@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,9 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -47,6 +51,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,8 +60,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.example.ui.theme.SliMotion
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -71,6 +78,7 @@ import com.example.data.ItemType
 import com.example.data.VaultItem
 import com.example.ui.VaultViewModel
 import com.example.ui.components.GlassCard
+import com.example.ui.components.GlassDialog
 import com.example.ui.components.formatFileSize
 import com.example.ui.theme.ElevatedCharcoal
 import com.example.ui.theme.FieryGradient
@@ -128,34 +136,33 @@ fun ItemDetailScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 6.dp),
+                .padding(horizontal = 16.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = PrimaryText
+            com.example.ui.components.SliGlassIconButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Back",
+                onClick = onBack,
+                size = 40.dp
+            )
+
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                com.example.ui.components.SliGlassIconButton(
+                    icon = if (item.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = if (item.isFavorite) "Favorited" else "Add to favorites",
+                    onClick = { viewModel.toggleFavorite(item) },
+                    tint = if (item.isFavorite) HotCoral else SecondaryText,
+                    size = 40.dp
                 )
-            }
 
-            Row {
-                IconButton(onClick = { viewModel.toggleFavorite(item) }) {
-                    Icon(
-                        imageVector = if (item.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorite",
-                        tint = if (item.isFavorite) HotCoral else SecondaryText
-                    )
-                }
-
-                IconButton(onClick = { showDeleteConfirmation = true }) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete",
-                        tint = HotCoral
-                    )
-                }
+                com.example.ui.components.SliGlassIconButton(
+                    icon = Icons.Default.Delete,
+                    contentDescription = "Delete",
+                    onClick = { showDeleteConfirmation = true },
+                    tint = HotCoral,
+                    size = 40.dp
+                )
             }
         }
 
@@ -266,11 +273,20 @@ fun ItemDetailScreen(
                 modifier = Modifier.weight(1f)
             )
 
-            // Glowing Favorite Button with Glassmorphism & Orange-Red Accent
+            // Glowing Favorite Button with Glassmorphism, Tactile Press, & Orange-Red Accent
+            val favInteraction = remember { MutableInteractionSource() }
+            val favPressed by favInteraction.collectIsPressedAsState()
+            val favScale by animateFloatAsState(
+                targetValue = if (favPressed) SliMotion.PRESSED_SCALE else SliMotion.DEFAULT_SCALE,
+                animationSpec = SliMotion.pressSpring,
+                label = "detail_fav_scale"
+            )
+
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(48.dp)
+                    .scale(favScale)
                     .then(
                         if (item.isFavorite) {
                             Modifier.shadow(
@@ -294,7 +310,10 @@ fun ItemDetailScreen(
                                 .border(1.dp, GlassSpecularBorder, RoundedCornerShape(12.dp))
                         }
                     )
-                    .clickable { viewModel.toggleFavorite(item) }
+                    .clickable(
+                        interactionSource = favInteraction,
+                        indication = androidx.compose.material3.ripple(color = Color.White)
+                    ) { viewModel.toggleFavorite(item) }
                     .testTag("detail_fav_btn"),
                 contentAlignment = Alignment.Center
             ) {
@@ -459,126 +478,134 @@ fun ItemDetailScreen(
         Spacer(modifier = Modifier.height(40.dp))
     }
 
-    // Edit Title & Notes Dialog
+    // Edit Title & Notes GlassDialog
     if (isEditTitleOpen) {
-        AlertDialog(
+        GlassDialog(
             onDismissRequest = { isEditTitleOpen = false },
-            title = { Text("Edit Item", color = PrimaryText, fontWeight = FontWeight.Bold) },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = editedTitle,
-                        onValueChange = { editedTitle = it },
-                        label = { Text("Title") },
-                        modifier = Modifier.fillMaxWidth()
+            title = "Edit Item",
+            icon = Icons.Default.Edit,
+            iconTint = FieryOrange,
+            confirmText = "Save",
+            onConfirm = {
+                viewModel.updateItem(
+                    item.copy(
+                        title = editedTitle.trim(),
+                        description = editedDescription.trim()
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    OutlinedTextField(
-                        value = editedDescription,
-                        onValueChange = { editedDescription = it },
-                        label = { Text("Notes / Description") },
-                        minLines = 3,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+                )
+                isEditTitleOpen = false
             },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        viewModel.updateItem(
-                            item.copy(
-                                title = editedTitle.trim(),
-                                description = editedDescription.trim()
-                            )
-                        )
-                        isEditTitleOpen = false
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = FieryOrange)
-                ) {
-                    Text("Save", color = Color.White)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { isEditTitleOpen = false }) {
-                    Text("Cancel", color = SecondaryText)
-                }
-            },
-            containerColor = ElevatedCharcoal
-        )
-    }
-
-    // Add Tag Dialog
-    if (isAddTagOpen) {
-        AlertDialog(
-            onDismissRequest = { isAddTagOpen = false },
-            title = { Text("Add Tag", color = PrimaryText, fontWeight = FontWeight.Bold) },
-            text = {
-                OutlinedTextField(
-                    value = newTagText,
-                    onValueChange = { newTagText = it },
-                    label = { Text("Tag Name") },
-                    singleLine = true,
+            dismissText = "Cancel",
+            onDismiss = { isEditTitleOpen = false }
+        ) {
+            Column {
+                androidx.compose.material3.OutlinedTextField(
+                    value = editedTitle,
+                    onValueChange = { editedTitle = it },
+                    label = { Text("Title") },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = PrimaryText,
+                        unfocusedTextColor = PrimaryText,
+                        focusedBorderColor = FieryOrange,
+                        unfocusedBorderColor = GlassBorder,
+                        focusedLabelColor = FieryOrange,
+                        unfocusedLabelColor = SecondaryText,
+                        focusedContainerColor = ElevatedCharcoal,
+                        unfocusedContainerColor = ElevatedCharcoal
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        val trimmed = newTagText.trim()
-                        if (trimmed.isNotEmpty()) {
-                            val currentTags = item.getTagList().toMutableList()
-                            if (!currentTags.contains(trimmed)) {
-                                currentTags.add(trimmed)
-                                viewModel.updateItem(item.copy(tags = currentTags.joinToString(", ")))
-                            }
-                        }
-                        newTagText = ""
-                        isAddTagOpen = false
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = FieryOrange)
-                ) {
-                    Text("Add", color = Color.White)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { isAddTagOpen = false }) {
-                    Text("Cancel", color = SecondaryText)
-                }
-            },
-            containerColor = ElevatedCharcoal
-        )
+                Spacer(modifier = Modifier.height(12.dp))
+                androidx.compose.material3.OutlinedTextField(
+                    value = editedDescription,
+                    onValueChange = { editedDescription = it },
+                    label = { Text("Notes / Description") },
+                    minLines = 3,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = PrimaryText,
+                        unfocusedTextColor = PrimaryText,
+                        focusedBorderColor = FieryOrange,
+                        unfocusedBorderColor = GlassBorder,
+                        focusedLabelColor = FieryOrange,
+                        unfocusedLabelColor = SecondaryText,
+                        focusedContainerColor = ElevatedCharcoal,
+                        unfocusedContainerColor = ElevatedCharcoal
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
     }
 
-    // Delete Confirmation Dialog
+    // Add Tag GlassDialog
+    if (isAddTagOpen) {
+        GlassDialog(
+            onDismissRequest = { isAddTagOpen = false },
+            title = "Add Tag",
+            icon = Icons.Default.Add,
+            iconTint = FieryOrange,
+            confirmText = "Add",
+            onConfirm = {
+                val trimmed = newTagText.trim()
+                if (trimmed.isNotEmpty()) {
+                    val currentTags = item.getTagList().toMutableList()
+                    if (!currentTags.contains(trimmed)) {
+                        currentTags.add(trimmed)
+                        viewModel.updateItem(item.copy(tags = currentTags.joinToString(", ")))
+                    }
+                }
+                newTagText = ""
+                isAddTagOpen = false
+            },
+            dismissText = "Cancel",
+            onDismiss = { isAddTagOpen = false }
+        ) {
+            androidx.compose.material3.OutlinedTextField(
+                value = newTagText,
+                onValueChange = { newTagText = it },
+                label = { Text("Tag Name") },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = PrimaryText,
+                    unfocusedTextColor = PrimaryText,
+                    focusedBorderColor = FieryOrange,
+                    unfocusedBorderColor = GlassBorder,
+                    focusedLabelColor = FieryOrange,
+                    unfocusedLabelColor = SecondaryText,
+                    focusedContainerColor = ElevatedCharcoal,
+                    unfocusedContainerColor = ElevatedCharcoal
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+
+    // Delete Confirmation GlassDialog
     if (showDeleteConfirmation) {
-        AlertDialog(
+        GlassDialog(
             onDismissRequest = { showDeleteConfirmation = false },
-            title = { Text("Delete Item?", color = PrimaryText, fontWeight = FontWeight.Bold) },
-            text = {
-                Text(
-                    "Are you sure you want to remove this item from your vault? This cannot be undone.",
-                    color = SecondaryText
-                )
+            title = "Delete Item?",
+            icon = Icons.Default.Delete,
+            iconTint = HotCoral,
+            confirmText = "Delete",
+            confirmIsDestructive = true,
+            onConfirm = {
+                viewModel.deleteItem(item)
+                showDeleteConfirmation = false
+                onBack()
             },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        viewModel.deleteItem(item)
-                        showDeleteConfirmation = false
-                        onBack()
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = HotCoral)
-                ) {
-                    Text("Delete", color = Color.White)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteConfirmation = false }) {
-                    Text("Cancel", color = SecondaryText)
-                }
-            },
-            containerColor = ElevatedCharcoal
-        )
+            dismissText = "Cancel",
+            onDismiss = { showDeleteConfirmation = false }
+        ) {
+            Text(
+                "Are you sure you want to remove this item from your vault? This cannot be undone.",
+                color = SecondaryText,
+                lineHeight = 18.sp
+            )
+        }
     }
 }
 
@@ -590,14 +617,26 @@ private fun ActionButton(
     modifier: Modifier = Modifier
 ) {
     val shape = RoundedCornerShape(12.dp)
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val animatedScale by animateFloatAsState(
+        targetValue = if (isPressed) SliMotion.PRESSED_SCALE else SliMotion.DEFAULT_SCALE,
+        animationSpec = SliMotion.pressSpring,
+        label = "action_btn_scale"
+    )
+
     Box(
         modifier = modifier
             .height(48.dp)
+            .scale(animatedScale)
             .clip(shape)
             .background(GlassSurfaceStandard)
             .background(GlassSheenGradient)
             .border(1.dp, GlassSpecularBorder, shape)
-            .clickable { onClick() },
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(color = FieryOrange)
+            ) { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {

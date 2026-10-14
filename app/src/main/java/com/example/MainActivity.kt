@@ -60,7 +60,12 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             } else if (type.startsWith("image/")) {
-                val imageUri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+                val imageUri: Uri? = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+                }
                 if (imageUri != null) {
                     viewModel.openAddSheet(
                         initialType = ItemType.IMAGE,

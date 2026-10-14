@@ -213,39 +213,13 @@ fun OnboardingScreen(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     // Get Started Button with Fiery Gradient & Drop Shadow
-                    Button(
+                    com.example.ui.components.SliPrimaryButton(
+                        text = "Get Started",
                         onClick = onDismiss,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .shadow(
-                                elevation = 12.dp,
-                                shape = RoundedCornerShape(16.dp),
-                                spotColor = FieryOrangeGlow,
-                                ambientColor = HotCoralGlow
-                            )
-                            .background(FieryGradient, RoundedCornerShape(16.dp))
-                            .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(16.dp))
-                            .testTag("get_started_btn")
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "Get Started",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                    }
+                        trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
+                        fillMaxWidth = true,
+                        modifier = Modifier.testTag("get_started_btn")
+                    )
                 }
             }
         }

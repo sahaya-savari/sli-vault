@@ -170,41 +170,43 @@ fun VaultItemListCard(
                 }
             }
 
-            // Favorite Icon button
-            IconButton(
+            // Favorite Icon button with >=48dp touch target and press feedback
+            SliGlassIconButton(
+                icon = if (item.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                contentDescription = if (item.isFavorite) "Favorited" else "Add to favorites",
                 onClick = onToggleFavorite,
+                tint = if (item.isFavorite) HotCoral else MutedText,
+                size = 36.dp,
+                iconSize = 18.dp,
                 modifier = Modifier.testTag("fav_btn_${item.id}")
-            ) {
-                Icon(
-                    imageVector = if (item.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = if (item.isFavorite) "Favorited" else "Add to favorites",
-                    tint = if (item.isFavorite) HotCoral else MutedText,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
+            )
 
-            // More Options menu
+            // More Options menu with glassmorphic dropdown
             Box {
-                IconButton(
+                SliGlassIconButton(
+                    icon = Icons.Default.MoreVert,
+                    contentDescription = "Options",
                     onClick = { showMenu = true },
+                    tint = MutedText,
+                    size = 36.dp,
+                    iconSize = 18.dp,
                     modifier = Modifier.testTag("menu_btn_${item.id}")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "Options",
-                        tint = MutedText,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+                )
 
                 DropdownMenu(
                     expanded = showMenu,
                     onDismissRequest = { showMenu = false },
-                    modifier = Modifier.background(ElevatedCharcoal)
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(com.example.ui.theme.GlassSurfaceElevated)
+                        .border(
+                            androidx.compose.foundation.BorderStroke(1.dp, com.example.ui.theme.GlassSpecularBorder),
+                            RoundedCornerShape(14.dp)
+                        )
                 ) {
                     if (item.type == ItemType.LINK) {
                         DropdownMenuItem(
-                            text = { Text("Open in Browser", color = PrimaryText) },
+                            text = { Text("Open in Browser", color = PrimaryText, fontWeight = FontWeight.Medium) },
                             leadingIcon = { Icon(Icons.Default.OpenInBrowser, contentDescription = null, tint = FieryOrange) },
                             onClick = {
                                 showMenu = false
@@ -213,7 +215,7 @@ fun VaultItemListCard(
                         )
                     }
                     DropdownMenuItem(
-                        text = { Text("Share", color = PrimaryText) },
+                        text = { Text("Share", color = PrimaryText, fontWeight = FontWeight.Medium) },
                         leadingIcon = { Icon(Icons.Default.Share, contentDescription = null, tint = SecondaryText) },
                         onClick = {
                             showMenu = false
@@ -221,7 +223,7 @@ fun VaultItemListCard(
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Edit Details", color = PrimaryText) },
+                        text = { Text("Edit Details", color = PrimaryText, fontWeight = FontWeight.Medium) },
                         leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null, tint = SecondaryText) },
                         onClick = {
                             showMenu = false
@@ -229,7 +231,7 @@ fun VaultItemListCard(
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Delete", color = HotCoral) },
+                        text = { Text("Delete", color = HotCoral, fontWeight = FontWeight.SemiBold) },
                         leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, tint = HotCoral) },
                         onClick = {
                             showMenu = false
@@ -253,7 +255,7 @@ fun VaultItemGridCard(
         modifier = modifier
             .fillMaxWidth()
             .testTag("item_grid_card_${item.id}"),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(18.dp),
         onClick = onClick
     ) {
         Column {
@@ -279,40 +281,42 @@ fun VaultItemGridCard(
                         )
                 )
 
-                // Favorite button top right
+                // Favorite button top right with accessible touch target and press feedback
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(6.dp)
-                        .size(32.dp)
-                        .background(Color(0x800A0B0D), RoundedCornerShape(16.dp))
-                        .clickable { onToggleFavorite() },
-                    contentAlignment = Alignment.Center
+                        .padding(4.dp)
                 ) {
-                    Icon(
-                        imageVector = if (item.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorite",
+                    SliGlassIconButton(
+                        icon = if (item.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = if (item.isFavorite) "Favorited" else "Add to favorites",
+                        onClick = onToggleFavorite,
                         tint = if (item.isFavorite) HotCoral else Color.White,
-                        modifier = Modifier.size(16.dp)
+                        size = 32.dp,
+                        iconSize = 16.dp,
+                        backgroundColor = Color(0x990A0B0D),
+                        borderBrush = androidx.compose.ui.graphics.Brush.linearGradient(
+                            listOf(Color(0x33FFFFFF), Color(0x11FFFFFF))
+                        ),
+                        modifier = Modifier.testTag("grid_fav_btn_${item.id}")
                     )
                 }
             }
 
             // Info below image
             Column(
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier.padding(12.dp)
             ) {
                 Text(
                     text = item.title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = PrimaryText,
-                    fontSize = 14.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(3.dp))
 
                 val subtitle = when (item.type) {
                     ItemType.LINK -> item.domain ?: "Web link"
@@ -322,10 +326,10 @@ fun VaultItemGridCard(
 
                 Text(
                     text = "$subtitle • ${formatRelativeTime(item.createdAt)}",
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MutedText,
-                    fontSize = 11.sp,
-                    maxLines = 1
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -357,11 +361,11 @@ fun ItemThumbnail(
             modifier = modifier
         )
     } else {
-        // Fallback stylish icon badge
+        // Fallback stylish icon badge with warm obsidian tones (avoiding purple)
         val gradient = when (item.type) {
-            ItemType.LINK -> Brush.linearGradient(listOf(Color(0xFF2E3138), Color(0xFF1E2024)))
-            ItemType.SCREENSHOT -> Brush.linearGradient(listOf(Color(0xFF332A24), Color(0xFF241C18)))
-            ItemType.IMAGE -> Brush.linearGradient(listOf(Color(0xFF2A2838), Color(0xFF1C1A24)))
+            ItemType.LINK -> Brush.linearGradient(listOf(Color(0xFF1E2129), Color(0xFF121419)))
+            ItemType.SCREENSHOT -> Brush.linearGradient(listOf(Color(0xFF261F1A), Color(0xFF181310)))
+            ItemType.IMAGE -> Brush.linearGradient(listOf(Color(0xFF261D19), Color(0xFF191310)))
         }
 
         val icon = when (item.type) {

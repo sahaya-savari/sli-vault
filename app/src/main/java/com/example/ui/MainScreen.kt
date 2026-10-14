@@ -18,6 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.animation.togetherWith
+import com.example.data.VaultItem
+import com.example.ui.components.AtmosphereVariant
 import com.example.ui.components.GlassAtmosphere
 import com.example.ui.components.NavDestination
 import com.example.ui.components.SliBottomNavBar
@@ -31,6 +34,15 @@ import com.example.ui.screens.OnboardingScreen
 import com.example.ui.screens.ProfileScreen
 import com.example.ui.screens.SearchScreen
 import com.example.ui.screens.SettingsScreen
+
+private sealed interface AppScreenState {
+    data object MainTabs : AppScreenState
+    data object Onboarding : AppScreenState
+    data class ItemDetail(val item: VaultItem) : AppScreenState
+    data object Search : AppScreenState
+    data object Settings : AppScreenState
+    data object Profile : AppScreenState
+}
 
 @Composable
 fun MainScreen(
@@ -61,115 +73,151 @@ fun MainScreen(
         }
     }
 
-    GlassAtmosphere(modifier = modifier) {
+    val currentScreenState: AppScreenState = when {
+        showOnboarding -> AppScreenState.Onboarding
+        selectedItem != null -> AppScreenState.ItemDetail(selectedItem!!)
+        isSearchActive -> AppScreenState.Search
+        isSettingsActive -> AppScreenState.Settings
+        isProfileActive -> AppScreenState.Profile
+        else -> AppScreenState.MainTabs
+    }
+
+    val atmosphereVariant = when (currentScreenState) {
+        AppScreenState.Onboarding -> AtmosphereVariant.CINEMATIC
+        is AppScreenState.ItemDetail -> AtmosphereVariant.FOCUS_IMMERSIVE
+        AppScreenState.Search -> AtmosphereVariant.COSMIC_SUBTLE
+        AppScreenState.Settings, AppScreenState.Profile -> AtmosphereVariant.SURFACE_ONLY
+        AppScreenState.MainTabs -> AtmosphereVariant.ABSTRACT_FLOW
+    }
+
+    GlassAtmosphere(modifier = modifier, variant = atmosphereVariant) {
         Box(modifier = Modifier.fillMaxSize()) {
-            when {
-            showOnboarding -> {
-                BackHandler { showOnboarding = false }
-                OnboardingScreen(onDismiss = { showOnboarding = false })
-            }
-
-            selectedItem != null -> {
-                BackHandler { viewModel.selectItem(null) }
-                ItemDetailScreen(
-                    item = selectedItem!!,
-                    viewModel = viewModel,
-                    onBack = { viewModel.selectItem(null) }
-                )
-            }
-
-            isSearchActive -> {
-                BackHandler { isSearchActive = false }
-                SearchScreen(
-                    viewModel = viewModel,
-                    onBack = { isSearchActive = false },
-                    onOpenItemDetail = { item -> viewModel.selectItem(item) }
-                )
-            }
-
-            isSettingsActive -> {
-                BackHandler { isSettingsActive = false }
-                SettingsScreen(
-                    viewModel = viewModel,
-                    onBack = { isSettingsActive = false },
-                    onShowOnboarding = { showOnboarding = true },
-                    onNavigateToProfile = { 
-                        isSettingsActive = false
-                        isProfileActive = true 
+            androidx.compose.animation.AnimatedContent(
+                targetState = currentScreenState,
+                transitionSpec = {
+                    (androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(200)) +
+                            androidx.compose.animation.slideInVertically(animationSpec = androidx.compose.animation.core.tween(200)) { it / 30 })
+                        .togetherWith(androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(150)))
+                },
+                label = "screen_transition"
+            ) { screen ->
+                when (screen) {
+                    AppScreenState.Onboarding -> {
+                        BackHandler { showOnboarding = false }
+                        OnboardingScreen(onDismiss = { showOnboarding = false })
                     }
-                )
-            }
 
-            isProfileActive -> {
-                BackHandler { isProfileActive = false }
-                ProfileScreen(
-                    viewModel = viewModel,
-                    onBack = { isProfileActive = false }
-                )
-            }
+                    is AppScreenState.ItemDetail -> {
+                        BackHandler { viewModel.selectItem(null) }
+                        ItemDetailScreen(
+                            item = screen.item,
+                            viewModel = viewModel,
+                            onBack = { viewModel.selectItem(null) }
+                        )
+                    }
 
-            else -> {
-                Scaffold(
-                    bottomBar = {
-                        SliBottomNavBar(
-                            currentDestination = currentDestination,
-                            onNavigate = { dest ->
-                                currentDestination = dest
-                            },
-                            onOpenAdd = {
-                                viewModel.openAddSheet()
+                    AppScreenState.Search -> {
+                        BackHandler { isSearchActive = false }
+                        SearchScreen(
+                            viewModel = viewModel,
+                            onBack = { isSearchActive = false },
+                            onOpenItemDetail = { item -> viewModel.selectItem(item) }
+                        )
+                    }
+
+                    AppScreenState.Settings -> {
+                        BackHandler { isSettingsActive = false }
+                        SettingsScreen(
+                            viewModel = viewModel,
+                            onBack = { isSettingsActive = false },
+                            onShowOnboarding = { showOnboarding = true },
+                            onNavigateToProfile = {
+                                isSettingsActive = false
+                                isProfileActive = true
                             }
                         )
-                    },
-                    snackbarHost = { SnackbarHost(snackbarHostState) },
-                    containerColor = Color.Transparent
-                ) { innerPadding ->
-                    Box(modifier = Modifier.padding(innerPadding)) {
-                        when (currentDestination) {
-                            NavDestination.HOME -> {
-                                HomeScreen(
-                                    viewModel = viewModel,
-                                    onNavigateToBrowse = { currentDestination = NavDestination.BROWSE },
-                                    onNavigateToSearch = { isSearchActive = true },
-                                    onNavigateToSettings = { isSettingsActive = true },
-                                    onNavigateToProfile = { isProfileActive = true },
-                                    onOpenItemDetail = { item -> viewModel.selectItem(item) }
-                                )
-                            }
-                            NavDestination.BROWSE -> {
-                                BrowseScreen(
-                                    viewModel = viewModel,
-                                    onOpenItemDetail = { item -> viewModel.selectItem(item) }
-                                )
-                            }
-                            NavDestination.FAVORITES -> {
-                                FavoritesScreen(
-                                    viewModel = viewModel,
-                                    onOpenItemDetail = { item -> viewModel.selectItem(item) }
-                                )
-                            }
-                            NavDestination.COLLECTIONS -> {
-                                CollectionsScreen(
-                                    viewModel = viewModel,
-                                    onSelectCollection = { collection ->
-                                        viewModel.setSelectedCollection(collection)
-                                        currentDestination = NavDestination.BROWSE
+                    }
+
+                    AppScreenState.Profile -> {
+                        BackHandler { isProfileActive = false }
+                        ProfileScreen(
+                            viewModel = viewModel,
+                            onBack = { isProfileActive = false }
+                        )
+                    }
+
+                    AppScreenState.MainTabs -> {
+                        Scaffold(
+                            bottomBar = {
+                                SliBottomNavBar(
+                                    currentDestination = currentDestination,
+                                    onNavigate = { dest ->
+                                        currentDestination = dest
+                                    },
+                                    onOpenAdd = {
+                                        viewModel.openAddSheet()
                                     }
                                 )
-                            }
-                            NavDestination.SETTINGS -> {
-                                SettingsScreen(
-                                    viewModel = viewModel,
-                                    onBack = { currentDestination = NavDestination.HOME },
-                                    onShowOnboarding = { showOnboarding = true },
-                                    onNavigateToProfile = { isProfileActive = true }
-                                )
+                            },
+                            snackbarHost = { SnackbarHost(snackbarHostState) },
+                            containerColor = Color.Transparent
+                        ) { innerPadding ->
+                            Box(modifier = Modifier.padding(innerPadding)) {
+                                androidx.compose.animation.AnimatedContent(
+                                    targetState = currentDestination,
+                                    transitionSpec = {
+                                        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(160))
+                                            .togetherWith(androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(120)))
+                                    },
+                                    label = "tab_transition"
+                                ) { targetDest ->
+                                    when (targetDest) {
+                                        NavDestination.HOME -> {
+                                            HomeScreen(
+                                                viewModel = viewModel,
+                                                onNavigateToBrowse = { currentDestination = NavDestination.BROWSE },
+                                                onNavigateToSearch = { isSearchActive = true },
+                                                onNavigateToSettings = { isSettingsActive = true },
+                                                onNavigateToProfile = { isProfileActive = true },
+                                                onOpenItemDetail = { item -> viewModel.selectItem(item) }
+                                            )
+                                        }
+                                        NavDestination.BROWSE -> {
+                                            BrowseScreen(
+                                                viewModel = viewModel,
+                                                onOpenItemDetail = { item -> viewModel.selectItem(item) }
+                                            )
+                                        }
+                                        NavDestination.FAVORITES -> {
+                                            FavoritesScreen(
+                                                viewModel = viewModel,
+                                                onOpenItemDetail = { item -> viewModel.selectItem(item) }
+                                            )
+                                        }
+                                        NavDestination.COLLECTIONS -> {
+                                            CollectionsScreen(
+                                                viewModel = viewModel,
+                                                onSelectCollection = { collection ->
+                                                    viewModel.setSelectedCollection(collection)
+                                                    currentDestination = NavDestination.BROWSE
+                                                }
+                                            )
+                                        }
+                                        NavDestination.SETTINGS -> {
+                                            SettingsScreen(
+                                                viewModel = viewModel,
+                                                onBack = { currentDestination = NavDestination.HOME },
+                                                onShowOnboarding = { showOnboarding = true },
+                                                onNavigateToProfile = { isProfileActive = true }
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-        }
 
         // Add Item Sheet Modal
         if (isAddSheetOpen) {

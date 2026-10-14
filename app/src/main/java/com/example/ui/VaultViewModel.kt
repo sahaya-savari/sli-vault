@@ -87,8 +87,14 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
     val favoriteItems: StateFlow<List<VaultItem>> = repository.favoriteItems
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val distinctCollections: StateFlow<List<String>> = repository.getDistinctCollections()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    private val _customCollections = MutableStateFlow(repository.getCustomCollections())
+
+    val distinctCollections: StateFlow<List<String>> = combine(
+        repository.getDistinctCollections(),
+        _customCollections
+    ) { fromDb, custom ->
+        (listOf("General") + fromDb + custom).distinct().sorted()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf("General"))
 
     // Counts
     val allCount: StateFlow<Int> = repository.itemCount
@@ -168,6 +174,15 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setSelectedCollection(collection: String?) {
         _selectedCollection.value = collection
+    }
+
+    fun createCollection(name: String) {
+        val trimmed = name.trim()
+        if (trimmed.isNotBlank()) {
+            repository.addCustomCollection(trimmed)
+            _customCollections.value = repository.getCustomCollections()
+            _userMessage.value = "Collection '$trimmed' created"
+        }
     }
 
     fun selectItem(item: VaultItem?) {

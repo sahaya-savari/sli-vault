@@ -1,8 +1,12 @@
 package com.example.ui.screens
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +30,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,12 +39,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.R
 import com.example.data.ItemType
 import com.example.data.VaultItem
 import com.example.ui.VaultViewModel
@@ -47,11 +55,13 @@ import com.example.ui.components.GlassCard
 import com.example.ui.components.VaultItemGridCard
 import com.example.ui.theme.ElevatedCharcoal
 import com.example.ui.theme.FieryGradient
+import com.example.ui.theme.FieryOrange
 import com.example.ui.theme.GlassBorder
 import com.example.ui.theme.HotCoral
 import com.example.ui.theme.MutedText
 import com.example.ui.theme.PrimaryText
 import com.example.ui.theme.SecondaryText
+import com.example.ui.theme.SliMotion
 
 @Composable
 fun FavoritesScreen(
@@ -79,7 +89,7 @@ fun FavoritesScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
+                .padding(horizontal = 20.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -88,19 +98,28 @@ fun FavoritesScreen(
                 tint = HotCoral,
                 modifier = Modifier.size(24.dp)
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = "Favorites",
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = PrimaryText
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "(${favoriteItems.size})",
-                style = MaterialTheme.typography.labelMedium,
-                color = MutedText
-            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(ElevatedCharcoal)
+                    .border(1.dp, GlassBorder, RoundedCornerShape(12.dp))
+                    .padding(horizontal = 8.dp, vertical = 3.dp)
+            ) {
+                Text(
+                    text = "${favoriteItems.size}",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = SecondaryText
+                )
+            }
         }
 
         // Filter Pills
@@ -119,23 +138,37 @@ fun FavoritesScreen(
 
             filters.forEach { (type, label) ->
                 val isSelected = selectedFilterType == type
+                val pillInteraction = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                val isPillPressed by pillInteraction.collectIsPressedAsState()
+                val pillScale by androidx.compose.animation.core.animateFloatAsState(
+                    targetValue = if (isPillPressed) com.example.ui.theme.SliMotion.PRESSED_SCALE else com.example.ui.theme.SliMotion.DEFAULT_SCALE,
+                    animationSpec = com.example.ui.theme.SliMotion.pressSpring,
+                    label = "pill_press_scale"
+                )
+
                 Box(
                     modifier = Modifier
+                        .scale(pillScale)
                         .clip(RoundedCornerShape(20.dp))
                         .then(
-                            if (isSelected) Modifier.background(FieryGradient)
+                            if (isSelected) Modifier
+                                .background(FieryGradient)
+                                .border(1.dp, Color.White.copy(alpha = 0.30f), RoundedCornerShape(20.dp))
                             else Modifier
                                 .background(ElevatedCharcoal)
                                 .border(1.dp, GlassBorder, RoundedCornerShape(20.dp))
                         )
-                        .clickable { selectedFilterType = type }
-                        .padding(horizontal = 14.dp, vertical = 7.dp)
+                        .clickable(
+                            interactionSource = pillInteraction,
+                            indication = ripple(color = FieryOrange)
+                        ) { selectedFilterType = type }
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     Text(
                         text = label,
-                        fontSize = 12.sp,
+                        style = MaterialTheme.typography.labelMedium,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) PrimaryText else SecondaryText
+                        color = if (isSelected) Color.White else SecondaryText
                     )
                 }
             }
@@ -147,54 +180,18 @@ fun FavoritesScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(32.dp),
+                    .padding(24.dp),
                 contentAlignment = Alignment.Center
             ) {
                 GlassCard(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(CircleShape)
-                                .background(ElevatedCharcoal)
-                                .border(1.dp, GlassBorder, CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Favorite,
-                                contentDescription = null,
-                                tint = HotCoral,
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Text(
-                            text = "No favorites yet",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = PrimaryText
-                        )
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        Text(
-                            text = "Tap the heart icon on any saved link or image to keep it in your favorites collection.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MutedText,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                        )
-                    }
+                    com.example.ui.components.SliEmptyState(
+                        title = "No favorites yet",
+                        description = "Tap the heart icon on any saved link or image to keep it in your favorites collection.",
+                        painter = painterResource(id = R.drawable.ic_vault_empty_favorites)
+                    )
                 }
             }
         } else {

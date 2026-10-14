@@ -25,6 +25,21 @@ class VaultRepository(
     fun getItemsByCollection(collection: String): Flow<List<VaultItem>> = dao.getItemsByCollection(collection)
     fun getDistinctCollections(): Flow<List<String>> = dao.getDistinctCollections()
 
+    private val collectionsPrefs = context.getSharedPreferences("sli_vault_collections", Context.MODE_PRIVATE)
+
+    fun getCustomCollections(): Set<String> {
+        return collectionsPrefs.getStringSet("custom_collections", emptySet()) ?: emptySet()
+    }
+
+    fun addCustomCollection(name: String) {
+        val trimmed = name.trim()
+        if (trimmed.isNotBlank()) {
+            val current = getCustomCollections().toMutableSet()
+            current.add(trimmed)
+            collectionsPrefs.edit().putStringSet("custom_collections", current).apply()
+        }
+    }
+
     val itemCount: Flow<Int> = dao.getItemCount()
     val favoriteCount: Flow<Int> = dao.getFavoriteCount()
     fun getItemCountByType(type: ItemType): Flow<Int> = dao.getItemCountByType(type)
