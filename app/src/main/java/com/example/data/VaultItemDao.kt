@@ -25,6 +25,15 @@ interface VaultItemDao {
     @Query("SELECT * FROM vault_items WHERE id = :id LIMIT 1")
     suspend fun getItemByIdOnce(id: String): VaultItem?
 
+    @Query("SELECT * FROM vault_items ORDER BY createdAt DESC")
+    suspend fun getAllItemsOnce(): List<VaultItem>
+
+    @Query("UPDATE vault_items SET collection = 'General' WHERE collection = :collection")
+    suspend fun resetCollectionToGeneral(collection: String)
+
+    @Query("UPDATE vault_items SET collection = :newName WHERE collection = :oldName")
+    suspend fun renameCollection(oldName: String, newName: String)
+
     @Query("""
         SELECT * FROM vault_items 
         WHERE title LIKE '%' || :query || '%' 

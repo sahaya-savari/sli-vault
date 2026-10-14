@@ -185,6 +185,28 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun deleteCollection(name: String) {
+        viewModelScope.launch {
+            repository.deleteCustomCollection(name)
+            _customCollections.value = repository.getCustomCollections()
+            if (_selectedCollection.value == name) {
+                _selectedCollection.value = null
+            }
+            _userMessage.value = "Collection '$name' deleted"
+        }
+    }
+
+    fun renameCollection(oldName: String, newName: String) {
+        viewModelScope.launch {
+            repository.renameCustomCollection(oldName, newName)
+            _customCollections.value = repository.getCustomCollections()
+            if (_selectedCollection.value == oldName) {
+                _selectedCollection.value = newName.trim()
+            }
+            _userMessage.value = "Collection renamed to '$newName'"
+        }
+    }
+
     fun selectItem(item: VaultItem?) {
         _selectedItem.value = item
     }
