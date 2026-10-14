@@ -111,11 +111,10 @@ fun HomeScreen(
                             .border(1.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(12.dp)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Bookmark,
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_vault_symbol),
                             contentDescription = "SLI Vault Logo",
-                            tint = Color.White,
-                            modifier = Modifier.size(22.dp)
+                            modifier = Modifier.size(26.dp)
                         )
                     }
 

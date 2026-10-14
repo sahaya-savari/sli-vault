@@ -4,6 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.ui.res.painterResource
+import com.example.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -237,7 +239,7 @@ fun SearchScreen(
                 com.example.ui.components.SliEmptyState(
                     title = "No results found",
                     description = "Try different keywords or check tag filters to find items in your vault.",
-                    icon = Icons.Default.Search,
+                    painter = painterResource(id = R.drawable.ic_vault_empty_search),
                     actionText = if (searchQuery.isNotEmpty() || selectedType != null) "Clear Filters" else null,
                     onActionClick = {
                         viewModel.setSearchQuery("")

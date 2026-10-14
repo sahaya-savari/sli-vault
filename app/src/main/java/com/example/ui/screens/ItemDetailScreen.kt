@@ -240,8 +240,23 @@ fun ItemDetailScreen(
                     icon = Icons.Default.OpenInBrowser,
                     label = "Open",
                     onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
-                        context.startActivity(intent)
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "No browser available to open link", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+
+                ActionButton(
+                    icon = Icons.Default.ContentCopy,
+                    label = "Copy",
+                    onClick = {
+                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        clipboard.setPrimaryClip(ClipData.newPlainText("URL", item.url))
+                        Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.weight(1f)
                 )
@@ -251,13 +266,33 @@ fun ItemDetailScreen(
                 icon = Icons.Default.Share,
                 label = "Share",
                 onClick = {
-                    val shareText = "${item.title}\n${item.url ?: ""}"
-                    val sendIntent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, shareText)
-                        type = "text/plain"
+                    if (item.type == ItemType.LINK) {
+                        val shareText = "${item.title}\n${item.url ?: ""}"
+                        val sendIntent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, shareText)
+                            type = "text/plain"
+                        }
+                        context.startActivity(Intent.createChooser(sendIntent, "Share via"))
+                    } else if (!item.localImagePath.isNullOrBlank()) {
+                        try {
+                            val file = File(item.localImagePath)
+                            val uri = androidx.core.content.FileProvider.getUriForFile(
+                                context,
+                                "${context.packageName}.fileprovider",
+                                file
+                            )
+                            val sendIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_STREAM, uri)
+                                type = "image/*"
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                            context.startActivity(Intent.createChooser(sendIntent, "Share image via"))
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Error sharing image", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    context.startActivity(Intent.createChooser(sendIntent, "Share via"))
                 },
                 modifier = Modifier.weight(1f)
             )

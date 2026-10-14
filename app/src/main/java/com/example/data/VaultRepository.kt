@@ -40,6 +40,43 @@ class VaultRepository(
         }
     }
 
+    suspend fun deleteCustomCollection(name: String) = withContext(Dispatchers.IO) {
+        val trimmed = name.trim()
+        dao.resetCollectionToGeneral(trimmed)
+        val current = getCustomCollections().toMutableSet()
+        current.remove(trimmed)
+        collectionsPrefs.edit().putStringSet("custom_collections", current).apply()
+    }
+
+    suspend fun renameCustomCollection(oldName: String, newName: String) = withContext(Dispatchers.IO) {
+        val oldTrimmed = oldName.trim()
+        val newTrimmed = newName.trim()
+        if (newTrimmed.isNotBlank() && oldTrimmed != newTrimmed) {
+            dao.renameCollection(oldTrimmed, newTrimmed)
+            val current = getCustomCollections().toMutableSet()
+            current.remove(oldTrimmed)
+            current.add(newTrimmed)
+            collectionsPrefs.edit().putStringSet("custom_collections", current).apply()
+        }
+    }
+
+    fun isValidWebUrl(url: String): Boolean {
+        val trimmed = url.trim()
+        if (trimmed.isBlank()) return false
+        val normalized = if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
+            "https://$trimmed"
+        } else {
+            trimmed
+        }
+        return try {
+            val uri = URI(normalized)
+            val host = uri.host
+            !host.isNullOrBlank() && host.contains(".") && (uri.scheme == "http" || uri.scheme == "https")
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     val itemCount: Flow<Int> = dao.getItemCount()
     val favoriteCount: Flow<Int> = dao.getFavoriteCount()
     fun getItemCountByType(type: ItemType): Flow<Int> = dao.getItemCountByType(type)
@@ -52,10 +89,15 @@ class VaultRepository(
         collection: String = "General"
     ): Result<VaultItem> = withContext(Dispatchers.IO) {
         try {
-            val normalizedUrl = if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                "https://$url"
+            val trimmedUrl = url.trim()
+            if (!isValidWebUrl(trimmedUrl)) {
+                return@withContext Result.failure(IllegalArgumentException("Please enter a valid website URL (e.g. https://example.com)"))
+            }
+
+            val normalizedUrl = if (!trimmedUrl.startsWith("http://") && !trimmedUrl.startsWith("https://")) {
+                "https://$trimmedUrl"
             } else {
-                url.trim()
+                trimmedUrl
             }
 
             val domain = extractDomain(normalizedUrl)
@@ -105,10 +147,18 @@ class VaultRepository(
             val destinationFile = File(storageDir, localFileName)
 
             var bytesCopied: Long = 0L
-            context.contentResolver.openInputStream(imageUri)?.use { inputStream ->
+            val inputStream = context.contentResolver.openInputStream(imageUri)
+                ?: return@withContext Result.failure(java.io.IOException("Cannot open input stream for image"))
+
+            inputStream.use { inStream ->
                 FileOutputStream(destinationFile).use { outputStream ->
-                    bytesCopied = inputStream.copyTo(outputStream)
+                    bytesCopied = inStream.copyTo(outputStream)
                 }
+            }
+
+            if (bytesCopied <= 0L) {
+                if (destinationFile.exists()) destinationFile.delete()
+                return@withContext Result.failure(java.io.IOException("Image file is empty or could not be read"))
             }
 
             val finalTitle = if (title.isNullOrBlank()) {
@@ -173,26 +223,37 @@ class VaultRepository(
         root.put("exportedAt", System.currentTimeMillis())
 
         val itemsArray = JSONArray()
-        // Read directly
-        val db = VaultDatabase.getDatabase(context)
-        val currentItems = db.vaultItemDao().getItemByIdOnce("") // or query
-        // We can query all items directly
-        val cursor = db.openHelper.readableDatabase.query("SELECT * FROM vault_items")
-        while (cursor.moveToNext()) {
+        val currentItems = dao.getAllItemsOnce()
+
+        for (item in currentItems) {
             val obj = JSONObject()
-            obj.put("id", cursor.getString(cursor.getColumnIndexOrThrow("id")))
-            obj.put("type", cursor.getString(cursor.getColumnIndexOrThrow("type")))
-            obj.put("title", cursor.getString(cursor.getColumnIndexOrThrow("title")))
-            obj.put("url", cursor.getString(cursor.getColumnIndexOrThrow("url")))
-            obj.put("domain", cursor.getString(cursor.getColumnIndexOrThrow("domain")))
-            obj.put("description", cursor.getString(cursor.getColumnIndexOrThrow("description")))
-            obj.put("tags", cursor.getString(cursor.getColumnIndexOrThrow("tags")))
-            obj.put("isFavorite", cursor.getInt(cursor.getColumnIndexOrThrow("isFavorite")) == 1)
-            obj.put("collection", cursor.getString(cursor.getColumnIndexOrThrow("collection")))
-            obj.put("createdAt", cursor.getLong(cursor.getColumnIndexOrThrow("createdAt")))
+            obj.put("id", item.id)
+            obj.put("type", item.type.name)
+            obj.put("title", item.title)
+            obj.put("url", item.url)
+            obj.put("domain", item.domain)
+            obj.put("description", item.description)
+            obj.put("tags", item.tags)
+            obj.put("isFavorite", item.isFavorite)
+            obj.put("collection", item.collection)
+            obj.put("fileSizeBytes", item.fileSizeBytes)
+            obj.put("createdAt", item.createdAt)
+            obj.put("updatedAt", item.updatedAt)
+
+            // Durably export image bytes as Base64 for local image items
+            if (!item.localImagePath.isNullOrBlank()) {
+                try {
+                    val file = File(item.localImagePath)
+                    if (file.exists() && file.length() > 0) {
+                        val bytes = file.readBytes()
+                        obj.put("imageBase64", android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP))
+                    }
+                } catch (e: Exception) {
+                    // Skip image binary if unreadable, keep metadata
+                }
+            }
             itemsArray.put(obj)
         }
-        cursor.close()
 
         root.put("items", itemsArray)
         root.toString(2)
@@ -203,11 +264,20 @@ class VaultRepository(
             val root = JSONObject(jsonString)
             val itemsArray = root.getJSONArray("items")
             val itemsToInsert = mutableListOf<VaultItem>()
-            
-            // Note: Currently imports metadata only. Local image files are not restored.
+            val storageDir = File(context.filesDir, "vault_images")
+            if (!storageDir.exists()) {
+                storageDir.mkdirs()
+            }
 
             for (i in 0 until itemsArray.length()) {
                 val obj = itemsArray.getJSONObject(i)
+                val id = if (obj.has("id") && !obj.isNull("id")) obj.getString("id") else UUID.randomUUID().toString()
+
+                // Deterministic duplicate prevention: preserve existing items with identical stable IDs
+                if (dao.getItemByIdOnce(id) != null) {
+                    continue
+                }
+
                 val typeStr = obj.optString("type", "LINK")
                 val itemType = try {
                     ItemType.valueOf(typeStr)
@@ -215,23 +285,47 @@ class VaultRepository(
                     ItemType.LINK
                 }
 
+                var restoredLocalPath: String? = null
+                var fileSize = obj.optLong("fileSizeBytes", 0L)
+
+                // Restore image bytes if present in backup archive
+                if (obj.has("imageBase64") && !obj.isNull("imageBase64")) {
+                    try {
+                        val base64Str = obj.getString("imageBase64")
+                        val bytes = android.util.Base64.decode(base64Str, android.util.Base64.DEFAULT)
+                        if (bytes.isNotEmpty()) {
+                            val ext = if (itemType == ItemType.SCREENSHOT) "png" else "jpg"
+                            val restoredFile = File(storageDir, "vault_restored_${id.take(8)}_${System.currentTimeMillis()}.$ext")
+                            restoredFile.writeBytes(bytes)
+                            restoredLocalPath = restoredFile.absolutePath
+                            fileSize = bytes.size.toLong()
+                        }
+                    } catch (e: Exception) {
+                        // Keep item even if image decoding fails
+                    }
+                }
+
                 val item = VaultItem(
-                    id = UUID.randomUUID().toString(), // assign new stable ID to avoid collisions
+                    id = id,
                     type = itemType,
                     title = obj.optString("title", "Imported Item"),
                     url = if (obj.has("url") && !obj.isNull("url")) obj.getString("url") else null,
                     domain = if (obj.has("domain") && !obj.isNull("domain")) obj.getString("domain") else null,
                     description = if (obj.has("description") && !obj.isNull("description")) obj.getString("description") else null,
+                    localImagePath = restoredLocalPath,
                     tags = obj.optString("tags", ""),
                     isFavorite = obj.optBoolean("isFavorite", false),
                     collection = obj.optString("collection", "General"),
+                    fileSizeBytes = fileSize,
                     createdAt = obj.optLong("createdAt", System.currentTimeMillis()),
-                    updatedAt = System.currentTimeMillis()
+                    updatedAt = obj.optLong("updatedAt", System.currentTimeMillis())
                 )
                 itemsToInsert.add(item)
             }
 
-            dao.insertAll(itemsToInsert)
+            if (itemsToInsert.isNotEmpty()) {
+                dao.insertAll(itemsToInsert)
+            }
             Result.success(itemsToInsert.size)
         } catch (e: Exception) {
             Result.failure(e)

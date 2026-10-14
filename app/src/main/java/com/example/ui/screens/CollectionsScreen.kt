@@ -24,10 +24,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -58,6 +63,7 @@ import com.example.ui.components.GlassCard
 import com.example.ui.theme.ElevatedCharcoal
 import com.example.ui.theme.FieryOrange
 import com.example.ui.theme.GlassBorder
+import com.example.ui.theme.HotCoral
 import com.example.ui.theme.MutedText
 import com.example.ui.theme.PrimaryText
 import com.example.ui.theme.SecondaryText
@@ -78,6 +84,9 @@ fun CollectionsScreen(
     val distinctCollections by viewModel.distinctCollections.collectAsStateWithLifecycle()
     var showCreateDialog by remember { mutableStateOf(false) }
     var newCollectionName by remember { mutableStateOf("") }
+    var collectionToRename by remember { mutableStateOf<String?>(null) }
+    var renameInput by remember { mutableStateOf("") }
+    var collectionToDelete by remember { mutableStateOf<String?>(null) }
 
     // Aggregate counts & cover images from DB items and persisted distinctCollections
     val collectionsList = remember(items, distinctCollections) {
@@ -154,6 +163,7 @@ fun CollectionsScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             items(collectionsList, key = { it.name }) { collection ->
+                val isCustom = collection.name != "All Items" && !collection.name.equals("General", ignoreCase = true)
                 CollectionCard(
                     collection = collection,
                     onClick = {
@@ -162,7 +172,18 @@ fun CollectionsScreen(
                         } else {
                             onSelectCollection(collection.name)
                         }
-                    }
+                    },
+                    onRename = if (isCustom) {
+                        {
+                            renameInput = collection.name
+                            collectionToRename = collection.name
+                        }
+                    } else null,
+                    onDelete = if (isCustom) {
+                        {
+                            collectionToDelete = collection.name
+                        }
+                    } else null
                 )
             }
         }
@@ -215,15 +236,89 @@ fun CollectionsScreen(
             }
         }
     }
+
+    collectionToRename?.let { oldName ->
+        com.example.ui.components.GlassDialog(
+            onDismissRequest = { collectionToRename = null },
+            title = "Rename Collection",
+            icon = Icons.Default.Edit,
+            iconTint = FieryOrange,
+            confirmText = "Rename",
+            confirmContainerColor = FieryOrange,
+            onConfirm = {
+                val trimmed = renameInput.trim()
+                if (trimmed.isNotEmpty() && !trimmed.equals(oldName, ignoreCase = true)) {
+                    viewModel.renameCollection(oldName, trimmed)
+                }
+                collectionToRename = null
+            },
+            dismissText = "Cancel",
+            onDismiss = { collectionToRename = null }
+        ) {
+            Column {
+                Text(
+                    text = "Enter a new name for '$oldName'. Existing items in this collection will be updated.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = SecondaryText
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+                OutlinedTextField(
+                    value = renameInput,
+                    onValueChange = { renameInput = it },
+                    label = { Text("Collection Name") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = PrimaryText,
+                        unfocusedTextColor = PrimaryText,
+                        focusedBorderColor = FieryOrange,
+                        unfocusedBorderColor = GlassBorder,
+                        focusedLabelColor = FieryOrange,
+                        unfocusedLabelColor = SecondaryText,
+                        focusedContainerColor = ElevatedCharcoal,
+                        unfocusedContainerColor = ElevatedCharcoal
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
+
+    collectionToDelete?.let { nameToDelete ->
+        com.example.ui.components.GlassDialog(
+            onDismissRequest = { collectionToDelete = null },
+            title = "Delete Collection?",
+            icon = Icons.Default.Delete,
+            iconTint = HotCoral,
+            confirmText = "Delete",
+            confirmContainerColor = HotCoral,
+            onConfirm = {
+                viewModel.deleteCollection(nameToDelete)
+                collectionToDelete = null
+            },
+            dismissText = "Cancel",
+            onDismiss = { collectionToDelete = null }
+        ) {
+            Text(
+                text = "Are you sure you want to delete '$nameToDelete'?\n\nItems stored in this collection will not be deleted; they will be safely moved to 'General'.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = SecondaryText
+            )
+        }
+    }
 }
 
 @Composable
 private fun CollectionCard(
     collection: CollectionMeta,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRename: (() -> Unit)? = null,
+    onDelete: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
+    var showMenu by remember { mutableStateOf(false) }
+
     GlassCard(
         modifier = modifier
             .fillMaxWidth()
@@ -296,6 +391,58 @@ private fun CollectionCard(
                         tint = FieryOrange,
                         modifier = Modifier.size(16.dp)
                     )
+                }
+
+                // Top-end more options button for custom collections
+                if (onRename != null || onDelete != null) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(6.dp)
+                    ) {
+                        com.example.ui.components.SliGlassIconButton(
+                            icon = Icons.Default.MoreVert,
+                            contentDescription = "Options",
+                            onClick = { showMenu = true },
+                            tint = PrimaryText,
+                            size = 28.dp,
+                            iconSize = 16.dp,
+                            modifier = Modifier.testTag("collection_options_${collection.name.lowercase().replace(" ", "_")}")
+                        )
+
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false },
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(com.example.ui.theme.GlassSurfaceElevated)
+                                .border(
+                                    androidx.compose.foundation.BorderStroke(1.dp, com.example.ui.theme.GlassSpecularBorder),
+                                    RoundedCornerShape(14.dp)
+                                )
+                        ) {
+                            if (onRename != null) {
+                                DropdownMenuItem(
+                                    text = { Text("Rename", color = PrimaryText, fontWeight = FontWeight.Medium) },
+                                    leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null, tint = SecondaryText) },
+                                    onClick = {
+                                        showMenu = false
+                                        onRename()
+                                    }
+                                )
+                            }
+                            if (onDelete != null) {
+                                DropdownMenuItem(
+                                    text = { Text("Delete", color = HotCoral, fontWeight = FontWeight.SemiBold) },
+                                    leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, tint = HotCoral) },
+                                    onClick = {
+                                        showMenu = false
+                                        onDelete()
+                                    }
+                                )
+                            }
+                        }
+                    }
                 }
             }
 

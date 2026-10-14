@@ -1,7 +1,10 @@
 package com.example.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.ui.res.painterResource
+import com.example.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -88,11 +91,10 @@ fun OnboardingScreen(
                                 .background(FieryGradient),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Bookmark,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(22.dp)
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_vault_symbol),
+                                contentDescription = "SLI Vault Logo",
+                                modifier = Modifier.size(24.dp)
                             )
                         }
                         Spacer(modifier = Modifier.width(12.dp))
