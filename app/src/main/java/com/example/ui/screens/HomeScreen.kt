@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Storage
@@ -67,6 +68,7 @@ fun HomeScreen(
     onNavigateToBrowse: () -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToProfile: () -> Unit,
     onOpenItemDetail: (VaultItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -160,6 +162,20 @@ fun HomeScreen(
                     }
 
                     Spacer(modifier = Modifier.width(6.dp))
+
+                    IconButton(
+                        onClick = onNavigateToProfile,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .testTag("profile_button")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Profile",
+                            tint = SecondaryText,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
 
                     IconButton(
                         onClick = onNavigateToSettings,
@@ -277,19 +293,43 @@ fun HomeScreen(
                         }
                     },
                     onShare = {
-                        val shareText = buildString {
-                            append(item.title)
-                            item.url?.let { append("\n$it") }
+                        if (item.type == ItemType.LINK) {
+                            val shareText = buildString {
+                                append(item.title)
+                                item.url?.let { append("\n$it") }
+                            }
+                            val sendIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, shareText)
+                                type = "text/plain"
+                            }
+                            context.startActivity(Intent.createChooser(sendIntent, "Share via"))
+                        } else if (!item.localImagePath.isNullOrBlank()) {
+                            try {
+                                val file = java.io.File(item.localImagePath)
+                                val uri = androidx.core.content.FileProvider.getUriForFile(
+                                    context,
+                                    "${context.packageName}.fileprovider",
+                                    file
+                                )
+                                val sendIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_STREAM, uri)
+                                    type = "image/*"
+                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                }
+                                context.startActivity(Intent.createChooser(sendIntent, "Share image via"))
+                            } catch (e: Exception) {
+                                android.widget.Toast.makeText(context, "Error sharing image", android.widget.Toast.LENGTH_SHORT).show()
+                            }
                         }
-                        val sendIntent = Intent().apply {
-                            action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT, shareText)
-                            type = "text/plain"
-                        }
-                        context.startActivity(Intent.createChooser(sendIntent, "Share via"))
                     },
                     onEdit = { onOpenItemDetail(item) },
                     onDelete = { viewModel.deleteItem(item) },
+                    onTagClick = { tag ->
+                        viewModel.setSearchQuery(tag)
+                        onNavigateToSearch()
+                    },
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
                 )
             }

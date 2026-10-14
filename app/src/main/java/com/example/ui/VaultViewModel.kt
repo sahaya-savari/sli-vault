@@ -87,6 +87,9 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
     val favoriteItems: StateFlow<List<VaultItem>> = repository.favoriteItems
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val distinctCollections: StateFlow<List<String>> = repository.getDistinctCollections()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     // Counts
     val allCount: StateFlow<Int> = repository.itemCount
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)

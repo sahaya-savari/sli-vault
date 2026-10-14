@@ -23,6 +23,7 @@ class VaultRepository(
     fun getItemById(id: String): Flow<VaultItem?> = dao.getItemById(id)
     fun searchItems(query: String): Flow<List<VaultItem>> = dao.searchItems(query)
     fun getItemsByCollection(collection: String): Flow<List<VaultItem>> = dao.getItemsByCollection(collection)
+    fun getDistinctCollections(): Flow<List<String>> = dao.getDistinctCollections()
 
     val itemCount: Flow<Int> = dao.getItemCount()
     val favoriteCount: Flow<Int> = dao.getFavoriteCount()
@@ -187,6 +188,8 @@ class VaultRepository(
             val root = JSONObject(jsonString)
             val itemsArray = root.getJSONArray("items")
             val itemsToInsert = mutableListOf<VaultItem>()
+            
+            // Note: Currently imports metadata only. Local image files are not restored.
 
             for (i in 0 until itemsArray.length()) {
                 val obj = itemsArray.getJSONObject(i)

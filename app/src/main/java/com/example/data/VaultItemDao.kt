@@ -39,6 +39,9 @@ interface VaultItemDao {
     @Query("SELECT * FROM vault_items WHERE collection = :collection ORDER BY createdAt DESC")
     fun getItemsByCollection(collection: String): Flow<List<VaultItem>>
 
+    @Query("SELECT DISTINCT collection FROM vault_items WHERE collection IS NOT NULL AND collection != '' ORDER BY collection ASC")
+    fun getDistinctCollections(): Flow<List<String>>
+
     @Query("SELECT COUNT(*) FROM vault_items")
     fun getItemCount(): Flow<Int>
 

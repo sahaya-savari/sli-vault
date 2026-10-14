@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Storage
@@ -77,6 +78,7 @@ fun SettingsScreen(
     viewModel: VaultViewModel,
     onBack: () -> Unit,
     onShowOnboarding: () -> Unit,
+    onNavigateToProfile: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -231,6 +233,13 @@ fun SettingsScreen(
                     title = "View Onboarding Guide",
                     subtitle = "Revisit the introductory tour of SLI Vault",
                     onClick = onShowOnboarding
+                )
+                
+                SettingsActionRow(
+                    icon = Icons.Default.Person,
+                    title = "Local Profile",
+                    subtitle = "View your local vault profile details",
+                    onClick = onNavigateToProfile
                 )
             }
         }
