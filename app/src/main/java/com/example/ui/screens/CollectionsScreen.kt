@@ -75,15 +75,21 @@ fun CollectionsScreen(
     modifier: Modifier = Modifier
 ) {
     val items by viewModel.allItems.collectAsStateWithLifecycle()
+    val distinctCollections by viewModel.distinctCollections.collectAsStateWithLifecycle()
     var showCreateDialog by remember { mutableStateOf(false) }
     var newCollectionName by remember { mutableStateOf("") }
-    var customCollections by remember { mutableStateOf(listOf("Design", "Inspiration", "Work", "Personal", "Travel")) }
+    
+    // We'll keep a local state of created collections just for immediate UI feedback if desired,
+    // but we should primarily rely on the database.
+    // However, if the user creates an empty collection, it won't appear in the DB until an item is added.
+    // So we combine distinctCollections from DB and any newly created ones that might be empty.
+    var newlyCreatedCollections by remember { mutableStateOf(emptyList<String>()) }
 
     // Aggregate counts & cover images
-    val collectionsList = remember(items, customCollections) {
+    val collectionsList = remember(items, distinctCollections, newlyCreatedCollections) {
         val list = mutableListOf<CollectionMeta>()
         // All Items card
-        val firstItemWithImage = items.firstOrNull { !it.previewImageUrl.isNullOrBlank() }
+        val firstItemWithImage = items.firstOrNull { !it.previewImageUrl.isNullOrBlank() || !it.localImagePath.isNullOrBlank() }
         list.add(
             CollectionMeta(
                 name = "All Items",
@@ -92,10 +98,16 @@ fun CollectionsScreen(
             )
         )
 
-        customCollections.forEach { name ->
+        // Ensure "General" is always present
+        val allCollectionsToDisplay = (listOf("General") + distinctCollections + newlyCreatedCollections)
+            .distinct()
+            .sorted()
+
+        allCollectionsToDisplay.forEach { name ->
             val matching = items.filter { it.collection.equals(name, ignoreCase = true) }
-            val cover = matching.firstOrNull { !it.previewImageUrl.isNullOrBlank() }?.previewImageUrl
+            val cover = matching.firstOrNull { !it.previewImageUrl.isNullOrBlank() || !it.localImagePath.isNullOrBlank() }?.previewImageUrl
                 ?: when (name.lowercase()) {
+                    "general" -> "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=600&q=80"
                     "design" -> "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=600&q=80"
                     "inspiration" -> "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&q=80"
                     "work" -> "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&q=80"
@@ -188,8 +200,8 @@ fun CollectionsScreen(
             confirmContainerColor = FieryOrange,
             onConfirm = {
                 val trimmed = newCollectionName.trim()
-                if (trimmed.isNotEmpty() && !customCollections.contains(trimmed)) {
-                    customCollections = customCollections + trimmed
+                if (trimmed.isNotEmpty() && !distinctCollections.contains(trimmed) && !newlyCreatedCollections.contains(trimmed)) {
+                    newlyCreatedCollections = newlyCreatedCollections + trimmed
                 }
                 newCollectionName = ""
                 showCreateDialog = false

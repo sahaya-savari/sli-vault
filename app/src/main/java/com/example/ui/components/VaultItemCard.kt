@@ -52,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.data.ItemType
@@ -75,6 +76,7 @@ fun VaultItemListCard(
     onShare: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
+    onTagClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var showMenu by remember { mutableStateOf(false) }
@@ -154,6 +156,7 @@ fun VaultItemListCard(
                                 modifier = Modifier
                                     .background(ElevatedCharcoal, RoundedCornerShape(6.dp))
                                     .border(0.8.dp, GlassBorder, RoundedCornerShape(6.dp))
+                                    .clickable { onTagClick(tag) }
                                     .padding(horizontal = 6.dp, vertical = 2.dp)
                             ) {
                                 Text(

@@ -2,10 +2,8 @@ package com.example.ui
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -16,8 +14,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.components.GlassAtmosphere
@@ -30,9 +28,9 @@ import com.example.ui.screens.FavoritesScreen
 import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.ItemDetailScreen
 import com.example.ui.screens.OnboardingScreen
+import com.example.ui.screens.ProfileScreen
 import com.example.ui.screens.SearchScreen
 import com.example.ui.screens.SettingsScreen
-import androidx.compose.ui.graphics.Color
 
 @Composable
 fun MainScreen(
@@ -43,6 +41,7 @@ fun MainScreen(
     var currentDestination by remember { mutableStateOf(NavDestination.HOME) }
     var isSearchActive by remember { mutableStateOf(false) }
     var isSettingsActive by remember { mutableStateOf(false) }
+    var isProfileActive by remember { mutableStateOf(false) }
     var showOnboarding by remember { mutableStateOf(false) }
 
     val selectedItem by viewModel.selectedItem.collectAsStateWithLifecycle()
@@ -93,7 +92,19 @@ fun MainScreen(
                 SettingsScreen(
                     viewModel = viewModel,
                     onBack = { isSettingsActive = false },
-                    onShowOnboarding = { showOnboarding = true }
+                    onShowOnboarding = { showOnboarding = true },
+                    onNavigateToProfile = { 
+                        isSettingsActive = false
+                        isProfileActive = true 
+                    }
+                )
+            }
+
+            isProfileActive -> {
+                BackHandler { isProfileActive = false }
+                ProfileScreen(
+                    viewModel = viewModel,
+                    onBack = { isProfileActive = false }
                 )
             }
 
@@ -121,6 +132,7 @@ fun MainScreen(
                                     onNavigateToBrowse = { currentDestination = NavDestination.BROWSE },
                                     onNavigateToSearch = { isSearchActive = true },
                                     onNavigateToSettings = { isSettingsActive = true },
+                                    onNavigateToProfile = { isProfileActive = true },
                                     onOpenItemDetail = { item -> viewModel.selectItem(item) }
                                 )
                             }
@@ -149,7 +161,8 @@ fun MainScreen(
                                 SettingsScreen(
                                     viewModel = viewModel,
                                     onBack = { currentDestination = NavDestination.HOME },
-                                    onShowOnboarding = { showOnboarding = true }
+                                    onShowOnboarding = { showOnboarding = true },
+                                    onNavigateToProfile = { isProfileActive = true }
                                 )
                             }
                         }
