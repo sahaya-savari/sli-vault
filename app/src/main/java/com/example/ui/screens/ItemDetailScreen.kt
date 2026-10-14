@@ -1,0 +1,669 @@
+package com.example.ui.screens
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.OpenInBrowser
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.example.data.ItemType
+import com.example.data.VaultItem
+import com.example.ui.VaultViewModel
+import com.example.ui.components.GlassCard
+import com.example.ui.components.formatFileSize
+import com.example.ui.theme.ElevatedCharcoal
+import com.example.ui.theme.FieryGradient
+import com.example.ui.theme.FieryOrange
+import com.example.ui.theme.GlassBorder
+import com.example.ui.theme.GlassSheenGradient
+import com.example.ui.theme.GlassSpecularBorder
+import com.example.ui.theme.GlassSurfaceStandard
+import com.example.ui.theme.HotCoral
+import com.example.ui.theme.MutedText
+import com.example.ui.theme.PrimaryText
+import com.example.ui.theme.SecondaryText
+import androidx.compose.ui.draw.shadow
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun ItemDetailScreen(
+    item: VaultItem,
+    viewModel: VaultViewModel,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    var isEditTitleOpen by remember { mutableStateOf(false) }
+    var editedTitle by remember { mutableStateOf(item.title) }
+    var editedDescription by remember { mutableStateOf(item.description ?: "") }
+    var isAddTagOpen by remember { mutableStateOf(false) }
+    var newTagText by remember { mutableStateOf("") }
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+
+    val formattedDate = remember(item.createdAt) {
+        val sdf = SimpleDateFormat("MMM d, yyyy, h:mm a", Locale.getDefault())
+        sdf.format(Date(item.createdAt))
+    }
+
+    val imageModel = remember(item) {
+        when {
+            !item.localImagePath.isNullOrBlank() -> File(item.localImagePath)
+            !item.previewImageUrl.isNullOrBlank() -> item.previewImageUrl
+            else -> null
+        }
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .verticalScroll(rememberScrollState())
+    ) {
+        // Top Action Bar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = PrimaryText
+                )
+            }
+
+            Row {
+                IconButton(onClick = { viewModel.toggleFavorite(item) }) {
+                    Icon(
+                        imageVector = if (item.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        tint = if (item.isFavorite) HotCoral else SecondaryText
+                    )
+                }
+
+                IconButton(onClick = { showDeleteConfirmation = true }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        tint = HotCoral
+                    )
+                }
+            }
+        }
+
+        // Hero Image Preview (if image exists)
+        if (imageModel != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .aspectRatio(1.5f)
+                    .clip(RoundedCornerShape(20.dp))
+                    .border(1.dp, GlassBorder, RoundedCornerShape(20.dp))
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(imageModel)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = item.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(Color.Transparent, Color(0x990A0B0D))
+                            )
+                        )
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // Title and Domain
+        Column(
+            modifier = Modifier.padding(horizontal = 20.dp)
+        ) {
+            Text(
+                text = item.title,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = PrimaryText
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                val subtitle = when (item.type) {
+                    ItemType.LINK -> item.domain ?: "Web link"
+                    ItemType.SCREENSHOT -> "Screenshot capture"
+                    ItemType.IMAGE -> "Saved image"
+                }
+                Text(
+                    text = "$subtitle • $formattedDate",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = SecondaryText
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        // Action Buttons Row (Open, Share, Edit, Favorite)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (item.type == ItemType.LINK && !item.url.isNullOrBlank()) {
+                ActionButton(
+                    icon = Icons.Default.OpenInBrowser,
+                    label = "Open",
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            ActionButton(
+                icon = Icons.Default.Share,
+                label = "Share",
+                onClick = {
+                    val shareText = "${item.title}\n${item.url ?: ""}"
+                    val sendIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, shareText)
+                        type = "text/plain"
+                    }
+                    context.startActivity(Intent.createChooser(sendIntent, "Share via"))
+                },
+                modifier = Modifier.weight(1f)
+            )
+
+            ActionButton(
+                icon = Icons.Default.Edit,
+                label = "Edit",
+                onClick = {
+                    editedTitle = item.title
+                    editedDescription = item.description ?: ""
+                    isEditTitleOpen = true
+                },
+                modifier = Modifier.weight(1f)
+            )
+
+            // Glowing Favorite Button with Glassmorphism & Orange-Red Accent
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp)
+                    .then(
+                        if (item.isFavorite) {
+                            Modifier.shadow(
+                                elevation = 10.dp,
+                                shape = RoundedCornerShape(12.dp),
+                                spotColor = FieryOrange,
+                                ambientColor = HotCoral
+                            )
+                        } else Modifier
+                    )
+                    .clip(RoundedCornerShape(12.dp))
+                    .then(
+                        if (item.isFavorite) {
+                            Modifier
+                                .background(FieryGradient)
+                                .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(12.dp))
+                        } else {
+                            Modifier
+                                .background(GlassSurfaceStandard)
+                                .background(GlassSheenGradient)
+                                .border(1.dp, GlassSpecularBorder, RoundedCornerShape(12.dp))
+                        }
+                    )
+                    .clickable { viewModel.toggleFavorite(item) }
+                    .testTag("detail_fav_btn"),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = if (item.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = if (item.isFavorite) "Saved" else "Favorite",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Description / Notes Card
+        if (!item.description.isNullOrBlank()) {
+            GlassCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Notes",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = PrimaryText
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = item.description,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = SecondaryText,
+                        lineHeight = 22.sp
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // Tags Section
+        GlassCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Tags",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = PrimaryText
+                    )
+
+                    IconButton(
+                        onClick = { isAddTagOpen = true },
+                        modifier = Modifier.size(28.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add Tag",
+                            tint = FieryOrange,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                val tags = item.getTagList()
+                if (tags.isEmpty()) {
+                    Text(
+                        text = "No tags added yet. Tap (+) to tag this item.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MutedText
+                    )
+                } else {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        tags.forEach { tag ->
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(ElevatedCharcoal)
+                                    .border(1.dp, GlassBorder, RoundedCornerShape(8.dp))
+                                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = tag,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = PrimaryText
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Technical Metadata Card
+        GlassCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Details",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = PrimaryText
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                DetailRow(label = "Type", value = item.type.name.lowercase().replaceFirstChar { it.uppercase() })
+
+                if (!item.url.isNullOrBlank()) {
+                    DetailRow(
+                        label = "URL",
+                        value = item.url,
+                        isClickable = true,
+                        onCopy = {
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            clipboard.setPrimaryClip(ClipData.newPlainText("URL", item.url))
+                            Toast.makeText(context, "URL copied to clipboard", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+
+                if (item.fileSizeBytes > 0) {
+                    DetailRow(label = "File Size", value = formatFileSize(item.fileSizeBytes))
+                }
+
+                DetailRow(label = "Collection", value = item.collection)
+                DetailRow(label = "Added", value = formattedDate)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(40.dp))
+    }
+
+    // Edit Title & Notes Dialog
+    if (isEditTitleOpen) {
+        AlertDialog(
+            onDismissRequest = { isEditTitleOpen = false },
+            title = { Text("Edit Item", color = PrimaryText, fontWeight = FontWeight.Bold) },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = editedTitle,
+                        onValueChange = { editedTitle = it },
+                        label = { Text("Title") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = editedDescription,
+                        onValueChange = { editedDescription = it },
+                        label = { Text("Notes / Description") },
+                        minLines = 3,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.updateItem(
+                            item.copy(
+                                title = editedTitle.trim(),
+                                description = editedDescription.trim()
+                            )
+                        )
+                        isEditTitleOpen = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = FieryOrange)
+                ) {
+                    Text("Save", color = Color.White)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { isEditTitleOpen = false }) {
+                    Text("Cancel", color = SecondaryText)
+                }
+            },
+            containerColor = ElevatedCharcoal
+        )
+    }
+
+    // Add Tag Dialog
+    if (isAddTagOpen) {
+        AlertDialog(
+            onDismissRequest = { isAddTagOpen = false },
+            title = { Text("Add Tag", color = PrimaryText, fontWeight = FontWeight.Bold) },
+            text = {
+                OutlinedTextField(
+                    value = newTagText,
+                    onValueChange = { newTagText = it },
+                    label = { Text("Tag Name") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val trimmed = newTagText.trim()
+                        if (trimmed.isNotEmpty()) {
+                            val currentTags = item.getTagList().toMutableList()
+                            if (!currentTags.contains(trimmed)) {
+                                currentTags.add(trimmed)
+                                viewModel.updateItem(item.copy(tags = currentTags.joinToString(", ")))
+                            }
+                        }
+                        newTagText = ""
+                        isAddTagOpen = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = FieryOrange)
+                ) {
+                    Text("Add", color = Color.White)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { isAddTagOpen = false }) {
+                    Text("Cancel", color = SecondaryText)
+                }
+            },
+            containerColor = ElevatedCharcoal
+        )
+    }
+
+    // Delete Confirmation Dialog
+    if (showDeleteConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmation = false },
+            title = { Text("Delete Item?", color = PrimaryText, fontWeight = FontWeight.Bold) },
+            text = {
+                Text(
+                    "Are you sure you want to remove this item from your vault? This cannot be undone.",
+                    color = SecondaryText
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteItem(item)
+                        showDeleteConfirmation = false
+                        onBack()
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = HotCoral)
+                ) {
+                    Text("Delete", color = Color.White)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmation = false }) {
+                    Text("Cancel", color = SecondaryText)
+                }
+            },
+            containerColor = ElevatedCharcoal
+        )
+    }
+}
+
+@Composable
+private fun ActionButton(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val shape = RoundedCornerShape(12.dp)
+    Box(
+        modifier = modifier
+            .height(48.dp)
+            .clip(shape)
+            .background(GlassSurfaceStandard)
+            .background(GlassSheenGradient)
+            .border(1.dp, GlassSpecularBorder, shape)
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = FieryOrange,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = label,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                color = PrimaryText
+            )
+        }
+    }
+}
+
+@Composable
+private fun DetailRow(
+    label: String,
+    value: String,
+    isClickable: Boolean = false,
+    onCopy: (() -> Unit)? = null
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            fontSize = 13.sp,
+            color = MutedText
+        )
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f, fill = false)
+        ) {
+            Text(
+                text = value,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                color = if (isClickable) FieryOrange else PrimaryText,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            if (onCopy != null) {
+                IconButton(
+                    onClick = onCopy,
+                    modifier = Modifier.size(24.dp).padding(start = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ContentCopy,
+                        contentDescription = "Copy",
+                        tint = SecondaryText,
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
+            }
+        }
+    }
+}
