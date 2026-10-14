@@ -23,10 +23,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
@@ -38,6 +40,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -81,6 +84,7 @@ fun BrowseScreen(
     val screenshotsCount by viewModel.screenshotsCount.collectAsStateWithLifecycle()
     val imagesCount by viewModel.imagesCount.collectAsStateWithLifecycle()
     val selectedType by viewModel.selectedTypeFilter.collectAsStateWithLifecycle()
+    val selectedCollection by viewModel.selectedCollection.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val sortOption by viewModel.sortOption.collectAsStateWithLifecycle()
     val items by viewModel.filteredBrowseItems.collectAsStateWithLifecycle()
@@ -97,34 +101,26 @@ fun BrowseScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
+                .padding(horizontal = 20.dp, vertical = 14.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Browse Vault",
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = PrimaryText
             )
 
-            // View toggle button (List vs Grid)
-            IconButton(
+            // View toggle button (List vs Grid) with tactile press feedback
+            com.example.ui.components.SliGlassIconButton(
+                icon = if (isGridView) Icons.Default.ViewList else Icons.Default.GridView,
+                contentDescription = "Toggle Grid or List",
                 onClick = { isGridView = !isGridView },
-                modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(ElevatedCharcoal)
-                    .border(1.dp, GlassBorder, RoundedCornerShape(10.dp))
-                    .size(36.dp)
-                    .testTag("toggle_view_mode")
-            ) {
-                Icon(
-                    imageVector = if (isGridView) Icons.Default.ViewList else Icons.Default.GridView,
-                    contentDescription = "Toggle Grid or List",
-                    tint = FieryOrange,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
+                tint = FieryOrange,
+                size = 38.dp,
+                modifier = Modifier.testTag("toggle_view_mode")
+            )
         }
 
         // Inline Search Bar with Glassmorphism
@@ -132,7 +128,7 @@ fun BrowseScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp),
-            shape = RoundedCornerShape(14.dp)
+            shape = RoundedCornerShape(16.dp)
         ) {
             Row(
                 modifier = Modifier
@@ -144,7 +140,7 @@ fun BrowseScreen(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search",
                     tint = FieryOrange,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(19.dp)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 BasicTextField(
@@ -161,9 +157,9 @@ fun BrowseScreen(
                     decorationBox = { innerTextField ->
                         if (searchQuery.isEmpty()) {
                             Text(
-                                text = "Search across titles, URLs, tags...",
-                                color = MutedText,
-                                fontSize = 14.sp
+                                text = "Filter titles, URLs, tags...",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MutedText
                             )
                         }
                         innerTextField()
@@ -173,7 +169,7 @@ fun BrowseScreen(
                 if (searchQuery.isNotEmpty()) {
                     IconButton(
                         onClick = { viewModel.setSearchQuery("") },
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(24.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
@@ -186,7 +182,7 @@ fun BrowseScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Type Filter Chips Row
         TypeFilterChips(
@@ -198,42 +194,82 @@ fun BrowseScreen(
             onSelectType = { viewModel.setTypeFilter(it) }
         )
 
+        // Active Collection Filter Chip if filtering by collection
+        if (!selectedCollection.isNullOrBlank()) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp, vertical = 4.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(ElevatedCharcoal)
+                    .border(1.dp, FieryOrange.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
+                    .padding(horizontal = 10.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Folder,
+                    contentDescription = null,
+                    tint = FieryOrange,
+                    modifier = Modifier.size(14.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Collection: $selectedCollection",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = PrimaryText,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Icon(
+                    imageVector = Icons.Default.Clear,
+                    contentDescription = "Clear Collection Filter",
+                    tint = SecondaryText,
+                    modifier = Modifier
+                        .size(14.dp)
+                        .clickable { viewModel.setSelectedCollection(null) }
+                )
+            }
+        }
+
         // Subheader Bar: Results Count + Sort Dropdown
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 10.dp),
+                .padding(horizontal = 20.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "${items.size} items found",
+                text = "${items.size} ${if (items.size == 1) "item" else "items"} in vault",
                 style = MaterialTheme.typography.labelMedium,
-                color = MutedText
+                color = SecondaryText,
+                fontWeight = FontWeight.Medium
             )
 
             // Sort Dropdown button
             Box {
                 Row(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(ElevatedCharcoal)
+                        .border(1.dp, GlassBorder, RoundedCornerShape(10.dp))
                         .clickable { showSortMenu = true }
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                        .padding(horizontal = 10.dp, vertical = 5.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Default.Sort,
                         contentDescription = "Sort",
                         tint = FieryOrange,
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(15.dp)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = sortOption.label,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = SecondaryText
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = PrimaryText
                     )
+                    Spacer(modifier = Modifier.width(2.dp))
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowDown,
                         contentDescription = null,
@@ -245,7 +281,13 @@ fun BrowseScreen(
                 DropdownMenu(
                     expanded = showSortMenu,
                     onDismissRequest = { showSortMenu = false },
-                    modifier = Modifier.background(ElevatedCharcoal)
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(com.example.ui.theme.GlassSurfaceElevated)
+                        .border(
+                            androidx.compose.foundation.BorderStroke(1.dp, com.example.ui.theme.GlassSpecularBorder),
+                            RoundedCornerShape(14.dp)
+                        )
                 ) {
                     SortOption.entries.forEach { option ->
                         DropdownMenuItem(
@@ -253,7 +295,8 @@ fun BrowseScreen(
                                 Text(
                                     text = option.label,
                                     color = if (sortOption == option) FieryOrange else PrimaryText,
-                                    fontWeight = if (sortOption == option) FontWeight.Bold else FontWeight.Normal
+                                    fontWeight = if (sortOption == option) FontWeight.Bold else FontWeight.Normal,
+                                    style = MaterialTheme.typography.bodyMedium
                                 )
                             },
                             onClick = {
@@ -274,19 +317,18 @@ fun BrowseScreen(
                     .padding(horizontal = 24.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "No matching items",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = PrimaryText
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Try adjusting your search query or filter",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MutedText
-                    )
-                }
+                com.example.ui.components.SliEmptyState(
+                    title = "No matching items",
+                    description = "Try adjusting your search query or filter to find what you're looking for.",
+                    icon = Icons.Default.Search,
+                    actionText = if (searchQuery.isNotEmpty() || selectedType != null) "Clear All Filters" else null,
+                    onActionClick = if (searchQuery.isNotEmpty() || selectedType != null) {
+                        {
+                            viewModel.setSearchQuery("")
+                            viewModel.setTypeFilter(null)
+                        }
+                    } else null
+                )
             }
         } else if (isGridView) {
             LazyVerticalGrid(

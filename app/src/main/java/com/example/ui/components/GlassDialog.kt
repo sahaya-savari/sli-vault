@@ -160,28 +160,29 @@ fun GlassDialog(
                 ) {
                     if (dismissText != null) {
                         TextButton(
-                            onClick = onDismiss ?: onDismissRequest
+                            onClick = onDismiss ?: onDismissRequest,
+                            modifier = Modifier.padding(end = 8.dp)
                         ) {
                             Text(
                                 text = dismissText,
                                 color = SecondaryText,
+                                style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Medium
                             )
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
                     }
 
-                    Button(
-                        onClick = onConfirm,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (confirmIsDestructive) HotCoral else confirmContainerColor
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(
+                    if (confirmIsDestructive) {
+                        SliDestructiveButton(
                             text = confirmText,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
+                            onClick = onConfirm,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                    } else {
+                        SliPrimaryButton(
+                            text = confirmText,
+                            onClick = onConfirm,
+                            shape = RoundedCornerShape(12.dp)
                         )
                     }
                 }

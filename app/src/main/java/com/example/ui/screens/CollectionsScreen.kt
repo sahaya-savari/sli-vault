@@ -78,43 +78,29 @@ fun CollectionsScreen(
     val distinctCollections by viewModel.distinctCollections.collectAsStateWithLifecycle()
     var showCreateDialog by remember { mutableStateOf(false) }
     var newCollectionName by remember { mutableStateOf("") }
-    
-    // We'll keep a local state of created collections just for immediate UI feedback if desired,
-    // but we should primarily rely on the database.
-    // However, if the user creates an empty collection, it won't appear in the DB until an item is added.
-    // So we combine distinctCollections from DB and any newly created ones that might be empty.
-    var newlyCreatedCollections by remember { mutableStateOf(emptyList<String>()) }
 
-    // Aggregate counts & cover images
-    val collectionsList = remember(items, distinctCollections, newlyCreatedCollections) {
+    // Aggregate counts & cover images from DB items and persisted distinctCollections
+    val collectionsList = remember(items, distinctCollections) {
         val list = mutableListOf<CollectionMeta>()
         // All Items card
-        val firstItemWithImage = items.firstOrNull { !it.previewImageUrl.isNullOrBlank() || !it.localImagePath.isNullOrBlank() }
+        val firstItemWithImage = items.firstOrNull { !it.localImagePath.isNullOrBlank() || !it.previewImageUrl.isNullOrBlank() }
         list.add(
             CollectionMeta(
                 name = "All Items",
                 count = items.size,
-                coverUrl = firstItemWithImage?.previewImageUrl ?: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80"
+                coverUrl = firstItemWithImage?.localImagePath ?: firstItemWithImage?.previewImageUrl
             )
         )
 
-        // Ensure "General" is always present
-        val allCollectionsToDisplay = (listOf("General") + distinctCollections + newlyCreatedCollections)
+        // Ensure "General" is always present, plus distinctCollections from DB & prefs
+        val allCollectionsToDisplay = (listOf("General") + distinctCollections)
             .distinct()
             .sorted()
 
         allCollectionsToDisplay.forEach { name ->
             val matching = items.filter { it.collection.equals(name, ignoreCase = true) }
-            val cover = matching.firstOrNull { !it.previewImageUrl.isNullOrBlank() || !it.localImagePath.isNullOrBlank() }?.previewImageUrl
-                ?: when (name.lowercase()) {
-                    "general" -> "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=600&q=80"
-                    "design" -> "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=600&q=80"
-                    "inspiration" -> "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&q=80"
-                    "work" -> "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&q=80"
-                    "personal" -> "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&q=80"
-                    "travel" -> "https://images.unsplash.com/photo-1505904267569-f02eaeb45a4c?w=600&q=80"
-                    else -> "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&q=80"
-                }
+            val cover = matching.firstOrNull { !it.localImagePath.isNullOrBlank() }?.localImagePath
+                ?: matching.firstOrNull { !it.previewImageUrl.isNullOrBlank() }?.previewImageUrl
             list.add(CollectionMeta(name = name, count = matching.size, coverUrl = cover))
         }
         list
@@ -129,7 +115,7 @@ fun CollectionsScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
+                .padding(horizontal = 20.dp, vertical = 14.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -140,31 +126,23 @@ fun CollectionsScreen(
                     tint = FieryOrange,
                     modifier = Modifier.size(24.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = "Collections",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = PrimaryText
                 )
             }
 
-            IconButton(
+            com.example.ui.components.SliGlassIconButton(
+                icon = Icons.Default.Add,
+                contentDescription = "New Collection",
                 onClick = { showCreateDialog = true },
-                modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(ElevatedCharcoal)
-                    .border(1.dp, GlassBorder, RoundedCornerShape(10.dp))
-                    .size(36.dp)
-                    .testTag("add_collection_btn")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "New Collection",
-                    tint = FieryOrange,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
+                tint = FieryOrange,
+                size = 38.dp,
+                modifier = Modifier.testTag("add_collection_btn")
+            )
         }
 
         // Grid of Collections
@@ -200,8 +178,8 @@ fun CollectionsScreen(
             confirmContainerColor = FieryOrange,
             onConfirm = {
                 val trimmed = newCollectionName.trim()
-                if (trimmed.isNotEmpty() && !distinctCollections.contains(trimmed) && !newlyCreatedCollections.contains(trimmed)) {
-                    newlyCreatedCollections = newlyCreatedCollections + trimmed
+                if (trimmed.isNotEmpty()) {
+                    viewModel.createCollection(trimmed)
                 }
                 newCollectionName = ""
                 showCreateDialog = false
@@ -211,16 +189,27 @@ fun CollectionsScreen(
         ) {
             Column {
                 Text(
-                    "Create a named folder to organize your saved links and screenshots.",
-                    color = SecondaryText,
-                    fontSize = 13.sp
+                    text = "Create a persistent folder to organize your saved links, screenshots, and reference images.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = SecondaryText
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(14.dp))
                 OutlinedTextField(
                     value = newCollectionName,
                     onValueChange = { newCollectionName = it },
                     label = { Text("Collection Name") },
                     singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = PrimaryText,
+                        unfocusedTextColor = PrimaryText,
+                        focusedBorderColor = FieryOrange,
+                        unfocusedBorderColor = GlassBorder,
+                        focusedLabelColor = FieryOrange,
+                        unfocusedLabelColor = SecondaryText,
+                        focusedContainerColor = ElevatedCharcoal,
+                        unfocusedContainerColor = ElevatedCharcoal
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -239,7 +228,7 @@ private fun CollectionCard(
         modifier = modifier
             .fillMaxWidth()
             .testTag("collection_card_${collection.name.lowercase().replace(" ", "_")}"),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(18.dp),
         onClick = onClick
     ) {
         Column {
@@ -262,14 +251,21 @@ private fun CollectionCard(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(ElevatedCharcoal),
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(
+                                        ElevatedCharcoal,
+                                        Color(0xFF1E222A)
+                                    )
+                                )
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Folder,
+                            imageVector = if (collection.name.equals("All Items", ignoreCase = true)) Icons.Default.Bookmark else Icons.Default.Folder,
                             contentDescription = null,
                             tint = FieryOrange,
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(36.dp)
                         )
                     }
                 }
@@ -284,6 +280,23 @@ private fun CollectionCard(
                             )
                         )
                 )
+
+                // Top-start folder badge
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp)
+                        .size(28.dp)
+                        .background(Color(0x990A0B0D), RoundedCornerShape(8.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Folder,
+                        contentDescription = null,
+                        tint = FieryOrange,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
             }
 
             Column(
@@ -294,14 +307,14 @@ private fun CollectionCard(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = PrimaryText,
-                    fontSize = 15.sp,
-                    maxLines = 1
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(3.dp))
                 Text(
-                    text = "${collection.count} items",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MutedText
+                    text = "${collection.count} ${if (collection.count == 1) "item" else "items"}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = SecondaryText
                 )
             }
         }

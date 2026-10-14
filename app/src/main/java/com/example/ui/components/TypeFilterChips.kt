@@ -18,16 +18,25 @@ import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Link
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import com.example.ui.theme.SliMotion
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -108,28 +117,39 @@ private fun FilterCard(
     modifier: Modifier = Modifier
 ) {
     val shape = RoundedCornerShape(16.dp)
+    val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val animatedScale by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = if (isPressed) com.example.ui.theme.SliMotion.PRESSED_SCALE else com.example.ui.theme.SliMotion.DEFAULT_SCALE,
+        animationSpec = com.example.ui.theme.SliMotion.pressSpring,
+        label = "filter_card_press_scale"
+    )
 
     Box(
         modifier = modifier
-            .height(72.dp)
+            .height(68.dp)
+            .scale(animatedScale)
             .then(
                 if (isSelected) {
                     Modifier.shadow(
-                        elevation = 10.dp,
+                        elevation = 6.dp,
                         shape = shape,
-                        spotColor = FieryOrange,
-                        ambientColor = HotCoral
+                        spotColor = FieryOrange.copy(alpha = 0.5f),
+                        ambientColor = HotCoral.copy(alpha = 0.25f)
                     )
                 } else {
                     Modifier.shadow(
                         elevation = 2.dp,
                         shape = shape,
-                        spotColor = Color.Black.copy(alpha = 0.4f)
+                        spotColor = Color.Black.copy(alpha = 0.35f)
                     )
                 }
             )
             .clip(shape)
-            .clickable { onClick() }
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(color = FieryOrange)
+            ) { onClick() }
             .testTag("filter_${title.lowercase()}"),
         contentAlignment = Alignment.Center
     ) {
@@ -139,14 +159,14 @@ private fun FilterCard(
                 modifier = Modifier
                     .matchParentSize()
                     .background(FieryGradient)
-                    .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.35f)), shape)
+                    .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.30f)), shape)
             )
         } else {
             // Frosted blur backdrop
             Box(
                 modifier = Modifier
                     .matchParentSize()
-                    .blur(14.dp, edgeTreatment = BlurredEdgeTreatment.Rectangle)
+                    .blur(12.dp, edgeTreatment = BlurredEdgeTreatment.Rectangle)
                     .background(GlassSurfaceStandard)
             )
 
@@ -164,18 +184,18 @@ private fun FilterCard(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp)
+            modifier = Modifier.padding(vertical = 6.dp, horizontal = 4.dp)
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = title,
                 tint = if (isSelected) Color.White else SecondaryText,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(19.dp)
             )
 
             Text(
                 text = title,
-                fontSize = 11.sp,
+                style = MaterialTheme.typography.labelMedium,
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                 color = if (isSelected) Color.White else SecondaryText,
                 maxLines = 1,
@@ -184,7 +204,7 @@ private fun FilterCard(
 
             Text(
                 text = count.toString(),
-                fontSize = 11.sp,
+                style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = if (isSelected) Color.White.copy(alpha = 0.95f) else MutedText
             )

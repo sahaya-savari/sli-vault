@@ -2,6 +2,7 @@ package com.example.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,6 +23,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.res.painterResource
+import com.example.R
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
@@ -87,12 +90,12 @@ fun HomeScreen(
             .statusBarsPadding(),
         contentPadding = PaddingValues(bottom = 100.dp)
     ) {
-        // Top Header: App Branding + Settings
+        // Top Header: App Branding + Storage & Quick Actions
         item {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                    .padding(horizontal = 20.dp, vertical = 14.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -102,94 +105,86 @@ fun HomeScreen(
                     // Logo Icon Badge
                     Box(
                         modifier = Modifier
-                            .size(38.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(FieryGradient),
+                            .size(42.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(FieryGradient)
+                            .border(1.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(12.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Bookmark,
                             contentDescription = "SLI Vault Logo",
                             tint = Color.White,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(22.dp)
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
 
                     Column {
                         Text(
                             text = "SLI Vault",
-                            style = MaterialTheme.typography.titleLarge,
+                            style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             color = PrimaryText
                         )
                         Text(
-                            text = "Save Links • Screenshots • Images",
+                            text = "Personal Knowledge Vault",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MutedText
+                            color = SecondaryText
                         )
                     }
                 }
 
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     // Storage usage chip
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
+                            .clip(RoundedCornerShape(14.dp))
                             .background(ElevatedCharcoal)
-                            .border(1.dp, GlassBorder, RoundedCornerShape(12.dp))
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                            .border(1.dp, GlassBorder, RoundedCornerShape(14.dp))
+                            .padding(horizontal = 10.dp, vertical = 5.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Storage,
-                                contentDescription = null,
-                                tint = FieryOrange,
-                                modifier = Modifier.size(12.dp)
+                            Box(
+                                modifier = Modifier
+                                    .size(7.dp)
+                                    .clip(CircleShape)
+                                    .background(FieryOrange)
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = storageStats.formattedSize(),
-                                fontSize = 11.sp,
-                                color = SecondaryText,
-                                fontWeight = FontWeight.Medium
+                                style = MaterialTheme.typography.labelSmall,
+                                color = PrimaryText,
+                                fontWeight = FontWeight.SemiBold
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.width(6.dp))
-
-                    IconButton(
+                    // Profile button
+                    com.example.ui.components.SliGlassIconButton(
+                        icon = Icons.Default.Person,
+                        contentDescription = "Profile",
                         onClick = onNavigateToProfile,
-                        modifier = Modifier
-                            .size(36.dp)
-                            .testTag("profile_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Profile",
-                            tint = SecondaryText,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+                        tint = SecondaryText,
+                        size = 38.dp,
+                        modifier = Modifier.testTag("profile_button")
+                    )
 
-                    IconButton(
+                    // Settings button
+                    com.example.ui.components.SliGlassIconButton(
+                        icon = Icons.Default.Settings,
+                        contentDescription = "Settings",
                         onClick = onNavigateToSettings,
-                        modifier = Modifier
-                            .size(36.dp)
-                            .testTag("settings_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
-                            tint = SecondaryText,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+                        tint = SecondaryText,
+                        size = 38.dp,
+                        modifier = Modifier.testTag("settings_button")
+                    )
                 }
             }
         }
@@ -199,15 +194,15 @@ fun HomeScreen(
             GlassCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 6.dp)
                     .testTag("home_search_trigger"),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(18.dp),
                 onClick = onNavigateToSearch
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                        .padding(horizontal = 16.dp, vertical = 13.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -218,17 +213,32 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "Search your vault...",
+                        text = "Search your vault by title, tags, or domain...",
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MutedText,
-                        fontSize = 14.sp
+                        maxLines = 1,
+                        modifier = Modifier.weight(1f)
                     )
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(ElevatedCharcoal)
+                            .border(0.8.dp, GlassBorder, RoundedCornerShape(8.dp))
+                            .padding(horizontal = 7.dp, vertical = 3.dp)
+                    ) {
+                        Text(
+                            text = "Find",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = SecondaryText
+                        )
+                    }
                 }
             }
         }
 
         // Type Filter Chips Row
         item {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             TypeFilterChips(
                 selectedType = selectedType,
                 allCount = allCount,
@@ -241,32 +251,12 @@ fun HomeScreen(
 
         // Recently Saved Header
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 16.dp, top = 20.dp, bottom = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (selectedType == null) "Recently Saved" else "${selectedType?.name?.lowercase()?.replaceFirstChar { it.uppercase() }} Items",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = PrimaryText
-                )
-
-                TextButton(
-                    onClick = onNavigateToBrowse,
-                    modifier = Modifier.testTag("see_all_button")
-                ) {
-                    Text(
-                        text = "See all",
-                        color = FieryOrange,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 13.sp
-                    )
-                }
-            }
+            com.example.ui.components.SliSectionHeaderWithAction(
+                title = if (selectedType == null) "Recently Saved" else "${selectedType?.name?.lowercase()?.replaceFirstChar { it.uppercase() }} Items",
+                actionText = "See all",
+                onActionClick = onNavigateToBrowse,
+                modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+            )
         }
 
         // Item List or Empty State
@@ -346,68 +336,12 @@ fun EmptyVaultCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(CircleShape)
-                    .background(ElevatedCharcoal)
-                    .border(1.dp, GlassBorder, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Bookmark,
-                    contentDescription = null,
-                    tint = FieryOrange,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Your vault is empty",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = PrimaryText
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = "Save links, screenshots, and reference images to access them anytime offline.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MutedText,
-                lineHeight = 18.sp,
-                modifier = Modifier.padding(horizontal = 16.dp),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Button(
-                onClick = onAddClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = FieryOrange,
-                    contentColor = Color.White
-                ),
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.testTag("empty_add_button")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text("Add First Item", fontWeight = FontWeight.SemiBold)
-            }
-        }
+        com.example.ui.components.SliEmptyState(
+            title = "Your vault is empty",
+            description = "Save links, screenshots, and reference images to access them anytime offline.",
+            painter = painterResource(id = R.drawable.ic_vault_empty_vault),
+            actionText = "Add First Item",
+            onActionClick = onAddClick
+        )
     }
 }

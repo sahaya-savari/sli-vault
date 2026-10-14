@@ -16,3 +16,14 @@
 local.properties
 .env
 debug.keystore
+
+# Local IDE configuration
+/.idea/deploymentTargetSelector.xml
+/.idea/deviceManager.xml
+
+# JVM crash logs
+hs_err_pid*.log
+replay_pid*.log
+
+# Editor settings
+.vscode/

@@ -64,6 +64,8 @@ import com.example.ui.ThemeMode
 import com.example.ui.VaultViewModel
 import com.example.ui.components.GlassCard
 import com.example.ui.components.GlassDialog
+import com.example.ui.components.pressScale
+import com.example.ui.theme.SliMotion
 import com.example.ui.theme.ElevatedCharcoal
 import com.example.ui.theme.FieryGradient
 import com.example.ui.theme.FieryOrange
@@ -103,16 +105,15 @@ fun SettingsScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = PrimaryText
-                )
-            }
+            com.example.ui.components.SliGlassIconButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Back",
+                onClick = onBack
+            )
+            Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = "Settings",
                 style = MaterialTheme.typography.titleLarge,
@@ -124,7 +125,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(10.dp))
 
         // Appearance Section
-        SectionHeader(title = "Appearance")
+        com.example.ui.components.SliSectionHeader(title = "Appearance", uppercase = true)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -159,7 +160,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         // Data & Storage Section
-        SectionHeader(title = "Data & Storage")
+        com.example.ui.components.SliSectionHeader(title = "Data & Storage", uppercase = true)
         GlassCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -197,7 +198,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         // Backup & Migration Section
-        SectionHeader(title = "Backup & Library")
+        com.example.ui.components.SliSectionHeader(title = "Backup & Library", uppercase = true)
         GlassCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -247,7 +248,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         // Privacy & Architecture
-        SectionHeader(title = "Privacy & Security")
+        com.example.ui.components.SliSectionHeader(title = "Privacy & Security", uppercase = true)
         GlassCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -273,7 +274,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         // Danger Zone: Clear Data
-        SectionHeader(title = "Danger Zone")
+        com.example.ui.components.SliSectionHeader(title = "Danger Zone", uppercase = true)
         GlassCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -368,17 +369,6 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun SectionHeader(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.labelMedium,
-        fontWeight = FontWeight.Bold,
-        color = FieryOrange,
-        modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
-    )
-}
-
-@Composable
 private fun ThemeOptionCard(
     title: String,
     icon: ImageVector,
@@ -444,6 +434,7 @@ private fun SettingsActionRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .pressScale(targetScale = SliMotion.scaleSubtle)
             .clickable { onClick() }
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically

@@ -5,12 +5,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
@@ -41,14 +44,15 @@ import com.example.ui.theme.HotCoralGlow
 @Composable
 fun GlassCard(
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(18.dp),
+    shape: Shape = RoundedCornerShape(20.dp),
     backgroundColor: Color = GlassSurfaceStandard,
     borderColor: Color? = null,
     borderBrush: Brush? = null,
     borderWidth: Dp = 1.dp,
     highlight: Boolean = false,
-    blurRadius: Dp = 16.dp,
-    elevation: Dp = 4.dp,
+    blurRadius: Dp = 12.dp,
+    elevation: Dp = 3.dp,
+    pressScaleEnabled: Boolean = true,
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
@@ -63,7 +67,7 @@ fun GlassCard(
 
     val shadowModifier = if (highlight) {
         Modifier.shadow(
-            elevation = elevation + 6.dp,
+            elevation = elevation + 4.dp,
             shape = shape,
             spotColor = FieryOrangeGlow,
             ambientColor = HotCoralGlow
@@ -72,15 +76,22 @@ fun GlassCard(
         Modifier.shadow(
             elevation = elevation,
             shape = shape,
-            spotColor = Color.Black.copy(alpha = 0.55f),
-            ambientColor = Color.Black.copy(alpha = 0.25f)
+            spotColor = Color.Black.copy(alpha = 0.45f),
+            ambientColor = Color.Black.copy(alpha = 0.20f)
         )
     }
 
     val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val animatedScale by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = if (onClick != null && pressScaleEnabled && isPressed) com.example.ui.theme.SliMotion.PRESSED_SCALE else com.example.ui.theme.SliMotion.DEFAULT_SCALE,
+        animationSpec = com.example.ui.theme.SliMotion.pressSpring,
+        label = "glass_card_press_scale"
+    )
 
     Box(
         modifier = modifier
+            .scale(animatedScale)
             .then(shadowModifier)
             .clip(shape)
             .then(

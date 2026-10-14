@@ -21,10 +21,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
@@ -66,6 +68,8 @@ import coil.request.ImageRequest
 import com.example.data.ItemType
 import com.example.ui.VaultViewModel
 import com.example.ui.components.GlassCard
+import com.example.ui.components.pressScale
+import com.example.ui.theme.SliMotion
 import com.example.ui.theme.DeepCharcoal
 import com.example.ui.theme.ElevatedCharcoal
 import com.example.ui.theme.FieryGradient
@@ -95,6 +99,11 @@ fun AddItemSheet(
 ) {
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val distinctCollections by viewModel.distinctCollections.collectAsStateWithLifecycle()
+    val allAvailableCollections = remember(distinctCollections) {
+        val defaults = listOf("General", "Design", "Inspiration", "Work", "Personal")
+        (defaults + distinctCollections).distinct()
+    }
 
     var currentStep by remember {
         mutableStateOf(
@@ -170,21 +179,19 @@ fun AddItemSheet(
                     color = PrimaryText
                 )
 
-                IconButton(
+                com.example.ui.components.SliGlassIconButton(
+                    icon = Icons.Default.Close,
+                    contentDescription = "Close",
                     onClick = {
                         if (currentStep != SheetStep.CHOOSE_TYPE && prefilledUrl.isNullOrBlank() && prefilledImageUri == null) {
                             currentStep = SheetStep.CHOOSE_TYPE
                         } else {
                             onDismiss()
                         }
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
-                        tint = SecondaryText
-                    )
-                }
+                    },
+                    size = 36.dp,
+                    iconSize = 18.dp
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -307,6 +314,7 @@ fun AddItemSheet(
 
                     CollectionSelector(
                         selected = selectedCollection,
+                        availableCollections = allAvailableCollections,
                         onSelect = { selectedCollection = it }
                     )
 
@@ -321,7 +329,8 @@ fun AddItemSheet(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    Button(
+                    com.example.ui.components.SliPrimaryButton(
+                        text = "Save to Vault",
                         onClick = {
                             if (urlText.isBlank()) {
                                 errorMessage = "Please enter a valid website URL"
@@ -335,15 +344,9 @@ fun AddItemSheet(
                                 )
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = FieryOrange),
-                        shape = RoundedCornerShape(14.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .testTag("save_link_button")
-                    ) {
-                        Text("Save to Vault", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Color.White)
-                    }
+                        fillMaxWidth = true,
+                        modifier = Modifier.testTag("save_link_button")
+                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -423,12 +426,14 @@ fun AddItemSheet(
 
                     CollectionSelector(
                         selected = selectedCollection,
+                        availableCollections = allAvailableCollections,
                         onSelect = { selectedCollection = it }
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    Button(
+                    com.example.ui.components.SliPrimaryButton(
+                        text = if (isScreenshotMode) "Save Screenshot" else "Save Image",
                         onClick = {
                             selectedImageUri?.let { uri ->
                                 viewModel.saveImageOrScreenshot(
@@ -441,20 +446,9 @@ fun AddItemSheet(
                                 )
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = FieryOrange),
-                        shape = RoundedCornerShape(14.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .testTag("save_image_button")
-                    ) {
-                        Text(
-                            text = if (isScreenshotMode) "Save Screenshot" else "Save Image",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp,
-                            color = Color.White
-                        )
-                    }
+                        fillMaxWidth = true,
+                        modifier = Modifier.testTag("save_image_button")
+                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -528,35 +522,40 @@ private fun CaptureOptionCard(
 @Composable
 private fun CollectionSelector(
     selected: String,
+    availableCollections: List<String>,
     onSelect: (String) -> Unit
 ) {
-    val collections = listOf("General", "Design", "Inspiration", "Work", "Personal", "Travel")
     Column {
         Text("Collection", style = MaterialTheme.typography.labelMedium, color = SecondaryText)
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            modifier = Modifier.fillMaxWidth()
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
         ) {
-            collections.take(4).forEach { name ->
+            availableCollections.forEach { name ->
                 val isSelected = selected.equals(name, ignoreCase = true)
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
+                        .pressScale(targetScale = SliMotion.scalePill)
+                        .clip(RoundedCornerShape(10.dp))
                         .then(
-                            if (isSelected) Modifier.background(FieryOrange)
+                            if (isSelected) Modifier
+                                .background(FieryGradient)
+                                .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(10.dp))
                             else Modifier
                                 .background(ElevatedCharcoal)
-                                .border(1.dp, GlassBorder, RoundedCornerShape(8.dp))
+                                .border(1.dp, GlassBorder, RoundedCornerShape(10.dp))
                         )
                         .clickable { onSelect(name) }
-                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                        .padding(horizontal = 14.dp, vertical = 7.dp)
                 ) {
                     Text(
                         text = name,
                         fontSize = 12.sp,
                         color = if (isSelected) Color.White else SecondaryText,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                     )
                 }
             }

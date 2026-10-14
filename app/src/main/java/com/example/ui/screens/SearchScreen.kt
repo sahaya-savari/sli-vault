@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,16 +21,21 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,8 +43,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import com.example.ui.theme.SliMotion
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -86,32 +95,33 @@ fun SearchScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+                .padding(horizontal = 14.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = PrimaryText
-                )
-            }
+            com.example.ui.components.SliGlassIconButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Back",
+                onClick = onBack,
+                size = 40.dp
+            )
+
+            Spacer(modifier = Modifier.width(10.dp))
 
             GlassCard(
                 modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(14.dp)
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = null,
                         tint = FieryOrange,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     BasicTextField(
@@ -119,7 +129,8 @@ fun SearchScreen(
                         onValueChange = { viewModel.setSearchQuery(it) },
                         textStyle = TextStyle(
                             color = PrimaryText,
-                            fontSize = 15.sp
+                            fontSize = 15.sp,
+                            lineHeight = 20.sp
                         ),
                         cursorBrush = SolidColor(FieryOrange),
                         modifier = Modifier
@@ -130,8 +141,8 @@ fun SearchScreen(
                             if (searchQuery.isEmpty()) {
                                 Text(
                                     text = "Search titles, URLs, tags...",
-                                    color = MutedText,
-                                    fontSize = 15.sp
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MutedText
                                 )
                             }
                             innerTextField()
@@ -159,7 +170,7 @@ fun SearchScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 6.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val filters = listOf(
@@ -171,23 +182,37 @@ fun SearchScreen(
 
             filters.forEach { (type, label) ->
                 val isSelected = selectedType == type
+                val pillInteraction = remember { MutableInteractionSource() }
+                val isPillPressed by pillInteraction.collectIsPressedAsState()
+                val pillScale by animateFloatAsState(
+                    targetValue = if (isPillPressed) SliMotion.PRESSED_SCALE else SliMotion.DEFAULT_SCALE,
+                    animationSpec = SliMotion.pressSpring,
+                    label = "search_pill_press_scale"
+                )
+
                 Box(
                     modifier = Modifier
+                        .scale(pillScale)
                         .clip(RoundedCornerShape(20.dp))
                         .then(
-                            if (isSelected) Modifier.background(FieryGradient)
+                            if (isSelected) Modifier
+                                .background(FieryGradient)
+                                .border(1.dp, Color.White.copy(alpha = 0.30f), RoundedCornerShape(20.dp))
                             else Modifier
                                 .background(ElevatedCharcoal)
                                 .border(1.dp, GlassBorder, RoundedCornerShape(20.dp))
                         )
-                        .clickable { viewModel.setTypeFilter(type) }
-                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                        .clickable(
+                            interactionSource = pillInteraction,
+                            indication = ripple(color = FieryOrange)
+                        ) { viewModel.setTypeFilter(type) }
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     Text(
                         text = label,
-                        fontSize = 12.sp,
+                        style = MaterialTheme.typography.labelMedium,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) PrimaryText else SecondaryText
+                        color = if (isSelected) Color.White else SecondaryText
                     )
                 }
             }
@@ -195,10 +220,10 @@ fun SearchScreen(
 
         // Search results count
         Text(
-            text = "${items.size} matching items",
+            text = "${items.size} matching ${if (items.size == 1) "item" else "items"}",
             style = MaterialTheme.typography.labelMedium,
-            color = MutedText,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+            color = SecondaryText,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
         )
 
         // Results list
@@ -209,20 +234,17 @@ fun SearchScreen(
                     .padding(32.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "No results found",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = PrimaryText
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Try different keywords or check spelling",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MutedText
-                    )
-                }
+                com.example.ui.components.SliEmptyState(
+                    title = "No results found",
+                    description = "Try different keywords or check tag filters to find items in your vault.",
+                    icon = Icons.Default.Search,
+                    actionText = if (searchQuery.isNotEmpty() || selectedType != null) "Clear Filters" else null,
+                    onActionClick = {
+                        viewModel.setSearchQuery("")
+                        viewModel.setTypeFilter(null)
+                    },
+                    compact = true
+                )
             }
         } else {
             LazyColumn(
