@@ -12,7 +12,7 @@
   <img alt="Dart" src="https://img.shields.io/badge/Dart-3.13-0175C2?logo=dart&logoColor=white">
   <img alt="Android" src="https://img.shields.io/badge/Android-first-3DDC84?logo=android&logoColor=white">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-6f4e37">
-  <img alt="Release" src="https://img.shields.io/badge/GitHub%20Release-pre--release%20APK-ff6b35">
+  <img alt="Release" src="https://img.shields.io/badge/GitHub%20Release-signed%20APK-ff6b35">
 </p>
 
 <p align="center">
@@ -37,7 +37,7 @@ SLI Vault is a Flutter Android app for saving links and images into **app-privat
 | iOS | Phase 2 — scaffold only, not verified as a shipping target |
 | Web / Desktop | Flutter platform folders only — not the shipping target |
 
-**Download / release status:** a **GitHub pre-release APK** is available under [Releases](https://github.com/sahaya-savari/sli-vault/releases). It is **debug-signed** (development only) and **not** for Play Store upload. There is no Play Store listing.
+**Download / release status:** a **signed GitHub Release APK** is available under [Releases](https://github.com/sahaya-savari/sli-vault/releases). Application ID `com.sahayasavari.slivault`. There is **no Play Store listing** — sideload / open-source distribution only.
 
 The project-owned code and documentation are licensed under [MIT](LICENSE). Third-party assets are separate: in particular, Anthropic Serif remains **not cleared for redistribution**. See [the font notice](assets/fonts/claude/README.md).
 
@@ -126,7 +126,7 @@ Additional facts from the current tree:
 - Optional **lock when backgrounded** uses the system biometric / device credential prompt. It does **not** encrypt the SQLite database.
 - Backup ZIPs are **not** encrypted. Treat exported files as private copies.
 - Opening a saved URL hands it to another app the user chooses. Copy URL is the only clipboard write from the app.
-- **`FLAG_SECURE` is currently OFF** (owner request for local debugging). Screenshot and recent-apps protection is paused until the owner explicitly asks to restore it. See `android/app/src/main/kotlin/com/example/sli_vault/MainActivity.kt`.
+- **`FLAG_SECURE` is currently OFF** (owner request for local debugging). Screenshot and recent-apps protection is paused until the owner explicitly asks to restore it. See `android/app/src/main/kotlin/com/sahayasavari/slivault/MainActivity.kt`.
 
 ---
 
@@ -231,8 +231,8 @@ These are **release blockers** or open gaps, not marketing copy:
 
 | Item | Current fact |
 |------|----------------|
-| Application ID | `com.example.sli_vault` (template ID — change before a store listing) |
-| Signing | Release APK/AAB use the **debug** signing config; no production keystore in-repo |
+| Application ID | `com.sahayasavari.slivault` |
+| Signing | Release builds use a **local** owner keystore via `android/key.properties` (never committed). Not enrolled in Play App Signing |
 | Version display | About UI hard-codes `1.0.0`; `pubspec.yaml` is `1.0.0+1` |
 | `FLAG_SECURE` | **Off** until the owner restores the commented `addFlags` call |
 | License | MIT for project-owned code and documentation; third-party assets remain separately licensed |
@@ -240,7 +240,7 @@ These are **release blockers** or open gaps, not marketing copy:
 | Launcher icon | Adaptive foreground fills the canvas; system mask may crop outer glow |
 | Device QA gaps | Backup export/import with real files, image handling, biometric lock, restart persistence, and error states are **not tested** on a real device — see [docs/ANDROID_DEVICE_CHECKLIST.md](docs/ANDROID_DEVICE_CHECKLIST.md) |
 | Framework assert | `_dependents.isEmpty` reported historically; **not reproduced** in the last QA pass |
-| Download | GitHub **pre-release** APK only (debug-signed); not on Play Store |
+| Download | GitHub **signed** APK (owner keystore); not on Play Store |
 
 More detail: [docs/RELEASE_READINESS.md](docs/RELEASE_READINESS.md) · [docs/ANDROID_RELEASE.md](docs/ANDROID_RELEASE.md).
 
@@ -267,11 +267,12 @@ Third-party notices that do exist:
 
 ## Download
 
-**GitHub pre-release (development APK):**
+**GitHub Release (signed APK, no Play Store):**
 
-- [Latest Releases](https://github.com/sahaya-savari/sli-vault/releases) — install the attached `sli-vault-*-debug-signed.apk` on a test device
-- Signing: **Android debug certificate** (not a production keystore)
+- [Latest Releases](https://github.com/sahaya-savari/sli-vault/releases) — install the attached `sli-vault-*-release.apk`
+- Application ID: `com.sahayasavari.slivault`
+- Signing: owner release keystore (local `android/key.properties`; never in Git)
 - Platforms: Android only for this package; iOS remains Phase 2
-- Play Store: **not listed** and this APK must **not** be uploaded as a store package
+- Play Store: **not listed** — this is a GitHub sideload package, not a Play upload
 
-Prefer cloning and building locally if you need a reproducible toolchain. Production signing and a store-ready package require a user-owned keystore and an application ID change away from `com.example.sli_vault`.
+To reproduce a signed build you need your own `android/key.properties` and keystore outside the repo (see [docs/ANDROID_RELEASE.md](docs/ANDROID_RELEASE.md)).

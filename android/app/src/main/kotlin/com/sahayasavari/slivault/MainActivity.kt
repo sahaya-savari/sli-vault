@@ -1,4 +1,4 @@
-package com.example.sli_vault
+package com.sahayasavari.slivault
 
 import android.content.Intent
 import android.net.Uri

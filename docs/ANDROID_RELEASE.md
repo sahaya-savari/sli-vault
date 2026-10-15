@@ -1,6 +1,6 @@
 # Android Release
 
-Status: **not production-ready.** This file records what is verified, what is blocked, and how to finish the release setup safely. Nothing in the "Signing setup guide" section has been applied to the project.
+Status: **signed GitHub sideload release available** (`v1.0.0`). Not on Google Play. Keep the repository **private** until Anthropic Serif redistribution is cleared.
 
 ## Verified in this pass — 2026-10-16
 
@@ -9,34 +9,34 @@ These commands succeeded on Windows with Flutter 3.47.7 and the Android Studio J
 - `flutter pub get`
 - `flutter analyze` — no issues found
 - `flutter test` — **62 tests passed**
-- `flutter build apk --release`
-- `flutter build appbundle --release`
+- `flutter build apk --release` — owner-keystore signed
 
-Current generated artifact sizes (not committed):
-
-- `build/app/outputs/flutter-apk/app-release.apk` — **63,521,428 bytes (60.58 MiB)**
-- `build/app/outputs/bundle/release/app-release.aab` — **63,540,169 bytes (60.60 MiB)**
-
-The release APK was verified with `apksigner`. It uses the `Android Debug` certificate
-(SHA-256: `db6c8a91b7691c7e64e5cb20c46cc79976d852125739e8766c335c50862cadd0`).
-These artifacts are **DEVELOPMENT/DEBUG-SIGNED — NOT FOR PLAY STORE UPLOAD**.
-
-If `JAVA_HOME` points at a JDK that is not installed, set it before Gradle runs:
+Set `JAVA_HOME` before Gradle if the default JDK path is invalid:
 
 ```powershell
 $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
 ```
 
+Current generated artifact (not committed):
+
+- `build/app/outputs/flutter-apk/app-release.apk` — published as `sli-vault-1.0.0-release.apk` on GitHub Release `v1.0.0`
+
+`apksigner verify --print-certs` must show the owner certificate, **not** `CN=Android Debug`:
+
+- Signer DN includes `CN=Sahaya Savari F, OU=SLI Vault, O=Sahaya Savari F, C=IN`
+- Application ID from `aapt dump badging`: `com.sahayasavari.slivault`
+- Version: `1.0.0` (`versionCode` `1`)
+
 ## Current Android configuration (read from the tree)
 
 | Item | Current value | Source |
 |---|---|---|
-| Application ID | `com.example.sli_vault` | `android/app/build.gradle.kts` (`applicationId`, `namespace`) |
-| Kotlin package | `com.example.sli_vault` | `android/app/src/main/kotlin/com/example/sli_vault/MainActivity.kt` |
+| Application ID | `com.sahayasavari.slivault` | `android/app/build.gradle.kts` (`applicationId`, `namespace`) |
+| Kotlin package | `com.sahayasavari.slivault` | `android/app/src/main/kotlin/com/sahayasavari/slivault/MainActivity.kt` |
 | `compileSdk` | 36 | `android/app/build.gradle.kts` |
 | `minSdk` / `targetSdk` | From Flutter (`flutter.minSdkVersion`, `flutter.targetSdkVersion`) | `android/app/build.gradle.kts` |
 | `versionName` / `versionCode` | From `pubspec.yaml` `version: 1.0.0+1` | `flutter.versionName`, `flutter.versionCode` |
-| Release signing | **Debug signing config** | `buildTypes.release.signingConfig` |
+| Release signing | Owner keystore via local `android/key.properties` (fail closed if missing) | `buildTypes.release.signingConfig` |
 | Production manifest permissions | `USE_BIOMETRIC` only | `android/app/src/main/AndroidManifest.xml` |
 | Debug / profile manifest | Adds `INTERNET` for Flutter tooling | `android/app/src/debug`, `android/app/src/profile` |
 | Backup | `allowBackup="false"`, `fullBackupContent="false"` | main manifest |
@@ -55,161 +55,93 @@ The Android implementation also includes:
 // window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
 ```
 
-## Release blockers
+## Remaining blockers (not Play / public)
 
-- Release `buildTypes` still sets `signingConfig = signingConfigs.getByName("debug")`. Do not generate a keystore or `key.properties` inside the repository to clear this. Do not commit either file.
-- Application ID remains `com.example.sli_vault`. Google Play does not accept the `com.example` prefix for a published app.
-- `FLAG_SECURE` is paused by owner request. Restoring it is a privacy decision, not a silent release fix.
-- About text hard-codes `1.0.0` in `lib/features/settings/settings_screen.dart` and `lib/features/settings/legal_screens.dart`. `pubspec.yaml` is `version: 1.0.0+1`, which Gradle already maps to `versionName` / `versionCode`. `package_info_plus` is not a dependency and was not added, so the Dart strings can drift from `pubspec.yaml`.
-- Adaptive icon: `mipmap-anydpi-v26/ic_launcher.xml` uses `@drawable/ic_launcher_foreground`, which is a bitmap of `drawable-nodpi/sli_vault_launcher.png` with `android:gravity="fill"`. The bitmap is a complete rounded app icon, so the system mask can crop the outer glow and frame. `assets/android/launcher-foreground.svg` is drawn inside the 66dp safe zone but is not what the adaptive XML uses. The PNG was not modified.
-- The bundled **Anthropic Serif** font files have no license file and are described by public sources as a proprietary Anthropic brand typeface. They must not ship in a public repository, a Play release, or an AAB until rights are confirmed in writing. See `assets/fonts/claude/README.md` and `docs/RELEASE_READINESS.md`.
-- `LICENSE` now covers project-owned code and documentation under MIT. It does not cover Anthropic Serif or other third-party assets.
-- `file_picker` and `share_plus` have been warned by Gradle for applying the Kotlin Gradle Plugin. That is a future upgrade, not a reason to drop the plugins.
+- Play Store upload is out of scope unless the owner enrolls later.
+- `FLAG_SECURE` is paused by owner request.
+- About text hard-codes `1.0.0` in Settings/legal screens; `pubspec.yaml` is `version: 1.0.0+1`.
+- Adaptive launcher foreground may be cropped by the system mask (see below).
+- Bundled **Anthropic Serif** fonts are not cleared for public redistribution — keep the repo private.
 - Real-device checks are **NOT TESTED**. See `docs/ANDROID_DEVICE_CHECKLIST.md`.
 
-Generated release APK/AAB files are compilation evidence only. They must not be uploaded as production releases.
+## Local signing files
 
-## Application ID proposal (not applied)
+Create these **outside Git** (already gitignored):
 
-The owner has not yet chosen a final ID. Do not change `applicationId`, `namespace`, or the Kotlin package path until one is approved.
-
-Rules for a good ID:
-
-- Reverse-domain style, lowercase letters, digits, and underscores, with at least two segments.
-- Use a domain or namespace you control.
-- It is **permanent** once the app is published on Google Play.
-- Changing it installs as a **different app** and does not update the current install. Local data is private to each ID, so an export of a ZIP backup is the only supported way to move data.
-
-Candidates to consider (no recommendation is final until the owner decides):
-
-- `app.slivault.vault`
-- `com.slivault.app`
-
-When an ID is approved, the change touches `build.gradle.kts` (`applicationId` and `namespace`), the Kotlin package directory and its `package` line in `MainActivity.kt`, and any docs that quote the old ID.
-
-## Signing setup guide (not applied)
-
-Goal: sign release builds with a production upload key that never enters Git.
-
-### 1. Create the keystore outside the repository
-
-Run this yourself in PowerShell. Choose your own passwords and keep them out of chat, docs, and Git. Replace the placeholders.
-
-```powershell
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\keystores" | Out-Null
-keytool -genkey -v `
-  -keystore "$env:USERPROFILE\keystores\sli-vault-upload.jks" `
-  -storetype JKS `
-  -keyalg RSA -keysize 2048 -validity 10000 `
-  -alias <KEY_ALIAS>
-```
-
-`keytool` ships with the Android Studio runtime: `C:\Program Files\Android\Android Studio\jbr\bin\keytool.exe`.
-
-### 2. Back it up
-
-- Copy the `.jks` file and both passwords into a password manager or an encrypted offline backup.
-- If you lose the upload key you can request a reset from Google Play only when you use Play App Signing. Without it, you cannot update the app.
-
-### 3. Create `android/key.properties` locally
-
-This file is already ignored by `android/.gitignore` and by the root `.gitignore`. Never commit it.
+1. Keystore (example path used locally): `%USERPROFILE%\keystores\sli-vault-release.jks`
+2. `android/key.properties`:
 
 ```properties
 storePassword=<STORE_PASSWORD>
 keyPassword=<KEY_PASSWORD>
-keyAlias=<KEY_ALIAS>
-storeFile=<ABSOLUTE_PATH_TO>/sli-vault-upload.jks
+keyAlias=sli-vault
+storeFile=C:\\Users\\<YOU>\\keystores\\sli-vault-release.jks
 ```
 
-### 4. Wire Gradle (proposal only)
+Hard rules:
 
-This is the standard Flutter pattern. **It has not been applied** to `android/app/build.gradle.kts`.
+- Never commit `*.jks`, `*.keystore`, `key.properties`, `*.enc`, or any password.
+- Never paste passwords into issues, chat, README, or CI logs.
+- Without `android/key.properties`, release builds **fail closed** (no silent debug signing).
 
-```kotlin
-import java.util.Properties
-import java.io.FileInputStream
+### Encrypted local backup (`android/secrets/`)
 
-val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("key.properties")
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-}
+A machine-local encrypted backup of the keystore (and optionally `key.properties`) may live under `android/secrets/`. That folder’s sensitive contents are gitignored. See `android/secrets/README.md` for decrypt/restore commands.
 
-android {
-    signingConfigs {
-        create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String?
-            keyPassword = keystoreProperties["keyPassword"] as String?
-            storeFile = keystoreProperties["storeFile"]?.let { file(it as String) }
-            storePassword = keystoreProperties["storePassword"] as String?
-        }
-    }
-    buildTypes {
-        release {
-            signingConfig = signingConfigs.getByName("release")
-        }
-    }
-}
-```
+Typical local files (not in Git):
 
-When applying it, keep a clear failure for a missing `key.properties` so a release build cannot silently fall back to debug signing.
+- `android/secrets/sli-vault-release.jks.enc`
+- `android/secrets/key.properties.enc`
 
-### 5. Use Play App Signing
-
-- Enroll the app in Play App Signing when you create the Play Console listing. Google holds the app signing key; your keystore becomes the **upload key**.
-- Upload an **AAB** (`flutter build appbundle --release`), not an APK.
-
-### 6. Verify the signature
-
-After a signed build, check the certificate (never the passwords) with the Android SDK tool:
+Encrypt with Git for Windows OpenSSL (AES-256-CBC + PBKDF2), using a passphrase you already know (for example the keystore store password — enter it when prompted; do not put it in scripts you commit):
 
 ```powershell
-& "$env:LOCALAPPDATA\Android\Sdk\build-tools\<BUILD_TOOLS_VERSION>\apksigner.bat" verify --print-certs build\app\outputs\flutter-apk\app-release.apk
+$openssl = "C:\Program Files\Git\usr\bin\openssl.exe"
+New-Item -ItemType Directory -Force -Path android\secrets | Out-Null
+& $openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt `
+  -in "$env:USERPROFILE\keystores\sli-vault-release.jks" `
+  -out android\secrets\sli-vault-release.jks.enc
+& $openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt `
+  -in android\key.properties `
+  -out android\secrets\key.properties.enc
 ```
 
-Today this prints an `Android Debug` certificate. A production build must not.
+Decrypt / restore:
 
-### Hard rules
+```powershell
+$openssl = "C:\Program Files\Git\usr\bin\openssl.exe"
+& $openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 `
+  -in android\secrets\sli-vault-release.jks.enc `
+  -out "$env:USERPROFILE\keystores\sli-vault-release.jks"
+& $openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 `
+  -in android\secrets\key.properties.enc `
+  -out android\key.properties
+```
 
-- Never commit `*.jks`, `*.keystore`, `key.properties`, or any password.
-- Never paste passwords into issues, chat, README, or CI logs.
-- Do not reuse the debug key for a store upload.
-- CI, if added later, must read secrets from the CI secret store, not from files in the repository.
+## Verify a release APK
+
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+& "$env:LOCALAPPDATA\Android\Sdk\build-tools\36.1.0\apksigner.bat" verify --print-certs `
+  build\app\outputs\flutter-apk\app-release.apk
+```
 
 ## Version identity
 
 - `pubspec.yaml` is the single source for Android `versionName` and `versionCode` (`1.0.0+1`).
-- The `+1` build number must increase for every Play upload.
-- The About line and the licenses page still print `1.0.0` from Dart strings. Fixing that needs a code change and an owner decision between a shared constant with a sync test and the `package_info_plus` plugin. Not applied.
+- The About line and the licenses page still print `1.0.0` from Dart strings.
 
 ## Launcher icon review (no changes made)
 
-- Adaptive XML: `android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml` uses `@color/launcher_background` and `@drawable/ic_launcher_foreground`.
-- `ic_launcher_foreground.xml` is a `<bitmap>` of `sli_vault_launcher` with `gravity="fill"`.
-- Legacy PNG icons exist for mdpi, hdpi, xhdpi, xxhdpi, and xxxhdpi.
-- The adaptive foreground is a finished rounded icon stretched over the full 108dp canvas. The system mask can crop its edge. The correct fix is to inset the logo into the central 66dp safe zone. That alters the icon's appearance and needs owner approval.
-- Not verified on a real launcher in this pass.
+- Adaptive XML uses `@drawable/ic_launcher_foreground` (bitmap of `sli_vault_launcher` with `gravity="fill"`).
+- The system mask can crop the outer glow. Inset changes need owner approval.
 
 ## Manifest and permission review
 
-- Production permissions: `USE_BIOMETRIC` only. No `INTERNET`, storage, camera, or location permission is declared.
-- Debug and profile builds add `INTERNET` for the Flutter tool. That does not apply to the release manifest.
-- `queries` lists `PROCESS_TEXT` and `http` / `https` `VIEW` intents for opening saved links.
-- The share activity is exported with `SEND` and `SEND_MULTIPLE` intent filters for text and images.
-- The launch mode is `singleTop` with `taskAffinity=""`.
+- Production permissions: `USE_BIOMETRIC` only.
+- Debug and profile builds add `INTERNET` for the Flutter tool.
+- Share activity is exported with `SEND` / `SEND_MULTIPLE` for text and images.
 
 ## Gradle wrapper
 
-`android/gradlew`, `android/gradlew.bat`, and `android/gradle/wrapper/gradle-wrapper.jar` are required to reproduce a build. They were previously ignored by `android/.gitignore` and are now visible to git. `local.properties` stays ignored.
-
-## Order of work still needed
-
-1. Owner picks the final application ID.
-2. Owner confirms or replaces the Anthropic Serif font.
-3. Owner creates the upload keystore outside the repo and approves the Gradle wiring.
-4. Owner decides on the version-display approach and launcher-icon inset.
-5. Owner runs `docs/ANDROID_DEVICE_CHECKLIST.md` on a real device.
-6. Only then build a signed AAB for Play internal testing.
-
-Do not describe the app as production-ready until signing and the device checklist are complete.
+`android/gradlew`, `android/gradlew.bat`, and `android/gradle/wrapper/gradle-wrapper.jar` are required to reproduce a build. `local.properties` stays ignored.

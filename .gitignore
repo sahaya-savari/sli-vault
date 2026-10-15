@@ -11,9 +11,17 @@
 key.properties
 *.p12
 *.pem
+*.enc
 .env
 .env.*
 !.env.example
+
+# Local encrypted signing backup (plaintext + ciphertext stay out of Git)
+/android/secrets/**
+!/android/secrets/.gitignore
+!/android/secrets/.ignore
+!/android/secrets/README.md
+
 .atom/
 .build/
 .buildlog/
