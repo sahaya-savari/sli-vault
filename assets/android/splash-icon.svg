@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 288 288" width="288" height="288" fill="none">
+  <defs>
+    <linearGradient id="splashIconGrad" x1="64" y1="64" x2="224" y2="224" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF6A24"/>
+      <stop offset="100%" stop-color="#FF4545"/>
+    </linearGradient>
+  </defs>
+  <!-- Centered within 160dp diameter circular area for Android 12+ SplashScreen -->
+  <rect x="64" y="64" width="160" height="160" rx="46" fill="url(#splashIconGrad)"/>
+  <path d="M104 94h80a4 4 0 0 1 4 4v90l-44-24-44 24V98a4 4 0 0 1 4-4z" fill="#FFFFFF"/>
+  <circle cx="144" cy="130" r="10" fill="#FF6A24"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108" fill="none">
+  <defs>
+    <linearGradient id="adaptiveBadgeGrad" x1="28" y1="28" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF6A24"/>
+      <stop offset="100%" stop-color="#FF4545"/>
+    </linearGradient>
+  </defs>
+  <!-- Centered strictly inside 66dp safe zone (canvas is 108x108, center is 54, radius is 33) -->
+  <rect x="29" y="29" width="50" height="50" rx="15" fill="url(#adaptiveBadgeGrad)"/>
+  <path d="M42 38h24a2 2 0 0 1 2 2v28l-14-8-14 8V40a2 2 0 0 1 2-2z" fill="#FFFFFF"/>
+  <circle cx="54" cy="49" r="3.5" fill="#FF6A24"/>
+</svg>

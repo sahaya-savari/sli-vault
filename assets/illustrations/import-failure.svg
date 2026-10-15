@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
+  <circle cx="100" cy="100" r="70" fill="#EF4444" fill-opacity="0.1"/>
+  <!-- Broken file / package -->
+  <path d="M60 60h50l30 30v60a10 10 0 0 1-10 10H60a10 10 0 0 1-10-10V70a10 10 0 0 1 10-10z"
+        fill="#14171E" stroke="#2A2D35" stroke-width="1.5"/>
+  <polyline points="110 60 110 90 140 90" stroke="#2A2D35" stroke-width="1.5"/>
+  <!-- Warning icon overlay -->
+  <circle cx="100" cy="125" r="16" fill="#EF4444"/>
+  <line x1="100" y1="117" x2="100" y2="126" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="100" cy="132" r="1.5" fill="#FFFFFF"/>
+</svg>

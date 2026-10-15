@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
+  <circle cx="100" cy="100" r="70" fill="#FF6A24" fill-opacity="0.08"/>
+  <!-- Cylinder Storage Disk -->
+  <ellipse cx="100" cy="75" rx="44" ry="15" fill="#191C22" stroke="#2A2D35" stroke-width="1.5"/>
+  <path d="M56 75v50c0 8.3 19.7 15 44 15s44-6.7 44-15V75" fill="#14171E" stroke="#2A2D35" stroke-width="1.5"/>
+  <!-- Capacity fill meter -->
+  <ellipse cx="100" cy="110" rx="42" ry="13" fill="#FF4545" fill-opacity="0.25" stroke="#FF4545" stroke-width="1.5"/>
+  <!-- Warning badge -->
+  <circle cx="140" cy="65" r="14" fill="#FF6A24"/>
+  <line x1="140" y1="58" x2="140" y2="66" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="140" cy="71" r="1.2" fill="#FFFFFF"/>
+</svg>
