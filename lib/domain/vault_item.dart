@@ -42,10 +42,13 @@ enum VaultItemType {
   }
 }
 
+/// User-facing grouping. Stored [VaultItemType] strings (`link`, `screenshot`,
+/// `image`) are never rewritten: legacy `screenshot` rows are simply shown
+/// under [images], so filters, counts and Settings copy always agree and the
+/// backup JSON (version 2) is unchanged.
 enum VaultTypeFilter {
   all('All', SliAssets.contentLayers),
   links('Links', SliAssets.contentLink),
-  screenshots('Screenshots', SliAssets.contentScreenshot),
   images('Images', SliAssets.contentImage);
 
   final String label;
@@ -58,10 +61,8 @@ enum VaultTypeFilter {
         return true;
       case VaultTypeFilter.links:
         return type == VaultItemType.link;
-      case VaultTypeFilter.screenshots:
-        return type == VaultItemType.screenshot;
       case VaultTypeFilter.images:
-        return type == VaultItemType.image;
+        return type == VaultItemType.image || type == VaultItemType.screenshot;
     }
   }
 }
@@ -188,11 +189,14 @@ class VaultItem {
     required this.updatedAt,
   });
 
+  /// Returns a copy with the given fields replaced. A `null` argument keeps
+  /// the existing value; pass [clearDescription] to explicitly remove it.
   VaultItem copyWith({
     String? title,
     String? url,
     String? domain,
     String? description,
+    bool clearDescription = false,
     String? localImageId,
     String? thumbnailId,
     List<String>? tags,
@@ -208,7 +212,7 @@ class VaultItem {
       title: title ?? this.title,
       url: url ?? this.url,
       domain: domain ?? this.domain,
-      description: description ?? this.description,
+      description: clearDescription ? null : (description ?? this.description),
       localImageId: localImageId ?? this.localImageId,
       thumbnailId: thumbnailId ?? this.thumbnailId,
       tags: tags != null ? VaultValidators.normalizeTags(tags) : this.tags,
@@ -231,6 +235,7 @@ class VaultItem {
 
     final searchable = [
       title,
+      type.label,
       url ?? '',
       domain ?? '',
       description ?? '',

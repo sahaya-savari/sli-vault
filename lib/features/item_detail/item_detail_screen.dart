@@ -52,89 +52,15 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   }
 
   Future<void> _showEditDialog(VaultItem item) async {
-    final titleCtrl = TextEditingController(text: item.title);
-    final descriptionCtrl = TextEditingController(text: item.description ?? '');
-    final tagsCtrl = TextEditingController(text: item.tags.join(', '));
-    String? errorText;
-
     final saved = await showDialog<bool>(
       context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              title: Text('Edit Item'),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: titleCtrl,
-                      style: TextStyle(color: context.sli.textPrimary),
-                      decoration: InputDecoration(
-                        labelText: 'Title',
-                        errorText: errorText,
-                      ),
-                    ),
-                    SizedBox(height: SliTokens.spaceMd),
-                    TextField(
-                      controller: descriptionCtrl,
-                      minLines: 2,
-                      maxLines: 4,
-                      style: TextStyle(color: context.sli.textPrimary),
-                      decoration: InputDecoration(labelText: 'Description'),
-                    ),
-                    SizedBox(height: SliTokens.spaceMd),
-                    TextField(
-                      controller: tagsCtrl,
-                      style: TextStyle(color: context.sli.textPrimary),
-                      decoration: InputDecoration(
-                        labelText: 'Tags (comma-separated)',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    final t = titleCtrl.text.trim();
-                    if (t.isEmpty) {
-                      setDialogState(
-                        () => errorText = 'Title cannot be empty.',
-                      );
-                      return;
-                    }
-                    await widget.controller.updateItemDetails(
-                      itemId: item.id,
-                      newTitle: t,
-                      newDescription: descriptionCtrl.text,
-                      newTags: VaultValidators.parseTagInput(tagsCtrl.text),
-                    );
-                    if (context.mounted) {
-                      Navigator.of(context).pop(true);
-                    }
-                  },
-                  child: Text('Save Changes'),
-                ),
-              ],
-            );
-          },
-        );
-      },
+      builder: (_) =>
+          _EditItemDialog(item: item, controller: widget.controller),
     );
-
     if (saved == true && mounted) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Item updated.')));
+          .showSnackBar(const SnackBar(content: Text('Item updated.')));
     }
-    titleCtrl.dispose();
-    descriptionCtrl.dispose();
-    tagsCtrl.dispose();
   }
 
   Future<void> _confirmDelete(VaultItem item) async {
@@ -152,8 +78,8 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: SliTokens.error,
-              foregroundColor: context.sli.obsidian,
+              backgroundColor: context.sli.destructive,
+              foregroundColor: context.sli.onDestructive,
             ),
             onPressed: () => Navigator.of(context).pop(true),
             child: Text('Delete'),
@@ -216,7 +142,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                 onPressed: () => _confirmDelete(item),
                 icon: SliIcon(
                   SliAssets.actionDelete,
-                  color: SliTokens.error,
+                  color: context.sli.errorText,
                   semanticLabel: 'Delete Item',
                 ),
               ),
@@ -322,7 +248,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             SliIcon(
                               item.type.iconAsset,
                               size: 14,
-                              color: SliTokens.orange,
+                              color: context.sli.accentText,
                             ),
                             SizedBox(width: 6),
                             Text(
@@ -358,7 +284,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             Text(
                               item.domain!,
                               style: TextStyle(
-                                color: SliTokens.amber,
+                                color: context.sli.amberText,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -428,7 +354,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 SliIcon(
                                   SliAssets.contentTag,
                                   size: 16,
-                                  color: SliTokens.amber,
+                                  color: context.sli.amberText,
                                 ),
                                 SizedBox(width: SliTokens.spaceSm),
                                 Text(
@@ -470,7 +396,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 child: Text(
                                   '#$tag',
                                   style: TextStyle(
-                                    color: SliTokens.amber,
+                                    color: context.sli.amberText,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -498,6 +424,120 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+/// Edit dialog that owns (and disposes) its own controllers. Disposing them in
+/// the caller right after `showDialog` returns would race the dialog's exit
+/// animation, during which the TextFields are still mounted.
+class _EditItemDialog extends StatefulWidget {
+  final VaultItem item;
+  final VaultController controller;
+
+  const _EditItemDialog({required this.item, required this.controller});
+
+  @override
+  State<_EditItemDialog> createState() => _EditItemDialogState();
+}
+
+class _EditItemDialogState extends State<_EditItemDialog> {
+  late final TextEditingController _title = TextEditingController(
+    text: widget.item.title,
+  );
+  late final TextEditingController _description = TextEditingController(
+    text: widget.item.description ?? '',
+  );
+  late final TextEditingController _tags = TextEditingController(
+    text: widget.item.tags.join(', '),
+  );
+  String? _errorText;
+  bool _saving = false;
+
+  @override
+  void dispose() {
+    _title.dispose();
+    _description.dispose();
+    _tags.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    if (_saving) return;
+    final title = _title.text.trim();
+    if (title.isEmpty) {
+      setState(() => _errorText = 'Title cannot be empty.');
+      return;
+    }
+    setState(() {
+      _saving = true;
+      _errorText = null;
+    });
+    try {
+      await widget.controller.updateItemDetails(
+        itemId: widget.item.id,
+        newTitle: title,
+        newDescription: _description.text,
+        newTags: VaultValidators.parseTagInput(_tags.text),
+      );
+      if (mounted) Navigator.of(context).pop(true);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _saving = false;
+        _errorText = e.toString().replaceFirst('FormatException: ', '');
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      scrollable: true,
+      title: const Text('Edit Item'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            key: const Key('edit_title_field'),
+            controller: _title,
+            style: TextStyle(color: context.sli.textPrimary),
+            decoration: InputDecoration(
+              labelText: 'Title',
+              errorText: _errorText,
+              errorStyle: TextStyle(color: context.sli.errorText),
+            ),
+          ),
+          const SizedBox(height: SliTokens.spaceMd),
+          TextField(
+            key: const Key('edit_description_field'),
+            controller: _description,
+            minLines: 2,
+            maxLines: 4,
+            style: TextStyle(color: context.sli.textPrimary),
+            decoration: const InputDecoration(labelText: 'Description'),
+          ),
+          const SizedBox(height: SliTokens.spaceMd),
+          TextField(
+            key: const Key('edit_tags_field'),
+            controller: _tags,
+            style: TextStyle(color: context.sli.textPrimary),
+            decoration: const InputDecoration(
+              labelText: 'Tags (comma-separated)',
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _saving ? null : () => Navigator.of(context).pop(false),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: _saving ? null : _save,
+          child: const Text('Save Changes'),
+        ),
+      ],
     );
   }
 }

@@ -169,10 +169,17 @@ class VaultController extends ChangeNotifier {
     notifyListeners();
   }
 
-  int countByFilter(VaultTypeFilter filter, {bool favoritesOnly = false}) {
+  /// Number of items under [filter]. When [query] is non-empty the count only
+  /// includes items that also match the search, so chip counts always agree
+  /// with the list that is shown.
+  int countByFilter(
+    VaultTypeFilter filter, {
+    bool favoritesOnly = false,
+    String query = '',
+  }) {
     return _allItems.where((item) {
       if (favoritesOnly && !item.isFavorite) return false;
-      return filter.matches(item.type);
+      return filter.matches(item.type) && item.matchesSearch(query);
     }).length;
   }
 
@@ -367,11 +374,11 @@ class VaultController extends ChangeNotifier {
     if (trimmedTitle.isEmpty) {
       throw const FormatException('Title cannot be empty.');
     }
+    final cleanedDescription = newDescription?.trim() ?? '';
     final updated = existing.copyWith(
       title: trimmedTitle,
-      description: newDescription?.trim().isEmpty == true
-          ? null
-          : newDescription?.trim(),
+      description: cleanedDescription.isEmpty ? null : cleanedDescription,
+      clearDescription: cleanedDescription.isEmpty,
       tags: VaultValidators.normalizeTags(newTags),
       updatedAt: DateTime.now(),
     );
@@ -393,9 +400,14 @@ class VaultController extends ChangeNotifier {
     await reloadLibrary();
   }
 
+  /// Removes every item and stored image and also forgets user-created
+  /// collection names, so the vault returns to a clean "General only" state.
+  /// Theme, lock and onboarding preferences are intentionally left untouched.
   Future<void> clearAllVaultData() async {
     await database.clearAllItems();
     await imageStorage.clearAllImages();
+    _customCollections = {'General'};
+    await _persistCollections();
     await reloadLibrary();
   }
 

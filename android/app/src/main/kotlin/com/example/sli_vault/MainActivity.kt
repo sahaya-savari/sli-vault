@@ -19,7 +19,8 @@ class MainActivity : FlutterFragmentActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+		// Protection paused for local debugging until explicit user request.
+		// window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
 		captureShareIntent(intent)
 	}
 

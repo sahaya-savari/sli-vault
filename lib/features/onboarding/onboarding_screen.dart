@@ -109,110 +109,190 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    // Keep hero + CTA above the fold; feature cards only when there is room.
+    final showFeatureCards = media.size.height >= 820;
+
     return Scaffold(
       backgroundColor: context.sli.obsidian,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: SliTokens.spaceXl,
-            vertical: SliTokens.spaceLg,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Full-bleed welcome video / still — headline layers on top of this.
+          _WelcomeMedia(
+            video: _video,
+            videoReady: _videoReady,
+            videoFailed: _videoFailed,
+            stillAsset: SliAssets.welcomeStills[_stillIndex],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // Soft full-screen scrim — art stays visible; text stays readable.
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0x59000000),
+                  Color(0x29000000),
+                  Color(0x66000000),
+                  Color(0xB3000000),
+                ],
+                stops: [0.0, 0.30, 0.58, 1.0],
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: SliTokens.spaceXl,
+                vertical: SliTokens.spaceLg,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          SliAssets.symbol,
-                          width: 32,
-                          height: 32,
-                          fit: BoxFit.cover,
-                          semanticLabel: 'SLI Vault',
-                          errorBuilder: (_, _, _) => SliIllustration(
-                            SliAssets.brandMark,
-                            width: 32,
-                            height: 32,
-                            semanticLabel: 'SLI Vault',
-                          ),
+                  _WelcomeTopBar(onSkip: widget.onFinish),
+                  const Spacer(flex: 2),
+                  // Upper-middle copy over video — no opaque card plate.
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 420),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Your personal vault for everything worth keeping.',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(
+                                color: SliTokens.textPrimary,
+                                shadows: const [
+                                  Shadow(
+                                    color: Color(0xCC000000),
+                                    blurRadius: 16,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                        ),
+                        const SizedBox(height: SliTokens.spaceMd),
+                        Text(
+                          'Save useful links, screenshots, and images in one calm, searchable workspace—without accounts or cloud tracking.',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(
+                                color: SliTokens.textPrimary.withValues(
+                                  alpha: 0.92,
+                                ),
+                                shadows: const [
+                                  Shadow(
+                                    color: Color(0x99000000),
+                                    blurRadius: 10,
+                                    offset: Offset(0, 1),
+                                  ),
+                                ],
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (showFeatureCards) ...[
+                    const SizedBox(height: SliTokens.spaceLg),
+                    const Flexible(
+                      child: SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            _FeatureTile(
+                              iconAsset: SliAssets.contentLink,
+                              title: 'Links, Screenshots & Images',
+                              subtitle: 'Capture URLs with clean domain fallbacks or import images directly into app-private storage.',
+                            ),
+                            SizedBox(height: SliTokens.spaceSm),
+                            _FeatureTile(
+                              iconAsset: SliAssets.utilPrivacy,
+                              title: 'Local-First & Zero Tracking',
+                              subtitle: 'No accounts, no cloud sync, and no analytics SDKs. Your library stays on this device.',
+                            ),
+                            SizedBox(height: SliTokens.spaceSm),
+                            _FeatureTile(
+                              iconAsset: SliAssets.utilExport,
+                              title: 'Honest Storage & Backup',
+                              subtitle: 'Local storage is not hardware encryption. Use Export in Settings anytime to back up your items and original images.',
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: SliTokens.spaceSm),
-                      Text(
-                        'SLI Vault',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                    ],
-                  ),
-                  TextButton(
-                    onPressed: widget.onFinish,
-                    style: TextButton.styleFrom(
-                      foregroundColor: context.sli.textSecondary,
-                      minimumSize: const Size(64, 48),
                     ),
-                    child: const Text('Skip'),
+                  ] else
+                    const Spacer(flex: 3),
+                  if (showFeatureCards) const Spacer(flex: 1),
+                  const SizedBox(height: SliTokens.spaceMd),
+                  SliGradientButton(
+                    label: 'Get Started',
+                    onPressed: widget.onFinish,
                   ),
                 ],
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: SliTokens.spaceLg),
-                      _WelcomeMedia(
-                        video: _video,
-                        videoReady: _videoReady,
-                        videoFailed: _videoFailed,
-                        stillAsset: SliAssets.welcomeStills[_stillIndex],
-                      ),
-                      const SizedBox(height: SliTokens.spaceXl),
-                      Text(
-                        'Your personal vault for everything worth keeping.',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
-                      const SizedBox(height: SliTokens.spaceMd),
-                      Text(
-                        'Save useful links, screenshots, and images in one calm, searchable workspace—without accounts or cloud tracking.',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyLarge
-                            ?.copyWith(color: context.sli.textSecondary),
-                      ),
-                      const SizedBox(height: SliTokens.spaceXl),
-                      const _FeatureTile(
-                        iconAsset: SliAssets.contentLink,
-                        title: 'Links, Screenshots & Images',
-                        subtitle: 'Capture URLs with clean domain fallbacks or import images directly into app-private storage.',
-                      ),
-                      const SizedBox(height: SliTokens.spaceMd),
-                      const _FeatureTile(
-                        iconAsset: SliAssets.utilPrivacy,
-                        title: 'Local-First & Zero Tracking',
-                        subtitle: 'No accounts, no cloud sync, and no analytics SDKs. Your library stays on this device.',
-                      ),
-                      const SizedBox(height: SliTokens.spaceMd),
-                      const _FeatureTile(
-                        iconAsset: SliAssets.utilExport,
-                        title: 'Honest Storage & Backup',
-                        subtitle: 'Local storage is not hardware encryption. Use Export in Settings anytime to back up your items and original images.',
-                      ),
-                    ],
-                  ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WelcomeTopBar extends StatelessWidget {
+  final VoidCallback onSkip;
+
+  const _WelcomeTopBar({required this.onSkip});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                SliAssets.symbol,
+                width: 32,
+                height: 32,
+                fit: BoxFit.cover,
+                semanticLabel: 'SLI Vault',
+                errorBuilder: (_, _, _) => SliIllustration(
+                  SliAssets.brandMark,
+                  width: 32,
+                  height: 32,
+                  semanticLabel: 'SLI Vault',
                 ),
               ),
-              const SizedBox(height: SliTokens.spaceMd),
-              SliGradientButton(
-                label: 'Get Started',
-                onPressed: widget.onFinish,
+            ),
+            const SizedBox(width: SliTokens.spaceSm),
+            Text(
+              'SLI Vault',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: SliTokens.textPrimary,
+                shadows: const [
+                  Shadow(
+                    color: Color(0x99000000),
+                    blurRadius: 8,
+                    offset: Offset(0, 1),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ),
+        TextButton(
+          onPressed: onSkip,
+          style: TextButton.styleFrom(
+            foregroundColor: SliTokens.textPrimary.withValues(alpha: 0.85),
+            minimumSize: const Size(64, 48),
+          ),
+          child: const Text('Skip'),
+        ),
+      ],
     );
   }
 }
@@ -239,70 +319,54 @@ class _WelcomeMedia extends StatelessWidget {
 
     return Semantics(
       label: 'Welcome artwork for SLI Vault',
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(SliTokens.radiusXl),
-        child: AspectRatio(
-          aspectRatio: 9 / 16,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.asset(
-                stillAsset,
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-                filterQuality: FilterQuality.medium,
-                gaplessPlayback: true,
-                errorBuilder: (_, _, _) => ColoredBox(
-                  color: context.sli.elevated,
-                  child: Center(
-                    child: SliIllustration(
-                      SliAssets.illOnboarding,
-                      width: 160,
-                      height: 160,
-                      semanticLabel: 'SLI Vault welcome illustration',
-                    ),
-                  ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            stillAsset,
+            fit: BoxFit.cover,
+            alignment: Alignment.center,
+            filterQuality: FilterQuality.medium,
+            gaplessPlayback: true,
+            semanticLabel: 'Welcome still for SLI Vault',
+            errorBuilder: (_, _, _) => ColoredBox(
+              color: context.sli.elevated,
+              child: Center(
+                child: SliIllustration(
+                  SliAssets.illOnboarding,
+                  width: 160,
+                  height: 160,
+                  semanticLabel: 'SLI Vault welcome illustration',
                 ),
               ),
-              if (useVideo)
-                FittedBox(
-                  fit: BoxFit.cover,
-                  child: SizedBox(
-                    width: video!.value.size.width,
-                    height: video!.value.size.height,
-                    child: VideoPlayer(video!),
-                  ),
-                ),
-              if (!videoReady && !videoFailed && !reduceMotion)
-                const Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: EdgeInsets.all(SliTokens.spaceMd),
-                    child: SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: SliTokens.orange,
-                      ),
-                    ),
-                  ),
-                ),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.15),
-                      Colors.black.withValues(alpha: 0.45),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          if (useVideo)
+            FittedBox(
+              fit: BoxFit.cover,
+              clipBehavior: Clip.hardEdge,
+              child: SizedBox(
+                width: video!.value.size.width,
+                height: video!.value.size.height,
+                child: VideoPlayer(video!),
+              ),
+            ),
+          if (!videoReady && !videoFailed && !reduceMotion)
+            const Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.all(SliTokens.spaceMd),
+                child: SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: SliTokens.orange,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -322,34 +386,43 @@ class _FeatureTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(SliTokens.spaceLg),
+      padding: const EdgeInsets.all(SliTokens.spaceMd),
       decoration: BoxDecoration(
-        color: context.sli.elevated,
+        color: Colors.black.withValues(alpha: 0.38),
         borderRadius: BorderRadius.circular(SliTokens.radiusLg),
-        border: Border.all(color: context.sli.border),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
-              color: context.sli.charcoal,
+              color: Colors.black.withValues(alpha: 0.35),
               borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-              border: Border.all(color: context.sli.border),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
             ),
             alignment: Alignment.center,
-            child: SliIcon(iconAsset, size: 20, color: SliTokens.orange),
+            child: SliIcon(iconAsset, size: 18, color: SliTokens.orange),
           ),
           const SizedBox(width: SliTokens.spaceMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 4),
-                Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium
+                      ?.copyWith(color: SliTokens.textPrimary),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: SliTokens.textPrimary.withValues(alpha: 0.78),
+                  ),
+                ),
               ],
             ),
           ),

@@ -1,28 +1,56 @@
 # Release Readiness
 
-Statuses are limited to PASS, FAIL, and BLOCKED.
+Statuses are limited to PASS, FAIL, BLOCKED, and NOT TESTED. This file is the current gate, not a store submission.
+
+Android release preparation steps live in [ANDROID_RELEASE.md](ANDROID_RELEASE.md). The real-device checks are in [ANDROID_DEVICE_CHECKLIST.md](ANDROID_DEVICE_CHECKLIST.md) and are **all NOT TESTED**.
 
 | Area | Status | Evidence | Required action |
 |---|---|---|---|
-| Flutter formatting | PASS | Intended Dart files pass `dart format --output=none --set-exit-if-changed lib test` | None |
-| Static analysis | PASS | `flutter analyze` reports no issues | None |
-| Automated tests | PASS | `flutter test`: **21** tests passed | Expand device coverage later |
-| Flutter v1 database migration | PASS | Synthetic v1 database upgrade test passes | None |
-| Kotlin JSON import | PASS | Synthetic Kotlin exporter-shaped fixture passes | Verify with a user-generated backup before migration |
-| Flutter ZIP restore | PASS | v1 compatibility plus v2 field/binary/SHA-256 round trip passes | None |
-| Unsafe/corrupt restore handling | PASS | Traversal, duplicate, corruption, size-cap, collision, orphan, and rollback fixtures pass | Continue device-level interruption testing |
-| Collections and mixed media | PASS | CRUD/search/favorites/tags/collections and cold reinitialization fixture passes | Physical UX smoke continued below |
-| Theme/navigation/accessibility | PASS | Semantic theme audit; narrow 320dp shell + font-scale 1.15 widget tests keep all five labels; fixed equal-width bottom nav (no horizontal scroll strip) | Physical TalkBack/contrast smoke test |
-| Legal/release UI | PASS | About, licenses, Privacy Policy, and Terms (no visible “Draft”) are Settings-reachable; copy matches app behavior | Hosted public URLs still needed for store listing |
-| Android debug build | PASS | `flutter build apk --debug` → `build/app/outputs/flutter-apk/app-debug.apk` (226.03 MB / 237004537 bytes) | Debug-signed only |
-| Android release builds | PASS | Release APK `app-release.apk` (60.45 MB / 63388628 bytes); AAB `app-release.aab` (60.46 MB / 63396123 bytes) | Artifacts remain **debug-signed** (not Play-publishable) |
-| Android release signing | BLOCKED | Release config still uses debug signing; application ID remains `com.example.sli_vault` | Configure approved production identity and keystore |
-| Android device runtime | PASS (partial) | CPH2569 (`5a1f8528`), Android 15 / API 35, font scale 1.15; `adb install -r` Success. Verified: five tabs; Add FAB on Home/Browse/Favorites/Collections and **absent** on Settings; Privacy/Terms without “Draft”; list swipe with **0** RenderFlex overflows; `FLAG_SECURE` screencap all-black (~17.7 KB). Prior session also verified Share Target, favorites, collection persistence, ZIP export. Welcome video on-device playback **NOT VERIFIED** this session (onboarding already completed; short ~0.9s loop integrated with stills fallback). No destructive restore. | Still needed: welcome video visual confirm, gallery picker, biometrics, TalkBack/rotation, ZIP import UI, release-signed install |
-| iOS build/runtime | BLOCKED | Windows environment has no macOS/Xcode | Build and test on supported macOS/Xcode |
-| iOS Share Extension | BLOCKED | Requires an Xcode extension target | Add and sign extension if required |
-| Dependency freshness | BLOCKED | `flutter pub outdated` reports locked major upgrades | Review upgrades separately; no confirmed vulnerability scan was available |
-| GitHub publication | PASS | Explicit owner authorization for commit+push after mandatory checks; normal push to `origin/main` (no force) | Confirm remote HEAD after push |
+| Project license | BLOCKED | No `LICENSE` file. README states the license is not chosen. | Owner picks a license (see the release report's MIT vs Apache-2.0 note) and adds `LICENSE` before any public "open source" claim. |
+| Flutter formatting | PASS (earlier) | Intended Dart files were formatted in prior passes. This prep pass did not reformat Dart. | Re-run `dart format --output=none --set-exit-if-changed lib test` before commit if Dart changes again. |
+| Static analysis | PASS | `flutter analyze` on 2026-10-15: no issues found (Flutter 3.47.7). | None from this pass. 23 packages have newer majors outside current constraints; do not upgrade them just to silence the notice. |
+| Automated tests | PASS | `flutter test` on 2026-10-15: **62 passed**. Matches the prior QA baseline count. Older notes said 21, then 25. | Real-file backup and biometric device walks are still open. |
+| Flutter v1 database migration | PASS | Synthetic v1 upgrade test | None |
+| Kotlin JSON import | PASS | Synthetic fixture | Still confirm with a user-generated backup on device |
+| Flutter ZIP restore | PASS | v1 compatibility and v2 SHA-256 round trip | Real-file export/import walkthrough still open |
+| Unsafe/corrupt restore handling | PASS | Traversal, duplicate, corruption, size, collision, orphan, rollback fixtures | Device interruption testing still open |
+| Collections and mixed media | PASS | Host fixtures, including dialog controller lifetime | `_dependents.isEmpty` still unresolved; see below |
+| Theme / navigation / accessibility | PASS (host) | Narrow shell and font-scale widget tests; five labels | Physical TalkBack and rotation still open |
+| Legal / About UI | PASS (in-app copy) | Privacy and Terms are Settings-reachable and do not say "Draft" | Version label is hard-coded `1.0.0`. No hosted public policy URL. |
+| Android debug build | PASS (earlier) | Prior debug APK under `build/app/outputs/` (not committed) | Not rebuilt in this prep pass |
+| Android release builds | PASS (compile only, earlier) | Prior release APK and AAB, QA baseline about 60.6 MB | Still **debug-signed**. Not rebuilt in this prep pass. |
+| Android release signing | BLOCKED | `signingConfig` is debug. No keystore in the tree. | Owner creates a production keystore outside git. A step-by-step guide, not applied, is in `docs/ANDROID_RELEASE.md`. |
+| Application ID | BLOCKED | `com.example.sli_vault` in `build.gradle.kts` and the Kotlin package path. Google Play rejects the `com.example` prefix. | Owner chooses a final ID (proposals in `docs/ANDROID_RELEASE.md`). Not changed. |
+| `FLAG_SECURE` | BLOCKED | Commented out in `MainActivity.kt` at the owner's request | Leave it off until the owner explicitly asks to restore it. |
+| Launcher safe zone | BLOCKED | Adaptive foreground bitmap uses `gravity="fill"` | Do not replace the approved logo. Adjust padding only after a visual check the owner accepts. |
+| Anthropic Serif redistribution | BLOCKED | 25 tracked files in `assets/fonts/claude/`, no license file, and public sources describe Anthropic Serif as a proprietary brand typeface offered for personal use only. Fonts are registered in `pubspec.yaml`, so they ship in every APK and AAB. The `origin` repository is **private**. | Do not make the repo public, publish a Release, or upload to Play with these files. Owner chooses written permission, an OFL replacement such as Newsreader or Source Serif 4, or history rewrite before any public step. Details: `assets/fonts/claude/README.md`. JetBrains Mono OFL is fine if `OFL.txt` stays. |
+| Android device runtime | PASS (partial, historical) | CPH2569, Android 15, font scale 1.15. Five tabs, FAB placement, legal screens, no sampled overflows. Share, favorites, collection persistence, and ZIP export were covered in an earlier session. | Still needed: real ZIP import, gallery picker, biometrics, TalkBack, rotation, welcome clip by eye. Screenshot blocking is no longer on. |
+| Android real-device checklist | NOT TESTED | `docs/ANDROID_DEVICE_CHECKLIST.md` lists backup and restore, image handling, biometric lock, persistence after restart, and error states. Every row is NOT TESTED. | Owner or tester runs it on a physical device and records results. No row is PASS until performed. |
+| iOS build / runtime | BLOCKED | Windows has no Xcode | macOS/Xcode later |
+| iOS Share Extension | BLOCKED | No extension target | Add only if inbound iOS share is required |
+| GitHub Actions | BLOCKED | `.github/workflows/android.yml` existed in `93dd5a8` and was removed in `97eaa1f`. No workflow is on `HEAD`. | Add CI after the license and signing decisions, not as a way to hide failing tests. |
+| Public GitHub push | BLOCKED | License missing, template ID, debug signing, `FLAG_SECURE` off, font rights unverified, local device notes previously in docs | Do not push until the owner accepts those risks or clears them. |
+
+## `_dependents.isEmpty`
+
+Reported on Flutter 3.47.7 from `InheritedElement.debugDeactivated` in `framework.dart:6281`. Not reproduced by the later host suite. Collection dialogs dispose their text controller with the dialog state so the exit animation does not use a disposed controller. That change is not proven to be the cause. Do not suppress the assertion.
+
+## Version identity
+
+- `pubspec.yaml`: `1.0.0+1` (source for Android `versionName` / `versionCode`)
+- Settings About line and the licenses page: hard-coded `1.0.0`
+- `package_info_plus` is not a dependency and was not added
 
 ## Verdict
 
-The Flutter source is locally verified for static analysis, **21** automated tests, migration/backup fixtures, Android debug/release compilation, and a **partial real-device smoke** on CPH2569 (Android 15). It is **not production-release ready** until production Android identity/signing, remaining device gaps (picker, biometrics, ZIP import UI, TalkBack/rotation), legal review/hosted URLs, and iOS/Xcode verification are completed.
+The Flutter app is a working local-first library with host coverage and a partial Android device smoke. It is **not** production-release ready and **not** an open-source-licensed project. Publication waits on a chosen license, a production application ID, a release keystore, a `FLAG_SECURE` decision from the owner, font redistribution clearance, launcher safe-zone review, and the remaining device walkthroughs.
+
+## Next session
+
+Local handoff for the following work session. This section is documentation, not a private scratch file.
+
+1. Do not move the Flutter project into `app/` until the website import is planned. Intended later layout: `app/` (this Flutter project), `website/` (existing Lovable showcase), `docs/`, root `README.md`, root `.gitignore`. Keep the website deploy independent of `flutter build`.
+2. Before editing the website, inspect its ZIP, git state, dependencies, assets, and build config. Do not create a website project in the Flutter tree tonight.
+3. Owner decisions still required: license, application ID, release keystore, whether to restore `FLAG_SECURE`, Anthropic Serif redistribution (replacement font or written permission), version-display approach, and whether to inset the launcher bitmap. The repository stays **private** until these are settled.
+4. Finish manual device checks using `docs/ANDROID_DEVICE_CHECKLIST.md`: real ZIP export/import, image handling, biometric lock, persistence after restart, error states, TalkBack, rotation. All are NOT TESTED. Leave `_dependents.isEmpty` visible if it returns; do not hide it.
+5. `kotlin.incremental=false` stays. Do not commit `build/`, `.dart_tool/`, `artifacts/`, or signing files.

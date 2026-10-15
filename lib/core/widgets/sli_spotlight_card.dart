@@ -27,12 +27,12 @@ class SliSpotlightCard extends StatelessWidget {
     final effectiveRadius =
         borderRadius ?? BorderRadius.circular(SliTokens.radiusLg);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark
-        ? Colors.white.withValues(alpha: 0.06)
-        : Colors.white.withValues(alpha: 0.72);
+    // Tokenised so light cards are near-opaque (clear separation from the
+    // background art) while dark cards keep their subtle 6% sheen.
+    final cardBg = context.sli.surfaceFill;
     final borderColor = isDark
         ? SliTokens.orange.withValues(alpha: 0.22)
-        : context.sli.border.withValues(alpha: 0.9);
+        : context.sli.border;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -41,7 +41,7 @@ class SliSpotlightCard extends StatelessWidget {
         border: Border.all(color: borderColor, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.22 : 0.04),
+            color: Colors.black.withValues(alpha: isDark ? 0.22 : 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

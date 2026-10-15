@@ -88,6 +88,8 @@ class _SearchScreenState extends State<SearchScreen> {
               TypeFilterBar(
                 selected: _filter,
                 onChanged: (next) => setState(() => _filter = next),
+                countForFilter: (f) =>
+                    widget.controller.countByFilter(f, query: query),
               ),
               SizedBox(height: SliTokens.spaceSm),
               Expanded(
@@ -98,7 +100,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             ? 'No items in this category'
                             : 'No matching items found',
                         subtitle: query.trim().isEmpty
-                            ? 'Save links, screenshots, or images to search your vault offline.'
+                            ? 'Save links or images to search your vault offline.'
                             : 'Try another keyword, domain, or tag filter.',
                       )
                     : ListView.separated(

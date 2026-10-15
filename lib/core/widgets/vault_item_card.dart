@@ -130,7 +130,7 @@ class VaultItemCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SliIcon(item.type.iconAsset, size: 12, color: SliTokens.amber),
+          SliIcon(item.type.iconAsset, size: 12, color: context.sli.amberText),
           SizedBox(width: 4),
           Text(
             item.type.label,
@@ -147,8 +147,8 @@ class VaultItemCard extends StatelessWidget {
 
   Widget _buildFavoriteButton(BuildContext context) {
     return SizedBox(
-      width: 44,
-      height: 44,
+      width: SliTokens.minTouchTarget,
+      height: SliTokens.minTouchTarget,
       child: IconButton(
         tooltip: item.isFavorite ? 'Remove from favorites' : 'Add to favorites',
         onPressed: onToggleFavorite,
@@ -243,7 +243,7 @@ class VaultItemCard extends StatelessWidget {
                         child: Text(
                           '#$t',
                           style: TextStyle(
-                            color: SliTokens.amber,
+                            color: context.sli.amberText,
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                           ),

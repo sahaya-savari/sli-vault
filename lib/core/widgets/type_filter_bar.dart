@@ -5,7 +5,8 @@ import '../theme/sli_theme.dart';
 import 'sli_glass_surface.dart';
 import 'sli_svg.dart';
 
-/// Stable, non-scrolling type filter segments (All / Links / Screenshots / Images).
+/// Stable, non-scrolling type filter segments (All / Links / Images).
+/// Legacy screenshot records are grouped under Images.
 class TypeFilterBar extends StatelessWidget {
   final VaultTypeFilter selected;
   final ValueChanged<VaultTypeFilter> onChanged;
@@ -80,9 +81,9 @@ class _FilterSegment extends StatelessWidget {
         'Filter by $label'
         '${count != null ? ', $count items' : ''}';
 
-    final fg = selected ? SliTokens.onPrimaryGradient : context.sli.textPrimary;
+    final fg = selected ? context.sli.onAccent : context.sli.textPrimary;
     final iconColor = selected
-        ? SliTokens.onPrimaryGradient
+        ? context.sli.onAccent
         : context.sli.textSecondary;
 
     return Semantics(
@@ -122,7 +123,7 @@ class _FilterSegment extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: fg,
-                        fontSize: compact ? 10.5 : 11.5,
+                        fontSize: compact ? 11.5 : 12.5,
                         fontWeight: selected
                             ? FontWeight.w700
                             : FontWeight.w500,

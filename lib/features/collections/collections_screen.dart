@@ -2,9 +2,69 @@ import 'package:flutter/material.dart';
 
 import '../../core/assets/sli_assets.dart';
 import '../../core/theme/sli_theme.dart';
+import '../../core/widgets/sli_screen_header.dart';
 import '../../core/widgets/sli_svg.dart';
 import '../../data/vault_controller.dart';
 import 'collection_detail_screen.dart';
+
+/// Dialog that owns its [TextEditingController]. The controller is disposed
+/// together with the dialog's State (after the route's exit animation) -
+/// disposing it right after `showDialog` returns would leave the still
+/// animating TextField using a disposed controller.
+class CollectionNameDialog extends StatefulWidget {
+  final String title;
+  final String actionLabel;
+  final String initialName;
+
+  const CollectionNameDialog({
+    super.key,
+    required this.title,
+    required this.actionLabel,
+    this.initialName = '',
+  });
+
+  @override
+  State<CollectionNameDialog> createState() => _CollectionNameDialogState();
+}
+
+class _CollectionNameDialogState extends State<CollectionNameDialog> {
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.initialName,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit() => Navigator.of(context).pop(_controller.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      scrollable: true,
+      title: Text(widget.title),
+      content: TextField(
+        key: const Key('collection_name_field'),
+        controller: _controller,
+        autofocus: true,
+        textCapitalization: TextCapitalization.words,
+        textInputAction: TextInputAction.done,
+        style: TextStyle(color: context.sli.textPrimary),
+        decoration: const InputDecoration(labelText: 'Collection name'),
+        onSubmitted: (_) => _submit(),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(onPressed: _submit, child: Text(widget.actionLabel)),
+      ],
+    );
+  }
+}
 
 class CollectionsScreen extends StatefulWidget {
   final VaultController controller;
@@ -16,150 +76,126 @@ class CollectionsScreen extends StatefulWidget {
 }
 
 class _CollectionsScreenState extends State<CollectionsScreen> {
-  Future<void> _createCollection() async {
-    final nameController = TextEditingController();
-    final name = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('New collection'),
-        content: TextField(
-          controller: nameController,
-          autofocus: true,
-          textCapitalization: TextCapitalization.words,
-          decoration: InputDecoration(labelText: 'Collection name'),
-          onSubmitted: (value) => Navigator.of(context).pop(value),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(nameController.text),
-            child: Text('Create'),
-          ),
-        ],
+  void _showError(Object error) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(error.toString().replaceFirst('FormatException: ', '')),
       ),
     );
-    nameController.dispose();
+  }
+
+  Future<void> _createCollection() async {
+    final name = await showDialog<String>(
+      context: context,
+      builder: (_) => const CollectionNameDialog(
+        title: 'New collection',
+        actionLabel: 'Create',
+      ),
+    );
     if (name == null) return;
     try {
       await widget.controller.createCollection(name);
     } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.toString().replaceFirst('FormatException: ', '')),
-        ),
-      );
+      _showError(error);
     }
   }
 
   Future<void> _renameCollection(String currentName) async {
-    final controller = TextEditingController(text: currentName);
     final name = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Rename collection'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: InputDecoration(labelText: 'Collection name'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(controller.text),
-            child: Text('Rename'),
-          ),
-        ],
+      builder: (_) => CollectionNameDialog(
+        title: 'Rename collection',
+        actionLabel: 'Rename',
+        initialName: currentName,
       ),
     );
-    controller.dispose();
     if (name == null) return;
     try {
       await widget.controller.renameCollection(currentName, name);
     } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.toString().replaceFirst('FormatException: ', '')),
-        ),
-      );
+      _showError(error);
     }
   }
 
   Future<void> _deleteCollection(String name) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Delete "$name"?'),
-        content: Text(
-          'Items in this collection will be moved to General. Nothing will be deleted.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Cancel'),
+      builder: (context) {
+        final palette = context.sli;
+        return AlertDialog(
+          scrollable: true,
+          title: Text('Delete "$name"?'),
+          content: const Text(
+            'Items in this collection will be moved to General. Nothing will be deleted.',
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Delete collection'),
-          ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: palette.destructive,
+                foregroundColor: palette.onDestructive,
+              ),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Delete collection'),
+            ),
+          ],
+        );
+      },
     );
     if (confirmed != true) return;
-    await widget.controller.deleteCollection(name);
+    try {
+      await widget.controller.deleteCollection(name);
+    } catch (error) {
+      _showError(error);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final collections = widget.controller.collections;
+    final palette = context.sli;
     return SliAtmosphere(
       variant: SliAtmosphereVariant.abstractFlow,
+      imageAsset: SliAssets.bgCollections,
       child: SafeArea(
         child: ListView(
-          padding: EdgeInsets.fromLTRB(
+          padding: const EdgeInsets.fromLTRB(
             SliTokens.spaceLg,
             SliTokens.spaceMd,
             SliTokens.spaceLg,
             96,
           ),
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Collections',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
+            SliScreenHeader(
+              margin: const EdgeInsets.only(bottom: SliTokens.spaceMd),
+              title: 'Collections',
+              subtitle:
+                  '${collections.length} ${collections.length == 1 ? 'collection' : 'collections'}',
+              actions: [
                 IconButton(
                   tooltip: 'Create collection',
                   onPressed: _createCollection,
-                  icon: SliIcon(
+                  icon: const SliIcon(
                     SliAssets.actionAdd,
                     semanticLabel: 'Create collection',
                   ),
                 ),
               ],
             ),
-            SizedBox(height: SliTokens.spaceSm),
-            Text(
-              '${collections.length} collections',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            SizedBox(height: SliTokens.spaceMd),
             ...collections.map((name) {
-              final items = widget.controller.getItemsForCollection(name);
+              final count = widget.controller
+                  .getItemsForCollection(name)
+                  .length;
               return Padding(
-                padding: EdgeInsets.only(bottom: SliTokens.spaceMd),
+                padding: const EdgeInsets.only(bottom: SliTokens.spaceMd),
                 child: Card(
+                  margin: EdgeInsets.zero,
+                  clipBehavior: Clip.antiAlias,
                   child: InkWell(
-                    borderRadius: BorderRadius.circular(SliTokens.radiusLg),
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => CollectionDetailScreen(
@@ -169,67 +205,89 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                       ),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.all(SliTokens.spaceLg),
+                      padding: const EdgeInsets.fromLTRB(
+                        SliTokens.spaceLg,
+                        SliTokens.spaceMd,
+                        SliTokens.spaceSm,
+                        SliTokens.spaceMd,
+                      ),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             width: 48,
                             height: 48,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: context.sli.charcoal,
+                              color: palette.elevated,
                               borderRadius: BorderRadius.circular(
                                 SliTokens.radiusMd,
                               ),
-                              border: Border.all(color: context.sli.border),
+                              border: Border.all(color: palette.border),
                             ),
                             child: SliIcon(
                               SliAssets.contentCollection,
-                              color: SliTokens.orange,
+                              color: palette.accentText,
                             ),
                           ),
-                          SizedBox(width: SliTokens.spaceMd),
+                          const SizedBox(width: SliTokens.spaceMd),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
                                   name,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleMedium,
                                 ),
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
                                 Text(
-                                  '${items.length} ${items.length == 1 ? 'item' : 'items'}',
+                                  '$count ${count == 1 ? 'item' : 'items'}',
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                               ],
                             ),
                           ),
-                          if (name != 'General')
-                            PopupMenuButton<String>(
-                              tooltip: 'Collection actions',
-                              onSelected: (action) => action == 'rename'
-                                  ? _renameCollection(name)
-                                  : _deleteCollection(name),
-                              itemBuilder: (_) => [
-                                PopupMenuItem(
-                                  value: 'rename',
-                                  child: Text('Rename'),
-                                ),
-                                PopupMenuItem(
-                                  value: 'delete',
-                                  child: Text('Delete'),
-                                ),
-                              ],
-                            )
-                          else
-                            Icon(
-                              Icons.lock_outline,
-                              size: 18,
-                              color: context.sli.textSecondary,
-                            ),
+                          // Fixed 48x48 trailing slot keeps General's lock
+                          // glyph and the other rows' menu button aligned.
+                          SizedBox(
+                            width: SliTokens.minTouchTarget,
+                            height: SliTokens.minTouchTarget,
+                            child: name == 'General'
+                                ? Tooltip(
+                                    message:
+                                        'General cannot be renamed or deleted',
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.lock_outline,
+                                        size: 18,
+                                        color: palette.textSecondary,
+                                        semanticLabel:
+                                            'General is a built-in collection',
+                                      ),
+                                    ),
+                                  )
+                                : PopupMenuButton<String>(
+                                    tooltip: 'Collection actions for $name',
+                                    onSelected: (action) => action == 'rename'
+                                        ? _renameCollection(name)
+                                        : _deleteCollection(name),
+                                    itemBuilder: (_) => const [
+                                      PopupMenuItem(
+                                        value: 'rename',
+                                        child: Text('Rename'),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 'delete',
+                                        child: Text('Delete'),
+                                      ),
+                                    ],
+                                  ),
+                          ),
                         ],
                       ),
                     ),

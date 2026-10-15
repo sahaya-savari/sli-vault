@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/assets/sli_assets.dart';
 import '../../core/theme/sli_theme.dart';
+import '../../core/widgets/sli_screen_header.dart';
 import '../../core/widgets/sli_svg.dart';
 import '../../core/widgets/type_filter_bar.dart';
 import '../../core/widgets/vault_item_card.dart';
@@ -33,77 +34,83 @@ class _BrowseScreenState extends State<BrowseScreen> {
       queryOverride: _searchCtrl.text,
     );
 
+    final filtering =
+        widget.controller.browseFilter != VaultTypeFilter.all ||
+        _searchCtrl.text.isNotEmpty;
+
     return SliAtmosphere(
       variant: SliAtmosphereVariant.abstractFlow,
+      imageAsset: SliAssets.bgBrowse,
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                SliTokens.spaceLg,
-                SliTokens.spaceMd,
-                SliTokens.spaceLg,
-                SliTokens.spaceSm,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Browse Library',
-                    style: Theme.of(context).textTheme.headlineMedium,
+            SliScreenHeader(
+              title: 'Browse Library',
+              subtitle:
+                  '${items.length} ${items.length == 1 ? 'result' : 'results'} • ${widget.controller.browseSort.label}',
+              actions: [
+                PopupMenuButton<VaultSortOption>(
+                  tooltip: 'Sort library',
+                  initialValue: widget.controller.browseSort,
+                  onSelected: widget.controller.setBrowseSort,
+                  color: context.sli.elevated,
+                  icon: const SliIcon(
+                    SliAssets.actionSort,
+                    size: 20,
+                    semanticLabel: 'Sort Options',
                   ),
-                  Row(
-                    children: [
-                      PopupMenuButton<VaultSortOption>(
-                        tooltip: 'Sort library',
-                        initialValue: widget.controller.browseSort,
-                        onSelected: widget.controller.setBrowseSort,
-                        color: context.sli.elevated,
-                        icon: SliIcon(
-                          SliAssets.actionSort,
-                          size: 20,
-                          semanticLabel: 'Sort Options',
+                  itemBuilder: (context) => VaultSortOption.values
+                      .map(
+                        (opt) => PopupMenuItem(
+                          value: opt,
+                          child: Row(
+                            children: [
+                              if (opt == widget.controller.browseSort)
+                                SliIcon(
+                                  SliAssets.actionCheck,
+                                  size: 16,
+                                  color: context.sli.accentText,
+                                )
+                              else
+                                const SizedBox(width: 16),
+                              const SizedBox(width: 8),
+                              Text(opt.label),
+                            ],
+                          ),
                         ),
-                        itemBuilder: (context) => VaultSortOption.values
-                            .map(
-                              (opt) => PopupMenuItem(
-                                value: opt,
-                                child: Row(
-                                  children: [
-                                    if (opt == widget.controller.browseSort)
-                                      SliIcon(
-                                        SliAssets.actionCheck,
-                                        size: 16,
-                                        color: SliTokens.orange,
-                                      )
-                                    else
-                                      SizedBox(width: 16),
-                                    SizedBox(width: 8),
-                                    Text(opt.label),
-                                  ],
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                      IconButton(
-                        tooltip: widget.controller.browseGridView
-                            ? 'Switch to list view'
-                            : 'Switch to grid view',
-                        onPressed: widget.controller.toggleBrowseLayout,
-                        icon: SliIcon(
-                          widget.controller.browseGridView
-                              ? SliAssets.actionListView
-                              : SliAssets.actionGridView,
-                          size: 20,
-                          semanticLabel: 'Toggle Grid or List View',
-                        ),
-                      ),
-                    ],
+                      )
+                      .toList(),
+                ),
+                IconButton(
+                  tooltip: widget.controller.browseGridView
+                      ? 'Switch to list view'
+                      : 'Switch to grid view',
+                  onPressed: widget.controller.toggleBrowseLayout,
+                  icon: SliIcon(
+                    widget.controller.browseGridView
+                        ? SliAssets.actionListView
+                        : SliAssets.actionGridView,
+                    size: 20,
+                    semanticLabel: 'Toggle Grid or List View',
                   ),
-                ],
-              ),
+                ),
+              ],
+              footer: filtering
+                  ? Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton(
+                        onPressed: () {
+                          _searchCtrl.clear();
+                          widget.controller.setBrowseFilter(
+                            VaultTypeFilter.all,
+                          );
+                          setState(() {});
+                        },
+                        child: const Text('Reset filters'),
+                      ),
+                    )
+                  : null,
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: SliTokens.spaceLg),
@@ -111,7 +118,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 controller: _searchCtrl,
                 style: TextStyle(color: context.sli.textPrimary),
                 decoration: InputDecoration(
-                  hintText: 'Filter by title, domain, URL, or #tag...',
+                  hintText: 'Filter by title, domain, or #tag...',
                   prefixIcon: Padding(
                     padding: EdgeInsets.all(14),
                     child: SliIcon(
@@ -142,43 +149,23 @@ class _BrowseScreenState extends State<BrowseScreen> {
             TypeFilterBar(
               selected: widget.controller.browseFilter,
               onChanged: widget.controller.setBrowseFilter,
-              countForFilter: (f) => widget.controller.countByFilter(f),
+              countForFilter: (f) =>
+                  widget.controller.countByFilter(f, query: _searchCtrl.text),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: SliTokens.spaceLg,
-                vertical: SliTokens.spaceXs,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${items.length} ${items.length == 1 ? 'result' : 'results'} • ${widget.controller.browseSort.label}',
-                    style: TextStyle(
-                      color: context.sli.textSecondary,
-                      fontSize: 12,
-                    ),
-                  ),
-                  if (widget.controller.browseFilter != VaultTypeFilter.all ||
-                      _searchCtrl.text.isNotEmpty)
-                    TextButton(
-                      onPressed: () {
-                        _searchCtrl.clear();
-                        widget.controller.setBrowseFilter(VaultTypeFilter.all);
-                        setState(() {});
-                      },
-                      child: Text('Reset filters'),
-                    ),
-                ],
-              ),
-            ),
+            const SizedBox(height: SliTokens.spaceXs),
             Expanded(
               child: items.isEmpty
-                  ? SliEmptyState(
-                      illustrationAsset: SliAssets.illEmptySearch,
-                      title: 'No matching items',
-                      subtitle: 'Adjust your search query or content type filter to view saved items.',
-                    )
+                  ? (widget.controller.allItems.isEmpty
+                        ? const SliEmptyState(
+                            illustrationAsset: SliAssets.illEmptyLibrary,
+                            title: 'Your library is empty',
+                            subtitle: 'Use Add to save a link or image. Everything stays on this device.',
+                          )
+                        : const SliEmptyState(
+                            illustrationAsset: SliAssets.illEmptySearch,
+                            title: 'No matching items',
+                            subtitle: 'Adjust your search query or content type filter to view saved items.',
+                          ))
                   : widget.controller.browseGridView
                   ? GridView.builder(
                       padding: EdgeInsets.fromLTRB(
