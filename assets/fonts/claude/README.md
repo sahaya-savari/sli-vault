@@ -25,7 +25,8 @@ documentation. It does **not** grant rights to these Anthropic Serif files.
 
 - The files are registered in `pubspec.yaml` (families `Claude` and `ClaudeDisplay`) and are therefore compiled into every APK and AAB.
 - 25 files in this folder are tracked in Git and were pushed to the private `origin` repository. Git history keeps them even if they are removed later.
-- Do **not** make the GitHub repository public, publish a GitHub Release, or upload an APK or AAB to Google Play while these files are in the tree or in history.
+- Do **not** make the GitHub repository **public**, publish a **public** GitHub Release, or upload an APK or AAB to Google Play while these files are in the tree or in history.
+- A **private** repository pre-release APK (visible only to collaborators who can already clone the fonts) may be used for owner sideload testing. That does not clear redistribution for the public.
 - Do not delete or replace these files as a side effect of cleanup. Replacement is a separate decision.
 
 ## Options (none applied)
