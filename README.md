@@ -62,9 +62,9 @@ The release Android signing configuration and application ID remain template val
 
 Primary UI typography uses Anthropic Serif (Claude/MB package, owner-provided) via the `Claude` / `ClaudeDisplay` font families. Technical/mono UI uses JetBrains Mono (`JetBrainsMono`, SIL OFL) under `assets/fonts/jetbrains_mono/`.
 
-Flutter vault-init loading uses a rotating set of owner-provided dark arts under `assets/illustrations/loading/` with brand mark + glass progress. The Android native splash (`@drawable/sli_vault_splash`) stays a simple centered mark; wiring full-bleed bitmaps into native splash needs extra density assets / splash tooling and was intentionally not done here.
+Flutter vault-init loading uses a rotating set of owner-provided dark arts under `assets/illustrations/loading/` (byte-synced from `D:\SLI FILES\VALUT STORE ANDROID\IMG FILES\`: `street_lamp.jpg`, `night_city.jpg`, `forest_cabin.jpg`) with brand mark + glass progress. `main()` calls `runApp` first and a boot gate keeps `SliLoadingScreen` up for ~2.2s after the first Flutter frame (so arts are not skipped). The Android native splash (`@drawable/sli_vault_splash`) stays a simple centered mark on black until Flutter attaches; wiring full-bleed bitmaps into native splash needs extra density assets / splash tooling and was intentionally not done here.
 
-Onboarding welcome media lives under `assets/illustrations/onboarding/` (owner stills plus a short muted `cabin_rain.mp4` loop with stills fallback). A ~30-second welcome video was **not found** in the approved `D:\SLI FILES\` asset folders searched.
+Onboarding welcome media lives under `assets/illustrations/onboarding/` (owner stills `lantern_tree` / `frog_pond` / `valley_river` plus muted `cabin_rain.mp4` ~5s loop with stills fallback). A ~30-second welcome video was **not found** in `IMG FILES`, `VALUT STORE ANDROID`, `SLI_Vault_Final_Review_Deliverables`, or `SLI_Vault_Finalization` — provide the path if available.
 
 ## Verification
 
@@ -77,8 +77,8 @@ flutter build apk --release
 flutter build appbundle --release
 ```
 
-Synthetic fixtures cover v1 database upgrades, Kotlin JSON metadata/image restoration, duplicate IDs, ZIP checksums and exact round trips, malformed/unsafe archives, rollback and image collisions, large libraries, URL/tag validation, onboarding persistence, narrow scaled navigation, collections, search, and favorites. Host suite: **21** tests (`flutter test`).
+Synthetic fixtures cover v1 database upgrades, Kotlin JSON metadata/image restoration, duplicate IDs, ZIP checksums and exact round trips, malformed/unsafe archives, rollback and image collisions, large libraries, URL/tag validation, onboarding persistence, loading-art wiring/boot gate, narrow scaled navigation, collections, search, and favorites. Host suite: **25** tests (`flutter test`).
 
-Latest local Android artifacts (not committed): debug APK ~226 MB, release APK ~60 MB, release AAB ~60 MB under `build/app/outputs/`. Release builds remain **debug-signed** until a production keystore is configured.
+Latest local Android artifacts (not committed): debug APK ~226 MB, release APK ~60.5 MB, release AAB ~60.5 MB under `build/app/outputs/`. Release builds remain **debug-signed** (`CN=Android Debug`) until a production keystore is configured.
 
 The original Kotlin checkpoint is `760d9e5a26a5c1ed600ce725911237e109e9e381`.

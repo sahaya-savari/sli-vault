@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed vault-init loading arts never appearing: `main()` previously awaited `initialize()` before `runApp`, so `SliLoadingScreen` was unreachable. Boot gate now paints owner loading arts for ~2.2s after first Flutter frame; loading JPGs re-synced byte-identical from `IMG FILES` (`street_lamp`, `night_city`, `forest_cabin`).
 - Removed dark-mode swipe spotlight glow (`SliSpotlightCard` pan tracking); kept restrained InkWell press feedback.
 - Hide Add FAB on Settings; keep it on Home/Browse/Favorites/Collections.
 - Home header uses official `sli_vault_logo_official.png` mark with SVG fallback.
