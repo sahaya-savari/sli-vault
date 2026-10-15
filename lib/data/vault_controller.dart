@@ -67,6 +67,8 @@ class VaultController extends ChangeNotifier {
     return sorted;
   }
 
+  /// Loads prefs + library. Loading-art hold time is owned by `_VaultBootGate`
+  /// in `main.dart` so the first painted frame is the rotating owner arts.
   Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
     _onboardingCompleted = prefs.getBool(_prefOnboardingDone) ?? false;

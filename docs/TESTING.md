@@ -14,7 +14,7 @@ flutter build appbundle --release
 
 ## Current Automated Coverage
 
-The Flutter suite has **21** tests covering:
+The Flutter suite has **25** tests covering:
 
 - HTTP/HTTPS validation and tag normalization.
 - SQLite CRUD, search, sort/filter inputs, favorites, tags, collection assignments, settings, image storage, and cold reinitialization.
@@ -24,6 +24,7 @@ The Flutter suite has **21** tests covering:
 - Exact metadata/binary ZIP round trips with SHA-256.
 - Corrupt/truncated/oversized/unsupported ZIPs, unsafe paths, duplicate/aliased manifests, missing/orphan/mismatched images, collisions, transaction rollback, and empty/500-item libraries.
 - Persistent onboarding replay, add-link, all five navigation labels, 200% text scaling on a narrow shell, fixed non-scrolling nav at font scale 1.15, favorites, and Settings legal-document navigation.
+- Loading-screen rotation mapping, uninitialized-shell loading art widget, boot-gate init handoff, and on-disk presence of owner welcome/loading media + official logo.
 
 ## Evidence Classification
 
@@ -32,28 +33,23 @@ The Flutter suite has **21** tests covering:
 - **Build:** Android APK/AAB compilation proves packaging, not runtime behavior or production signing.
 - **Emulator / real device:** real-device smoke executed on **CPH2569** (`5a1f8528`), Android 15 (API 35), density 480, system font scale **1.15**. `adb` was invoked from `C:\Users\SANTO\AppData\Local\Android\sdk\platform-tools\adb.exe` (not on PATH). Debug APK installed with `adb install -r`.
 
-### Real-device results (2026-10-15, this verification pass)
+### Real-device results (2026-10-15, image-fix / QA pass)
 
 | Flow | Result | Evidence |
 |---|---|---|
-| USB detection / install | PASS | SDK `adb devices -l` shows CPH2569; `adb install -r` Success |
-| Library state at session start | OBSERVED | Home showed “0 saved” / empty vault after install (likely prior reinstall wipe); no destructive restore run |
-| Cold start / onboarding persistence | PASS | Force-stop + relaunch skips onboarding; library item remains |
-| Five navigation labels | PASS | UIAutomator: Home, Browse, Favorites, **Collections**, Settings (equal-width row; no horizontal scroll strip) |
-| Nav RenderFlex overflow | PASS | Session logcat `RenderFlex overflowed` count = **0** |
-| Light/dark theme | PASS | Light chip `selected="true"` after cold restart |
-| Share Target → save link | PASS | `ACTION_SEND` text/plain → Add sheet → “1 saved” (`example.com`) |
-| Favorites toggle | PASS | Add/remove favorites reflected on Home / Favorites |
-| Collections persistence | PASS | `SmokeTest` present after force-stop |
-| ZIP export (non-destructive) | PASS | Dialog: `sli-vault-backup-…zip` “1 items and original image bytes” (473 B); closed without clearing library |
-| ZIP import on device | NOT VERIFIED | Avoided against device library; covered by host automated suite |
-| Image / photo picker | NOT VERIFIED | System gallery UI not automated in this session |
-| Biometric vault lock | NOT VERIFIED | Optional lock not exercised end-to-end |
-| `FLAG_SECURE` / screenshots | PASS | Focused `screencap` all-black (~17.7 KB; 3/3 black samples) |
-| Add FAB placement | PASS | Visible on Home/Browse/Favorites/Collections; **absent** on Settings |
-| Dark-mode swipe glow | PASS (proxy) | List swipe after spotlight removal; 0 RenderFlex / no FATAL in logcat |
-| Legal titles without Draft | PASS | Privacy Policy + Terms of Use reachable; bodies match local-first behavior |
-| Welcome video on-device | NOT VERIFIED | Short muted loop + stills integrated; visual playback not confirmed this session |
-| Rotation / process death / TalkBack | NOT VERIFIED | Manual follow-up |
+| USB detection / install | PASS | CPH2569 (`5a1f8528`); `adb install -r` Success (data preserved; library still “1 saved”) |
+| Loading arts root cause | FIXED | Prior `await initialize()` before `runApp` skipped `SliLoadingScreen`; boot gate + IMG FILES byte-sync |
+| Loading arts on-device pixels | NOT VERIFIED | Early screencap shows **native** splash (centered logo on black); Flutter arts appear after first frame; `FLAG_SECURE` blacks Flutter screencaps |
+| Loading arts packaging | PASS | APK contains `loading-street-lamp.jpg` / `night-city` / `forest-cabin` matching IMG FILES hashes; 0 asset-load errors in logcat |
+| Welcome media (a11y) | PASS | Settings → View Welcome Guide Again → `Welcome artwork for SLI Vault` + Get Started |
+| Welcome ~30s video | BLOCKED | Only `cabin_rain.mp4` (~5s) found under searched `D:\SLI FILES\` trees; need owner path |
+| Five navigation labels | PASS | Home, Browse, Favorites, Collections, Settings via UIAutomator content-desc |
+| Add FAB placement | PASS | Present on Home; **absent** on Settings |
+| Home logo | PASS | `SLI Vault` identity + official mark path in use |
+| Nav / crash overflows | PASS | Session `RenderFlex overflowed` = 0; no FATAL in sampled logcat |
+| CRUD / favorites / item | PASS (proxy) | Existing `example.com` link + favorite affordance still present after reinstall `-r` |
+| ZIP import / image picker / biometrics | NOT VERIFIED | Avoided destructive restore; gallery/biometric not exercised this pass |
+| TalkBack / rotation | NOT VERIFIED | Manual follow-up |
+| `FLAG_SECURE` | PASS | Flutter-window screencaps black/~34 KB when vault UI focused |
 
 Airplane mode is not expected to affect local CRUD because the release manifest has no Internet permission, but external URL opening depends on the selected app/network and still requires device verification. iOS runtime testing requires macOS and Xcode.

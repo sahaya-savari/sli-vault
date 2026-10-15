@@ -41,12 +41,14 @@ class SliLoadingScreen extends StatelessWidget {
         : (logicalSize.height * dpr).round().clamp(640, 2560);
 
     return Scaffold(
+      key: const ValueKey('sli-loading-screen'),
       backgroundColor: SliTokens.obsidian,
       body: Stack(
         fit: StackFit.expand,
         children: [
           Image.asset(
             art,
+            key: ValueKey('sli-loading-art:$art'),
             fit: BoxFit.cover,
             alignment: Alignment.center,
             filterQuality: FilterQuality.medium,
@@ -126,14 +128,18 @@ class SliLoadingScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: SliTokens.spaceMd),
-                        Text(
-                          message ?? 'Opening vault…',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: SliTokens.fontFamily,
-                            color: SliTokens.textPrimary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                        Semantics(
+                          label: 'Opening vault',
+                          liveRegion: true,
+                          child: Text(
+                            message ?? 'Opening vault…',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: SliTokens.fontFamily,
+                              color: SliTokens.textPrimary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sli_vault/core/assets/sli_assets.dart';
+import 'package:sli_vault/core/widgets/sli_loading_screen.dart';
 import 'package:sli_vault/data/backup_service.dart';
 import 'package:sli_vault/data/local_image_storage.dart';
 import 'package:sli_vault/data/vault_controller.dart';
@@ -623,6 +625,127 @@ void main() {
         await controller.database.close();
         await tempDir.delete(recursive: true);
       });
+    });
+  });
+
+  group('Loading & welcome media assets', () {
+    test('rotating loading backgrounds are declared owner arts', () {
+      expect(
+        SliLoadingScreen.backgrounds,
+        equals([
+          SliAssets.loadingStreetLamp,
+          SliAssets.loadingNightCity,
+          SliAssets.loadingForestCabin,
+        ]),
+      );
+      expect(
+        SliLoadingScreen.backgroundForNow(DateTime(2026, 10, 15)),
+        equals(SliAssets.loadingStreetLamp),
+      );
+      expect(
+        SliLoadingScreen.backgroundForNow(DateTime(2026, 10, 16)),
+        equals(SliAssets.loadingNightCity),
+      );
+      expect(
+        SliLoadingScreen.backgroundForNow(DateTime(2026, 10, 17)),
+        equals(SliAssets.loadingForestCabin),
+      );
+    });
+
+    testWidgets('shows loading art screen while vault is uninitialized', (
+      WidgetTester tester,
+    ) async {
+      SharedPreferences.setMockInitialValues({});
+      late Directory tempDir;
+      late VaultController controller;
+      await tester.runAsync(() async {
+        tempDir = await Directory.systemTemp.createTemp('sli_loading_test_');
+        controller = VaultController(
+          database: VaultDatabase(
+            overrideDbPath: p.join(tempDir.path, 'loading.db'),
+          ),
+          imageStorage: LocalImageStorage(
+            overrideBaseDir: Directory(p.join(tempDir.path, 'images')),
+          ),
+        );
+        // Intentionally do not initialize — boot gate must show loading art.
+      });
+
+      await tester.pumpWidget(SliVaultApp(controller: controller));
+      await tester.pump();
+
+      expect(find.byKey(const ValueKey('sli-loading-screen')), findsOneWidget);
+      expect(find.text('Opening vault…'), findsOneWidget);
+      expect(find.text('SLI Vault'), findsWidgets);
+      final artKey = find.byWidgetPredicate(
+        (widget) =>
+            widget.key is ValueKey<String> &&
+            (widget.key! as ValueKey<String>).value.startsWith(
+              'sli-loading-art:',
+            ),
+      );
+      expect(artKey, findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await tester.runAsync(() async {
+        await controller.initialize();
+        await controller.database.close();
+        await tempDir.delete(recursive: true);
+      });
+    });
+
+    testWidgets('keeps loading art until init completes under test binding', (
+      WidgetTester tester,
+    ) async {
+      SharedPreferences.setMockInitialValues({
+        'sli_vault_onboarding_completed_v1': true,
+      });
+      late Directory tempDir;
+      late VaultController controller;
+      await tester.runAsync(() async {
+        tempDir = await Directory.systemTemp.createTemp('sli_boot_gate_');
+        controller = VaultController(
+          database: VaultDatabase(
+            overrideDbPath: p.join(tempDir.path, 'boot.db'),
+          ),
+          imageStorage: LocalImageStorage(
+            overrideBaseDir: Directory(p.join(tempDir.path, 'images')),
+          ),
+        );
+      });
+
+      await tester.pumpWidget(SliVaultApp(controller: controller));
+      await tester.pump();
+      expect(find.byKey(const ValueKey('sli-loading-screen')), findsOneWidget);
+
+      await tester.runAsync(() async {
+        await controller.initialize();
+      });
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('sli-loading-screen')), findsNothing);
+      expect(find.text('Home'), findsOneWidget);
+
+      await tester.runAsync(() async {
+        await controller.database.close();
+        await tempDir.delete(recursive: true);
+      });
+    });
+
+    test('welcome stills and short cabin_rain video assets exist on disk', () {
+      for (final asset in [
+        ...SliAssets.welcomeStills,
+        SliAssets.welcomeVideo,
+        ...SliLoadingScreen.backgrounds,
+        SliAssets.symbol,
+      ]) {
+        final file = File(p.join(Directory.current.path, asset));
+        expect(file.existsSync(), isTrue, reason: '$asset must exist');
+        expect(
+          file.lengthSync(),
+          greaterThan(1000),
+          reason: '$asset too small',
+        );
+      }
     });
   });
 }
