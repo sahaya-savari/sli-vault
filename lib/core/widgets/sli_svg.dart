@@ -64,7 +64,37 @@ class SliIllustration extends StatelessWidget {
       width: width,
       height: height,
       semanticsLabel: semanticLabel,
+      colorMapper:
+          Theme.of(context).brightness == Brightness.light &&
+              {
+                SliAssets.illEmptyLibrary,
+                SliAssets.illEmptySearch,
+                SliAssets.illEmptyFavorites,
+              }.contains(assetPath)
+          ? _LightIllustrationColorMapper(context.sli)
+          : null,
     );
+  }
+}
+
+class _LightIllustrationColorMapper extends ColorMapper {
+  final SliPalette palette;
+
+  const _LightIllustrationColorMapper(this.palette);
+
+  @override
+  Color substitute(
+    String? id,
+    String elementName,
+    String attributeName,
+    Color color,
+  ) {
+    if (color == const Color(0xFF0A0B0D)) return palette.obsidian;
+    if (color == const Color(0xFF14171E) || color == const Color(0xFF191C22)) {
+      return palette.elevated;
+    }
+    if (color == const Color(0xFF2A2D35)) return palette.border;
+    return color;
   }
 }
 
@@ -112,7 +142,9 @@ class _SliGradientButtonState extends State<SliGradientButton> {
             borderRadius: BorderRadius.circular(SliTokens.radiusMd),
             child: Ink(
               height: 52,
-              padding: const EdgeInsets.symmetric(horizontal: SliTokens.spaceLg),
+              padding: const EdgeInsets.symmetric(
+                horizontal: SliTokens.spaceLg,
+              ),
               decoration: BoxDecoration(
                 gradient: enabled ? SliTokens.primaryGradient : null,
                 color: enabled ? null : context.sli.border,
@@ -128,8 +160,9 @@ class _SliGradientButtonState extends State<SliGradientButton> {
                     : null,
               ),
               child: Row(
-                mainAxisSize:
-                    widget.expand ? MainAxisSize.max : MainAxisSize.min,
+                mainAxisSize: widget.expand
+                    ? MainAxisSize.max
+                    : MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (widget.isLoading) ...[
@@ -173,7 +206,9 @@ class _SliGradientButtonState extends State<SliGradientButton> {
         ),
       ),
     );
-    return widget.expand ? SizedBox(width: double.infinity, child: button) : button;
+    return widget.expand
+        ? SizedBox(width: double.infinity, child: button)
+        : button;
   }
 }
 

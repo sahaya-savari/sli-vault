@@ -1,6 +1,6 @@
 # SLI Vault Flutter
 
-Local-first personal vault for links, screenshots, and images. The Flutter project is the active cross-platform implementation. The original Kotlin recovery project remains at `D:\sli-vault` and must not be modified during migration work.
+Local-first personal vault for links, screenshots, and images. This repository contains the active Flutter implementation.
 
 ## Run
 
@@ -35,6 +35,7 @@ images/<private-image-id>
 ```
 
 Import rejects traversal paths, absolute paths, unexpected files, invalid image binaries, malformed manifests, and unsupported versions.
+Format v2 records SHA-256 and byte length for every image. The importer remains compatible with format v1, skips IDs already in the vault, and rejects duplicate IDs inside an archive.
 
 ## Features
 
@@ -48,6 +49,8 @@ Import rejects traversal paths, absolute paths, unexpected files, invalid image 
 - Android inbound text/image sharing through `ACTION_SEND` and `ACTION_SEND_MULTIPLE`
 - Dark, light, and system theme modes
 - Accessible labels, safe areas, and responsive Flutter layouts
+- Five primary destinations: Home, Browse, Favorites, Collections, and Settings
+- Settings-reachable About, runtime open-source licenses, and clearly labeled local draft legal documents
 
 ## Platform Notes
 
@@ -55,7 +58,11 @@ Android sharing is implemented in `android/app/src/main/kotlin/.../MainActivity.
 
 iOS has Face ID and photo-library usage descriptions and the Flutter-side platform boundary. A true iOS Share Extension requires a separate Xcode extension target, signing configuration, and macOS verification; it is not claimed complete from Windows.
 
-The release Android signing configuration and application ID remain template values and require an explicit release decision before publishing. Proprietary Anthropic Serif font binaries are intentionally not bundled because their redistribution license was not established.
+The release Android signing configuration and application ID remain template values and require an explicit release decision before publishing.
+
+Primary UI typography uses Anthropic Serif (Claude/MB package, owner-provided) via the `Claude` / `ClaudeDisplay` font families. Technical/mono UI uses JetBrains Mono (`JetBrainsMono`, SIL OFL) under `assets/fonts/jetbrains_mono/`.
+
+Flutter vault-init loading uses a rotating set of owner-provided dark arts under `assets/illustrations/loading/` with brand mark + glass progress. The Android native splash (`@drawable/sli_vault_splash`) stays a simple centered mark; wiring full-bleed bitmaps into native splash needs extra density assets / splash tooling and was intentionally not done here.
 
 ## Verification
 
@@ -64,8 +71,12 @@ dart format lib test
 flutter analyze
 flutter test
 flutter build apk --debug
+flutter build apk --release
+flutter build appbundle --release
 ```
 
-Synthetic fixtures cover v1 database upgrades, Kotlin JSON metadata/image restoration, duplicate IDs, ZIP restore, unsafe ZIP paths, image cleanup, URL/tag validation, onboarding, navigation, and favorites.
+Synthetic fixtures cover v1 database upgrades, Kotlin JSON metadata/image restoration, duplicate IDs, ZIP checksums and exact round trips, malformed/unsafe archives, rollback and image collisions, large libraries, URL/tag validation, onboarding persistence, narrow scaled navigation, collections, search, and favorites. Host suite: **21** tests (`flutter test`).
+
+Latest local Android artifacts (not committed): `build/app/outputs/flutter-apk/app-debug.apk`, `app-release.apk`, and `build/app/outputs/bundle/release/app-release.aab`. Release builds remain **debug-signed** until a production keystore is configured.
 
 The original Kotlin checkpoint is `760d9e5a26a5c1ed600ce725911237e109e9e381`.

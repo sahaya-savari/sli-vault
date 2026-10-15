@@ -27,7 +27,14 @@ class OnboardingScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      SliIllustration(SliAssets.symbol, width: 32, height: 32),
+                      SliIllustration(
+                        SliAssets.symbolForBrightness(
+                          Theme.of(context).brightness,
+                        ),
+                        width: 32,
+                        height: 32,
+                        semanticLabel: 'SLI Vault',
+                      ),
                       SizedBox(width: SliTokens.spaceSm),
                       Text(
                         'SLI Vault',

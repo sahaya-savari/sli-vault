@@ -12,9 +12,15 @@ SLI Vault is a local-first Flutter application with no account, cloud sync, tele
 
 `VaultController` exposes the current application state through `ChangeNotifier`. Persistence remains behind `VaultDatabase`, `LocalImageStorage`, and `VaultBackupService`.
 
+The shell exposes exactly five primary destinations: Home, Browse, Favorites, Collections, and Settings via `IndexedStack` (tap-only; no horizontal page swipe). Semantic light/dark palette tokens and identical typography metrics are centralized in `SliTheme`; `SliGlassSurface` provides frosted panels with reduced-motion-aware blur. Primary UI typefaces are Anthropic Serif (`Claude` / `ClaudeDisplay`) with JetBrains Mono for technical labels. Vault-init loading uses `SliLoadingScreen` with rotating owner-provided arts under `assets/illustrations/loading/`.
+
 ## Security Boundary
 
 Optional relocking uses `local_auth` and device credentials. It does not encrypt the database. Android uses `FLAG_SECURE` to prevent screenshots and recent-task previews while the Flutter activity is visible.
+
+The production Android manifest requests biometric authentication only. The app does not include a networking, analytics, advertising, notification, or cloud SDK. URL opening and explicit sharing are delegated to user-selected external apps. Copy URL is the only clipboard write.
+
+Backup restore validates into memory first, requires user confirmation, stages private image files, and inserts database records atomically. Existing IDs are skipped; records are never overwritten by restore.
 
 ## Platform Boundary
 

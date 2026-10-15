@@ -118,6 +118,8 @@ class VaultController extends ChangeNotifier {
   }
 
   Future<void> reopenOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefOnboardingDone, false);
     _onboardingCompleted = false;
     notifyListeners();
   }

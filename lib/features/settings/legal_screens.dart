@@ -1,0 +1,153 @@
+import 'package:flutter/material.dart';
+
+import '../../core/theme/sli_theme.dart';
+
+class AboutSliVaultScreen extends StatelessWidget {
+  const AboutSliVaultScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return _DocumentScaffold(
+      title: 'About SLI Vault',
+      children: [
+        const _DocumentSection(
+          heading: 'SLI Vault 1.0.0',
+          body: 'SLI Vault is a local-first personal library for links, screenshots, and images. Records and imported media are stored in app-private storage on this device.',
+        ),
+        const _DocumentSection(
+          heading: 'Privacy model',
+          body: 'The app has no account, cloud sync, advertising, or analytics integration. Optional vault locking uses the authentication configured on the device; it does not encrypt the database.',
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Open-source licenses'),
+          subtitle: const Text('Licenses supplied by Flutter dependencies'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => showLicensePage(
+            context: context,
+            applicationName: 'SLI Vault',
+            applicationVersion: '1.0.0',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class PrivacyPolicyScreen extends StatelessWidget {
+  const PrivacyPolicyScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const _DocumentScaffold(
+      title: 'Privacy Policy (Draft)',
+      children: [
+        _DraftNotice(),
+        _DocumentSection(
+          heading: 'Data stored by the app',
+          body: 'SLI Vault stores saved links, titles, descriptions, tags, favorite state, collection assignments, timestamps, settings, and imported image files locally in app-private storage.',
+        ),
+        _DocumentSection(
+          heading: 'Data transmission',
+          body: 'SLI Vault does not include an account service, cloud sync, analytics, or advertising SDK. A link is sent to another app only when you choose to open or share it. Backup archives leave the app only when you explicitly share or save them.',
+        ),
+        _DocumentSection(
+          heading: 'Device features',
+          body: 'If enabled, vault locking asks the operating system to authenticate you with a configured biometric or device credential. SLI Vault does not receive or store biometric data. Android inbound sharing copies selected image content to temporary app cache for review.',
+        ),
+        _DocumentSection(
+          heading: 'Deletion and backups',
+          body: 'You can delete individual items or clear the vault. Deleting a media item removes its private image when no other item references it. Exported backups are separate files under your control and are not deleted when the vault is cleared.',
+        ),
+      ],
+    );
+  }
+}
+
+class TermsScreen extends StatelessWidget {
+  const TermsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const _DocumentScaffold(
+      title: 'Terms of Use (Draft)',
+      children: [
+        _DraftNotice(),
+        _DocumentSection(
+          heading: 'Local storage and backups',
+          body: 'You are responsible for maintaining device access and any backup files you create. SLI Vault does not provide hosted storage, account recovery, or cloud restoration.',
+        ),
+        _DocumentSection(
+          heading: 'Your content',
+          body: 'Only save or share content that you are permitted to use. Opening links and sharing content hands that data to the selected external application under its own terms and privacy practices.',
+        ),
+        _DocumentSection(
+          heading: 'Availability',
+          body: 'This draft describes the current app behavior and does not promise uninterrupted operation or recovery from device loss, storage failure, or deletion.',
+        ),
+      ],
+    );
+  }
+}
+
+class _DocumentScaffold extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+
+  const _DocumentScaffold({required this.title, required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(SliTokens.spaceLg),
+          children: children,
+        ),
+      ),
+    );
+  }
+}
+
+class _DraftNotice extends StatelessWidget {
+  const _DraftNotice();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: SliTokens.spaceLg),
+      padding: const EdgeInsets.all(SliTokens.spaceMd),
+      decoration: BoxDecoration(
+        color: context.sli.elevated,
+        border: Border.all(color: SliTokens.warning),
+        borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+      ),
+      child: const Text(
+        'Local factual draft — requires legal review and a hosted public URL before store publication.',
+      ),
+    );
+  }
+}
+
+class _DocumentSection extends StatelessWidget {
+  final String heading;
+  final String body;
+
+  const _DocumentSection({required this.heading, required this.body});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: SliTokens.spaceLg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(heading, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: SliTokens.spaceSm),
+          Text(body, style: Theme.of(context).textTheme.bodyMedium),
+        ],
+      ),
+    );
+  }
+}

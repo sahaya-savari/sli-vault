@@ -21,6 +21,7 @@ dependencies:
   url_launcher: ^6.3.1
   share_plus: ^10.1.4
   archive: ^4.0.4
+  crypto: ^3.0.7
   local_auth: ^2.3.0
 
 dev_dependencies:
@@ -36,9 +37,69 @@ flutter:
     - assets/branding/
     - assets/android/
     - assets/illustrations/
+    - assets/illustrations/loading/
     - assets/tokens/
     - assets/icons/navigation/
     - assets/icons/content/
     - assets/icons/actions/
     - assets/icons/utility/
     - assets/icons/status/
+
+  fonts:
+    # Primary UI — Anthropic Serif (MB Claude Font pack, Text optical size)
+    - family: Claude
+      fonts:
+        - asset: assets/fonts/claude/AnthropicSerif-Text-Regular-Static.otf
+          weight: 400
+        - asset: assets/fonts/claude/AnthropicSerif-Text-RegularItalic-Static.otf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/claude/AnthropicSerif-Text-Medium-Static.otf
+          weight: 500
+        - asset: assets/fonts/claude/AnthropicSerif-Text-MediumItalic-Static.otf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/claude/AnthropicSerif-Text-Semibold-Static.otf
+          weight: 600
+        - asset: assets/fonts/claude/AnthropicSerif-Text-SemiboldItalic-Static.otf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/claude/AnthropicSerif-Text-Bold-Static.otf
+          weight: 700
+        - asset: assets/fonts/claude/AnthropicSerif-Text-BoldItalic-Static.otf
+          weight: 700
+          style: italic
+    # Display optical size for large titles / hero headings
+    - family: ClaudeDisplay
+      fonts:
+        - asset: assets/fonts/claude/AnthropicSerif-Display-Regular-Static.otf
+          weight: 400
+        - asset: assets/fonts/claude/AnthropicSerif-Display-Medium-Static.otf
+          weight: 500
+        - asset: assets/fonts/claude/AnthropicSerif-Display-Semibold-Static.otf
+          weight: 600
+        - asset: assets/fonts/claude/AnthropicSerif-Display-Bold-Static.otf
+          weight: 700
+    # Secondary / technical mono (JetBrains Mono, OFL-1.1)
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/jetbrains_mono/JetBrainsMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/jetbrains_mono/JetBrainsMono-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/jetbrains_mono/JetBrainsMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/jetbrains_mono/JetBrainsMono-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/jetbrains_mono/JetBrainsMono-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/jetbrains_mono/JetBrainsMono-SemiBoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/jetbrains_mono/JetBrainsMono-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/jetbrains_mono/JetBrainsMono-BoldItalic.ttf
+          weight: 700
+          style: italic

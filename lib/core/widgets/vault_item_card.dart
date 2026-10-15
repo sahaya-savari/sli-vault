@@ -162,7 +162,9 @@ class VaultItemCard extends StatelessWidget {
                 : SliAssets.actionFavoriteOutline,
             key: ValueKey<bool>(item.isFavorite),
             size: 20,
-            color: item.isFavorite ? SliTokens.coral : context.sli.textSecondary,
+            color: item.isFavorite
+                ? SliTokens.coral
+                : context.sli.textSecondary,
             semanticLabel: item.isFavorite
                 ? 'Unfavorite ${item.title}'
                 : 'Favorite ${item.title}',

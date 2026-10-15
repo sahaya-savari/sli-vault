@@ -55,3 +55,6 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Local verification dumps / screenshots (not source)
+/artifacts/

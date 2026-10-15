@@ -364,6 +364,7 @@ class VaultItem {
     final createdAt = DateTime.tryParse(json['createdAt'] as String? ?? '');
     final updatedAt = DateTime.tryParse(json['updatedAt'] as String? ?? '');
     if (createdAt == null || updatedAt == null) return null;
+    final collection = (json['collection'] as String?)?.trim();
 
     return VaultItem(
       id: id,
@@ -376,9 +377,9 @@ class VaultItem {
       thumbnailId: (json['thumbnailId'] as String?)?.trim(),
       tags: tags,
       isFavorite: json['isFavorite'] == true,
-      collection: ((json['collection'] as String?) ?? 'General').trim().isEmpty
+      collection: collection == null || collection.isEmpty
           ? 'General'
-          : (json['collection'] as String?)!.trim(),
+          : collection,
       fileSizeBytes: (json['fileSizeBytes'] as num?)?.toInt() ?? 0,
       createdAt: createdAt.toLocal(),
       updatedAt: updatedAt.toLocal(),
@@ -411,6 +412,7 @@ class VaultItem {
     final createdAt = _kotlinTimestamp(json['createdAt']);
     final updatedAt = _kotlinTimestamp(json['updatedAt']);
     if (createdAt == null || updatedAt == null) return null;
+    final collection = (json['collection'] as String?)?.trim();
 
     if (type == VaultItemType.link) {
       if (urlValue == null ||
@@ -430,9 +432,9 @@ class VaultItem {
       thumbnailId: null,
       tags: tags,
       isFavorite: json['isFavorite'] == true,
-      collection: ((json['collection'] as String?) ?? 'General').trim().isEmpty
+      collection: collection == null || collection.isEmpty
           ? 'General'
-          : (json['collection'] as String?)!.trim(),
+          : collection,
       fileSizeBytes: (json['fileSizeBytes'] as num?)?.toInt() ?? 0,
       createdAt: createdAt,
       updatedAt: updatedAt,
