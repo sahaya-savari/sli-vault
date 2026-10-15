@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../core/assets/sli_assets.dart';
 import '../../core/theme/sli_theme.dart';
+import '../../core/widgets/sli_screen_header.dart';
 import '../../core/widgets/sli_svg.dart';
 import '../../core/widgets/type_filter_bar.dart';
 import '../../core/widgets/vault_item_card.dart';
 import '../../data/vault_controller.dart';
+import '../../domain/vault_item.dart';
 import '../item_detail/item_detail_screen.dart';
 
 class FavoritesScreen extends StatefulWidget {
@@ -26,27 +28,43 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     super.dispose();
   }
 
+  /// Distinguishes "nothing favourited yet" from "favourites exist but the
+  /// active search / type filter hides them".
+  Widget _emptyState() {
+    final hasFavorites = widget.controller.allItems.any((i) => i.isFavorite);
+    final filtering =
+        _searchCtrl.text.trim().isNotEmpty ||
+        widget.controller.favoritesFilter != VaultTypeFilter.all;
+    if (hasFavorites && filtering) {
+      return const SliEmptyState(
+        illustrationAsset: SliAssets.illEmptySearch,
+        title: 'No matching favorites',
+        subtitle:
+            'None of your favorites match the current search or type filter.',
+      );
+    }
+    return const SliEmptyState(
+      illustrationAsset: SliAssets.illEmptyFavorites,
+      title: 'No favorites yet',
+      subtitle: 'Tap the heart icon on any saved link or image to pin it here for quick access.',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final items = widget.controller.getFavoritesItems(query: _searchCtrl.text);
 
     return SliAtmosphere(
       variant: SliAtmosphereVariant.abstractFlow,
+      imageAsset: SliAssets.bgFavorites,
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                SliTokens.spaceLg,
-                SliTokens.spaceMd,
-                SliTokens.spaceLg,
-                SliTokens.spaceSm,
-              ),
-              child: Text(
-                'Favorites',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
+            SliScreenHeader(
+              title: 'Favorites',
+              subtitle:
+                  '${items.length} ${items.length == 1 ? 'favorite' : 'favorites'}',
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: SliTokens.spaceLg),
@@ -85,17 +103,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             TypeFilterBar(
               selected: widget.controller.favoritesFilter,
               onChanged: widget.controller.setFavoritesFilter,
-              countForFilter: (f) =>
-                  widget.controller.countByFilter(f, favoritesOnly: true),
+              countForFilter: (f) => widget.controller.countByFilter(
+                f,
+                favoritesOnly: true,
+                query: _searchCtrl.text,
+              ),
             ),
             SizedBox(height: SliTokens.spaceSm),
             Expanded(
               child: items.isEmpty
-                  ? SliEmptyState(
-                      illustrationAsset: SliAssets.illEmptyFavorites,
-                      title: 'No favorites yet',
-                      subtitle: 'Tap the heart icon on any saved link, screenshot, or image to pin it here for quick access.',
-                    )
+                  ? _emptyState()
                   : ListView.separated(
                       padding: EdgeInsets.fromLTRB(
                         SliTokens.spaceLg,

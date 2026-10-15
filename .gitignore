@@ -8,6 +8,7 @@
 *.jks
 *.keystore
 *.key
+key.properties
 *.p12
 *.pem
 .env
@@ -58,3 +59,22 @@ app.*.map.json
 
 # Local verification dumps / screenshots (not source)
 /artifacts/
+
+# Kotlin compiler sessions. Incremental compilation is intentionally off
+# (android/gradle.properties: kotlin.incremental=false).
+**/.kotlin/
+*.salive
+
+# JVM crash dumps from Gradle
+*.hprof
+hs_err_pid*
+replay_pid*
+
+# Packaged binaries copied outside /build must not be committed
+*.apk
+*.aab
+*.ap_
+*.idsig
+
+# Local UIAutomator dump parser from device QA (not part of the app)
+/tool_parse_ui.py

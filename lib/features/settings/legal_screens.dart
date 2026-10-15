@@ -12,7 +12,7 @@ class AboutSliVaultScreen extends StatelessWidget {
       children: [
         const _DocumentSection(
           heading: 'SLI Vault 1.0.0',
-          body: 'SLI Vault is a local-first personal library for links, screenshots, and images. Records and imported media are stored in app-private storage on this device.',
+          body: 'SLI Vault is a local-first personal library for links and images (including screenshots you import). Records and imported media are stored in app-private storage on this device.',
         ),
         const _DocumentSection(
           heading: 'Privacy model',
@@ -56,7 +56,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
         ),
         _DocumentSection(
           heading: 'Deletion and backups',
-          body: 'You can delete individual items or clear the vault. Deleting a media item removes its private image when no other item references it. Exported backups are separate files under your control and are not deleted when the vault is cleared.',
+          body: 'You can delete individual items or clear the vault. Deleting a media item removes its private image when no other item references it. Exported backups are separate files under your control, are not encrypted by SLI Vault, and are not deleted when the vault is cleared.',
         ),
       ],
     );

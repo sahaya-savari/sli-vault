@@ -24,3 +24,5 @@ Restore previews are validated before confirmation. Cancellation performs no wri
 Backups are created in the temporary directory and shared explicitly; they are not placed in public media folders by default.
 
 Export fails rather than silently omitting a referenced private image that is missing. Empty and large synthetic libraries are covered by automated tests. Keep exported ZIP/JSON files private: they are portable copies and are not encrypted by SLI Vault.
+
+A real-file export/import walkthrough on a device (save a ZIP, move it, import it, and confirm skipped IDs) is still incomplete. Automated fixtures are not a substitute for that pass.

@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sli_vault/core/assets/sli_assets.dart';
+import 'package:sli_vault/core/theme/sli_theme.dart';
 import 'package:sli_vault/core/widgets/sli_loading_screen.dart';
 import 'package:sli_vault/data/backup_service.dart';
 import 'package:sli_vault/data/local_image_storage.dart';
@@ -480,9 +481,14 @@ void main() {
         await tester.tap(find.text('Settings'));
         await tester.pumpAndSettle();
         expect(find.text('Local Storage & Backup'), findsOneWidget);
-        await tester.drag(
-          find.byKey(const ValueKey('settings-scroll')),
-          const Offset(0, -900),
+        final settingsScrollable = find.descendant(
+          of: find.byKey(const ValueKey('settings-scroll')),
+          matching: find.byType(Scrollable),
+        );
+        await tester.scrollUntilVisible(
+          find.byKey(const ValueKey('Privacy Policy')),
+          100,
+          scrollable: settingsScrollable,
         );
         await tester.pumpAndSettle();
         await tester.tap(find.byKey(const ValueKey('Privacy Policy')).first);
@@ -490,6 +496,11 @@ void main() {
         expect(find.textContaining('app-private storage'), findsWidgets);
         await tester.pageBack();
         await tester.pumpAndSettle();
+        await tester.scrollUntilVisible(
+          find.byKey(const ValueKey('Terms of Use')),
+          100,
+          scrollable: settingsScrollable,
+        );
         await tester.tap(find.byKey(const ValueKey('Terms of Use')).first);
         await tester.pumpAndSettle();
         expect(find.textContaining('hosted storage'), findsOneWidget);
@@ -729,6 +740,48 @@ void main() {
         await controller.database.close();
         await tempDir.delete(recursive: true);
       });
+    });
+
+    test('tab plates are the owner IMG files', () {
+      expect(SliAssets.bgHome, SliAssets.loadingForestCabin);
+      expect(SliAssets.bgBrowse, SliAssets.loadingNightCity);
+      expect(SliAssets.bgFavorites, SliAssets.welcomeLanternTree);
+      expect(SliAssets.bgCollections, SliAssets.welcomeValleyRiver);
+      expect(SliAssets.bgSettings, SliAssets.loadingStreetLamp);
+      for (final asset in [
+        SliAssets.bgHome,
+        SliAssets.bgBrowse,
+        SliAssets.bgFavorites,
+        SliAssets.bgCollections,
+        SliAssets.bgSettings,
+      ]) {
+        final file = File(p.join(Directory.current.path, asset));
+        expect(file.existsSync(), isTrue, reason: '$asset must exist');
+        expect(
+          file.lengthSync(),
+          greaterThan(1000),
+          reason: '$asset too small',
+        );
+      }
+    });
+
+    testWidgets('atmosphere paints the supplied owner plate', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: SliTheme.darkTheme,
+          home: const SliAtmosphere(
+            imageAsset: SliAssets.bgHome,
+            child: SizedBox.expand(child: Text('Library')),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(
+        find.byKey(const ValueKey('sli-atmosphere-art:${SliAssets.bgHome}')),
+        findsOneWidget,
+      );
+      expect(find.text('Library'), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
 
     test('welcome stills and short cabin_rain video assets exist on disk', () {

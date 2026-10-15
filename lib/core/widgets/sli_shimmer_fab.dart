@@ -29,7 +29,8 @@ class _SliShimmerFabState extends State<SliShimmerFab>
       vsync: this,
       duration: const Duration(milliseconds: 3200),
     );
-    // Don't repeat infinitely in test runner so pumpAndSettle can settle cleanly
+    _animController.addStatusListener(_onSheenStatus);
+    // Never animate in the test runner so pumpAndSettle can settle cleanly
     _isTestBinding = WidgetsBinding.instance.runtimeType.toString().contains(
       'Test',
     );
@@ -43,8 +44,21 @@ class _SliShimmerFabState extends State<SliShimmerFab>
     if (_isTestBinding || disableAnimations) {
       _animController.stop();
       _animController.value = 0;
-    } else if (!_animController.isAnimating) {
-      _animController.repeat();
+    } else if (!_animController.isAnimating && _sheenLoops == 0) {
+      _animController.forward(from: 0);
+    }
+  }
+
+  /// The sheen is a brief attention cue, not a permanent animation: it plays a
+  /// few times after the FAB appears and then rests, so an idle screen does not
+  /// schedule frames (battery) forever.
+  static const int _maxSheenLoops = 3;
+  int _sheenLoops = 0;
+
+  void _onSheenStatus(AnimationStatus status) {
+    if (status != AnimationStatus.completed || !mounted) return;
+    if (++_sheenLoops < _maxSheenLoops) {
+      _animController.forward(from: 0);
     }
   }
 
@@ -58,86 +72,91 @@ class _SliShimmerFabState extends State<SliShimmerFab>
   Widget build(BuildContext context) {
     final disableAnimations =
         MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    return Semantics(
-      button: true,
-      label: 'Add Item to Vault',
-      child: AnimatedScale(
-        scale: _isPressed ? 0.94 : 1.0,
-        duration: disableAnimations
-            ? Duration.zero
-            : const Duration(milliseconds: 120),
-        curve: Curves.easeOutCubic,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(SliTokens.radiusPill),
-            boxShadow: [
-              BoxShadow(
-                color: SliTokens.orange.withValues(alpha: 0.35),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-              BoxShadow(
-                color: SliTokens.coral.withValues(alpha: 0.15),
-                blurRadius: 28,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              key: const Key('fab_add_item'),
-              onHighlightChanged: (highlighted) {
-                if (mounted) setState(() => _isPressed = highlighted);
-              },
-              onTap: widget.onTap,
+    return RepaintBoundary(
+      child: Semantics(
+        button: true,
+        label: 'Add Item to Vault',
+        child: AnimatedScale(
+          scale: _isPressed ? 0.94 : 1.0,
+          duration: disableAnimations
+              ? Duration.zero
+              : const Duration(milliseconds: 120),
+          curve: Curves.easeOutCubic,
+          child: Container(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(SliTokens.radiusPill),
-              child: AnimatedBuilder(
-                animation: _animController,
-                builder: (context, child) {
-                  return Ink(
-                    height: 54,
-                    padding: const EdgeInsets.symmetric(horizontal: 22),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: const [SliTokens.orange, SliTokens.coral],
-                      ),
-                      borderRadius: BorderRadius.circular(SliTokens.radiusPill),
-                      border: Border.all(
-                        color: Colors.white.withValues(
-                          alpha:
-                              0.20 +
-                              0.15 *
-                                  (1.0 -
-                                      (_animController.value - 0.5).abs() * 2),
-                        ),
-                        width: 1.2,
-                      ),
-                    ),
-                    child: child,
-                  );
+              boxShadow: [
+                BoxShadow(
+                  color: SliTokens.orange.withValues(alpha: 0.35),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: SliTokens.coral.withValues(alpha: 0.15),
+                  blurRadius: 28,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                key: const Key('fab_add_item'),
+                onHighlightChanged: (highlighted) {
+                  if (mounted) setState(() => _isPressed = highlighted);
                 },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SliIcon(
-                      SliAssets.actionAdd,
-                      size: 20,
-                      color: SliTokens.onPrimaryGradient,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      widget.label,
-                      style: const TextStyle(
-                        color: SliTokens.onPrimaryGradient,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.2,
+                onTap: widget.onTap,
+                borderRadius: BorderRadius.circular(SliTokens.radiusPill),
+                child: AnimatedBuilder(
+                  animation: _animController,
+                  builder: (context, child) {
+                    return Ink(
+                      height: 54,
+                      padding: const EdgeInsets.symmetric(horizontal: 22),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: const [SliTokens.orange, SliTokens.coral],
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          SliTokens.radiusPill,
+                        ),
+                        border: Border.all(
+                          color: Colors.white.withValues(
+                            alpha:
+                                0.20 +
+                                0.15 *
+                                    (1.0 -
+                                        (_animController.value - 0.5).abs() *
+                                            2),
+                          ),
+                          width: 1.2,
+                        ),
                       ),
-                    ),
-                  ],
+                      child: child,
+                    );
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SliIcon(
+                        SliAssets.actionAdd,
+                        size: 20,
+                        color: SliTokens.onPrimaryGradient,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        widget.label,
+                        style: const TextStyle(
+                          color: SliTokens.onPrimaryGradient,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

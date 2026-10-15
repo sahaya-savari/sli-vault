@@ -46,27 +46,43 @@ class SliLoadingScreen extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            art,
-            key: ValueKey('sli-loading-art:$art'),
-            fit: BoxFit.cover,
-            alignment: Alignment.center,
-            filterQuality: FilterQuality.medium,
-            cacheWidth: cacheWidth,
-            cacheHeight: cacheHeight,
-            gaplessPlayback: true,
-            errorBuilder: (_, _, _) => ColoredBox(color: SliTokens.obsidian),
+          Positioned.fill(
+            child: Image.asset(
+              art,
+              key: ValueKey('sli-loading-art:$art'),
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+              width: double.infinity,
+              height: double.infinity,
+              filterQuality: FilterQuality.medium,
+              cacheWidth: cacheWidth,
+              cacheHeight: cacheHeight,
+              gaplessPlayback: true,
+              semanticLabel: 'Loading background for SLI Vault',
+              errorBuilder: (_, _, _) => ColoredBox(
+                color: SliTokens.obsidian,
+                child: Center(
+                  child: Text(
+                    'Art unavailable',
+                    style: TextStyle(
+                      color: SliTokens.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
-          // Readability veil — stronger in light theme so brand stays legible.
+          // Readability veil — keep art recognizable (not a flat black plate).
           DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withValues(alpha: isDark ? 0.35 : 0.45),
-                  Colors.black.withValues(alpha: isDark ? 0.55 : 0.62),
-                  Colors.black.withValues(alpha: isDark ? 0.72 : 0.78),
+                  Colors.black.withValues(alpha: isDark ? 0.22 : 0.34),
+                  Colors.black.withValues(alpha: isDark ? 0.40 : 0.50),
+                  Colors.black.withValues(alpha: isDark ? 0.58 : 0.68),
                 ],
                 stops: const [0.0, 0.45, 1.0],
               ),

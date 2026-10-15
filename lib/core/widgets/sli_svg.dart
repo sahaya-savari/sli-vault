@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../assets/sli_assets.dart';
 import '../theme/sli_theme.dart';
+import 'sli_glass_surface.dart';
 
 class SliIcon extends StatelessWidget {
   final String assetPath;
@@ -124,6 +125,9 @@ class _SliGradientButtonState extends State<SliGradientButton> {
   @override
   Widget build(BuildContext context) {
     final enabled = widget.onPressed != null && !widget.isLoading;
+    // While loading the button keeps its brand gradient (so the ink spinner
+    // stays visible); only a truly disabled button turns neutral.
+    final active = widget.onPressed != null;
     final button = Semantics(
       button: true,
       enabled: enabled,
@@ -146,10 +150,10 @@ class _SliGradientButtonState extends State<SliGradientButton> {
                 horizontal: SliTokens.spaceLg,
               ),
               decoration: BoxDecoration(
-                gradient: enabled ? SliTokens.primaryGradient : null,
-                color: enabled ? null : context.sli.border,
+                gradient: active ? SliTokens.primaryGradient : null,
+                color: active ? null : context.sli.border,
                 borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-                boxShadow: enabled
+                boxShadow: active
                     ? [
                         BoxShadow(
                           color: SliTokens.orange.withValues(alpha: 0.22),
@@ -166,12 +170,12 @@ class _SliGradientButtonState extends State<SliGradientButton> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (widget.isLoading) ...[
-                    const SizedBox(
+                    SizedBox(
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.2,
-                        color: SliTokens.onPrimaryGradient,
+                        color: context.sli.onAccent,
                       ),
                     ),
                     const SizedBox(width: SliTokens.spaceSm),
@@ -179,8 +183,8 @@ class _SliGradientButtonState extends State<SliGradientButton> {
                     SliIcon(
                       widget.iconAsset!,
                       size: 18,
-                      color: enabled
-                          ? SliTokens.onPrimaryGradient
+                      color: active
+                          ? context.sli.onAccent
                           : context.sli.textSecondary,
                     ),
                     const SizedBox(width: SliTokens.spaceSm),
@@ -191,8 +195,8 @@ class _SliGradientButtonState extends State<SliGradientButton> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: enabled
-                            ? SliTokens.onPrimaryGradient
+                        color: active
+                            ? context.sli.onAccent
                             : context.sli.textSecondary,
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -230,38 +234,62 @@ class SliEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.sli;
+    // The empty state is a localized, theme-aware plate (not a full-screen
+    // darkening) so title/subtitle keep >=4.5:1 over any background photo.
     return Center(
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(SliTokens.spaceXl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SliIllustration(illustrationAsset, width: 156, height: 156),
-            SizedBox(height: SliTokens.spaceLg),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge,
+        padding: const EdgeInsets.all(SliTokens.spaceLg),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 360),
+          child: SliGlassSurface(
+            fillColor: palette.plateFill,
+            fillDeepColor: palette.plateFill,
+            borderColor: palette.plateStroke,
+            blurSigma: 12,
+            borderRadius: BorderRadius.circular(SliTokens.radiusXl),
+            padding: const EdgeInsets.symmetric(
+              horizontal: SliTokens.spaceXl,
+              vertical: SliTokens.spaceXl,
             ),
-            SizedBox(height: SliTokens.spaceSm),
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 320),
-              child: Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: SliIllustration(
+                    illustrationAsset,
+                    width: 140,
+                    height: 140,
+                  ),
+                ),
+                const SizedBox(height: SliTokens.spaceLg),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: SliTokens.spaceSm),
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium
+                      ?.copyWith(color: palette.textSecondary),
+                ),
+                if (actionLabel != null && onAction != null) ...[
+                  const SizedBox(height: SliTokens.spaceXl),
+                  Center(
+                    child: SliGradientButton(
+                      label: actionLabel!,
+                      iconAsset: SliAssets.actionAdd,
+                      onPressed: onAction,
+                      expand: false,
+                    ),
+                  ),
+                ],
+              ],
             ),
-            if (actionLabel != null && onAction != null) ...[
-              SizedBox(height: SliTokens.spaceXl),
-              SliGradientButton(
-                label: actionLabel!,
-                iconAsset: SliAssets.actionAdd,
-                onPressed: onAction,
-                expand: false,
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );

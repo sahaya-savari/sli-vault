@@ -13,6 +13,7 @@ class SliGlassSurface extends StatelessWidget {
   final bool enableBlur;
   final bool danger;
   final Color? fillColor;
+  final Color? fillDeepColor;
   final Color? borderColor;
   final double blurSigma;
 
@@ -24,6 +25,7 @@ class SliGlassSurface extends StatelessWidget {
     this.enableBlur = true,
     this.danger = false,
     this.fillColor,
+    this.fillDeepColor,
     this.borderColor,
     this.blurSigma = 14,
   });
@@ -36,27 +38,29 @@ class SliGlassSurface extends StatelessWidget {
     final radius = borderRadius ?? BorderRadius.circular(SliTokens.radiusLg);
     final useBlur = enableBlur && !reduceMotion && blurSigma > 0;
 
+    final palette = context.sli;
+    final Color dangerTint = SliTokens.error.withValues(
+      alpha: isDark ? 0.10 : 0.07,
+    );
+    // Theme tokens own the fill/stroke so light cards stay clearly separated
+    // from the background art (95% white) and dark cards keep the 6% sheen.
     final Color fill =
         fillColor ??
         (danger
-            ? (isDark
-                  ? SliTokens.error.withValues(alpha: 0.10)
-                  : SliTokens.error.withValues(alpha: 0.06))
-            : (isDark
-                  ? Colors.white.withValues(alpha: 0.06)
-                  : Colors.white.withValues(alpha: 0.62)));
-
-    final Color fillDeep = isDark
-        ? Colors.white.withValues(alpha: danger ? 0.04 : 0.03)
-        : Colors.white.withValues(alpha: danger ? 0.78 : 0.82);
-
+            ? Color.alphaBlend(dangerTint, palette.surfaceFill)
+            : palette.surfaceFill);
+    final Color fillDeep =
+        fillDeepColor ??
+        (danger
+            ? Color.alphaBlend(dangerTint, palette.surfaceFillDeep)
+            : palette.surfaceFillDeep);
     final Color stroke =
         borderColor ??
         (danger
-            ? SliTokens.error.withValues(alpha: isDark ? 0.45 : 0.40)
-            : (isDark
-                  ? SliTokens.orange.withValues(alpha: 0.28)
-                  : const Color(0xFFD8C4B4).withValues(alpha: 0.85)));
+            ? (isDark
+                  ? SliTokens.error.withValues(alpha: 0.45)
+                  : palette.errorText.withValues(alpha: 0.55))
+            : palette.surfaceStroke);
 
     final decoration = BoxDecoration(
       borderRadius: radius,

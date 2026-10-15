@@ -16,7 +16,9 @@ The shell exposes exactly five primary destinations: Home, Browse, Favorites, Co
 
 ## Security Boundary
 
-Optional relocking uses `local_auth` and device credentials. It does not encrypt the database. Android uses `FLAG_SECURE` to prevent screenshots and recent-task previews while the Flutter activity is visible.
+Optional relocking uses `local_auth` and device credentials. The shell locks when the activity is actually paused, then prompts on resume. It does not encrypt the database, and the app does not receive biometric templates.
+
+`FLAG_SECURE` is currently off. In `MainActivity.kt` the `window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)` call is commented, with a restore comment, because the owner explicitly paused screenshot and recents protection. Do not turn it back on unless the owner asks. Older device notes that describe black screencaps describe the previous, enabled behavior.
 
 The production Android manifest requests biometric authentication only. The app does not include a networking, analytics, advertising, notification, or cloud SDK. URL opening and explicit sharing are delegated to user-selected external apps. Copy URL is the only clipboard write.
 

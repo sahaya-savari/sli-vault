@@ -129,9 +129,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      await AddItemSheet.show(
-        context,
-        controller: widget.controller,
+      await _showAddSheet(
         initialType: share.imagePath == null
             ? VaultItemType.link
             : VaultItemType.image,
@@ -139,6 +137,28 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
         initialImagePath: share.imagePath,
       );
     });
+  }
+
+  /// Opens the Add sheet and confirms a successful save with a snackbar.
+  Future<void> _showAddSheet({
+    VaultItemType initialType = VaultItemType.link,
+    String? initialUrl,
+    String? initialImagePath,
+  }) async {
+    final saved = await AddItemSheet.show(
+      context,
+      controller: widget.controller,
+      initialType: initialType,
+      initialUrl: initialUrl,
+      initialImagePath: initialImagePath,
+    );
+    if (saved != null && mounted) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text('Saved "${saved.title}" to vault.')),
+        );
+    }
   }
 
   @override
@@ -217,25 +237,21 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
             }
           },
           child: Scaffold(
-            body: IndexedStack(index: _selectedIndex, children: pages),
+            backgroundColor: Colors.transparent,
+            // The Add sheet (and dialogs) own their keyboard inset. Letting
+            // this Scaffold also shrink made the tab behind the sheet reflow
+            // and overflow (RenderFlex stripes) every time the keyboard
+            // opened.
+            resizeToAvoidBottomInset: false,
+            body: IndexedStack(
+              sizing: StackFit.expand,
+              index: _selectedIndex,
+              children: pages,
+            ),
             // Add belongs on library surfaces only — never on Settings.
             floatingActionButton: _selectedIndex == 4
                 ? null
-                : SliShimmerFab(
-                    onTap: () async {
-                      final saved = await AddItemSheet.show(
-                        context,
-                        controller: widget.controller,
-                      );
-                      if (saved != null && context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Saved "${saved.title}" to vault.'),
-                          ),
-                        );
-                      }
-                    },
-                  ),
+                : SliShimmerFab(onTap: _showAddSheet),
             bottomNavigationBar: _BottomNavBar(
               selectedIndex: _selectedIndex,
               onSelect: (index) => setState(() => _selectedIndex = index),
@@ -325,7 +341,9 @@ class _NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? SliTokens.orange : context.sli.textSecondary;
+    // accentText keeps >=4.5:1 on the light nav surface (raw brand orange is
+    // only 2.9:1 there); in dark it resolves to the brand orange.
+    final color = selected ? context.sli.accentText : context.sli.textSecondary;
     final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
     // Cap label size so serif + large accessibility scales still fit 5 columns.
     final fontSize = textScale > 1.4 ? 9.5 : (textScale > 1.15 ? 10.5 : 11.0);
@@ -346,7 +364,19 @@ class _NavBarItem extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SliIcon(iconAsset, size: 20, color: color),
+                  // Selected state is shape + colour (not colour alone).
+                  Container(
+                    width: 44,
+                    height: 24,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? context.sli.accentText.withValues(alpha: 0.16)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(SliTokens.radiusPill),
+                    ),
+                    child: SliIcon(iconAsset, size: 20, color: color),
+                  ),
                   const SizedBox(height: 2),
                   // ScaleDown keeps "Collections" on one line without scroll/wrap.
                   FittedBox(

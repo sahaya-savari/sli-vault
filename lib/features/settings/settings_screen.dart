@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../core/assets/sli_assets.dart';
 import '../../core/theme/sli_theme.dart';
 import '../../core/widgets/sli_glass_surface.dart';
+import '../../core/widgets/sli_screen_header.dart';
 import '../../core/widgets/sli_svg.dart';
 import '../../data/backup_service.dart';
 import '../../data/vault_controller.dart';
@@ -52,6 +53,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
+          scrollable: true,
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -166,6 +168,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
+          scrollable: true,
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -200,36 +203,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _confirmClearAll() async {
+    if (_isWorking) return;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Clear Entire Vault?'),
-        content: Text(
-          'This permanently deletes all saved links, screenshots, images, and tags from this device. Without an exported backup ZIP, this cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Cancel'),
+      builder: (context) {
+        final palette = context.sli;
+        return AlertDialog(
+          scrollable: true,
+          title: const Text('Clear Entire Vault?'),
+          content: const Text(
+            'This permanently deletes all saved links and images, their tags, and any collections you created from this device. Without an exported backup ZIP, this cannot be undone.',
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: SliTokens.error,
-              foregroundColor: context.sli.obsidian,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
             ),
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Delete Everything'),
-          ),
-        ],
-      ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: palette.destructive,
+                foregroundColor: palette.onDestructive,
+              ),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Delete Everything'),
+            ),
+          ],
+        );
+      },
     );
 
     if (confirmed == true) {
-      await widget.controller.clearAllVaultData();
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('All local vault data cleared.')));
+      setState(() => _isWorking = true);
+      try {
+        await widget.controller.clearAllVaultData();
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('All local vault data cleared.')),
+        );
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Could not clear vault: $e')));
+      } finally {
+        if (mounted) setState(() => _isWorking = false);
+      }
     }
   }
 
@@ -237,13 +254,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final total = widget.controller.allItems.length;
     final links = widget.controller.countByFilter(VaultTypeFilter.links);
-    final screenshots = widget.controller.countByFilter(
-      VaultTypeFilter.screenshots,
-    );
     final images = widget.controller.countByFilter(VaultTypeFilter.images);
+    final palette = context.sli;
 
     return SliAtmosphere(
       variant: SliAtmosphereVariant.abstractFlow,
+      imageAsset: SliAssets.bgSettings,
       child: SafeArea(
         child: ListView(
           key: const ValueKey('settings-scroll'),
@@ -254,14 +270,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             96,
           ),
           children: [
-            Text('Settings', style: Theme.of(context).textTheme.headlineMedium),
-            SizedBox(height: SliTokens.spaceLg),
+            const SliScreenHeader(
+              margin: EdgeInsets.only(bottom: SliTokens.spaceMd),
+              title: 'Settings',
+            ),
             _SectionCard(
               title: 'Local Storage & Backup',
               iconAsset: SliAssets.utilStorage,
               children: [
                 Text(
-                  '$total total items ($links links • $screenshots screenshots • $images images)',
+                  '$total total ${total == 1 ? 'item' : 'items'} ($links ${links == 1 ? 'link' : 'links'} • $images ${images == 1 ? 'image' : 'images'})',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 SizedBox(height: 4),
@@ -270,25 +288,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: SliTheme.mono(context, fontSize: 12.5),
                 ),
                 SizedBox(height: SliTokens.spaceMd),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SliGradientButton(
-                        label: 'Export Backup',
-                        iconAsset: SliAssets.utilExport,
-                        isLoading: _isWorking,
-                        onPressed: _exportBackup,
-                      ),
+                _ActionPair(
+                  primary: SliGradientButton(
+                    label: 'Export Backup',
+                    iconAsset: SliAssets.utilExport,
+                    isLoading: _isWorking,
+                    onPressed: _exportBackup,
+                  ),
+                  secondary: OutlinedButton.icon(
+                    onPressed: _isWorking ? null : _importBackup,
+                    icon: SliIcon(
+                      SliAssets.utilImport,
+                      size: 18,
+                      color: _isWorking
+                          ? palette.textSecondary
+                          : palette.textPrimary,
                     ),
-                    SizedBox(width: SliTokens.spaceSm),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _isWorking ? null : _importBackup,
-                        icon: SliIcon(SliAssets.utilImport, size: 18),
-                        label: Text('Import Backup'),
-                      ),
-                    ),
-                  ],
+                    label: const _ButtonLabel('Import Backup'),
+                  ),
                 ),
               ],
             ),
@@ -313,7 +330,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 SizedBox(height: SliTokens.spaceSm),
-                _ThemeChoiceRow(),
+                _ThemeChoiceRow(controller: widget.controller),
               ],
             ),
             SizedBox(height: SliTokens.spaceMd),
@@ -323,13 +340,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 Material(
                   color: Colors.transparent,
-                  child: SwitchListTile.adaptive(
+                  child: SwitchListTile(
+                    key: const ValueKey('lock-vault-switch'),
                     contentPadding: EdgeInsets.zero,
                     value: widget.controller.lockEnabled,
                     onChanged: widget.controller.setLockEnabled,
-                    title: Text('Lock vault when backgrounded'),
+                    title: Text(
+                      'Lock vault when backgrounded',
+                      style: TextStyle(
+                        color: palette.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     subtitle: Text(
                       'Uses biometrics or the device credential. No custom PIN is stored.',
+                      style: TextStyle(
+                        color: palette.textSecondary,
+                        fontSize: 13,
+                        height: 1.35,
+                      ),
                     ),
                   ),
                 ),
@@ -347,8 +376,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SizedBox(height: SliTokens.spaceMd),
                 OutlinedButton.icon(
                   onPressed: widget.controller.reopenOnboarding,
-                  icon: SliIcon(SliAssets.utilInfo, size: 16),
-                  label: Text('View Welcome Guide Again'),
+                  icon: SliIcon(
+                    SliAssets.utilInfo,
+                    size: 16,
+                    color: palette.textPrimary,
+                  ),
+                  label: const _ButtonLabel('View Welcome Guide Again'),
                 ),
               ],
             ),
@@ -367,18 +400,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 SizedBox(height: SliTokens.spaceMd),
                 OutlinedButton.icon(
+                  key: const ValueKey('clear-all-button'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: SliTokens.error,
-                    side: BorderSide(color: SliTokens.error),
-                    backgroundColor: SliTokens.error.withValues(alpha: 0.06),
+                    foregroundColor: palette.errorText,
+                    side: BorderSide(
+                      color: total == 0 ? palette.border : palette.errorText,
+                    ),
+                    backgroundColor: palette.errorText.withValues(alpha: 0.08),
                   ),
-                  onPressed: total == 0 ? null : _confirmClearAll,
+                  onPressed: total == 0 || _isWorking ? null : _confirmClearAll,
                   icon: SliIcon(
                     SliAssets.actionDelete,
                     size: 18,
-                    color: SliTokens.error,
+                    color: total == 0
+                        ? palette.textSecondary
+                        : palette.errorText,
                   ),
-                  label: Text('Clear All Vault Data'),
+                  label: const _ButtonLabel('Clear All Vault Data'),
                 ),
               ],
             ),
@@ -398,8 +436,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'Save Links • Screenshots • Images',
-                  style: TextStyle(color: SliTokens.amber, fontSize: 12),
+                  'Save links and images',
+                  style: TextStyle(color: palette.amberText, fontSize: 13),
                 ),
                 SizedBox(height: SliTokens.spaceMd),
                 for (final destination in [
@@ -442,29 +480,90 @@ class _SettingsScreenState extends State<SettingsScreen> {
 }
 
 class _ThemeChoiceRow extends StatelessWidget {
-  const _ThemeChoiceRow();
+  final VaultController controller;
+
+  const _ThemeChoiceRow({required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    final controller = context
-        .findAncestorStateOfType<_SettingsScreenState>()!
-        .widget
-        .controller;
+    final palette = context.sli;
     return Wrap(
       spacing: SliTokens.spaceSm,
+      runSpacing: SliTokens.spaceSm,
       children: [
-        for (final mode in [
+        for (final mode in const [
           ('dark', 'Dark'),
           ('light', 'Light'),
           ('system', 'System'),
         ])
           ChoiceChip(
+            key: ValueKey('theme-chip-${mode.$1}'),
             label: Text(mode.$2),
             selected: controller.themeModeName == mode.$1,
+            showCheckmark: false,
+            labelStyle: TextStyle(
+              fontFamily: SliTokens.fontFamily,
+              fontWeight: FontWeight.w700,
+              color: controller.themeModeName == mode.$1
+                  ? palette.onAccent
+                  : palette.textPrimary,
+            ),
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            visualDensity: VisualDensity.standard,
             onSelected: (_) => controller.setThemeModeName(mode.$1),
           ),
       ],
     );
+  }
+}
+
+/// Lays out two buttons side-by-side, or stacked (full width) when the card is
+/// narrow or the text scale is large, so labels are never shrunk or clipped.
+class _ActionPair extends StatelessWidget {
+  final Widget primary;
+  final Widget secondary;
+
+  const _ActionPair({required this.primary, required this.secondary});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final stacked =
+            constraints.maxWidth < 340 ||
+            MediaQuery.textScalerOf(context).scale(15) > 18;
+        if (stacked) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              primary,
+              const SizedBox(height: SliTokens.spaceSm),
+              secondary,
+            ],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: primary),
+            const SizedBox(width: SliTokens.spaceSm),
+            Expanded(child: secondary),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Button label that wraps onto a second line instead of overflowing.
+class _ButtonLabel extends StatelessWidget {
+  final String text;
+
+  const _ButtonLabel(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(text, textAlign: TextAlign.center, softWrap: true);
   }
 }
 
@@ -497,7 +596,7 @@ class _SectionCard extends StatelessWidget {
               SliIcon(
                 iconAsset,
                 size: 18,
-                color: danger ? SliTokens.error : SliTokens.orange,
+                color: danger ? context.sli.errorText : context.sli.accentText,
               ),
               SizedBox(width: SliTokens.spaceSm),
               Expanded(

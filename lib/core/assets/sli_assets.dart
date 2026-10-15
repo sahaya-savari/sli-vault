@@ -105,6 +105,13 @@ class SliAssets {
     welcomeValleyRiver,
   ];
 
+  /// Library / settings atmosphere plates (same owner IMG FILES set).
+  static const String bgHome = loadingForestCabin;
+  static const String bgBrowse = loadingNightCity;
+  static const String bgFavorites = welcomeLanternTree;
+  static const String bgCollections = welcomeValleyRiver;
+  static const String bgSettings = loadingStreetLamp;
+
   // Illustrations
   static const String illOnboarding =
       'assets/illustrations/onboarding-welcome.svg';
