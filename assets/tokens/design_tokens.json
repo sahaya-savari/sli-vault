@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "SLI Vault Design System Tokens",
+  "version": "3.0.0-final",
+  "status": "Proposed canonical tokens from Combined PRD/FRD v2. Not integrated into any application.",
+  "platformTargets": [
+    "Flutter",
+    "Android"
+  ],
+  "color": {
+    "brand": {
+      "fieryOrange": {
+        "value": "#FF6A24",
+        "role": "Primary interactive accent and branding"
+      },
+      "hotCoral": {
+        "value": "#FF4545",
+        "role": "Secondary accent for active states & highlights"
+      },
+      "warmAmber": {
+        "value": "#FFB347",
+        "role": "Warm highlight, badges, and tags (Combined PRD/FRD v2 canonical)"
+      }
+    },
+    "surface": {
+      "obsidian": {
+        "value": "#0A0B0D",
+        "role": "Base canvas and window background"
+      },
+      "deepCharcoal": {
+        "value": "#111317",
+        "role": "Secondary surfaces and bottom nav bar"
+      },
+      "elevatedCharcoal": {
+        "value": "#191C22",
+        "role": "Card bodies, input fields, and dialog panels"
+      }
+    },
+    "glass": {
+      "surfaceSubtle": {
+        "value": "#99111317",
+        "alpha": 0.6,
+        "role": "Optional restrained backdrop overlay \u2014 prefer solid charcoal for readable defaults"
+      },
+      "surfaceStandard": {
+        "value": "#CC181B22",
+        "alpha": 0.8,
+        "role": "Optional frosted card fill \u2014 use sparingly"
+      },
+      "surfaceElevated": {
+        "value": "#E0191D26",
+        "alpha": 0.88,
+        "role": "Modal bottom sheets and dialogs"
+      },
+      "surfaceNavBar": {
+        "value": "#EB0E1014",
+        "alpha": 0.92,
+        "role": "Floating bottom bar"
+      }
+    },
+    "border": {
+      "subtle": {
+        "value": "#2A2D35",
+        "role": "Standard card outline and separators"
+      },
+      "specular": {
+        "value": "#38FFFFFF",
+        "role": "Optional top-edge highlight; keep restrained"
+      },
+      "active": {
+        "value": "#FF6A24",
+        "role": "Focused or highlighted element border"
+      }
+    },
+    "text": {
+      "primary": {
+        "value": "#F5F6F8",
+        "role": "Headings, titles, primary body \u2014 measure contrast before claiming WCAG"
+      },
+      "secondary": {
+        "value": "#A9AFBA",
+        "role": "Subtitles, metadata, secondary body"
+      },
+      "onPrimaryGradient": {
+        "value": "#0A0B0D",
+        "role": "Recommended label color on orange-coral gradient buttons"
+      }
+    },
+    "status": {
+      "success": {
+        "value": "#22C55E",
+        "role": "Confirmed saves and valid operations"
+      },
+      "error": {
+        "value": "#EF4444",
+        "role": "Destructive actions and validation failures"
+      },
+      "warning": {
+        "value": "#F59E0B",
+        "role": "Storage warnings and conflict alerts"
+      },
+      "info": {
+        "value": "#3882F6",
+        "role": "Informational cues"
+      }
+    },
+    "supersededFromCompletePrd": {
+      "primaryText": "#F5F5F7",
+      "secondaryText": "#A4A7B0",
+      "muted": "#777C87",
+      "amber": "#FFB347",
+      "success": "#4ADE80",
+      "error": "#FF6B6B"
+    }
+  },
+  "gradient": {
+    "primary": {
+      "type": "linear",
+      "stops": [
+        {
+          "offset": 0.0,
+          "color": "#FF6A24"
+        },
+        {
+          "offset": 1.0,
+          "color": "#FF4545"
+        }
+      ],
+      "angleDegrees": 135,
+      "usage": "Primary buttons, active filter pills, brand badges"
+    },
+    "glassSheen": {
+      "type": "linear",
+      "stops": [
+        {
+          "offset": 0.0,
+          "color": "#1AFFFFFF"
+        },
+        {
+          "offset": 0.4,
+          "color": "#05FFFFFF"
+        },
+        {
+          "offset": 1.0,
+          "color": "#00000000"
+        }
+      ],
+      "angleDegrees": 145,
+      "usage": "Subtle light catch diagonal sheen on glass surfaces"
+    },
+    "ambientAtmosphere": {
+      "type": "radial",
+      "stops": [
+        {
+          "offset": 0.0,
+          "color": "#33FF6A24"
+        },
+        {
+          "offset": 1.0,
+          "color": "#00000000"
+        }
+      ],
+      "usage": "Background ambient diffusion orbs behind content"
+    }
+  },
+  "typography": {
+    "fontFamily": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    "scale": {
+      "displayLarge": {
+        "fontSize": 32,
+        "lineHeight": 38,
+        "fontWeight": 700,
+        "letterSpacing": -0.5
+      },
+      "headlineMedium": {
+        "fontSize": 24,
+        "lineHeight": 30,
+        "fontWeight": 700,
+        "letterSpacing": -0.2
+      },
+      "titleLarge": {
+        "fontSize": 20,
+        "lineHeight": 26,
+        "fontWeight": 600,
+        "letterSpacing": 0.0
+      },
+      "titleMedium": {
+        "fontSize": 16,
+        "lineHeight": 22,
+        "fontWeight": 600,
+        "letterSpacing": 0.15
+      },
+      "bodyLarge": {
+        "fontSize": 15,
+        "lineHeight": 22,
+        "fontWeight": 400,
+        "letterSpacing": 0.25
+      },
+      "bodyMedium": {
+        "fontSize": 13,
+        "lineHeight": 18,
+        "fontWeight": 400,
+        "letterSpacing": 0.25
+      },
+      "labelLarge": {
+        "fontSize": 14,
+        "lineHeight": 20,
+        "fontWeight": 600,
+        "letterSpacing": 0.1
+      },
+      "labelMedium": {
+        "fontSize": 12,
+        "lineHeight": 16,
+        "fontWeight": 500,
+        "letterSpacing": 0.4
+      },
+      "labelSmall": {
+        "fontSize": 11,
+        "lineHeight": 14,
+        "fontWeight": 500,
+        "letterSpacing": 0.5
+      }
+    }
+  },
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "xxs": 2,
+      "xs": 4,
+      "sm": 8,
+      "md": 12,
+      "lg": 16,
+      "xl": 20,
+      "xxl": 24,
+      "xxxl": 32,
+      "huge": 48
+    }
+  },
+  "radius": {
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 20,
+    "full": 9999
+  },
+  "touchTarget": {
+    "minimumSize": 48,
+    "comment": "Enforces WCAG 2.5.5 and Android Accessibility minimum interactive component size"
+  },
+  "button": {
+    "primaryHeight": 52,
+    "compactHeight": 40,
+    "iconButtonSize": 44
+  },
+  "shadow": {
+    "glassSubtle": {
+      "elevation": 2,
+      "color": "#00000080",
+      "blur": 4
+    },
+    "fieryGlow": {
+      "elevation": 10,
+      "color": "#FF6A244D",
+      "blur": 16
+    }
+  }
+}

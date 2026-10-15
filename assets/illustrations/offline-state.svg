@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
+  <circle cx="100" cy="100" r="70" fill="#FF4545" fill-opacity="0.08"/>
+  <!-- Cloud outline with slash -->
+  <path d="M72 120h56a22 22 0 0 0 4-43.6 30 30 0 0 0-58-4.4A20 20 0 0 0 72 120z"
+        fill="#14171E" stroke="#2A2D35" stroke-width="2"/>
+  <!-- Diagonal Red Slash -->
+  <line x1="60" y1="60" x2="140" y2="140" stroke="#FF4545" stroke-width="3" stroke-linecap="round"/>
+  <!-- Local Disk Badge -->
+  <rect x="80" y="132" width="40" height="18" rx="6" fill="#191C22" stroke="#FF6A24" stroke-width="1.2"/>
+  <circle cx="88" cy="141" r="2" fill="#FF6A24"/>
+  <line x1="96" y1="141" x2="112" y2="141" stroke="#F5F6F8" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

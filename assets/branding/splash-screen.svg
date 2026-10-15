@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 412 915" width="412" height="915" fill="none">
+  <defs>
+    <radialGradient id="splashGlow" cx="50%" cy="45%" r="40%">
+      <stop offset="0%" stop-color="#FF6A24" stop-opacity="0.25"/>
+      <stop offset="60%" stop-color="#FF4545" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#0A0B0D" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="splashBadgeGrad" x1="166" y1="365" x2="246" y2="445" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF6A24"/>
+      <stop offset="100%" stop-color="#FF4545"/>
+    </linearGradient>
+  </defs>
+  <rect width="412" height="915" fill="#0A0B0D"/>
+  <circle cx="206" cy="410" r="220" fill="url(#splashGlow)"/>
+  <g transform="translate(166, 370)">
+    <rect width="80" height="80" rx="24" fill="url(#splashBadgeGrad)"/>
+    <path d="M26 18h28a3 3 0 0 1 3 3v41l-17-10.5L23 62V21a3 3 0 0 1 3-3z" fill="#FFFFFF"/>
+    <circle cx="40" cy="35" r="4.5" fill="#FF6A24"/>
+  </g>
+  <text x="206" y="490" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="28" font-weight="700" fill="#F5F6F8" letter-spacing="-0.5">SLI Vault</text>
+  <text x="206" y="515" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="500" fill="#A9AFBA" letter-spacing="1">SAVE LINKS • SCREENSHOTS • IMAGES</text>
+  <text x="206" y="870" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="500" fill="#777C87" letter-spacing="0.5">LOCAL-FIRST • ZERO TRACKING</text>
+</svg>

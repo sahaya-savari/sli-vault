@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
+  <defs>
+    <radialGradient id="libGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF6A24" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#0A0B0D" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="75" fill="url(#libGlow)"/>
+  <!-- Vault Box / Safe Outline -->
+  <rect x="52" y="60" width="96" height="80" rx="16" fill="#14171E" stroke="#2A2D35" stroke-width="1.5"/>
+  <rect x="58" y="66" width="84" height="68" rx="12" fill="#191C22" stroke="#2A2D35" stroke-dasharray="4 4" stroke-width="1.2"/>
+  <!-- Floating Bookmark Shield -->
+  <g transform="translate(86, 40)">
+    <rect width="28" height="38" rx="6" fill="#FF6A24"/>
+    <path d="M7 6h14a1 1 0 0 1 1 1v26l-8-5-8 5V7a1 1 0 0 1 1-1z" fill="#FFFFFF"/>
+    <circle cx="14" cy="15" r="2.5" fill="#FF6A24"/>
+  </g>
+  <!-- Plus sparkle -->
+  <path d="M148 48v8 M144 52h8" stroke="#FFB347" stroke-width="2" stroke-linecap="round"/>
+  <path d="M48 135v6 M45 138h6" stroke="#FF4545" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

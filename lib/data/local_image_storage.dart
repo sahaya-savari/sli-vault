@@ -1,0 +1,147 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
+
+class LocalImageStorage {
+  final Directory? overrideBaseDir;
+  final Uuid _uuid = const Uuid();
+
+  LocalImageStorage({this.overrideBaseDir});
+
+  Future<Directory> getImagesDir() async {
+    final base = overrideBaseDir ?? await getApplicationSupportDirectory();
+    final dir = Directory(p.join(base.path, 'vault_images'));
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+    }
+    return dir;
+  }
+
+  /// Validates basic image magic headers (PNG, JPEG, WEBP, GIF, BMP).
+  static String? detectImageExtension(Uint8List bytes, {String? fileNameHint}) {
+    if (bytes.length < 12) return null;
+    // PNG: 89 50 4E 47
+    if (bytes[0] == 0x89 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x4E &&
+        bytes[3] == 0x47) {
+      return '.png';
+    }
+    // JPEG: FF D8 FF
+    if (bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF) {
+      return '.jpg';
+    }
+    // GIF: 47 49 46 38
+    if (bytes[0] == 0x47 &&
+        bytes[1] == 0x49 &&
+        bytes[2] == 0x46 &&
+        bytes[3] == 0x38) {
+      return '.gif';
+    }
+    // WEBP: RIFF....WEBP
+    if (bytes[0] == 0x52 &&
+        bytes[1] == 0x49 &&
+        bytes[2] == 0x46 &&
+        bytes[3] == 0x46 &&
+        bytes[8] == 0x57 &&
+        bytes[9] == 0x45 &&
+        bytes[10] == 0x42 &&
+        bytes[11] == 0x50) {
+      return '.webp';
+    }
+    // BMP: 42 4D
+    if (bytes[0] == 0x42 && bytes[1] == 0x4D) {
+      return '.bmp';
+    }
+    if (fileNameHint != null) {
+      final ext = p.extension(fileNameHint).toLowerCase();
+      if (const {
+        '.png',
+        '.jpg',
+        '.jpeg',
+        '.webp',
+        '.gif',
+        '.bmp',
+      }.contains(ext)) {
+        return ext == '.jpeg' ? '.jpg' : ext;
+      }
+    }
+    return null;
+  }
+
+  /// Saves image bytes into durable app-private storage and returns a stable localImageId.
+  Future<String> saveImageBytes(
+    Uint8List bytes, {
+    String? fileNameHint,
+    String? explicitImageId,
+  }) async {
+    final ext = detectImageExtension(bytes, fileNameHint: fileNameHint);
+    if (ext == null) {
+      throw const FormatException(
+        'Unsupported or unreadable image format. Choose a PNG, JPG, WEBP, GIF, or BMP file.',
+      );
+    }
+
+    final dir = await getImagesDir();
+    final safeId = explicitImageId != null
+        ? p.basename(explicitImageId)
+        : '${_uuid.v4()}$ext';
+    final file = File(p.join(dir.path, safeId));
+    await file.writeAsBytes(bytes, flush: true);
+    return safeId;
+  }
+
+  Future<File?> resolveImageFile(String? localImageId) async {
+    if (localImageId == null || localImageId.trim().isEmpty) return null;
+    final safeName = p.basename(localImageId.trim());
+    if (safeName != localImageId.trim()) return null;
+    final dir = await getImagesDir();
+    final file = File(p.join(dir.path, safeName));
+    if (await file.exists()) {
+      return file;
+    }
+    return null;
+  }
+
+  Future<void> deleteImageIfUnused(
+    String? localImageId,
+    Set<String> activeReferencedIds,
+  ) async {
+    if (localImageId == null || localImageId.trim().isEmpty) return;
+    if (activeReferencedIds.contains(localImageId)) return;
+    final file = await resolveImageFile(localImageId);
+    if (file != null && await file.exists()) {
+      await file.delete();
+    }
+  }
+
+  Future<int> calculateTotalImageBytes() async {
+    final dir = await getImagesDir();
+    if (!await dir.exists()) return 0;
+    int total = 0;
+    await for (final entity in dir.list(followLinks: false)) {
+      if (entity is File) {
+        try {
+          total += await entity.length();
+        } catch (_) {}
+      }
+    }
+    return total;
+  }
+
+  Future<void> clearAllImages() async {
+    final dir = await getImagesDir();
+    if (await dir.exists()) {
+      await for (final entity in dir.list(followLinks: false)) {
+        if (entity is File) {
+          try {
+            await entity.delete();
+          } catch (_) {}
+        }
+      }
+    }
+  }
+}

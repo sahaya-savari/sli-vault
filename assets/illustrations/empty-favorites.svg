@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
+  <circle cx="100" cy="100" r="70" fill="#FF4545" fill-opacity="0.08"/>
+  <!-- Heart contour -->
+  <path d="M100 135l-2.4-2.2C82 118 72 108 72 96a14 14 0 0 1 14-14c8 0 12 6 14 9 2-3 6-9 14-9a14 14 0 0 1 14 14c0 12-10 22-25.6 36.8L100 135z"
+        fill="#191C22" stroke="#FF4545" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Sparkles -->
+  <path d="M135 68v6 M132 71h6" stroke="#FFB347" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M64 125v4 M62 127h4" stroke="#FF6A24" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
