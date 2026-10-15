@@ -80,43 +80,37 @@ storeFile=C:\\Users\\<YOU>\\keystores\\sli-vault-release.jks
 
 Hard rules:
 
-- Never commit `*.jks`, `*.keystore`, `key.properties`, `*.enc`, or any password.
+- Never commit `*.jks`, `*.keystore`, `key.properties`, `.env`, `*.env`, or any password.
 - Never paste passwords into issues, chat, README, or CI logs.
 - Without `android/key.properties`, release builds **fail closed** (no silent debug signing).
 
-### Encrypted local backup (`android/secrets/`)
+### Local restore backup (`android/secrets/`)
 
-A machine-local encrypted backup of the keystore (and optionally `key.properties`) may live under `android/secrets/`. That folder’s sensitive contents are gitignored. See `android/secrets/README.md` for decrypt/restore commands.
+A machine-local `.env` restore file for keystore credentials may live under `android/secrets/`. That folder’s sensitive contents are gitignored. See `android/secrets/README.md` for create/restore steps.
 
 Typical local files (not in Git):
 
-- `android/secrets/sli-vault-release.jks.enc`
-- `android/secrets/key.properties.enc`
+- `android/secrets/.env` — `STORE_FILE`, `KEY_ALIAS`, `STORE_PASSWORD`, `KEY_PASSWORD`
+- `android/secrets/keystore.env` — same values using `key.properties` field names
 
-Encrypt with Git for Windows OpenSSL (AES-256-CBC + PBKDF2), using a passphrase you already know (for example the keystore store password — enter it when prompted; do not put it in scripts you commit):
+The `.jks` keystore stays outside the repo (example: `%USERPROFILE%\keystores\sli-vault-release.jks`).
+
+Create from a working `android/key.properties` (do not commit):
 
 ```powershell
-$openssl = "C:\Program Files\Git\usr\bin\openssl.exe"
 New-Item -ItemType Directory -Force -Path android\secrets | Out-Null
-& $openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt `
-  -in "$env:USERPROFILE\keystores\sli-vault-release.jks" `
-  -out android\secrets\sli-vault-release.jks.enc
-& $openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt `
-  -in android\key.properties `
-  -out android\secrets\key.properties.enc
+Copy-Item android\key.properties android\secrets\keystore.env
+# Or write android/secrets/.env with STORE_* / KEY_* keys — see android/secrets/README.md
 ```
 
-Decrypt / restore:
+Restore:
 
 ```powershell
-$openssl = "C:\Program Files\Git\usr\bin\openssl.exe"
-& $openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 `
-  -in android\secrets\sli-vault-release.jks.enc `
-  -out "$env:USERPROFILE\keystores\sli-vault-release.jks"
-& $openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 `
-  -in android\secrets\key.properties.enc `
-  -out android\key.properties
+# From keystore.env (same field names as key.properties)
+Copy-Item android\secrets\keystore.env android\key.properties
 ```
+
+Confirm `storeFile` points at your `.jks` path.
 
 ## Verify a release APK
 

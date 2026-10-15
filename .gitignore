@@ -16,7 +16,7 @@ key.properties
 .env.*
 !.env.example
 
-# Local encrypted signing backup (plaintext + ciphertext stay out of Git)
+# Local signing restore under android/secrets (plaintext .env / keystore stay out of Git)
 /android/secrets/**
 !/android/secrets/.gitignore
 !/android/secrets/.ignore
