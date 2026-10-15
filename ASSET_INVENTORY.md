@@ -52,3 +52,7 @@ This document inventories the vector drawables, adaptive launcher icons, design 
 6. **`GlassDialog`**: Frosted modal dialogs for item editing, collection creation/renaming, and safe deletion confirmation.
 7. **`VaultItemListCard` & `VaultItemGridCard`**: High-performance item presentation cards with thumbnail previews, domain chips, tag pills, favorite toggles, and contextual overflow options.
 8. **`TypeFilterChips`**: Segmented filter pills with active fiery gradient selection.
+9. **`VaultLockScreen` (`com.example.ui.screens.VaultLockScreen`)**: Full-screen frosted biometric lock barrier with fiery flame badge, error banner, and primary Unlock CTA.
+10. **`SliVaultLightColorScheme`**: Cohesive porcelain-white and slate light theme with dark typography, subtle borders, and fiery gradient accents.
+
+

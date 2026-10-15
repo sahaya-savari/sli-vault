@@ -29,8 +29,10 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FileUpload
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Security
@@ -38,12 +40,19 @@ import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.fragment.app.FragmentActivity
+import com.example.ui.auth.BiometricAuthResult
+import com.example.ui.auth.BiometricHelper
+import com.example.ui.auth.BiometricStatus
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -90,10 +99,12 @@ fun SettingsScreen(
     val screenshotsCount by viewModel.screenshotsCount.collectAsStateWithLifecycle()
     val imagesCount by viewModel.imagesCount.collectAsStateWithLifecycle()
     val storageStats by viewModel.storageStats.collectAsStateWithLifecycle()
+    val isVaultLockEnabled by viewModel.isVaultLockEnabled.collectAsStateWithLifecycle()
 
     var showClearConfirmation by remember { mutableStateOf(false) }
     var showImportDialog by remember { mutableStateOf(false) }
     var importJsonText by remember { mutableStateOf("") }
+    var securityDialogMessage by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = modifier
@@ -256,6 +267,86 @@ fun SettingsScreen(
             shape = RoundedCornerShape(18.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
+                // Biometric Toggle Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color(0x33FF6A24)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.Fingerprint, contentDescription = null, tint = FieryOrange, modifier = Modifier.size(20.dp))
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text("Biometric Vault Lock", color = PrimaryText, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                            Text("Require fingerprint, face, or device PIN to open vault", color = SecondaryText, fontSize = 12.sp)
+                        }
+                    }
+
+                    Switch(
+                        checked = isVaultLockEnabled,
+                        onCheckedChange = { enable ->
+                            val activity = context as? FragmentActivity
+                            if (enable) {
+                                val status = BiometricHelper.checkAvailability(context)
+                                if (status != BiometricStatus.READY) {
+                                    securityDialogMessage = status.userFriendlyMessage()
+                                } else if (activity != null) {
+                                    BiometricHelper.showBiometricPrompt(
+                                        activity = activity,
+                                        title = "Enable Vault Lock",
+                                        subtitle = "Authenticate to confirm biometric protection"
+                                    ) { result ->
+                                        if (result is BiometricAuthResult.Success) {
+                                            viewModel.setVaultLockEnabled(true)
+                                        } else if (result is BiometricAuthResult.Error) {
+                                            securityDialogMessage = result.message
+                                        }
+                                    }
+                                } else {
+                                    viewModel.setVaultLockEnabled(true)
+                                }
+                            } else {
+                                if (activity != null && BiometricHelper.checkAvailability(context) == BiometricStatus.READY) {
+                                    BiometricHelper.showBiometricPrompt(
+                                        activity = activity,
+                                        title = "Disable Vault Lock",
+                                        subtitle = "Authenticate to disable vault protection"
+                                    ) { result ->
+                                        if (result is BiometricAuthResult.Success) {
+                                            viewModel.setVaultLockEnabled(false)
+                                        } else if (result is BiometricAuthResult.Error) {
+                                            securityDialogMessage = result.message
+                                        }
+                                    }
+                                } else {
+                                    viewModel.setVaultLockEnabled(false)
+                                }
+                            }
+                        },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = FieryOrange,
+                            uncheckedThumbColor = SecondaryText,
+                            uncheckedTrackColor = ElevatedCharcoal
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+                HorizontalDivider(color = GlassBorder)
+                Spacer(modifier = Modifier.height(14.dp))
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Security, contentDescription = null, tint = FieryOrange, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(10.dp))
@@ -263,7 +354,7 @@ fun SettingsScreen(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "SLI Vault operates entirely on your device using a local Room SQLite database and private file sandbox. No accounts, no external tracking, no cloud synchronization. Your vault is completely yours.",
+                    text = "SLI Vault operates entirely on your device using a local Room SQLite database and private file sandbox. No accounts, no external tracking, no cloud synchronization. Your vault is completely yours.\n\nNotice: Biometric authentication protects application interface access; underlying database files reside in local app-private storage.",
                     color = SecondaryText,
                     fontSize = 13.sp,
                     lineHeight = 18.sp
@@ -364,6 +455,25 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+        }
+    }
+
+    if (securityDialogMessage != null) {
+        GlassDialog(
+            onDismissRequest = { securityDialogMessage = null },
+            title = "Security & Biometrics",
+            icon = Icons.Default.Lock,
+            iconTint = FieryOrange,
+            confirmText = "OK",
+            confirmContainerColor = FieryOrange,
+            onConfirm = { securityDialogMessage = null }
+        ) {
+            Text(
+                text = securityDialogMessage ?: "",
+                color = SecondaryText,
+                fontSize = 14.sp,
+                lineHeight = 20.sp
+            )
         }
     }
 }

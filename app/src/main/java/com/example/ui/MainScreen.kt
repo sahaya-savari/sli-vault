@@ -62,8 +62,53 @@ fun MainScreen(
     val prefilledUrl by viewModel.prefilledUrl.collectAsStateWithLifecycle()
     val prefilledImageUri by viewModel.prefilledImageUri.collectAsStateWithLifecycle()
     val userMessage by viewModel.userMessage.collectAsStateWithLifecycle()
+    val isVaultLocked by viewModel.isVaultLocked.collectAsStateWithLifecycle()
+    val vaultLockError by viewModel.vaultLockError.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
+    val activity = context as? androidx.fragment.app.FragmentActivity
+
+    fun triggerUnlock() {
+        if (activity != null) {
+            com.example.ui.auth.BiometricHelper.showBiometricPrompt(
+                activity = activity,
+                title = "Unlock SLI Vault",
+                subtitle = "Authenticate to access your private vault"
+            ) { result ->
+                when (result) {
+                    is com.example.ui.auth.BiometricAuthResult.Success -> {
+                        viewModel.unlockVault()
+                    }
+                    is com.example.ui.auth.BiometricAuthResult.Error -> {
+                        viewModel.setVaultLockError(result.message)
+                    }
+                    is com.example.ui.auth.BiometricAuthResult.Cancelled -> {
+                        viewModel.setVaultLockError("Authentication cancelled. Tap Unlock to try again.")
+                    }
+                    is com.example.ui.auth.BiometricAuthResult.FailedAttempt -> {
+                        viewModel.setVaultLockError("Authentication failed. Please try again.")
+                    }
+                }
+            }
+        } else {
+            viewModel.unlockVault()
+        }
+    }
+
+    LaunchedEffect(isVaultLocked) {
+        if (isVaultLocked) {
+            triggerUnlock()
+        }
+    }
+
+    if (isVaultLocked) {
+        com.example.ui.screens.VaultLockScreen(
+            errorMessage = vaultLockError,
+            onUnlockClick = { triggerUnlock() },
+            modifier = modifier
+        )
+        return
+    }
 
     // User feedback toasts/snackbars
     LaunchedEffect(userMessage) {

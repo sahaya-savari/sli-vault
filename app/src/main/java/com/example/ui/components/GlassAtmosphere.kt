@@ -40,13 +40,17 @@ fun GlassAtmosphere(
     variant: AtmosphereVariant = AtmosphereVariant.ABSTRACT_FLOW,
     content: @Composable () -> Unit
 ) {
+    val baseColor = Obsidian
+    val isDark = com.example.ui.theme.LocalThemeIsDark.current
+    val glowAlpha = if (isDark) 1.0f else 0.45f
+
     Box(modifier = modifier.fillMaxSize()) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val width = size.width
             val height = size.height
 
             // 1. Deep Obsidian base for all variants
-            drawRect(color = Obsidian)
+            drawRect(color = baseColor)
 
             when (variant) {
                 AtmosphereVariant.CINEMATIC -> {
@@ -54,8 +58,8 @@ fun GlassAtmosphere(
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(
-                                FieryOrange.copy(alpha = 0.28f),
-                                HotCoral.copy(alpha = 0.12f),
+                                FieryOrange.copy(alpha = 0.28f * glowAlpha),
+                                HotCoral.copy(alpha = 0.12f * glowAlpha),
                                 Color.Transparent
                             ),
                             center = Offset(width * 0.50f, height * 0.14f),

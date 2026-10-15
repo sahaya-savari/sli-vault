@@ -124,6 +124,7 @@ fun AddItemSheet(
     var isScreenshotMode by remember { mutableStateOf(initialType == ItemType.SCREENSHOT) }
     var selectedImageUri by remember { mutableStateOf<Uri?>(prefilledImageUri) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isSaving by remember { mutableStateOf(false) }
 
     // Android Zero-Permission Photo Picker
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -331,10 +332,14 @@ fun AddItemSheet(
 
                     com.example.ui.components.SliPrimaryButton(
                         text = "Save to Vault",
+                        enabled = !isSaving,
+                        loading = isSaving,
                         onClick = {
+                            if (isSaving) return@SliPrimaryButton
                             if (urlText.isBlank()) {
                                 errorMessage = "Please enter a valid website URL"
                             } else {
+                                isSaving = true
                                 viewModel.saveLink(
                                     url = urlText,
                                     title = titleText,
@@ -434,8 +439,12 @@ fun AddItemSheet(
 
                     com.example.ui.components.SliPrimaryButton(
                         text = if (isScreenshotMode) "Save Screenshot" else "Save Image",
+                        enabled = !isSaving && selectedImageUri != null,
+                        loading = isSaving,
                         onClick = {
+                            if (isSaving) return@SliPrimaryButton
                             selectedImageUri?.let { uri ->
+                                isSaving = true
                                 viewModel.saveImageOrScreenshot(
                                     imageUri = uri,
                                     isScreenshot = isScreenshotMode,
