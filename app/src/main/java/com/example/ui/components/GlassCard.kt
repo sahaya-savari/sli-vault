@@ -45,7 +45,7 @@ import com.example.ui.theme.HotCoralGlow
 fun GlassCard(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(20.dp),
-    backgroundColor: Color = GlassSurfaceStandard,
+    backgroundColor: Color = Color.Unspecified,
     borderColor: Color? = null,
     borderBrush: Brush? = null,
     borderWidth: Dp = 1.dp,
@@ -56,6 +56,7 @@ fun GlassCard(
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
+    val actualBgColor = if (backgroundColor != Color.Unspecified) backgroundColor else GlassSurfaceStandard
     val actualBorderBrush = when {
         highlight -> GlassActiveBorder
         borderBrush != null -> borderBrush
@@ -108,14 +109,14 @@ fun GlassCard(
             modifier = Modifier
                 .matchParentSize()
                 .blur(radius = blurRadius, edgeTreatment = BlurredEdgeTreatment.Rectangle)
-                .background(backgroundColor)
+                .background(actualBgColor)
         )
 
         // Layer 2: Translucent Glass Tint & Diagonal Light Reflection Sheen
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .background(backgroundColor)
+                .background(actualBgColor)
                 .background(GlassSheenGradient)
                 .then(
                     if (highlight) {

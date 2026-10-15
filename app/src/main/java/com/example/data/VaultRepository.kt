@@ -26,6 +26,7 @@ class VaultRepository(
     fun getDistinctCollections(): Flow<List<String>> = dao.getDistinctCollections()
 
     private val collectionsPrefs = context.getSharedPreferences("sli_vault_collections", Context.MODE_PRIVATE)
+    private val settingsPrefs = context.getSharedPreferences("sli_vault_settings", Context.MODE_PRIVATE)
 
     fun getCustomCollections(): Set<String> {
         return collectionsPrefs.getStringSet("custom_collections", emptySet()) ?: emptySet()
@@ -58,6 +59,77 @@ class VaultRepository(
             current.add(newTrimmed)
             collectionsPrefs.edit().putStringSet("custom_collections", current).apply()
         }
+    }
+
+    fun getThemeModeName(): String {
+        return settingsPrefs.getString("theme_mode", "DARK") ?: "DARK"
+    }
+
+    fun setThemeModeName(name: String) {
+        settingsPrefs.edit().putString("theme_mode", name).apply()
+    }
+
+    fun isOnboardingCompleted(): Boolean {
+        return settingsPrefs.getBoolean("onboarding_completed", true)
+    }
+
+    fun setOnboardingCompleted(completed: Boolean) {
+        settingsPrefs.edit().putBoolean("onboarding_completed", completed).apply()
+    }
+
+    fun isVaultLockEnabled(): Boolean {
+        return settingsPrefs.getBoolean("vault_lock_enabled", false)
+    }
+
+    fun setVaultLockEnabled(enabled: Boolean) {
+        settingsPrefs.edit().putBoolean("vault_lock_enabled", enabled).apply()
+    }
+
+    fun getVaultLockTimeoutSeconds(): Int {
+        return settingsPrefs.getInt("vault_lock_timeout", 0)
+    }
+
+    fun setVaultLockTimeoutSeconds(seconds: Int) {
+        settingsPrefs.edit().putInt("vault_lock_timeout", seconds).apply()
+    }
+
+    /**
+     * Multi-token, case-insensitive memory search and filtering across titles, URLs,
+     * domains, descriptions, tags, and collections.
+     */
+    fun filterItems(
+        items: List<VaultItem>,
+        query: String,
+        typeFilter: ItemType? = null,
+        collectionFilter: String? = null
+    ): List<VaultItem> {
+        var list = items
+
+        if (!collectionFilter.isNullOrBlank()) {
+            list = list.filter { it.collection.equals(collectionFilter, ignoreCase = true) }
+        }
+
+        if (typeFilter != null) {
+            list = list.filter { it.type == typeFilter }
+        }
+
+        if (query.isNotBlank()) {
+            val tokens = query.trim().lowercase().split("\\s+".toRegex()).filter { it.isNotEmpty() }
+            if (tokens.isNotEmpty()) {
+                list = list.filter { item ->
+                    tokens.all { token ->
+                        item.title.lowercase().contains(token) ||
+                                (item.url?.lowercase()?.contains(token) == true) ||
+                                (item.domain?.lowercase()?.contains(token) == true) ||
+                                (item.description?.lowercase()?.contains(token) == true) ||
+                                item.tags.lowercase().contains(token) ||
+                                item.collection.lowercase().contains(token)
+                    }
+                }
+            }
+        }
+
+        return list
     }
 
     fun isValidWebUrl(url: String): Boolean {
@@ -261,7 +333,14 @@ class VaultRepository(
 
     suspend fun importLibraryFromJson(jsonString: String): Result<Int> = withContext(Dispatchers.IO) {
         try {
-            val root = JSONObject(jsonString)
+            val trimmed = jsonString.trim()
+            if (trimmed.isBlank()) {
+                return@withContext Result.failure(IllegalArgumentException("Backup JSON is empty"))
+            }
+            val root = JSONObject(trimmed)
+            if (!root.has("items")) {
+                return@withContext Result.failure(IllegalArgumentException("Invalid backup format: missing 'items' array"))
+            }
             val itemsArray = root.getJSONArray("items")
             val itemsToInsert = mutableListOf<VaultItem>()
             val storageDir = File(context.filesDir, "vault_images")
@@ -305,6 +384,11 @@ class VaultRepository(
                     }
                 }
 
+                val coll = obj.optString("collection", "General").trim().ifBlank { "General" }
+                if (!coll.equals("General", ignoreCase = true)) {
+                    addCustomCollection(coll)
+                }
+
                 val item = VaultItem(
                     id = id,
                     type = itemType,
@@ -315,7 +399,7 @@ class VaultRepository(
                     localImagePath = restoredLocalPath,
                     tags = obj.optString("tags", ""),
                     isFavorite = obj.optBoolean("isFavorite", false),
-                    collection = obj.optString("collection", "General"),
+                    collection = coll,
                     fileSizeBytes = fileSize,
                     createdAt = obj.optLong("createdAt", System.currentTimeMillis()),
                     updatedAt = obj.optLong("updatedAt", System.currentTimeMillis())

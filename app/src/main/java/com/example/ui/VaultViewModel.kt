@@ -67,12 +67,29 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
     private val _prefilledImageUri = MutableStateFlow<Uri?>(null)
     val prefilledImageUri = _prefilledImageUri.asStateFlow()
 
-    // Preferences
-    private val _themeMode = MutableStateFlow(ThemeMode.DARK)
+    // Preferences (Loaded synchronously from persistent storage)
+    private val _themeMode = MutableStateFlow(
+        try {
+            ThemeMode.valueOf(repository.getThemeModeName())
+        } catch (e: Exception) {
+            ThemeMode.DARK
+        }
+    )
     val themeMode = _themeMode.asStateFlow()
 
-    private val _isOnboardingCompleted = MutableStateFlow(true) // default to completed, can be shown or retoggled
+    private val _isOnboardingCompleted = MutableStateFlow(repository.isOnboardingCompleted())
     val isOnboardingCompleted = _isOnboardingCompleted.asStateFlow()
+
+    private val _isVaultLockEnabled = MutableStateFlow(repository.isVaultLockEnabled())
+    val isVaultLockEnabled = _isVaultLockEnabled.asStateFlow()
+
+    private val _isVaultLocked = MutableStateFlow(repository.isVaultLockEnabled())
+    val isVaultLocked = _isVaultLocked.asStateFlow()
+
+    private val _vaultLockError = MutableStateFlow<String?>(null)
+    val vaultLockError = _vaultLockError.asStateFlow()
+
+    private var lastBackgroundTimestamp = 0L
 
     private val _storageStats = MutableStateFlow(StorageStats(0, 0))
     val storageStats = _storageStats.asStateFlow()
@@ -109,7 +126,7 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
     val imagesCount: StateFlow<Int> = repository.getItemCountByType(ItemType.IMAGE)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
-    // Filtered and Sorted Library
+    // Filtered and Sorted Library with multi-token search and collection matching
     val filteredBrowseItems: StateFlow<List<VaultItem>> = combine(
         allItems,
         _searchQuery,
@@ -117,36 +134,18 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         _sortOption,
         _selectedCollection
     ) { items, query, typeFilter, sort, collectionFilter ->
-        var list = items
+        val filtered = repository.filterItems(
+            items = items,
+            query = query,
+            typeFilter = typeFilter,
+            collectionFilter = collectionFilter
+        )
 
-        // 1. Filter by collection
-        if (!collectionFilter.isNullOrBlank()) {
-            list = list.filter { it.collection.equals(collectionFilter, ignoreCase = true) }
-        }
-
-        // 2. Filter by type
-        if (typeFilter != null) {
-            list = list.filter { it.type == typeFilter }
-        }
-
-        // 3. Filter by search query
-        if (query.isNotBlank()) {
-            val q = query.trim().lowercase()
-            list = list.filter { item ->
-                item.title.lowercase().contains(q) ||
-                (item.url?.lowercase()?.contains(q) == true) ||
-                (item.domain?.lowercase()?.contains(q) == true) ||
-                (item.description?.lowercase()?.contains(q) == true) ||
-                item.tags.lowercase().contains(q)
-            }
-        }
-
-        // 4. Sort
         when (sort) {
-            SortOption.NEWEST -> list.sortedByDescending { it.createdAt }
-            SortOption.OLDEST -> list.sortedBy { it.createdAt }
-            SortOption.TITLE_AZ -> list.sortedBy { it.title.lowercase() }
-            SortOption.FAVORITES -> list.sortedByDescending { it.isFavorite }
+            SortOption.NEWEST -> filtered.sortedByDescending { it.createdAt }
+            SortOption.OLDEST -> filtered.sortedBy { it.createdAt }
+            SortOption.TITLE_AZ -> filtered.sortedBy { it.title.lowercase() }
+            SortOption.FAVORITES -> filtered.sortedByDescending { it.isFavorite }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -295,10 +294,51 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setThemeMode(mode: ThemeMode) {
         _themeMode.value = mode
+        repository.setThemeModeName(mode.name)
     }
 
     fun setOnboardingCompleted(completed: Boolean) {
         _isOnboardingCompleted.value = completed
+        repository.setOnboardingCompleted(completed)
+    }
+
+    fun setVaultLockEnabled(enabled: Boolean) {
+        _isVaultLockEnabled.value = enabled
+        repository.setVaultLockEnabled(enabled)
+        if (!enabled) {
+            _isVaultLocked.value = false
+            _vaultLockError.value = null
+        }
+    }
+
+    fun unlockVault() {
+        _isVaultLocked.value = false
+        _vaultLockError.value = null
+    }
+
+    fun lockVault() {
+        if (_isVaultLockEnabled.value) {
+            _isVaultLocked.value = true
+        }
+    }
+
+    fun setVaultLockError(error: String?) {
+        _vaultLockError.value = error
+    }
+
+    fun onAppBackgrounded() {
+        if (_isVaultLockEnabled.value) {
+            lastBackgroundTimestamp = System.currentTimeMillis()
+        }
+    }
+
+    fun onAppForegrounded() {
+        if (_isVaultLockEnabled.value) {
+            val timeoutMs = repository.getVaultLockTimeoutSeconds() * 1000L
+            if (timeoutMs == 0L || (System.currentTimeMillis() - lastBackgroundTimestamp) >= timeoutMs) {
+                _isVaultLocked.value = true
+            }
+        }
     }
 
     fun clearUserMessage() {

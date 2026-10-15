@@ -7,7 +7,21 @@ SLI Vault is a native Android application designed to save, organize, and revisi
 ## Key Features
 
 - **Multi-Type Vaulting:** Save web links with strict URL validation and auto-extracted domains/metadata, high-resolution gallery images, and device screenshots.
-- **Durable Local Storage:** All images and screenshots are persistently copied to private app storage (`files/vault_images/`), preventing 0-byte corrupt files and preserving content even when temporary picker URIs or cache files expire.
+- **Biometric Vault Protection:**
+  - Secure biometric vault lock powered by AndroidX Biometric (`1.2.0-alpha05`).
+  - Supports fingerprint, face unlock, and device credential fallback (PIN / pattern / password).
+  - Pre-enrollment verification via `BiometricStatus` checks to prevent unrecoverable states.
+  - Strict UI isolation: sensitive vault items, search queries, and collections are never rendered while the vault is locked.
+  - Lifecycle re-locking on background/foreground transitions with customizable timeout.
+  - *Note: Biometrics enforce zero-leakage UI access control; database files remain locally sandboxed in app-private storage.*
+- **Adaptive 3-State Appearance System:**
+  - Full support for **Dark Mode**, **Light Mode**, and **System Default**.
+  - Dynamic `@Composable` color tokens adapting obsidian/charcoal surfaces into polished porcelain surfaces with crisp glass borders.
+  - Zero theme flash on cold startup via synchronous preference bootstrapping.
+- **Durable Local Storage & Performance:**
+  - All images and screenshots are persistently stored inside private app storage (`files/vault_images/`), preventing 0-byte corrupt files and eliminating dependency on transient picker URIs.
+  - Custom `SliVaultApp` Coil `ImageLoaderFactory` configured with a 25% heap memory cache and 64 MB disk cache.
+  - Rapid-tap insertion debouncing prevents accidental duplicate saves.
 - **Streak-Inspired UI/UX:**
   - Obsidian (`#0A0B0D`), Primary Surface (`#111317`), and Elevated Charcoal (`#191C22`).
   - Specular glass borders (`GlassSpecularBorder`) and radial ambient glows (`GlassAtmosphere`).
@@ -16,12 +30,15 @@ SLI Vault is a native Android application designed to save, organize, and revisi
   - Custom vector assets including the official fiery vault symbol and dedicated search empty illustration.
 - **Collections & Organization:** Group items into custom collections with dynamic item counts, visual badge indicators, and collection filtering. Includes full rename and safe delete capabilities (reassigning items to General to guarantee zero data loss).
 - **Starred Favorites:** Instant favorite toggling with dedicated filter and quick-access favorites section.
-- **Deep Search & Filtering:** Instant client-side full-text search across titles, URLs, descriptions, domains, and tags, complemented by type filter chips (All, Links, Screenshots, Images).
+- **Deep Multi-Token Search & Filtering:**
+  - Multi-token, whitespace-delimited search matching across titles, URLs, domains, descriptions, tags, and collections.
+  - Robust handling of special characters (`%`, `_`, `'`, `\`, unicode) and partial queries.
+  - Instant client-side filtering combined with segmented type chips (All, Links, Screenshots, Images) and collection filters.
 - **Android System Integration:**
   - `ACTION_SEND` intent receiver for incoming URLs (`text/plain`) and shared images (`image/*`).
   - Secure `FileProvider` image sharing with `FLAG_GRANT_READ_URI_PERMISSION`.
   - System browser intent launching and clipboard copy shortcuts.
-- **Resilient Backup & Restore:** Full JSON export and import with Base64-encoded local image payload preservation and deterministic duplicate avoidance.
+- **Resilient Backup & Restore:** Full JSON export and import with Base64-encoded local image payload preservation, deterministic duplicate avoidance, and hardened parser protection against malformed or truncated archives.
 - **100% Offline & Private:** Zero tracking, zero telemetry, zero analytics, and zero required remote API calls.
 
 ---
@@ -32,8 +49,10 @@ SLI Vault is a native Android application designed to save, organize, and revisi
 - **Language:** Kotlin 2.0.21 / 2.2.10.
 - **UI Toolkit:** Jetpack Compose (BOM 2024.09.00) + Material 3.
 - **Architecture Pattern:** MVVM (Model-View-ViewModel) with unidirectional data flow and Kotlin `StateFlow`.
+- **Security:** AndroidX Biometric 1.2.0-alpha05 with device credential fallback.
 - **Local Persistence:** Room Database 2.7.0 with SQLite indices and coroutines support.
-- **Image Loading:** Coil Compose 2.7.0 with crossfade and disk caching.
+- **Image Loading:** Coil Compose 2.7.0 with custom memory (25% heap) and disk (64MB) caching in `SliVaultApp`.
+- **Continuous Integration:** GitHub Actions (`.github/workflows/android.yml`) verifying unit tests and debug APK assembly on push/PR.
 - **Build System:** Gradle 9.3.1 with Android Gradle Plugin 9.1.1. Compatible with JDK 21 to JDK 25.
 
 ---
@@ -137,7 +156,16 @@ When a user imports an image or captures a screenshot:
 ```bash
 ./gradlew testDebugUnitTest
 ```
-All unit tests execute via JUnit 4 and Robolectric (10 passing tests across `VaultRepositoryTest`, `ExampleRobolectricTest`, and `ExampleUnitTest`).
+All unit tests execute via JUnit 4 and Robolectric (14 passing tests across `VaultRepositoryTest`, `ExampleRobolectricTest`, and `ExampleUnitTest`), verifying:
+- Web URL validation, auto-scheme normalization, and invalid pattern rejection.
+- Safe custom collection deletion (zero data loss via automatic reassignment to `General`).
+- Custom collection renaming with atomic item reference updates.
+- JSON library export and deterministic deduplication on re-import.
+- Preference persistence across app restarts (ThemeMode, Onboarding state, Biometric lock, Lock timeout).
+- Multi-token, whitespace-delimited search matching across title, url, domain, description, tags, and collections.
+- Special character search resilience (`%`, `_`, `'`, `\`, unicode).
+- Type filter and collection filter isolation.
+- Resilience against blank, corrupted, and malformed JSON backup files.
 
 ### Build Debug APK
 ```bash
@@ -145,6 +173,12 @@ All unit tests execute via JUnit 4 and Robolectric (10 passing tests across `Vau
 ```
 The output APK is generated at:
 `app/build/outputs/apk/debug/app-debug.apk`
+
+### Continuous Integration (GitHub Actions)
+The repository includes automated CI (`.github/workflows/android.yml`):
+- Runs on `ubuntu-latest` with Temurin JDK 21.
+- Executes `./gradlew testDebugUnitTest` and `./gradlew assembleDebug` on every push or pull request to `main`.
+- Uploads the assembled debug APK as a workflow artifact.
 
 ---
 
