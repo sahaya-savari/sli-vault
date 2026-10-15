@@ -2,9 +2,10 @@
 
 ## Unreleased
 
-- README hero replaced with the full-quality SLI Vault promotional banner; GitHub **pre-release** APK published for sideload testing (debug-signed, not Play Store).
-- Release prep: added MIT licensing for project-owned code and documentation, with an explicit third-party asset boundary. The app remains not Play-ready, and `FLAG_SECURE` stays commented until the owner asks to restore it. No keystore, application ID, version-code, font binary, or behavior change.
-- Verified on 2026-10-16 with Flutter 3.47.7: `flutter pub get`, `flutter analyze` (no issues), `flutter test` (62 passed), release APK and AAB builds, and APK certificate verification. Artifacts are development/debug-signed and not for Play Store upload; physical-device checks remain NOT TESTED.
+- Android application ID set to `com.sahayasavari.slivault`; release builds signed with a local owner keystore via `android/key.properties` (never committed). GitHub Release `v1.0.0` APK is for sideload / open-source distribution — not Play Store.
+- README hero replaced with the full-quality SLI Vault promotional banner; earlier debug-signed pre-release replaced by a signed owner-keystore release package.
+- Release prep: added MIT licensing for project-owned code and documentation, with an explicit third-party asset boundary. The app remains not Play-ready, and `FLAG_SECURE` stays commented until the owner asks to restore it.
+- Verified on 2026-10-16 with Flutter 3.47.7: `flutter pub get`, `flutter analyze` (no issues), `flutter test` (62 passed), `flutter build apk --release` signed with owner certificate (`CN=Sahaya Savari F`). Physical-device checks remain NOT TESTED.
 - Stopped ignoring the Android Gradle wrapper (`gradlew`, `gradlew.bat`, `gradle-wrapper.jar`) so a clone can reproduce a build. `local.properties` and signing files stay ignored.
 - `FLAG_SECURE` remains paused in `MainActivity.kt` (commented `addFlags`, with a restore comment). Older changelog lines that describe black screencaps describe the previous behavior.
 - Fixed vault-init loading arts never appearing: `main()` previously awaited `initialize()` before `runApp`, so `SliLoadingScreen` was unreachable. Boot gate now paints owner loading arts for ~2.2s after first Flutter frame; loading JPGs re-synced byte-identical from `IMG FILES` (`street_lamp`, `night_city`, `forest_cabin`).

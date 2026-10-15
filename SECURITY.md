@@ -12,4 +12,4 @@ If this GitHub repository has private vulnerability reporting enabled, use that.
 
 - `FLAG_SECURE` is off at the owner's request. Android can capture the Flutter window and the recent-apps preview until the owner asks to restore the commented `addFlags` call in `MainActivity.kt`.
 - Optional background lock uses the device authenticator. It does not encrypt SQLite.
-- Release builds are debug-signed, and the application ID is still `com.example.sli_vault`. Those are publication blockers, not hidden production credentials. No production keystore is in this repository.
+- The application ID is `com.sahayasavari.slivault`. Release signing uses a local owner keystore referenced by `android/key.properties`. No keystore or `key.properties` is in this repository.

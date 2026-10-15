@@ -16,8 +16,8 @@ On PowerShell, quote test name filters that contain `|`.
 
 ## What not to change without an explicit owner decision
 
-- Application ID `com.example.sli_vault`
-- Release signing (`android/app/build.gradle.kts` still uses the debug config)
+- Application ID `com.sahayasavari.slivault`
+- Release signing (local `android/key.properties` + owner keystore; never commit secrets)
 - `FLAG_SECURE` in `MainActivity.kt` (the owner paused it; the `addFlags` call stays commented)
 - `kotlin.incremental=false` in `android/gradle.properties`
 - Bundled fonts and the approved launcher artwork
