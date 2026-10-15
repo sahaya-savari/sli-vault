@@ -218,19 +218,24 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
           },
           child: Scaffold(
             body: IndexedStack(index: _selectedIndex, children: pages),
-            floatingActionButton: SliShimmerFab(
-              onTap: () async {
-                final saved = await AddItemSheet.show(
-                  context,
-                  controller: widget.controller,
-                );
-                if (saved != null && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Saved "${saved.title}" to vault.')),
-                  );
-                }
-              },
-            ),
+            // Add belongs on library surfaces only — never on Settings.
+            floatingActionButton: _selectedIndex == 4
+                ? null
+                : SliShimmerFab(
+                    onTap: () async {
+                      final saved = await AddItemSheet.show(
+                        context,
+                        controller: widget.controller,
+                      );
+                      if (saved != null && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Saved "${saved.title}" to vault.'),
+                          ),
+                        );
+                      }
+                    },
+                  ),
             bottomNavigationBar: _BottomNavBar(
               selectedIndex: _selectedIndex,
               onSelect: (index) => setState(() => _selectedIndex = index),

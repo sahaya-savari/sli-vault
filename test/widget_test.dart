@@ -483,11 +483,14 @@ void main() {
           const Offset(0, -900),
         );
         await tester.pumpAndSettle();
-        await tester.tap(
-          find.byKey(const ValueKey('Privacy Policy (Draft)')).first,
-        );
+        await tester.tap(find.byKey(const ValueKey('Privacy Policy')).first);
         await tester.pumpAndSettle();
-        expect(find.textContaining('Local factual draft'), findsOneWidget);
+        expect(find.textContaining('app-private storage'), findsWidgets);
+        await tester.pageBack();
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('Terms of Use')).first);
+        await tester.pumpAndSettle();
+        expect(find.textContaining('hosted storage'), findsOneWidget);
         await tester.pageBack();
         await tester.pumpAndSettle();
 

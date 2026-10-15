@@ -49,7 +49,11 @@ The Flutter suite has **21** tests covering:
 | ZIP import on device | NOT VERIFIED | Avoided against device library; covered by host automated suite |
 | Image / photo picker | NOT VERIFIED | System gallery UI not automated in this session |
 | Biometric vault lock | NOT VERIFIED | Optional lock not exercised end-to-end |
-| `FLAG_SECURE` / screenshots | PASS | Focused `screencap` all-black 1080×2412 (~19.3 KB; 3/3 black samples) |
+| `FLAG_SECURE` / screenshots | PASS | Focused `screencap` all-black (~17.7 KB; 3/3 black samples) |
+| Add FAB placement | PASS | Visible on Home/Browse/Favorites/Collections; **absent** on Settings |
+| Dark-mode swipe glow | PASS (proxy) | List swipe after spotlight removal; 0 RenderFlex / no FATAL in logcat |
+| Legal titles without Draft | PASS | Privacy Policy + Terms of Use reachable; bodies match local-first behavior |
+| Welcome video on-device | NOT VERIFIED | Short muted loop + stills integrated; visual playback not confirmed this session |
 | Rotation / process death / TalkBack | NOT VERIFIED | Manual follow-up |
 
 Airplane mode is not expected to affect local CRUD because the release manifest has no Internet permission, but external URL opening depends on the selected app/network and still requires device verification. iOS runtime testing requires macOS and Xcode.

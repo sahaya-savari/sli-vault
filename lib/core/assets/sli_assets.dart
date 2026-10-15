@@ -90,6 +90,21 @@ class SliAssets {
   static const String loadingForestCabin =
       'assets/illustrations/loading/loading-forest-cabin.jpg';
 
+  // Welcome / onboarding media (from VALUT STORE ANDROID / IMG FILES)
+  static const String welcomeVideo =
+      'assets/illustrations/onboarding/welcome-cabin-rain.mp4';
+  static const String welcomeLanternTree =
+      'assets/illustrations/onboarding/welcome-lantern-tree.jpg';
+  static const String welcomeFrogPond =
+      'assets/illustrations/onboarding/welcome-frog-pond.jpg';
+  static const String welcomeValleyRiver =
+      'assets/illustrations/onboarding/welcome-valley-river.jpg';
+  static const List<String> welcomeStills = [
+    welcomeLanternTree,
+    welcomeFrogPond,
+    welcomeValleyRiver,
+  ];
+
   // Illustrations
   static const String illOnboarding =
       'assets/illustrations/onboarding-welcome.svg';

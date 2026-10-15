@@ -409,13 +409,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const AboutSliVaultScreen(),
                   ),
                   (
-                    'Privacy Policy (Draft)',
-                    'Local factual draft; legal review required',
+                    'Privacy Policy',
+                    'How SLI Vault stores and handles your data',
                     const PrivacyPolicyScreen(),
                   ),
                   (
-                    'Terms of Use (Draft)',
-                    'Local factual draft; legal review required',
+                    'Terms of Use',
+                    'Local storage, backups, and your content',
                     const TermsScreen(),
                   ),
                 ])
