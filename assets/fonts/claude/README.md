@@ -18,6 +18,9 @@ Findings from a public-source check on 2026-10-16:
 
 These findings are not legal advice and could not be confirmed against a first-party license. Treat the fonts as **not cleared for redistribution** until written permission or an official license is obtained.
 
+The repository's root MIT license applies only to project-owned code and
+documentation. It does **not** grant rights to these Anthropic Serif files.
+
 ## What this means for the project
 
 - The files are registered in `pubspec.yaml` (families `Claude` and `ClaudeDisplay`) and are therefore compiled into every APK and AAB.

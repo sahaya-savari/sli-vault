@@ -6,10 +6,10 @@ Android release preparation steps live in [ANDROID_RELEASE.md](ANDROID_RELEASE.m
 
 | Area | Status | Evidence | Required action |
 |---|---|---|---|
-| Project license | BLOCKED | No `LICENSE` file. README states the license is not chosen. | Owner picks a license (see the release report's MIT vs Apache-2.0 note) and adds `LICENSE` before any public "open source" claim. |
+| Project license | PASS (scope-limited) | `LICENSE` added with MIT terms for project-owned code and documentation. | Keep third-party notices separate; MIT does not cover Anthropic Serif or other third-party assets. |
 | Flutter formatting | PASS (earlier) | Intended Dart files were formatted in prior passes. This prep pass did not reformat Dart. | Re-run `dart format --output=none --set-exit-if-changed lib test` before commit if Dart changes again. |
-| Static analysis | PASS | `flutter analyze` on 2026-10-15: no issues found (Flutter 3.47.7). | None from this pass. 23 packages have newer majors outside current constraints; do not upgrade them just to silence the notice. |
-| Automated tests | PASS | `flutter test` on 2026-10-15: **62 passed**. Matches the prior QA baseline count. Older notes said 21, then 25. | Real-file backup and biometric device walks are still open. |
+| Static analysis | PASS | `flutter analyze` on 2026-10-16: no issues found (Flutter 3.47.7). | None from this pass. 23 packages have newer versions outside current constraints; do not upgrade them just to silence the notice. |
+| Automated tests | PASS | `flutter test` on 2026-10-16: **62 passed**. | Real-file backup and biometric device walks are still open. |
 | Flutter v1 database migration | PASS | Synthetic v1 upgrade test | None |
 | Kotlin JSON import | PASS | Synthetic fixture | Still confirm with a user-generated backup on device |
 | Flutter ZIP restore | PASS | v1 compatibility and v2 SHA-256 round trip | Real-file export/import walkthrough still open |
@@ -18,18 +18,18 @@ Android release preparation steps live in [ANDROID_RELEASE.md](ANDROID_RELEASE.m
 | Theme / navigation / accessibility | PASS (host) | Narrow shell and font-scale widget tests; five labels | Physical TalkBack and rotation still open |
 | Legal / About UI | PASS (in-app copy) | Privacy and Terms are Settings-reachable and do not say "Draft" | Version label is hard-coded `1.0.0`. No hosted public policy URL. |
 | Android debug build | PASS (earlier) | Prior debug APK under `build/app/outputs/` (not committed) | Not rebuilt in this prep pass |
-| Android release builds | PASS (compile only, earlier) | Prior release APK and AAB, QA baseline about 60.6 MB | Still **debug-signed**. Not rebuilt in this prep pass. |
+| Android release builds | PASS (compile only) | `flutter build apk --release` and `flutter build appbundle --release` on 2026-10-16. APK: 63,521,428 bytes (60.58 MiB); AAB: 63,540,169 bytes (60.60 MiB). | Artifacts are **DEVELOPMENT/DEBUG-SIGNED — NOT FOR PLAY STORE UPLOAD**. |
 | Android release signing | BLOCKED | `signingConfig` is debug. No keystore in the tree. | Owner creates a production keystore outside git. A step-by-step guide, not applied, is in `docs/ANDROID_RELEASE.md`. |
 | Application ID | BLOCKED | `com.example.sli_vault` in `build.gradle.kts` and the Kotlin package path. Google Play rejects the `com.example` prefix. | Owner chooses a final ID (proposals in `docs/ANDROID_RELEASE.md`). Not changed. |
 | `FLAG_SECURE` | BLOCKED | Commented out in `MainActivity.kt` at the owner's request | Leave it off until the owner explicitly asks to restore it. |
 | Launcher safe zone | BLOCKED | Adaptive foreground bitmap uses `gravity="fill"` | Do not replace the approved logo. Adjust padding only after a visual check the owner accepts. |
 | Anthropic Serif redistribution | BLOCKED | 25 tracked files in `assets/fonts/claude/`, no license file, and public sources describe Anthropic Serif as a proprietary brand typeface offered for personal use only. Fonts are registered in `pubspec.yaml`, so they ship in every APK and AAB. The `origin` repository is **private**. | Do not make the repo public, publish a Release, or upload to Play with these files. Owner chooses written permission, an OFL replacement such as Newsreader or Source Serif 4, or history rewrite before any public step. Details: `assets/fonts/claude/README.md`. JetBrains Mono OFL is fine if `OFL.txt` stays. |
-| Android device runtime | PASS (partial, historical) | CPH2569, Android 15, font scale 1.15. Five tabs, FAB placement, legal screens, no sampled overflows. Share, favorites, collection persistence, and ZIP export were covered in an earlier session. | Still needed: real ZIP import, gallery picker, biometrics, TalkBack, rotation, welcome clip by eye. Screenshot blocking is no longer on. |
+| Android device runtime | NOT TESTED | No physical-device checks were performed in this pass. | Run the complete physical-device checklist; do not infer runtime readiness from host tests or build success. |
 | Android real-device checklist | NOT TESTED | `docs/ANDROID_DEVICE_CHECKLIST.md` lists backup and restore, image handling, biometric lock, persistence after restart, and error states. Every row is NOT TESTED. | Owner or tester runs it on a physical device and records results. No row is PASS until performed. |
 | iOS build / runtime | BLOCKED | Windows has no Xcode | macOS/Xcode later |
 | iOS Share Extension | BLOCKED | No extension target | Add only if inbound iOS share is required |
 | GitHub Actions | BLOCKED | `.github/workflows/android.yml` existed in `93dd5a8` and was removed in `97eaa1f`. No workflow is on `HEAD`. | Add CI after the license and signing decisions, not as a way to hide failing tests. |
-| Public GitHub push | BLOCKED | License missing, template ID, debug signing, `FLAG_SECURE` off, font rights unverified, local device notes previously in docs | Do not push until the owner accepts those risks or clears them. |
+| Public GitHub push | BLOCKED | Template ID, debug signing, `FLAG_SECURE` off, font rights unverified, and device checks not tested | Keep the repository private; do not publish or upload artifacts until these blockers are resolved. |
 
 ## `_dependents.isEmpty`
 
@@ -43,7 +43,7 @@ Reported on Flutter 3.47.7 from `InheritedElement.debugDeactivated` in `framewor
 
 ## Verdict
 
-The Flutter app is a working local-first library with host coverage and a partial Android device smoke. It is **not** production-release ready and **not** an open-source-licensed project. Publication waits on a chosen license, a production application ID, a release keystore, a `FLAG_SECURE` decision from the owner, font redistribution clearance, launcher safe-zone review, and the remaining device walkthroughs.
+The Flutter app is a working local-first library with host coverage. It is **not** production-release ready. Publication waits on a production application ID, a release keystore, a `FLAG_SECURE` decision from the owner, font redistribution clearance, launcher safe-zone review, and the remaining device walkthroughs.
 
 ## Next session
 

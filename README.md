@@ -1,6 +1,6 @@
-<p align="center">
-  <img src="docs/assets/sli-vault-banner.png" alt="SLI Vault — A minimal, private, local-first library" width="100%">
-</p>
+<div align="center">
+  <img src="docs/assets/sli-vault-readme-hero.png" alt="SLI Vault — local-first private media vault" width="100%" />
+</div>
 
 <p align="center">
   <strong>SLI Vault</strong><br>
@@ -10,9 +10,9 @@
 <p align="center">
   <img alt="Flutter" src="https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white">
   <img alt="Dart" src="https://img.shields.io/badge/Dart-3.13-0175C2?logo=dart&logoColor=white">
-  <img alt="Android" src="https://img.shields.io/badge/Android-15%20tested-3DDC84?logo=android&logoColor=white">
-  <img alt="License" src="https://img.shields.io/badge/license-not%20chosen-lightgrey">
-  <img alt="Release" src="https://img.shields.io/badge/download-not%20published-lightgrey">
+  <img alt="Android" src="https://img.shields.io/badge/Android-first-3DDC84?logo=android&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-6f4e37">
+  <img alt="Release" src="https://img.shields.io/badge/release-development_only-ff6b35">
 </p>
 
 <p align="center">
@@ -33,13 +33,13 @@ SLI Vault is a Flutter Android app for saving links and images into **app-privat
 
 | Platform | Status |
 |----------|--------|
-| Android | Supported (primary target; device-tested on Android 15) |
-| iOS | Scaffold only — not verified as a shipping target |
+| Android | Primary target; development builds compile successfully |
+| iOS | Phase 2 — scaffold only, not verified as a shipping target |
 | Web / Desktop | Flutter platform folders only — not the shipping target |
 
-**Download / release status:** not yet published. There is no GitHub Release, Play Store listing, or signed production APK in this repository. Local debug and release-mode builds are for development only.
+**Download / release status:** not published. There is no GitHub Release or Play Store listing. The current APK/AAB are development artifacts using debug signing; they are **not for Play Store upload**.
 
-A project license has **not** been chosen. Do not treat this repository as MIT, Apache-2.0, or any other open-source license until a `LICENSE` file exists.
+The project-owned code and documentation are licensed under [MIT](LICENSE). Third-party assets are separate: in particular, Anthropic Serif remains **not cleared for redistribution**. See [the font notice](assets/fonts/claude/README.md).
 
 ---
 
@@ -60,42 +60,59 @@ A project license has **not** been chosen. Do not treat this repository as MIT, 
 
 ## Screenshots
 
-Device captures of the current UI (empty-state showcase set):
+The current Android UI, captured from the six primary destinations and onboarding:
 
-<p align="center">
-  <img src="docs/screenshots/ui-verification/home.png" alt="Home" width="30%">
-  &nbsp;
-  <img src="docs/screenshots/ui-verification/browse.png" alt="Browse" width="30%">
-  &nbsp;
-  <img src="docs/screenshots/ui-verification/favourites.png" alt="Favorites" width="30%">
-</p>
+<div align="center">
 
-<p align="center">
-  <img src="docs/screenshots/ui-verification/collections.png" alt="Collections" width="30%">
-  &nbsp;
-  <img src="docs/screenshots/ui-verification/settings.png" alt="Settings" width="30%">
-  &nbsp;
-  <img src="docs/screenshots/ui-verification/welcome.png" alt="Welcome" width="30%">
-</p>
+<img src="docs/screenshots/ui-verification/welcome.png" alt="Welcome" width="145" />
+<img src="docs/screenshots/ui-verification/home.png" alt="Home" width="145" />
+<img src="docs/screenshots/ui-verification/browse.png" alt="Browse" width="145" />
+<img src="docs/screenshots/ui-verification/collections.png" alt="Collections" width="145" />
+
+<img src="docs/screenshots/ui-verification/favourites.png" alt="Favorites" width="145" />
+<img src="docs/screenshots/ui-verification/settings.png" alt="Settings" width="145" />
+
+<sub><b>Welcome</b> · <b>Home</b> · <b>Browse</b> · <b>Collections</b> · <b>Favorites</b> · <b>Settings</b></sub>
+
+</div>
 
 ### QA / verification gallery
 
 Selected light/dark and Add-sheet checks (not a full device suite):
 
-| Capture | Path |
-|---------|------|
-| Home · light · populated | [`21-light-home.png`](docs/screenshots/ui-verification/21-light-home.png) |
-| Home · dark · populated | [`31-dark-home.png`](docs/screenshots/ui-verification/31-dark-home.png) |
-| Collections · light | [`20-light-coll.png`](docs/screenshots/ui-verification/20-light-coll.png) |
-| Add Link · light | [`02-add-sheet-light-link.png`](docs/screenshots/ui-verification/02-add-sheet-light-link.png) |
-| Add Image · light | [`03-add-sheet-light-image.png`](docs/screenshots/ui-verification/03-add-sheet-light-image.png) |
-| Add Link · dark | [`32-dark-add-link.png`](docs/screenshots/ui-verification/32-dark-add-link.png) |
-| Image validation · dark | [`35-image-validation.png`](docs/screenshots/ui-verification/35-image-validation.png) |
-| Settings top · light | [`22-light-settings-top.png`](docs/screenshots/ui-verification/22-light-settings-top.png) |
-| Settings top · dark | [`30-dark-settings-top.png`](docs/screenshots/ui-verification/30-dark-settings-top.png) |
-| Privacy + Danger Zone · light | [`21-light-settings-2.png`](docs/screenshots/ui-verification/21-light-settings-2.png) |
+<p align="center"><b>Home</b></p>
+<p align="center">
+  <a href="docs/screenshots/ui-verification/21-light-home.png"><img src="docs/screenshots/ui-verification/21-light-home.png" alt="QA Home in light theme" width="120"></a>
+  <a href="docs/screenshots/ui-verification/31-dark-home.png"><img src="docs/screenshots/ui-verification/31-dark-home.png" alt="QA Home in dark theme" width="120"></a>
+</p>
+<p align="center"><b>Collections</b></p>
+<p align="center"><a href="docs/screenshots/ui-verification/20-light-coll.png"><img src="docs/screenshots/ui-verification/20-light-coll.png" alt="QA Collections in light theme" width="120"></a></p>
+<p align="center"><b>Add Link / Image</b></p>
+<p align="center">
+  <a href="docs/screenshots/ui-verification/02-add-sheet-light-link.png"><img src="docs/screenshots/ui-verification/02-add-sheet-light-link.png" alt="QA Add Link sheet" width="120"></a>
+  <a href="docs/screenshots/ui-verification/03-add-sheet-light-image.png"><img src="docs/screenshots/ui-verification/03-add-sheet-light-image.png" alt="QA Add Image sheet" width="120"></a>
+  <a href="docs/screenshots/ui-verification/32-dark-add-link.png"><img src="docs/screenshots/ui-verification/32-dark-add-link.png" alt="QA Add Link sheet in dark theme" width="120"></a>
+</p>
+<p align="center"><b>Image Validation</b></p>
+<p align="center"><a href="docs/screenshots/ui-verification/35-image-validation.png"><img src="docs/screenshots/ui-verification/35-image-validation.png" alt="QA Image validation" width="120"></a></p>
+<p align="center"><b>Settings</b></p>
+<p align="center">
+  <a href="docs/screenshots/ui-verification/22-light-settings-top.png"><img src="docs/screenshots/ui-verification/22-light-settings-top.png" alt="QA Settings in light theme" width="120"></a>
+  <a href="docs/screenshots/ui-verification/30-dark-settings-top.png"><img src="docs/screenshots/ui-verification/30-dark-settings-top.png" alt="QA Settings in dark theme" width="120"></a>
+</p>
+<p align="center"><b>Privacy / Danger Zone</b></p>
+<p align="center"><a href="docs/screenshots/ui-verification/21-light-settings-2.png"><img src="docs/screenshots/ui-verification/21-light-settings-2.png" alt="QA Privacy and Danger Zone" width="120"></a></p>
 
 Full QA notes: [docs/TESTING.md](docs/TESTING.md) · [docs/RELEASE_READINESS.md](docs/RELEASE_READINESS.md).
+
+---
+
+## Release documentation
+
+- [Android release guide](docs/ANDROID_RELEASE.md) — build, signing, and artifact verification
+- [Android device checklist](docs/ANDROID_DEVICE_CHECKLIST.md) — all physical-device checks remain **NOT TESTED**
+- [Release readiness gate](docs/RELEASE_READINESS.md) — blockers and evidence
+- [Testing notes](docs/TESTING.md) — automated coverage and validation classification
 
 ---
 
@@ -170,8 +187,8 @@ Outputs stay under `build/` and must not be committed. `publish_to` is `none` in
 | Artifact | Typical local path | Notes |
 |----------|-------------------|--------|
 | Debug APK | `build/app/outputs/flutter-apk/app-debug.apk` | Development |
-| Release APK | `build/app/outputs/flutter-apk/app-release.apk` | Release mode, debug signing today |
-| Release AAB | `build/app/outputs/bundle/release/app-release.aab` | Release mode, debug signing today |
+| Release APK | `build/app/outputs/flutter-apk/app-release.apk` | 63,521,428 bytes (60.58 MiB), debug-signed |
+| Release AAB | `build/app/outputs/bundle/release/app-release.aab` | 63,540,169 bytes (60.60 MiB), debug-signed |
 
 ---
 
@@ -218,8 +235,8 @@ These are **release blockers** or open gaps, not marketing copy:
 | Signing | Release APK/AAB use the **debug** signing config; no production keystore in-repo |
 | Version display | About UI hard-codes `1.0.0`; `pubspec.yaml` is `1.0.0+1` |
 | `FLAG_SECURE` | **Off** until the owner restores the commented `addFlags` call |
-| License | **Not chosen** — no `LICENSE` file |
-| Fonts | JetBrains Mono is SIL OFL. Anthropic Serif under `assets/fonts/claude/` has **no** license and appears to be a proprietary typeface, so it is **not cleared for redistribution**. Keep this repository private until it is replaced or permission is obtained ([details](assets/fonts/claude/README.md)) |
+| License | MIT for project-owned code and documentation; third-party assets remain separately licensed |
+| Fonts | JetBrains Mono is SIL OFL. Anthropic Serif under `assets/fonts/claude/` is **not cleared for redistribution**; keep this repository private until permission or replacement |
 | Launcher icon | Adaptive foreground fills the canvas; system mask may crop outer glow |
 | Device QA gaps | Backup export/import with real files, image handling, biometric lock, restart persistence, and error states are **not tested** on a real device — see [docs/ANDROID_DEVICE_CHECKLIST.md](docs/ANDROID_DEVICE_CHECKLIST.md) |
 | Framework assert | `_dependents.isEmpty` reported historically; **not reproduced** in the last QA pass |
@@ -239,7 +256,7 @@ Do not commit keystores, `key.properties`, `.env` files, vault databases, backup
 
 ## License
 
-**Not chosen.** There is no `LICENSE` file. All rights remain with the copyright holder until one is added.
+Project-owned code and documentation are licensed under the [MIT License](LICENSE). MIT does **not** cover Anthropic Serif or other third-party assets; see [assets/fonts/claude/README.md](assets/fonts/claude/README.md).
 
 Third-party notices that do exist:
 
@@ -250,6 +267,6 @@ Third-party notices that do exist:
 
 ## Download
 
-**Not yet published.**
+**Not yet published.** No GitHub Release or Play Store listing exists.
 
 When a signed release exists, it will be announced with a GitHub Release or store listing. Until then, clone the repo and build locally with the commands above. Do not treat debug-signed release APKs as distributable store packages.
