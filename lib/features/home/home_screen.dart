@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/assets/sli_assets.dart';
 import '../../core/theme/sli_theme.dart';
+import '../../core/widgets/sli_glass_surface.dart';
 import '../../core/widgets/sli_svg.dart';
 import '../../core/widgets/type_filter_bar.dart';
 import '../../core/widgets/vault_item_card.dart';
@@ -24,172 +25,197 @@ class HomeScreen extends StatelessWidget {
       variant: SliAtmosphereVariant.abstractFlow,
       child: SafeArea(
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              SliTokens.spaceLg,
-              SliTokens.spaceMd,
-              SliTokens.spaceLg,
-              SliTokens.spaceSm,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                SliTokens.spaceLg,
+                SliTokens.spaceMd,
+                SliTokens.spaceLg,
+                SliTokens.spaceSm,
+              ),
+              child: _HomeHeader(totalCount: totalCount),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    SliIllustration(SliAssets.symbol, width: 36, height: 36),
-                    SizedBox(width: SliTokens.spaceMd),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: SliTokens.spaceLg,
+                vertical: SliTokens.spaceSm,
+              ),
+              child: InkWell(
+                key: Key('home_search_bar'),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => SearchScreen(controller: controller),
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+                child: SliGlassSurface(
+                  enableBlur: true,
+                  blurSigma: 10,
+                  borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: SliTokens.spaceLg,
+                  ),
+                  child: SizedBox(
+                    height: 48,
+                    child: Row(
                       children: [
-                        Text(
-                          'SLI Vault',
-                          style: Theme.of(context).textTheme.titleLarge,
+                        SliIcon(
+                          SliAssets.actionSearch,
+                          size: 18,
+                          color: context.sli.textSecondary,
                         ),
-                        Text(
-                          'Local-first personal library',
-                          style: TextStyle(
-                            color: context.sli.textSecondary,
-                            fontSize: 12,
+                        SizedBox(width: SliTokens.spaceMd),
+                        Expanded(
+                          child: Text(
+                            'Search links, screenshots, images, or tags...',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: context.sli.textSecondary,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: context.sli.elevated,
-                    borderRadius: BorderRadius.circular(SliTokens.radiusPill),
-                    border: Border.all(color: context.sli.border),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SliIcon(
-                        SliAssets.utilPrivacy,
-                        size: 14,
-                        color: SliTokens.success,
-                      ),
-                      SizedBox(width: 6),
-                      Text(
-                        '$totalCount saved',
-                        style: TextStyle(
-                          color: context.sli.textPrimary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: SliTokens.spaceLg,
-              vertical: SliTokens.spaceSm,
-            ),
-            child: InkWell(
-              key: Key('home_search_bar'),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => SearchScreen(controller: controller),
-                  ),
-                );
-              },
-              borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-              child: Container(
-                height: 48,
-                padding: EdgeInsets.symmetric(horizontal: SliTokens.spaceLg),
-                decoration: BoxDecoration(
-                  color: context.sli.elevated,
-                  borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-                  border: Border.all(color: context.sli.border),
-                ),
-                child: Row(
-                  children: [
-                    SliIcon(
-                      SliAssets.actionSearch,
-                      size: 18,
-                      color: context.sli.textSecondary,
-                    ),
-                    SizedBox(width: SliTokens.spaceMd),
-                    Expanded(
-                      child: Text(
-                        'Search links, screenshots, images, or tags...',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: context.sli.textSecondary,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
-          ),
-          SizedBox(height: SliTokens.spaceXs),
-          TypeFilterBar(
-            selected: controller.homeFilter,
-            onChanged: controller.setHomeFilter,
-            countForFilter: (f) => controller.countByFilter(f),
-          ),
-          SizedBox(height: SliTokens.spaceSm),
-          Expanded(
-            child: items.isEmpty
-                ? SliEmptyState(
-                    illustrationAsset: SliAssets.illEmptyLibrary,
-                    title: totalCount == 0
-                        ? 'Your vault is empty'
-                        : 'No ${controller.homeFilter.label.toLowerCase()} yet',
-                    subtitle: totalCount == 0
-                        ? 'Save your first link, screenshot, or image. Everything stays stored privately on this device.'
-                        : 'Tap Add below to capture a new item in this category.',
-                    actionLabel: 'Add First Item',
-                    onAction: () =>
-                        AddItemSheet.show(context, controller: controller),
-                  )
-                : ListView.separated(
-                    padding: EdgeInsets.fromLTRB(
-                      SliTokens.spaceLg,
-                      SliTokens.spaceSm,
-                      SliTokens.spaceLg,
-                      96,
-                    ),
-                    itemCount: items.length,
-                    separatorBuilder: (_, _) =>
-                        SizedBox(height: SliTokens.spaceMd),
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return VaultItemCard(
-                        item: item,
-                        controller: controller,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => ItemDetailScreen(
-                                itemId: item.id,
-                                controller: controller,
+            SizedBox(height: SliTokens.spaceXs),
+            TypeFilterBar(
+              selected: controller.homeFilter,
+              onChanged: controller.setHomeFilter,
+              countForFilter: (f) => controller.countByFilter(f),
+            ),
+            SizedBox(height: SliTokens.spaceSm),
+            Expanded(
+              child: items.isEmpty
+                  ? SliEmptyState(
+                      illustrationAsset: SliAssets.illEmptyLibrary,
+                      title: totalCount == 0
+                          ? 'Your vault is empty'
+                          : 'No ${controller.homeFilter.label.toLowerCase()} yet',
+                      subtitle: totalCount == 0
+                          ? 'Save your first link, screenshot, or image. Everything stays stored privately on this device.'
+                          : 'Tap Add below to capture a new item in this category.',
+                      actionLabel: 'Add First Item',
+                      onAction: () =>
+                          AddItemSheet.show(context, controller: controller),
+                    )
+                  : ListView.separated(
+                      padding: EdgeInsets.fromLTRB(
+                        SliTokens.spaceLg,
+                        SliTokens.spaceSm,
+                        SliTokens.spaceLg,
+                        96,
+                      ),
+                      itemCount: items.length,
+                      separatorBuilder: (_, _) =>
+                          SizedBox(height: SliTokens.spaceMd),
+                      itemBuilder: (context, index) {
+                        final item = items[index];
+                        return VaultItemCard(
+                          item: item,
+                          controller: controller,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ItemDetailScreen(
+                                  itemId: item.id,
+                                  controller: controller,
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                        onToggleFavorite: () =>
-                            controller.toggleFavorite(item.id),
-                      );
-                    },
-                  ),
+                            );
+                          },
+                          onToggleFavorite: () =>
+                              controller.toggleFavorite(item.id),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeHeader extends StatelessWidget {
+  final int totalCount;
+
+  const _HomeHeader({required this.totalCount});
+
+  @override
+  Widget build(BuildContext context) {
+    final identity = Row(
+      children: [
+        SliIllustration(
+          SliAssets.symbolForBrightness(Theme.of(context).brightness),
+          width: 36,
+          height: 36,
+          semanticLabel: 'SLI Vault',
+        ),
+        SizedBox(width: SliTokens.spaceMd),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('SLI Vault', style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                'Local-first personal library',
+                style: TextStyle(
+                  color: context.sli.textSecondary,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+    final badge = SliGlassSurface(
+      enableBlur: false,
+      borderRadius: BorderRadius.circular(SliTokens.radiusPill),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SliIcon(SliAssets.utilPrivacy, size: 14, color: SliTokens.success),
+          SizedBox(width: 6),
+          Text(
+            '$totalCount saved',
+            style: TextStyle(
+              color: context.sli.textPrimary,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),
-      ),
+    );
+    final largeText = MediaQuery.textScalerOf(context).scale(12) / 12 > 1.3;
+    if (largeText) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          identity,
+          SizedBox(height: SliTokens.spaceSm),
+          Align(alignment: Alignment.centerLeft, child: badge),
+        ],
+      );
+    }
+    return Row(
+      children: [
+        Expanded(child: identity),
+        SizedBox(width: SliTokens.spaceSm),
+        badge,
+      ],
     );
   }
 }

@@ -9,10 +9,12 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../core/assets/sli_assets.dart';
 import '../../core/theme/sli_theme.dart';
+import '../../core/widgets/sli_glass_surface.dart';
 import '../../core/widgets/sli_svg.dart';
 import '../../data/backup_service.dart';
 import '../../data/vault_controller.dart';
 import '../../domain/vault_item.dart';
+import 'legal_screens.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VaultController controller;
@@ -240,161 +242,200 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
     final images = widget.controller.countByFilter(VaultTypeFilter.images);
 
-    return SafeArea(
-      child: ListView(
-        padding: EdgeInsets.fromLTRB(
-          SliTokens.spaceLg,
-          SliTokens.spaceMd,
-          SliTokens.spaceLg,
-          96,
+    return SliAtmosphere(
+      variant: SliAtmosphereVariant.abstractFlow,
+      child: SafeArea(
+        child: ListView(
+          key: const ValueKey('settings-scroll'),
+          padding: EdgeInsets.fromLTRB(
+            SliTokens.spaceLg,
+            SliTokens.spaceMd,
+            SliTokens.spaceLg,
+            96,
+          ),
+          children: [
+            Text('Settings', style: Theme.of(context).textTheme.headlineMedium),
+            SizedBox(height: SliTokens.spaceLg),
+            _SectionCard(
+              title: 'Local Storage & Backup',
+              iconAsset: SliAssets.utilStorage,
+              children: [
+                Text(
+                  '$total total items ($links links • $screenshots screenshots • $images images)',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Approximate local storage used: ${_formatBytes(widget.controller.approxStorageBytes)}',
+                  style: SliTheme.mono(context, fontSize: 12.5),
+                ),
+                SizedBox(height: SliTokens.spaceMd),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SliGradientButton(
+                        label: 'Export Backup',
+                        iconAsset: SliAssets.utilExport,
+                        isLoading: _isWorking,
+                        onPressed: _exportBackup,
+                      ),
+                    ),
+                    SizedBox(width: SliTokens.spaceSm),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _isWorking ? null : _importBackup,
+                        icon: SliIcon(SliAssets.utilImport, size: 18),
+                        label: Text('Import Backup'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: SliTokens.spaceMd),
+            _SectionCard(
+              title: 'Appearance',
+              iconAsset: SliAssets.utilTheme,
+              children: [
+                Text(
+                  'Theme',
+                  style: TextStyle(
+                    color: context.sli.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Choose the appearance used by SLI Vault.',
+                  style: TextStyle(
+                    color: context.sli.textSecondary,
+                    fontSize: 13,
+                  ),
+                ),
+                SizedBox(height: SliTokens.spaceSm),
+                _ThemeChoiceRow(),
+              ],
+            ),
+            SizedBox(height: SliTokens.spaceMd),
+            _SectionCard(
+              title: 'Privacy & Data Architecture',
+              iconAsset: SliAssets.utilPrivacy,
+              children: [
+                Material(
+                  color: Colors.transparent,
+                  child: SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    value: widget.controller.lockEnabled,
+                    onChanged: widget.controller.setLockEnabled,
+                    title: Text('Lock vault when backgrounded'),
+                    subtitle: Text(
+                      'Uses biometrics or the device credential. No custom PIN is stored.',
+                    ),
+                  ),
+                ),
+                SizedBox(height: SliTokens.spaceSm),
+                Text(
+                  '• 100% Local-First: Saved links, tags, and imported images are stored in app-private storage on this device.\n'
+                  '• Zero Telemetry: No user accounts, cloud sync, analytics, or advertising SDKs are included.\n'
+                  '• Honest Security Notice: Local storage is not hardware encryption. Protect your device lock screen and keep backup exports in a safe place.',
+                  style: TextStyle(
+                    color: context.sli.textSecondary,
+                    fontSize: 13,
+                    height: 1.45,
+                  ),
+                ),
+                SizedBox(height: SliTokens.spaceMd),
+                OutlinedButton.icon(
+                  onPressed: widget.controller.reopenOnboarding,
+                  icon: SliIcon(SliAssets.utilInfo, size: 16),
+                  label: Text('View Welcome Guide Again'),
+                ),
+              ],
+            ),
+            SizedBox(height: SliTokens.spaceMd),
+            _SectionCard(
+              title: 'Danger Zone',
+              iconAsset: SliAssets.statusWarning,
+              danger: true,
+              children: [
+                Text(
+                  'Clearing your vault removes all database records and stored image files from this device.',
+                  style: TextStyle(
+                    color: context.sli.textSecondary,
+                    fontSize: 13,
+                  ),
+                ),
+                SizedBox(height: SliTokens.spaceMd),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: SliTokens.error,
+                    side: BorderSide(color: SliTokens.error),
+                    backgroundColor: SliTokens.error.withValues(alpha: 0.06),
+                  ),
+                  onPressed: total == 0 ? null : _confirmClearAll,
+                  icon: SliIcon(
+                    SliAssets.actionDelete,
+                    size: 18,
+                    color: SliTokens.error,
+                  ),
+                  label: Text('Clear All Vault Data'),
+                ),
+              ],
+            ),
+            SizedBox(height: SliTokens.spaceMd),
+            _SectionCard(
+              title: 'About SLI Vault',
+              iconAsset: SliAssets.utilInfo,
+              children: [
+                Text(
+                  'SLI Vault v1.0.0 (Flutter + Dart Canonical Build)',
+                  style: SliTheme.mono(
+                    context,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: context.sli.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Save Links • Screenshots • Images',
+                  style: TextStyle(color: SliTokens.amber, fontSize: 12),
+                ),
+                SizedBox(height: SliTokens.spaceMd),
+                for (final destination in [
+                  (
+                    'About',
+                    'App details and open-source licenses',
+                    const AboutSliVaultScreen(),
+                  ),
+                  (
+                    'Privacy Policy (Draft)',
+                    'Local factual draft; legal review required',
+                    const PrivacyPolicyScreen(),
+                  ),
+                  (
+                    'Terms of Use (Draft)',
+                    'Local factual draft; legal review required',
+                    const TermsScreen(),
+                  ),
+                ])
+                  Material(
+                    key: ValueKey(destination.$1),
+                    color: Colors.transparent,
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(destination.$1),
+                      subtitle: Text(destination.$2),
+                      trailing: Icon(Icons.chevron_right),
+                      onTap: () => Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute(builder: (_) => destination.$3)),
+                    ),
+                  ),
+              ],
+            ),
+          ],
         ),
-        children: [
-          Text('Settings', style: Theme.of(context).textTheme.headlineMedium),
-          SizedBox(height: SliTokens.spaceLg),
-          _SectionCard(
-            title: 'Local Storage & Backup',
-            iconAsset: SliAssets.utilStorage,
-            children: [
-              Text(
-                '$total total items ($links links • $screenshots screenshots • $images images)',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              SizedBox(height: 4),
-              Text(
-                'Approximate local storage used: ${_formatBytes(widget.controller.approxStorageBytes)}',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              SizedBox(height: SliTokens.spaceMd),
-              Row(
-                children: [
-                  Expanded(
-                    child: SliGradientButton(
-                      label: 'Export Backup',
-                      iconAsset: SliAssets.utilExport,
-                      isLoading: _isWorking,
-                      onPressed: _exportBackup,
-                    ),
-                  ),
-                  SizedBox(width: SliTokens.spaceSm),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _isWorking ? null : _importBackup,
-                      icon: SliIcon(SliAssets.utilImport, size: 18),
-                      label: Text('Import ZIP'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: SliTokens.spaceMd),
-          _SectionCard(
-            title: 'Appearance',
-            iconAsset: SliAssets.utilTheme,
-            children: [
-              Text(
-                'Theme',
-                style: TextStyle(
-                  color: context.sli.textPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'Choose the appearance used by SLI Vault.',
-                style: TextStyle(
-                  color: context.sli.textSecondary,
-                  fontSize: 13,
-                ),
-              ),
-              SizedBox(height: SliTokens.spaceSm),
-              _ThemeChoiceRow(),
-            ],
-          ),
-          SizedBox(height: SliTokens.spaceMd),
-          _SectionCard(
-            title: 'Privacy & Data Architecture',
-            iconAsset: SliAssets.utilPrivacy,
-            children: [
-              Material(
-                color: Colors.transparent,
-                child: SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  value: widget.controller.lockEnabled,
-                  onChanged: widget.controller.setLockEnabled,
-                  title: Text('Lock vault when backgrounded'),
-                  subtitle: Text(
-                    'Uses biometrics or the device credential. No custom PIN is stored.',
-                  ),
-                ),
-              ),
-              SizedBox(height: SliTokens.spaceSm),
-              Text(
-                '• 100% Local-First: Saved links, tags, and imported images are stored in app-private storage on this device.\n'
-                '• Zero Telemetry: No user accounts, cloud sync, analytics, or advertising SDKs are included.\n'
-                '• Honest Security Notice: Local storage is not hardware encryption. Protect your device lock screen and keep backup exports in a safe place.',
-                style: TextStyle(
-                  color: context.sli.textSecondary,
-                  fontSize: 13,
-                  height: 1.45,
-                ),
-              ),
-              SizedBox(height: SliTokens.spaceMd),
-              OutlinedButton.icon(
-                onPressed: widget.controller.reopenOnboarding,
-                icon: SliIcon(SliAssets.utilInfo, size: 16),
-                label: Text('View Welcome Guide Again'),
-              ),
-            ],
-          ),
-          SizedBox(height: SliTokens.spaceMd),
-          _SectionCard(
-            title: 'Danger Zone',
-            iconAsset: SliAssets.statusWarning,
-            children: [
-              Text(
-                'Clearing your vault removes all database records and stored image files from this device.',
-                style: TextStyle(
-                  color: context.sli.textSecondary,
-                  fontSize: 13,
-                ),
-              ),
-              SizedBox(height: SliTokens.spaceMd),
-              OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: SliTokens.error,
-                  side: BorderSide(color: SliTokens.error),
-                ),
-                onPressed: total == 0 ? null : _confirmClearAll,
-                icon: SliIcon(
-                  SliAssets.actionDelete,
-                  size: 18,
-                  color: SliTokens.error,
-                ),
-                label: Text('Clear All Vault Data'),
-              ),
-            ],
-          ),
-          SizedBox(height: SliTokens.spaceMd),
-          _SectionCard(
-            title: 'About SLI Vault',
-            iconAsset: SliAssets.utilInfo,
-            children: [
-              Text(
-                'SLI Vault v1.0.0 (Flutter + Dart Canonical Build)',
-                style: TextStyle(
-                  color: context.sli.textPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'Save Links • Screenshots • Images',
-                style: TextStyle(color: SliTokens.amber, fontSize: 12),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -431,30 +472,42 @@ class _SectionCard extends StatelessWidget {
   final String title;
   final String iconAsset;
   final List<Widget> children;
+  final bool danger;
 
   const _SectionCard({
     required this.title,
     required this.iconAsset,
     required this.children,
+    this.danger = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(SliTokens.spaceLg),
-      decoration: BoxDecoration(
-        color: context.sli.elevated,
-        borderRadius: BorderRadius.circular(SliTokens.radiusLg),
-        border: Border.all(color: context.sli.border),
-      ),
+    return SliGlassSurface(
+      enableBlur: true,
+      blurSigma: 12,
+      danger: danger,
+      borderRadius: BorderRadius.circular(SliTokens.radiusLg),
+      padding: const EdgeInsets.all(SliTokens.spaceLg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              SliIcon(iconAsset, size: 18, color: SliTokens.orange),
+              SliIcon(
+                iconAsset,
+                size: 18,
+                color: danger ? SliTokens.error : SliTokens.orange,
+              ),
               SizedBox(width: SliTokens.spaceSm),
-              Text(title, style: Theme.of(context).textTheme.titleMedium),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
             ],
           ),
           SizedBox(height: SliTokens.spaceMd),

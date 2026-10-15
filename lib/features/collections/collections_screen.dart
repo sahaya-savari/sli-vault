@@ -195,7 +195,9 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                               children: [
                                 Text(
                                   name,
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium,
                                 ),
                                 SizedBox(height: 4),
                                 Text(

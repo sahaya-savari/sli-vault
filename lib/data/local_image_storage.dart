@@ -56,19 +56,6 @@ class LocalImageStorage {
     if (bytes[0] == 0x42 && bytes[1] == 0x4D) {
       return '.bmp';
     }
-    if (fileNameHint != null) {
-      final ext = p.extension(fileNameHint).toLowerCase();
-      if (const {
-        '.png',
-        '.jpg',
-        '.jpeg',
-        '.webp',
-        '.gif',
-        '.bmp',
-      }.contains(ext)) {
-        return ext == '.jpeg' ? '.jpg' : ext;
-      }
-    }
     return null;
   }
 
@@ -86,9 +73,21 @@ class LocalImageStorage {
     }
 
     final dir = await getImagesDir();
-    final safeId = explicitImageId != null
-        ? p.basename(explicitImageId)
-        : '${_uuid.v4()}$ext';
+    final explicitBaseName = explicitImageId == null
+        ? null
+        : p.basename(explicitImageId);
+    if (explicitImageId != null &&
+        (explicitImageId != explicitBaseName ||
+            p
+                    .extension(explicitImageId)
+                    .toLowerCase()
+                    .replaceFirst('.jpeg', '.jpg') !=
+                ext)) {
+      throw const FormatException(
+        'Explicit image ID must be a safe filename matching the image format.',
+      );
+    }
+    final safeId = explicitBaseName ?? '${_uuid.v4()}$ext';
     final file = File(p.join(dir.path, safeId));
     await file.writeAsBytes(bytes, flush: true);
     return safeId;

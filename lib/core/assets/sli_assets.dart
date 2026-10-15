@@ -1,15 +1,32 @@
+import 'package:flutter/material.dart';
+
 class SliAssets {
   SliAssets._();
 
   // Branding
   static const String symbol = 'assets/branding/sli_vault_logo_official.png';
   static const String symbolSvg = 'assets/branding/sli-vault-symbol.svg';
+
+  /// Light plate + dark mark — readable on dark canvases.
+  static const String symbolForDark =
+      'assets/branding/sli-vault-symbol-monochrome-dark.svg';
+
+  /// Dark plate + light mark — readable on light canvases.
+  static const String symbolForLight =
+      'assets/branding/sli-vault-symbol-monochrome-light.svg';
   static const String markCompact =
       'assets/branding/sli-vault-mark-compact.svg';
   static const String logoDark =
       'assets/branding/sli-vault-logo-horizontal-dark.svg';
   static const String logoLight =
       'assets/branding/sli-vault-logo-horizontal-light.svg';
+
+  /// Theme-aware monochrome mark (plate contrasts with the scaffold).
+  static String symbolForBrightness(Brightness brightness) =>
+      brightness == Brightness.dark ? symbolForDark : symbolForLight;
+
+  /// Official orange gradient mark — works on both themes.
+  static const String brandMark = symbolSvg;
 
   // Navigation Icons
   static const String navHome = 'assets/icons/navigation/home.svg';
@@ -64,6 +81,14 @@ class SliAssets {
   static const String statusWarning = 'assets/icons/status/warning.svg';
   static const String statusError = 'assets/icons/status/error.svg';
   static const String statusLoading = 'assets/icons/status/loading.svg';
+
+  // Loading backgrounds (owner-provided dark vault arts; rotating set)
+  static const String loadingStreetLamp =
+      'assets/illustrations/loading/loading-street-lamp.jpg';
+  static const String loadingNightCity =
+      'assets/illustrations/loading/loading-night-city.jpg';
+  static const String loadingForestCabin =
+      'assets/illustrations/loading/loading-forest-cabin.jpg';
 
   // Illustrations
   static const String illOnboarding =

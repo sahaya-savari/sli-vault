@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
+import 'package:crypto/crypto.dart';
 import 'package:path/path.dart' as p;
 
 import '../domain/vault_item.dart';
@@ -34,13 +35,21 @@ class ImportPreviewSummary {
 
 class VaultBackupService {
   static const String productIdentifier = 'sli_vault';
-  static const int currentBackupFormatVersion = 1;
+  static const int currentBackupFormatVersion = 2;
   static const int maxArchiveBytes = 150 * 1024 * 1024; // 150 MB safety cap
+  static const int maxExtractedBytes = 300 * 1024 * 1024;
 
   final VaultDatabase database;
   final LocalImageStorage imageStorage;
+  final int maxInputBytes;
+  final int maxExpandedBytes;
 
-  VaultBackupService({required this.database, required this.imageStorage});
+  VaultBackupService({
+    required this.database,
+    required this.imageStorage,
+    this.maxInputBytes = maxArchiveBytes,
+    this.maxExpandedBytes = maxExtractedBytes,
+  });
 
   /// Creates a versioned ZIP archive containing `manifest.json` and `images/<id>` (FR-015).
   Future<Uint8List> createBackupArchiveBytes() async {
@@ -48,9 +57,12 @@ class VaultBackupService {
     final archive = Archive();
 
     final imageEntries = <Map<String, Object?>>[];
+    final exportedImageIds = <String>{};
     for (final item in items) {
       final imageId = item.localImageId;
-      if (imageId != null && imageId.isNotEmpty) {
+      if (imageId != null &&
+          imageId.isNotEmpty &&
+          exportedImageIds.add(imageId)) {
         final file = await imageStorage.resolveImageFile(imageId);
         if (file == null || !await file.exists()) {
           throw StateError(
@@ -63,6 +75,7 @@ class VaultBackupService {
         imageEntries.add({
           'imageId': p.basename(imageId),
           'sizeBytes': bytes.length,
+          'sha256': sha256.convert(bytes).toString(),
         });
       }
     }
@@ -93,7 +106,7 @@ class VaultBackupService {
     if (zipBytes.isEmpty) {
       throw const FormatException('Backup file is empty.');
     }
-    if (zipBytes.length > maxArchiveBytes) {
+    if (zipBytes.length > maxInputBytes) {
       throw const FormatException(
         'Backup archive exceeds maximum allowed size.',
       );
@@ -108,6 +121,8 @@ class VaultBackupService {
 
     ArchiveFile? manifestFile;
     final imageFiles = <String, Uint8List>{};
+    final entryNames = <String>{};
+    var extractedBytes = 0;
 
     for (final entry in archive.files) {
       final rawName = entry.name.replaceAll('\\', '/');
@@ -118,6 +133,15 @@ class VaultBackupService {
         throw FormatException('Unsafe archive path rejected: $rawName');
       }
       if (!entry.isFile) continue;
+      if (!entryNames.add(rawName)) {
+        throw FormatException('Duplicate archive entry rejected: $rawName');
+      }
+      extractedBytes += entry.size;
+      if (extractedBytes > maxExpandedBytes) {
+        throw const FormatException(
+          'Backup expands beyond the maximum allowed size.',
+        );
+      }
 
       if (rawName == 'manifest.json') {
         manifestFile = entry;
@@ -126,15 +150,23 @@ class VaultBackupService {
         if (rawName != 'images/$base' || base.isEmpty) {
           throw FormatException('Invalid image path in archive: $rawName');
         }
-        final content = entry.content;
-        if (LocalImageStorage.detectImageExtension(
-              content,
-              fileNameHint: base,
-            ) ==
-            null) {
+        final content = Uint8List.fromList(entry.content);
+        final detectedExtension = LocalImageStorage.detectImageExtension(
+          content,
+        );
+        if (detectedExtension == null) {
           throw FormatException('Unsupported image binary in archive: $base');
         }
-        imageFiles[base] = Uint8List.fromList(content);
+        final declaredExtension = p.extension(base).toLowerCase();
+        final normalizedDeclaredExtension = declaredExtension == '.jpeg'
+            ? '.jpg'
+            : declaredExtension;
+        if (normalizedDeclaredExtension != detectedExtension) {
+          throw FormatException(
+            'Image extension does not match its binary content: $base',
+          );
+        }
+        imageFiles[base] = content;
       } else {
         throw FormatException('Unexpected file in backup archive: $rawName');
       }
@@ -168,16 +200,35 @@ class VaultBackupService {
       );
     }
 
+    final schemaVersion = manifest['schemaVersion'];
+    if (schemaVersion is! int ||
+        schemaVersion < 1 ||
+        schemaVersion > VaultDatabase.schemaVersion) {
+      throw FormatException(
+        'Unsupported database schema version: $schemaVersion',
+      );
+    }
+
     final itemsRaw = manifest['items'];
     if (itemsRaw is! List) {
       throw const FormatException('Manifest is missing a valid items list.');
     }
+    if (manifest['itemCount'] != itemsRaw.length) {
+      throw const FormatException('Manifest item count does not match items.');
+    }
+
+    final declaredImages = _validateImageManifest(
+      manifest['images'],
+      imageFiles,
+      requireChecksums: formatVersion >= 2,
+    );
 
     final existingItems = await database.getAllItems();
     final existingIds = existingItems.map((e) => e.id).toSet();
     final seenInArchive = <String>{};
     final validatedNew = <VaultItem>[];
     final stagedImages = <String, Uint8List>{};
+    final referencedImages = <String>{};
     int skippedDuplicates = 0;
 
     for (final raw in itemsRaw) {
@@ -193,20 +244,39 @@ class VaultBackupService {
 
       if (parsed.type != VaultItemType.link) {
         final imgId = parsed.localImageId!;
+        referencedImages.add(imgId);
         final bytes = imageFiles[imgId];
         if (bytes == null) {
           throw FormatException(
             'Archive is missing image file "$imgId" for "${parsed.title}".',
           );
         }
-        stagedImages[imgId] = bytes;
       }
 
-      if (existingIds.contains(parsed.id) || !seenInArchive.add(parsed.id)) {
+      if (!seenInArchive.add(parsed.id)) {
+        throw FormatException('Duplicate item ID in archive: ${parsed.id}');
+      }
+      if (existingIds.contains(parsed.id)) {
         skippedDuplicates++;
         continue;
       }
       validatedNew.add(parsed);
+      if (parsed.type != VaultItemType.link) {
+        stagedImages[parsed.localImageId!] = imageFiles[parsed.localImageId!]!;
+      }
+    }
+
+    final orphanImages = declaredImages.difference(referencedImages);
+    if (orphanImages.isNotEmpty) {
+      throw FormatException(
+        'Archive contains unreferenced image files: ${orphanImages.join(', ')}',
+      );
+    }
+    final undeclaredReferences = referencedImages.difference(declaredImages);
+    if (undeclaredReferences.isNotEmpty) {
+      throw FormatException(
+        'Manifest image metadata is missing: ${undeclaredReferences.join(', ')}',
+      );
     }
 
     return ImportPreviewSummary(
@@ -221,13 +291,61 @@ class VaultBackupService {
     );
   }
 
+  Set<String> _validateImageManifest(
+    Object? rawImages,
+    Map<String, Uint8List> imageFiles, {
+    required bool requireChecksums,
+  }) {
+    if (rawImages is! List) {
+      throw const FormatException('Manifest is missing image metadata.');
+    }
+    final declared = <String>{};
+    for (final raw in rawImages) {
+      if (raw is! Map) {
+        throw const FormatException(
+          'Manifest contains invalid image metadata.',
+        );
+      }
+      final metadata = Map<String, Object?>.from(raw);
+      final imageId = (metadata['imageId'] as String?)?.trim();
+      if (imageId == null ||
+          imageId.isEmpty ||
+          p.basename(imageId) != imageId ||
+          !declared.add(imageId)) {
+        throw const FormatException(
+          'Manifest contains an invalid or duplicate image ID.',
+        );
+      }
+      final bytes = imageFiles[imageId];
+      if (bytes == null) {
+        throw FormatException('Archive is missing declared image "$imageId".');
+      }
+      if (metadata['sizeBytes'] != bytes.length) {
+        throw FormatException('Image size check failed for "$imageId".');
+      }
+      final checksum = metadata['sha256'];
+      if (requireChecksums &&
+          (checksum is! String ||
+              checksum.toLowerCase() != sha256.convert(bytes).toString())) {
+        throw FormatException('Image checksum check failed for "$imageId".');
+      }
+    }
+    final undeclaredFiles = imageFiles.keys.toSet().difference(declared);
+    if (undeclaredFiles.isNotEmpty) {
+      throw FormatException(
+        'Archive contains images absent from metadata: ${undeclaredFiles.join(', ')}',
+      );
+    }
+    return declared;
+  }
+
   /// Validates the JSON format emitted by the Kotlin repository exporter.
   /// Image paths are deliberately ignored; imageBase64 is the portable source.
   Future<ImportPreviewSummary> validateKotlinJson(Uint8List jsonBytes) async {
     if (jsonBytes.isEmpty) {
       throw const FormatException('Kotlin backup file is empty.');
     }
-    if (jsonBytes.length > maxArchiveBytes) {
+    if (jsonBytes.length > maxInputBytes) {
       throw const FormatException(
         'Kotlin backup exceeds maximum allowed size.',
       );
@@ -301,7 +419,12 @@ class VaultBackupService {
         imageId = '${parsed.id}$extension';
       }
 
-      if (existingIds.contains(parsed.id) || !seenIds.add(parsed.id)) {
+      if (!seenIds.add(parsed.id)) {
+        throw FormatException(
+          'Kotlin backup contains duplicate item ID "${parsed.id}".',
+        );
+      }
+      if (existingIds.contains(parsed.id)) {
         skippedDuplicates++;
         continue;
       }

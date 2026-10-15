@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../assets/sli_assets.dart';
 import '../theme/sli_theme.dart';
 import 'sli_svg.dart';
@@ -9,11 +10,7 @@ class SliShimmerFab extends StatefulWidget {
   final VoidCallback onTap;
   final String label;
 
-  const SliShimmerFab({
-    super.key,
-    required this.onTap,
-    this.label = 'Add',
-  });
+  const SliShimmerFab({super.key, required this.onTap, this.label = 'Add'});
 
   @override
   State<SliShimmerFab> createState() => _SliShimmerFabState();
@@ -23,6 +20,7 @@ class _SliShimmerFabState extends State<SliShimmerFab>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animController;
   bool _isPressed = false;
+  bool _isTestBinding = false;
 
   @override
   void initState() {
@@ -32,18 +30,21 @@ class _SliShimmerFabState extends State<SliShimmerFab>
       duration: const Duration(milliseconds: 3200),
     );
     // Don't repeat infinitely in test runner so pumpAndSettle can settle cleanly
-    final isRunningInTest =
-        WidgetsBinding.instance.runtimeType.toString().contains('Test');
-    if (!isRunningInTest) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          final disableAnimations =
-              MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-          if (!disableAnimations) {
-            _animController.repeat();
-          }
-        }
-      });
+    _isTestBinding = WidgetsBinding.instance.runtimeType.toString().contains(
+      'Test',
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    if (_isTestBinding || disableAnimations) {
+      _animController.stop();
+      _animController.value = 0;
+    } else if (!_animController.isAnimating) {
+      _animController.repeat();
     }
   }
 
@@ -55,12 +56,16 @@ class _SliShimmerFabState extends State<SliShimmerFab>
 
   @override
   Widget build(BuildContext context) {
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     return Semantics(
       button: true,
       label: 'Add Item to Vault',
       child: AnimatedScale(
         scale: _isPressed ? 0.94 : 1.0,
-        duration: const Duration(milliseconds: 120),
+        duration: disableAnimations
+            ? Duration.zero
+            : const Duration(milliseconds: 120),
         curve: Curves.easeOutCubic,
         child: Container(
           decoration: BoxDecoration(
@@ -97,16 +102,16 @@ class _SliShimmerFabState extends State<SliShimmerFab>
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: const [
-                          SliTokens.orange,
-                          SliTokens.coral,
-                        ],
+                        colors: const [SliTokens.orange, SliTokens.coral],
                       ),
-                      borderRadius:
-                          BorderRadius.circular(SliTokens.radiusPill),
+                      borderRadius: BorderRadius.circular(SliTokens.radiusPill),
                       border: Border.all(
                         color: Colors.white.withValues(
-                          alpha: 0.20 + 0.15 * (1.0 - (_animController.value - 0.5).abs() * 2),
+                          alpha:
+                              0.20 +
+                              0.15 *
+                                  (1.0 -
+                                      (_animController.value - 0.5).abs() * 2),
                         ),
                         width: 1.2,
                       ),

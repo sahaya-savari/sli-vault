@@ -5,6 +5,7 @@ import 'package:local_auth/local_auth.dart';
 import '../core/assets/sli_assets.dart';
 import '../core/platform/platform_share_service.dart';
 import '../core/theme/sli_theme.dart';
+import '../core/widgets/sli_loading_screen.dart';
 import '../core/widgets/sli_shimmer_fab.dart';
 import '../core/widgets/sli_svg.dart';
 import '../data/vault_controller.dart';
@@ -146,12 +147,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
       listenable: widget.controller,
       builder: (context, _) {
         if (!widget.controller.isInitialized) {
-          return Scaffold(
-            backgroundColor: context.sli.obsidian,
-            body: Center(
-              child: CircularProgressIndicator(color: SliTokens.orange),
-            ),
-          );
+          return const SliLoadingScreen();
         }
 
         if (widget.controller.isLocked) {
@@ -230,61 +226,81 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
                 );
                 if (saved != null && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Saved "${saved.title}" to vault.'),
-                    ),
+                    SnackBar(content: Text('Saved "${saved.title}" to vault.')),
                   );
                 }
               },
             ),
-            bottomNavigationBar: Container(
-              decoration: BoxDecoration(
-                color: context.sli.charcoal,
-                border: Border(top: BorderSide(color: context.sli.border)),
-              ),
-              child: SafeArea(
-                child: SizedBox(
-                  height: 64,
-                  child: Row(
-                    children: [
-                      _NavBarItem(
-                        label: 'Home',
-                        iconAsset: SliAssets.navHome,
-                        selected: _selectedIndex == 0,
-                        onTap: () => setState(() => _selectedIndex = 0),
-                      ),
-                      _NavBarItem(
-                        label: 'Browse',
-                        iconAsset: SliAssets.navBrowse,
-                        selected: _selectedIndex == 1,
-                        onTap: () => setState(() => _selectedIndex = 1),
-                      ),
-                      _NavBarItem(
-                        label: 'Favorites',
-                        iconAsset: SliAssets.navFavorites,
-                        selected: _selectedIndex == 2,
-                        onTap: () => setState(() => _selectedIndex = 2),
-                      ),
-                      _NavBarItem(
-                        label: 'Collections',
-                        iconAsset: SliAssets.contentCollection,
-                        selected: _selectedIndex == 3,
-                        onTap: () => setState(() => _selectedIndex = 3),
-                      ),
-                      _NavBarItem(
-                        label: 'Settings',
-                        iconAsset: SliAssets.navSettings,
-                        selected: _selectedIndex == 4,
-                        onTap: () => setState(() => _selectedIndex = 4),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            bottomNavigationBar: _BottomNavBar(
+              selectedIndex: _selectedIndex,
+              onSelect: (index) => setState(() => _selectedIndex = index),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class _BottomNavBar extends StatelessWidget {
+  final int selectedIndex;
+  final ValueChanged<int> onSelect;
+
+  const _BottomNavBar({required this.selectedIndex, required this.onSelect});
+
+  static const _destinations = [
+    (label: 'Home', icon: SliAssets.navHome),
+    (label: 'Browse', icon: SliAssets.navBrowse),
+    (label: 'Favorites', icon: SliAssets.navFavorites),
+    (label: 'Collections', icon: SliAssets.contentCollection),
+    (label: 'Settings', icon: SliAssets.navSettings),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: Colors.transparent,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: isDark
+              ? SliTokens.charcoal.withValues(alpha: 0.92)
+              : Colors.white.withValues(alpha: 0.90),
+          border: Border(
+            top: BorderSide(
+              color: isDark
+                  ? SliTokens.orange.withValues(alpha: 0.22)
+                  : context.sli.border.withValues(alpha: 0.9),
+            ),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.28 : 0.06),
+              blurRadius: 12,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          top: false,
+          child: SizedBox(
+            key: const ValueKey('sli-bottom-nav'),
+            height: 64,
+            // Fixed equal-width destinations — never a horizontal scroll strip.
+            child: Row(
+              children: [
+                for (var i = 0; i < _destinations.length; i++)
+                  _NavBarItem(
+                    label: _destinations[i].label,
+                    iconAsset: _destinations[i].icon,
+                    selected: selectedIndex == i,
+                    onTap: () => onSelect(i),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -305,6 +321,10 @@ class _NavBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = selected ? SliTokens.orange : context.sli.textSecondary;
+    final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
+    // Cap label size so serif + large accessibility scales still fit 5 columns.
+    final fontSize = textScale > 1.4 ? 9.5 : (textScale > 1.15 ? 10.5 : 11.0);
+
     return Expanded(
       child: Semantics(
         selected: selected,
@@ -312,24 +332,43 @@ class _NavBarItem extends StatelessWidget {
         label: label,
         child: InkWell(
           onTap: onTap,
-          child: SizedBox(
-            height: 64,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SliIcon(iconAsset, size: 22, color: color),
-                SizedBox(height: 4),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: selected
-                        ? context.sli.textPrimary
-                        : context.sli.textSecondary,
-                    fontSize: 12,
-                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minHeight: SliTokens.minTouchTarget,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 1),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SliIcon(iconAsset, size: 20, color: color),
+                  const SizedBox(height: 2),
+                  // ScaleDown keeps "Collections" on one line without scroll/wrap.
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.center,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.clip,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: SliTokens.fontFamily,
+                        color: selected
+                            ? context.sli.textPrimary
+                            : context.sli.textSecondary,
+                        fontSize: fontSize,
+                        fontWeight: selected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                        height: 1.05,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

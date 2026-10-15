@@ -1,6 +1,6 @@
 # Data Migration
 
-The Kotlin recovery application at `D:\sli-vault` remains untouched. Its Room database is not opened directly by Flutter because the database names, columns, tag encoding, paths, and timestamp representations differ.
+The Kotlin recovery source is treated as a read-only migration reference outside the active Flutter implementation. Its Room database is not opened directly by Flutter because the database names, columns, tag encoding, paths, and timestamp representations differ.
 
 ## Kotlin Transfer
 

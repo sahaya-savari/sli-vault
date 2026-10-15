@@ -227,120 +227,188 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
             child: SingleChildScrollView(
               padding: EdgeInsets.all(SliTokens.spaceLg),
               child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (item.type != VaultItemType.link)
-                  FutureBuilder<File?>(
-                    future: widget.controller.resolveImageFile(
-                      item.localImageId,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (item.type != VaultItemType.link)
+                    FutureBuilder<File?>(
+                      future: widget.controller.resolveImageFile(
+                        item.localImageId,
+                      ),
+                      builder: (context, snapshot) {
+                        final file = snapshot.data;
+                        return Container(
+                          constraints: BoxConstraints(
+                            minHeight: 220,
+                            maxHeight: 380,
+                          ),
+                          decoration: BoxDecoration(
+                            color: context.sli.elevated,
+                            borderRadius: BorderRadius.circular(
+                              SliTokens.radiusLg,
+                            ),
+                            border: Border.all(color: context.sli.border),
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: file != null
+                              ? InteractiveViewer(
+                                  child: Image.file(file, fit: BoxFit.contain),
+                                )
+                              : Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(SliTokens.spaceXl),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SliIllustration(
+                                          SliAssets.illImagePlaceholder,
+                                          width: 120,
+                                          height: 120,
+                                        ),
+                                        SizedBox(height: SliTokens.spaceSm),
+                                        Text(
+                                          'Local image file is unavailable',
+                                          style: TextStyle(
+                                            color: context.sli.textSecondary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                        );
+                      },
+                    )
+                  else
+                    Container(
+                      height: 140,
+                      decoration: BoxDecoration(
+                        color: context.sli.elevated,
+                        borderRadius: BorderRadius.circular(SliTokens.radiusLg),
+                        border: Border.all(color: context.sli.border),
+                      ),
+                      alignment: Alignment.center,
+                      child: SliIllustration(
+                        SliAssets.illLinkPlaceholder,
+                        width: 110,
+                        height: 110,
+                      ),
                     ),
-                    builder: (context, snapshot) {
-                      final file = snapshot.data;
-                      return Container(
-                        constraints: BoxConstraints(
-                          minHeight: 220,
-                          maxHeight: 380,
+                  SizedBox(height: SliTokens.spaceLg),
+                  Text(
+                    item.title,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  SizedBox(height: SliTokens.spaceSm),
+                  Wrap(
+                    spacing: SliTokens.spaceSm,
+                    runSpacing: SliTokens.spaceSm,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
                         ),
                         decoration: BoxDecoration(
                           color: context.sli.elevated,
                           borderRadius: BorderRadius.circular(
-                            SliTokens.radiusLg,
+                            SliTokens.radiusSm,
                           ),
                           border: Border.all(color: context.sli.border),
                         ),
-                        clipBehavior: Clip.antiAlias,
-                        child: file != null
-                            ? InteractiveViewer(
-                                child: Image.file(file, fit: BoxFit.contain),
-                              )
-                            : Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(SliTokens.spaceXl),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SliIllustration(
-                                        SliAssets.illImagePlaceholder,
-                                        width: 120,
-                                        height: 120,
-                                      ),
-                                      SizedBox(height: SliTokens.spaceSm),
-                                      Text(
-                                        'Local image file is unavailable',
-                                        style: TextStyle(
-                                          color: context.sli.textSecondary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SliIcon(
+                              item.type.iconAsset,
+                              size: 14,
+                              color: SliTokens.orange,
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              item.type.label,
+                              style: TextStyle(
+                                color: context.sli.textPrimary,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
                               ),
-                      );
-                    },
-                  )
-                else
-                  Container(
-                    height: 140,
-                    decoration: BoxDecoration(
-                      color: context.sli.elevated,
-                      borderRadius: BorderRadius.circular(SliTokens.radiusLg),
-                      border: Border.all(color: context.sli.border),
-                    ),
-                    alignment: Alignment.center,
-                    child: SliIllustration(
-                      SliAssets.illLinkPlaceholder,
-                      width: 110,
-                      height: 110,
-                    ),
-                  ),
-                SizedBox(height: SliTokens.spaceLg),
-                Text(
-                  item.title,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                SizedBox(height: SliTokens.spaceSm),
-                Wrap(
-                  spacing: SliTokens.spaceSm,
-                  runSpacing: SliTokens.spaceSm,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
+                            ),
+                          ],
+                        ),
                       ),
+                      Text(
+                        'Saved ${item.createdAt.toLocal().toString().substring(0, 16)}',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                  if (item.url != null) ...[
+                    SizedBox(height: SliTokens.spaceLg),
+                    Container(
+                      padding: EdgeInsets.all(SliTokens.spaceLg),
                       decoration: BoxDecoration(
                         color: context.sli.elevated,
-                        borderRadius: BorderRadius.circular(SliTokens.radiusSm),
+                        borderRadius: BorderRadius.circular(SliTokens.radiusLg),
                         border: Border.all(color: context.sli.border),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SliIcon(
-                            item.type.iconAsset,
-                            size: 14,
-                            color: SliTokens.orange,
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            item.type.label,
+                          if (item.domain != null) ...[
+                            Text(
+                              item.domain!,
+                              style: TextStyle(
+                                color: SliTokens.amber,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                          ],
+                          SelectableText(
+                            item.url!,
                             style: TextStyle(
                               color: context.sli.textPrimary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
                             ),
+                          ),
+                          SizedBox(height: SliTokens.spaceMd),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  onPressed: () => _copyUrl(item.url!),
+                                  icon: SliIcon(SliAssets.actionCopy, size: 16),
+                                  label: Text('Copy URL'),
+                                ),
+                              ),
+                              SizedBox(width: SliTokens.spaceSm),
+                              Expanded(
+                                child: SliGradientButton(
+                                  label: 'Open Link',
+                                  iconAsset: SliAssets.actionOpenUrl,
+                                  onPressed: () => _openUrl(item.url!),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
+                  ],
+                  if (item.description != null &&
+                      item.description!.isNotEmpty) ...[
+                    SizedBox(height: SliTokens.spaceLg),
                     Text(
-                      'Saved ${item.createdAt.toLocal().toString().substring(0, 16)}',
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      'Description',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    SizedBox(height: SliTokens.spaceSm),
+                    Text(
+                      item.description!,
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ],
-                ),
-                if (item.url != null) ...[
                   SizedBox(height: SliTokens.spaceLg),
                   Container(
                     padding: EdgeInsets.all(SliTokens.spaceLg),
@@ -352,145 +420,81 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (item.domain != null) ...[
-                          Text(
-                            item.domain!,
-                            style: TextStyle(
-                              color: SliTokens.amber,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                        ],
-                        SelectableText(
-                          item.url!,
-                          style: TextStyle(
-                            color: context.sli.textPrimary,
-                            fontSize: 14,
-                          ),
-                        ),
-                        SizedBox(height: SliTokens.spaceMd),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                onPressed: () => _copyUrl(item.url!),
-                                icon: SliIcon(SliAssets.actionCopy, size: 16),
-                                label: Text('Copy URL'),
-                              ),
+                            Row(
+                              children: [
+                                SliIcon(
+                                  SliAssets.contentTag,
+                                  size: 16,
+                                  color: SliTokens.amber,
+                                ),
+                                SizedBox(width: SliTokens.spaceSm),
+                                Text(
+                                  'Tags',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium,
+                                ),
+                              ],
                             ),
-                            SizedBox(width: SliTokens.spaceSm),
-                            Expanded(
-                              child: SliGradientButton(
-                                label: 'Open Link',
-                                iconAsset: SliAssets.actionOpenUrl,
-                                onPressed: () => _openUrl(item.url!),
-                              ),
+                            TextButton(
+                              onPressed: () => _showEditDialog(item),
+                              child: Text('Edit'),
                             ),
                           ],
                         ),
+                        if (item.tags.isEmpty)
+                          Text(
+                            'No tags added yet.',
+                            style: TextStyle(color: context.sli.textSecondary),
+                          )
+                        else
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: item.tags.map((tag) {
+                              return Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: context.sli.charcoal,
+                                  borderRadius: BorderRadius.circular(
+                                    SliTokens.radiusPill,
+                                  ),
+                                  border: Border.all(color: context.sli.border),
+                                ),
+                                child: Text(
+                                  '#$tag',
+                                  style: TextStyle(
+                                    color: SliTokens.amber,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
                       ],
                     ),
                   ),
-                ],
-                if (item.description != null &&
-                    item.description!.isNotEmpty) ...[
                   SizedBox(height: SliTokens.spaceLg),
-                  Text(
-                    'Description',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  SizedBox(height: SliTokens.spaceSm),
-                  Text(
-                    item.description!,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      final shareText = item.url != null
+                          ? '${item.title}\n${item.url}'
+                          : item.title;
+                      await Share.share(shareText);
+                    },
+                    icon: SliIcon(SliAssets.actionShare, size: 18),
+                    label: Text('Share'),
                   ),
                 ],
-                SizedBox(height: SliTokens.spaceLg),
-                Container(
-                  padding: EdgeInsets.all(SliTokens.spaceLg),
-                  decoration: BoxDecoration(
-                    color: context.sli.elevated,
-                    borderRadius: BorderRadius.circular(SliTokens.radiusLg),
-                    border: Border.all(color: context.sli.border),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              SliIcon(
-                                SliAssets.contentTag,
-                                size: 16,
-                                color: SliTokens.amber,
-                              ),
-                              SizedBox(width: SliTokens.spaceSm),
-                              Text(
-                                'Tags',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                            ],
-                          ),
-                          TextButton(
-                            onPressed: () => _showEditDialog(item),
-                            child: Text('Edit'),
-                          ),
-                        ],
-                      ),
-                      if (item.tags.isEmpty)
-                        Text(
-                          'No tags added yet.',
-                          style: TextStyle(color: context.sli.textSecondary),
-                        )
-                      else
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: item.tags.map((tag) {
-                            return Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: context.sli.charcoal,
-                                borderRadius: BorderRadius.circular(
-                                  SliTokens.radiusPill,
-                                ),
-                                border: Border.all(color: context.sli.border),
-                              ),
-                              child: Text(
-                                '#$tag',
-                                style: TextStyle(
-                                  color: SliTokens.amber,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: SliTokens.spaceLg),
-                OutlinedButton.icon(
-                  onPressed: () async {
-                    final shareText = item.url != null
-                        ? '${item.title}\n${item.url}'
-                        : item.title;
-                    await Share.share(shareText);
-                  },
-                  icon: SliIcon(SliAssets.actionShare, size: 18),
-                  label: Text('Share'),
-                ),
-              ],
+              ),
             ),
-          ),
           ),
         );
       },

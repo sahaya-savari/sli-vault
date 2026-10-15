@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -346,6 +347,63 @@ void main() {
         expect(restoredController.themeModeName, equals('system'));
       },
     );
+
+    test(
+      'persists onboarding replay, CRUD, search, favorites, and collections',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final controller = VaultController(
+          database: database,
+          imageStorage: imageStorage,
+        );
+        await controller.initialize();
+        await controller.completeOnboarding();
+        await controller.reopenOnboarding();
+
+        final link = await controller.addLinkItem(
+          rawUrl: 'https://example.com/research',
+          customTitle: 'Research Link',
+          description: 'Cold restart record',
+          tags: ['Alpha', 'Beta'],
+        );
+        final media = await controller.addMediaItem(
+          type: VaultItemType.image,
+          imageBytes: validPngBytes,
+          customTitle: 'Reference Image',
+          tags: ['Visual'],
+        );
+        await controller.createCollection('Research');
+        await controller.moveItemsToCollection([link.id, media.id], 'Research');
+        await controller.toggleFavorite(link.id);
+        await controller.updateItemDetails(
+          itemId: link.id,
+          newTitle: 'Updated Research Link',
+          newDescription: 'Persisted description',
+          newTags: ['Alpha', 'Updated'],
+        );
+
+        expect(
+          controller.searchAllItems('updated research', VaultTypeFilter.all),
+          hasLength(1),
+        );
+        expect(controller.getFavoritesItems(), hasLength(1));
+        expect(controller.getItemsForCollection('Research'), hasLength(2));
+
+        final restarted = VaultController(
+          database: database,
+          imageStorage: imageStorage,
+        );
+        await restarted.initialize();
+        expect(restarted.onboardingCompleted, isFalse);
+        expect(restarted.collections, contains('Research'));
+        expect(restarted.getItemsForCollection('Research'), hasLength(2));
+        expect(restarted.findById(link.id)!.isFavorite, isTrue);
+        expect(restarted.findById(link.id)!.tags, ['Alpha', 'Updated']);
+
+        await restarted.deleteItem(media.id);
+        expect(restarted.findById(media.id), isNull);
+      },
+    );
   });
 
   group('SLI Vault widget workflow test', () {
@@ -420,6 +478,18 @@ void main() {
         await tester.tap(find.text('Settings'));
         await tester.pumpAndSettle();
         expect(find.text('Local Storage & Backup'), findsOneWidget);
+        await tester.drag(
+          find.byKey(const ValueKey('settings-scroll')),
+          const Offset(0, -900),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(
+          find.byKey(const ValueKey('Privacy Policy (Draft)')).first,
+        );
+        await tester.pumpAndSettle();
+        expect(find.textContaining('Local factual draft'), findsOneWidget);
+        await tester.pageBack();
+        await tester.pumpAndSettle();
 
         await tester.runAsync(() async {
           await controller.database.close();
@@ -429,5 +499,127 @@ void main() {
         });
       },
     );
+
+    testWidgets(
+      'keeps all five full navigation labels accessible on a narrow display',
+      (WidgetTester tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = const Size(320, 640);
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(() {
+          tester.view.resetDevicePixelRatio();
+          tester.view.resetPhysicalSize();
+          tester.platformDispatcher.clearTextScaleFactorTestValue();
+        });
+        SharedPreferences.setMockInitialValues({
+          'sli_vault_onboarding_completed_v1': true,
+        });
+        late Directory tempDir;
+        late VaultController controller;
+        await tester.runAsync(() async {
+          tempDir = await Directory.systemTemp.createTemp('sli_nav_test_');
+          controller = VaultController(
+            database: VaultDatabase(
+              overrideDbPath: p.join(tempDir.path, 'nav.db'),
+            ),
+            imageStorage: LocalImageStorage(
+              overrideBaseDir: Directory(p.join(tempDir.path, 'images')),
+            ),
+          );
+          await controller.initialize();
+        });
+
+        await tester.pumpWidget(SliVaultApp(controller: controller));
+        await tester.pumpAndSettle();
+        for (final label in [
+          'Home',
+          'Browse',
+          'Favorites',
+          'Collections',
+          'Settings',
+        ]) {
+          expect(find.text(label), findsOneWidget);
+        }
+        // Bottom nav must be a fixed equal-width row — never a swipe strip.
+        final nav = find.byKey(const ValueKey('sli-bottom-nav'));
+        expect(nav, findsOneWidget);
+        expect(
+          find.descendant(of: nav, matching: find.byType(Scrollable)),
+          findsNothing,
+        );
+        expect(
+          find.descendant(
+            of: nav,
+            matching: find.byType(SingleChildScrollView),
+          ),
+          findsNothing,
+        );
+        expect(tester.takeException(), isNull);
+
+        await tester.runAsync(() async {
+          await controller.database.close();
+          await tempDir.delete(recursive: true);
+        });
+      },
+    );
+
+    testWidgets('keeps fixed non-scrolling bottom nav at font scale 1.15', (
+      WidgetTester tester,
+    ) async {
+      tester.view.devicePixelRatio = 2.5;
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.platformDispatcher.textScaleFactorTestValue = 1.15;
+      addTearDown(() {
+        tester.view.resetDevicePixelRatio();
+        tester.view.resetPhysicalSize();
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
+      });
+      SharedPreferences.setMockInitialValues({
+        'sli_vault_onboarding_completed_v1': true,
+      });
+      late Directory tempDir;
+      late VaultController controller;
+      await tester.runAsync(() async {
+        tempDir = await Directory.systemTemp.createTemp('sli_nav_115_');
+        controller = VaultController(
+          database: VaultDatabase(
+            overrideDbPath: p.join(tempDir.path, 'nav115.db'),
+          ),
+          imageStorage: LocalImageStorage(
+            overrideBaseDir: Directory(p.join(tempDir.path, 'images')),
+          ),
+        );
+        await controller.initialize();
+      });
+
+      await tester.pumpWidget(SliVaultApp(controller: controller));
+      await tester.pumpAndSettle();
+
+      final nav = find.byKey(const ValueKey('sli-bottom-nav'));
+      expect(nav, findsOneWidget);
+      for (final label in [
+        'Home',
+        'Browse',
+        'Favorites',
+        'Collections',
+        'Settings',
+      ]) {
+        expect(find.text(label), findsOneWidget);
+      }
+      expect(
+        find.descendant(of: nav, matching: find.byType(Scrollable)),
+        findsNothing,
+      );
+      // Settings must be tappable without horizontal drag.
+      await tester.tap(find.text('Settings'));
+      await tester.pumpAndSettle();
+      expect(find.text('Local Storage & Backup'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await tester.runAsync(() async {
+        await controller.database.close();
+        await tempDir.delete(recursive: true);
+      });
+    });
   });
 }

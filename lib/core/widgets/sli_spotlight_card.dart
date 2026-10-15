@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../theme/sli_theme.dart';
 
 /// A native Flutter card inspired by React Bits' Spotlight Card.
@@ -55,16 +56,16 @@ class _SliSpotlightCardState extends State<SliSpotlightCard> {
     final effectiveRadius =
         widget.borderRadius ?? BorderRadius.circular(SliTokens.radiusLg);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     final cardBg = isDark
-        ? SliTokens.elevated.withValues(alpha: 0.90)
-        : Colors.white.withValues(alpha: 0.96);
-    final borderColor = isDark
-        ? (_isHovered
-            ? SliTokens.orange.withValues(alpha: 0.35)
-            : SliTokens.border)
-        : (_isHovered
-            ? SliTokens.orange.withValues(alpha: 0.40)
-            : context.sli.border);
+        ? Colors.white.withValues(alpha: 0.06)
+        : Colors.white.withValues(alpha: 0.72);
+    final borderColor = _isHovered
+        ? SliTokens.orange.withValues(alpha: isDark ? 0.45 : 0.40)
+        : (isDark
+              ? SliTokens.orange.withValues(alpha: 0.22)
+              : context.sli.border.withValues(alpha: 0.9));
     final glowColor = widget.glowColor ?? SliTokens.orange;
 
     return MouseRegion(
@@ -77,7 +78,9 @@ class _SliSpotlightCardState extends State<SliSpotlightCard> {
         onPanEnd: (_) => _clearPosition(),
         onPanCancel: () => _clearPosition(),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+          duration: disableAnimations
+              ? Duration.zero
+              : const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
           decoration: BoxDecoration(
             color: cardBg,
@@ -142,7 +145,8 @@ class _SliSpotlightCardState extends State<SliSpotlightCard> {
                     splashColor: SliTokens.orange.withValues(alpha: 0.08),
                     highlightColor: SliTokens.orange.withValues(alpha: 0.04),
                     child: Padding(
-                      padding: widget.padding ??
+                      padding:
+                          widget.padding ??
                           const EdgeInsets.all(SliTokens.spaceMd),
                       child: widget.child,
                     ),

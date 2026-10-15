@@ -87,81 +87,81 @@ class _CollectionDetailScreenState extends State<CollectionDetailScreen> {
       body: SliAtmosphere(
         variant: SliAtmosphereVariant.abstractFlow,
         child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              SliTokens.spaceLg,
-              SliTokens.spaceSm,
-              SliTokens.spaceLg,
-              0,
-            ),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (_) => setState(() {}),
-              decoration: const InputDecoration(
-                hintText: 'Search this collection',
-              ),
-            ),
-          ),
-          TypeFilterBar(
-            selected: _filter,
-            onChanged: (value) => setState(() => _filter = value),
-          ),
-          if (_selected.isNotEmpty)
+          children: [
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: SliTokens.spaceLg,
+              padding: const EdgeInsets.fromLTRB(
+                SliTokens.spaceLg,
+                SliTokens.spaceSm,
+                SliTokens.spaceLg,
+                0,
               ),
-              child: Row(
-                children: [
-                  Text(
-                    '${_selected.length} selected',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const Spacer(),
-                  TextButton(
-                    onPressed: _removeSelected,
-                    child: const Text('Remove'),
-                  ),
-                  TextButton(
-                    onPressed: () => setState(_selected.clear),
-                    child: const Text('Cancel'),
-                  ),
-                ],
+              child: TextField(
+                controller: _searchController,
+                onChanged: (_) => setState(() {}),
+                decoration: const InputDecoration(
+                  hintText: 'Search this collection',
+                ),
               ),
             ),
-          Expanded(
-            child: items.isEmpty
-                ? Center(
-                    child: Text(
-                      'No items in this collection.',
+            TypeFilterBar(
+              selected: _filter,
+              onChanged: (value) => setState(() => _filter = value),
+            ),
+            if (_selected.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: SliTokens.spaceLg,
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      '${_selected.length} selected',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                  )
-                : _grid
-                ? GridView.builder(
-                    padding: const EdgeInsets.all(SliTokens.spaceLg),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: .82,
-                        ),
-                    itemCount: items.length,
-                    itemBuilder: (_, index) =>
-                        _itemCard(items[index], isGrid: true),
-                  )
-                : ListView.separated(
-                    padding: const EdgeInsets.all(SliTokens.spaceLg),
-                    itemCount: items.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(height: SliTokens.spaceSm),
-                    itemBuilder: (_, index) => _itemCard(items[index]),
-                  ),
-          ),
-        ],
-      ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: _removeSelected,
+                      child: const Text('Remove'),
+                    ),
+                    TextButton(
+                      onPressed: () => setState(_selected.clear),
+                      child: const Text('Cancel'),
+                    ),
+                  ],
+                ),
+              ),
+            Expanded(
+              child: items.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No items in this collection.',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    )
+                  : _grid
+                  ? GridView.builder(
+                      padding: const EdgeInsets.all(SliTokens.spaceLg),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: .82,
+                          ),
+                      itemCount: items.length,
+                      itemBuilder: (_, index) =>
+                          _itemCard(items[index], isGrid: true),
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(SliTokens.spaceLg),
+                      itemCount: items.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(height: SliTokens.spaceSm),
+                      itemBuilder: (_, index) => _itemCard(items[index]),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
