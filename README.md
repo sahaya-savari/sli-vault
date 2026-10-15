@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/sli-vault-readme-hero.png" alt="SLI Vault — local-first private media vault" width="100%" />
+  <img src="docs/assets/sli-vault-readme-hero.png" alt="SLI Vault — personal vault for links, screenshots, and images. Android, 100% local-first." width="100%" />
 </div>
 
 <p align="center">
@@ -12,7 +12,7 @@
   <img alt="Dart" src="https://img.shields.io/badge/Dart-3.13-0175C2?logo=dart&logoColor=white">
   <img alt="Android" src="https://img.shields.io/badge/Android-first-3DDC84?logo=android&logoColor=white">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-6f4e37">
-  <img alt="Release" src="https://img.shields.io/badge/release-development_only-ff6b35">
+  <img alt="Release" src="https://img.shields.io/badge/GitHub%20Release-pre--release%20APK-ff6b35">
 </p>
 
 <p align="center">
@@ -37,7 +37,7 @@ SLI Vault is a Flutter Android app for saving links and images into **app-privat
 | iOS | Phase 2 — scaffold only, not verified as a shipping target |
 | Web / Desktop | Flutter platform folders only — not the shipping target |
 
-**Download / release status:** not published. There is no GitHub Release or Play Store listing. The current APK/AAB are development artifacts using debug signing; they are **not for Play Store upload**.
+**Download / release status:** a **GitHub pre-release APK** is available under [Releases](https://github.com/sahaya-savari/sli-vault/releases). It is **debug-signed** (development only) and **not** for Play Store upload. There is no Play Store listing.
 
 The project-owned code and documentation are licensed under [MIT](LICENSE). Third-party assets are separate: in particular, Anthropic Serif remains **not cleared for redistribution**. See [the font notice](assets/fonts/claude/README.md).
 
@@ -240,7 +240,7 @@ These are **release blockers** or open gaps, not marketing copy:
 | Launcher icon | Adaptive foreground fills the canvas; system mask may crop outer glow |
 | Device QA gaps | Backup export/import with real files, image handling, biometric lock, restart persistence, and error states are **not tested** on a real device — see [docs/ANDROID_DEVICE_CHECKLIST.md](docs/ANDROID_DEVICE_CHECKLIST.md) |
 | Framework assert | `_dependents.isEmpty` reported historically; **not reproduced** in the last QA pass |
-| Download | **Not published** — no GitHub Release / store package |
+| Download | GitHub **pre-release** APK only (debug-signed); not on Play Store |
 
 More detail: [docs/RELEASE_READINESS.md](docs/RELEASE_READINESS.md) · [docs/ANDROID_RELEASE.md](docs/ANDROID_RELEASE.md).
 
@@ -248,7 +248,7 @@ More detail: [docs/RELEASE_READINESS.md](docs/RELEASE_READINESS.md) · [docs/AND
 
 ## Contributing
 
-Bug reports and focused pull requests are welcome after you read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Because no license is chosen yet, ask before sending a large patch.
+Bug reports and focused pull requests are welcome after you read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
 
 Do not commit keystores, `key.properties`, `.env` files, vault databases, backup ZIPs, or anything under `build/`, `.dart_tool/`, or `artifacts/`.
 
@@ -267,6 +267,11 @@ Third-party notices that do exist:
 
 ## Download
 
-**Not yet published.** No GitHub Release or Play Store listing exists.
+**GitHub pre-release (development APK):**
 
-When a signed release exists, it will be announced with a GitHub Release or store listing. Until then, clone the repo and build locally with the commands above. Do not treat debug-signed release APKs as distributable store packages.
+- [Latest Releases](https://github.com/sahaya-savari/sli-vault/releases) — install the attached `sli-vault-*-debug-signed.apk` on a test device
+- Signing: **Android debug certificate** (not a production keystore)
+- Platforms: Android only for this package; iOS remains Phase 2
+- Play Store: **not listed** and this APK must **not** be uploaded as a store package
+
+Prefer cloning and building locally if you need a reproducible toolchain. Production signing and a store-ready package require a user-owned keystore and an application ID change away from `com.example.sli_vault`.

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- README hero replaced with the full-quality SLI Vault promotional banner; GitHub **pre-release** APK published for sideload testing (debug-signed, not Play Store).
 - Release prep: added MIT licensing for project-owned code and documentation, with an explicit third-party asset boundary. The app remains not Play-ready, and `FLAG_SECURE` stays commented until the owner asks to restore it. No keystore, application ID, version-code, font binary, or behavior change.
 - Verified on 2026-10-16 with Flutter 3.47.7: `flutter pub get`, `flutter analyze` (no issues), `flutter test` (62 passed), release APK and AAB builds, and APK certificate verification. Artifacts are development/debug-signed and not for Play Store upload; physical-device checks remain NOT TESTED.
 - Stopped ignoring the Android Gradle wrapper (`gradlew`, `gradlew.bat`, `gradle-wrapper.jar`) so a clone can reproduce a build. `local.properties` and signing files stay ignored.
