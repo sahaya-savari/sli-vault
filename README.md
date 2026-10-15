@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/sli-vault-readme-hero.png" alt="SLI Vault — personal vault for links, screenshots, and images. Android, 100% local-first." width="100%" />
+  <img src="docs/assets/sli-vault-readme-hero.png" alt="SLI Vault - personal vault for links, screenshots, and images. Android, 100% local-first." width="100%" />
 </div>
 
 <p align="center">
@@ -34,10 +34,10 @@ SLI Vault is a Flutter Android app for saving links and images into **app-privat
 | Platform | Status |
 |----------|--------|
 | Android | Primary target; development builds compile successfully |
-| iOS | Phase 2 — scaffold only, not verified as a shipping target |
-| Web / Desktop | Flutter platform folders only — not the shipping target |
+| iOS | Phase 2 - scaffold only, not verified as a shipping target |
+| Web / Desktop | Flutter platform folders only - not the shipping target |
 
-**Download / release status:** a **signed GitHub Release APK** is available under [Releases](https://github.com/sahaya-savari/sli-vault/releases). Application ID `com.sahayasavari.slivault`. There is **no Play Store listing** — sideload / open-source distribution only.
+**Download / release status:** a **signed GitHub Release APK** is available under [Releases](https://github.com/sahaya-savari/sli-vault/releases). Application ID `com.sahayasavari.slivault`. There is **no Play Store listing** - sideload / open-source distribution only.
 
 The project-owned code and documentation are licensed under [MIT](LICENSE). Third-party assets are separate: in particular, Anthropic Serif remains **not cleared for redistribution**. See [the font notice](assets/fonts/claude/README.md).
 
@@ -51,7 +51,7 @@ The project-owned code and documentation are licensed under [MIT](LICENSE). Thir
 - ZIP backup format **v2** (`manifest.json` + `images/<id>`) with SHA-256 and byte length per image; v1 archives still import
 - Import of the earlier Kotlin vault JSON shape (including Base64 image bytes)
 - Theme: **Dark**, **Light**, or **System**
-- Optional lock when backgrounded (device biometric or credential — SQLite is **not** encrypted)
+- Optional lock when backgrounded (device biometric or credential - SQLite is **not** encrypted)
 - Onboarding with a short welcome clip and still fallbacks
 - Android share-in (`ACTION_SEND` / `ACTION_SEND_MULTIPLE` for text and images)
 - Five destinations: Home, Browse, Favorites, Collections, Settings
