@@ -28,7 +28,17 @@ SLI Vault is a native Android application designed to save, organize, and revisi
   - Five distinct atmospheric variations: Cinematic (Onboarding/Empty), Abstract Flow (Home/Browse/Collections), Cosmic Subtle (Search), Surface Only (Settings/Profile), and Focus Immersive (Item Detail).
   - Micro-interactions with spring-based press scaling feedback (`PressFeedback`, `SliButtons`).
   - Custom vector assets including the official fiery vault symbol and dedicated search empty illustration.
-- **Collections & Organization:** Group items into custom collections with dynamic item counts, visual badge indicators, and collection filtering. Includes full rename and safe delete capabilities (reassigning items to General to guarantee zero data loss).
+- **User-Selected Mixed-Media Collections:**
+  - Create named collections and immediately select any combination of saved links, images, and screenshots from the vault.
+  - Interactive selection bottom sheet (`ItemSelectionSheet`) with live search, segmented type chips, select/deselect all, and breakdown counters.
+  - Dedicated Collection View (`CollectionDetailScreen`) displaying mixed-media cards with content-type indicators, grid/list view toggling, and in-collection search.
+  - Add items later: open any existing collection and add more saved vault items at any time.
+  - Move & Remove: move items between collections via `MoveItemDialog`, or remove items back to `General` without deleting the underlying link or media.
+  - Multi-select batch mode: select multiple items in a collection to batch move or batch remove.
+  - Safe deletion: deleting a collection safely reassigns member items to `General` with zero data loss.
+- **Editorial Serif Typography System:**
+  - Integrated `EditorialSerifFontFamily` / `AnthropicSerifFontFamily` applied selectively to prominent display titles, headlines, and empty states.
+  - Strict licensing compliance: evaluated `MB - Claude Font.zip` (`Copyright 2025 Anthropic PBC`, BSPK LLC); in compliance with project redistribution safety rules, the application leverages Android's native high-quality `FontFamily.Serif` to ensure 100% legal redistribution safety for public open-source builds.
 - **Starred Favorites:** Instant favorite toggling with dedicated filter and quick-access favorites section.
 - **Deep Multi-Token Search & Filtering:**
   - Multi-token, whitespace-delimited search matching across titles, URLs, domains, descriptions, tags, and collections.
@@ -156,7 +166,7 @@ When a user imports an image or captures a screenshot:
 ```bash
 ./gradlew testDebugUnitTest
 ```
-All unit tests execute via JUnit 4 and Robolectric (14 passing tests across `VaultRepositoryTest`, `ExampleRobolectricTest`, and `ExampleUnitTest`), verifying:
+All unit tests execute via JUnit 4 and Robolectric (19 passing tests across `VaultRepositoryTest`, `ExampleRobolectricTest`, and `ExampleUnitTest`), verifying:
 - Web URL validation, auto-scheme normalization, and invalid pattern rejection.
 - Safe custom collection deletion (zero data loss via automatic reassignment to `General`).
 - Custom collection renaming with atomic item reference updates.
@@ -166,6 +176,11 @@ All unit tests execute via JUnit 4 and Robolectric (14 passing tests across `Vau
 - Special character search resilience (`%`, `_`, `'`, `\`, unicode).
 - Type filter and collection filter isolation.
 - Resilience against blank, corrupted, and malformed JSON backup files.
+- Mixed-media collection creation and persistence grouping Links, Images, and Screenshots together.
+- Moving items between collections preserving underlying media paths and content.
+- Removing items from a collection back to `General` without deleting the underlying item.
+- Batch item removal from collections.
+- Duplicate prevention: re-adding items does not produce duplicate rows or duplicate memberships.
 
 ### Build Debug APK
 ```bash

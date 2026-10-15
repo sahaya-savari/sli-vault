@@ -26,6 +26,7 @@ import com.example.ui.components.NavDestination
 import com.example.ui.components.SliBottomNavBar
 import com.example.ui.screens.AddItemSheet
 import com.example.ui.screens.BrowseScreen
+import com.example.ui.screens.CollectionDetailScreen
 import com.example.ui.screens.CollectionsScreen
 import com.example.ui.screens.FavoritesScreen
 import com.example.ui.screens.HomeScreen
@@ -39,6 +40,7 @@ private sealed interface AppScreenState {
     data object MainTabs : AppScreenState
     data object Onboarding : AppScreenState
     data class ItemDetail(val item: VaultItem) : AppScreenState
+    data class CollectionDetail(val collectionName: String) : AppScreenState
     data object Search : AppScreenState
     data object Settings : AppScreenState
     data object Profile : AppScreenState
@@ -55,6 +57,7 @@ fun MainScreen(
     var isSettingsActive by remember { mutableStateOf(false) }
     var isProfileActive by remember { mutableStateOf(false) }
     var showOnboarding by remember { mutableStateOf(false) }
+    var activeCollectionDetail by remember { mutableStateOf<String?>(null) }
 
     val selectedItem by viewModel.selectedItem.collectAsStateWithLifecycle()
     val isAddSheetOpen by viewModel.isAddSheetOpen.collectAsStateWithLifecycle()
@@ -121,6 +124,7 @@ fun MainScreen(
     val currentScreenState: AppScreenState = when {
         showOnboarding -> AppScreenState.Onboarding
         selectedItem != null -> AppScreenState.ItemDetail(selectedItem!!)
+        activeCollectionDetail != null -> AppScreenState.CollectionDetail(activeCollectionDetail!!)
         isSearchActive -> AppScreenState.Search
         isSettingsActive -> AppScreenState.Settings
         isProfileActive -> AppScreenState.Profile
@@ -130,6 +134,7 @@ fun MainScreen(
     val atmosphereVariant = when (currentScreenState) {
         AppScreenState.Onboarding -> AtmosphereVariant.CINEMATIC
         is AppScreenState.ItemDetail -> AtmosphereVariant.FOCUS_IMMERSIVE
+        is AppScreenState.CollectionDetail -> AtmosphereVariant.ABSTRACT_FLOW
         AppScreenState.Search -> AtmosphereVariant.COSMIC_SUBTLE
         AppScreenState.Settings, AppScreenState.Profile -> AtmosphereVariant.SURFACE_ONLY
         AppScreenState.MainTabs -> AtmosphereVariant.ABSTRACT_FLOW
@@ -158,6 +163,16 @@ fun MainScreen(
                             item = screen.item,
                             viewModel = viewModel,
                             onBack = { viewModel.selectItem(null) }
+                        )
+                    }
+
+                    is AppScreenState.CollectionDetail -> {
+                        BackHandler { activeCollectionDetail = null }
+                        CollectionDetailScreen(
+                            collectionName = screen.collectionName,
+                            viewModel = viewModel,
+                            onBack = { activeCollectionDetail = null },
+                            onOpenItemDetail = { item -> viewModel.selectItem(item) }
                         )
                     }
 
@@ -243,8 +258,12 @@ fun MainScreen(
                                             CollectionsScreen(
                                                 viewModel = viewModel,
                                                 onSelectCollection = { collection ->
-                                                    viewModel.setSelectedCollection(collection)
-                                                    currentDestination = NavDestination.BROWSE
+                                                    if (collection == null) {
+                                                        viewModel.setSelectedCollection(null)
+                                                        currentDestination = NavDestination.BROWSE
+                                                    } else {
+                                                        activeCollectionDetail = collection
+                                                    }
                                                 }
                                             )
                                         }

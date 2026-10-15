@@ -10,17 +10,24 @@ import androidx.compose.ui.unit.sp
 // balanced tracking, line heights, and accessibility font scaling support.
 val ModernFontFamily = FontFamily.SansSerif
 
+// Editorial Serif font family used selectively for prominent headlines,
+// onboarding display titles, and editorial-style empty states.
+// Defaults to Android's native high-quality Serif typeface (Roboto/Noto Serif)
+// to strictly guarantee legal redistribution compliance per project guidelines.
+val EditorialSerifFontFamily: FontFamily = FontFamily.Serif
+val AnthropicSerifFontFamily: FontFamily = EditorialSerifFontFamily
+
 val Typography = Typography(
     // Display styles (Dashboard hero numbers / prominent metrics)
     displayLarge = TextStyle(
-        fontFamily = ModernFontFamily,
+        fontFamily = EditorialSerifFontFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 30.sp,
         lineHeight = 36.sp,
         letterSpacing = (-0.75).sp
     ),
     displayMedium = TextStyle(
-        fontFamily = ModernFontFamily,
+        fontFamily = EditorialSerifFontFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 26.sp,
         lineHeight = 32.sp,
@@ -28,14 +35,14 @@ val Typography = Typography(
     ),
     // Headline styles (Top-level screen titles, modal headers)
     headlineLarge = TextStyle(
-        fontFamily = ModernFontFamily,
+        fontFamily = EditorialSerifFontFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = (-0.35).sp
     ),
     headlineMedium = TextStyle(
-        fontFamily = ModernFontFamily,
+        fontFamily = EditorialSerifFontFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         lineHeight = 26.sp,

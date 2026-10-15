@@ -61,6 +61,44 @@ class VaultRepository(
         }
     }
 
+    suspend fun addItemsToCollection(itemIds: List<String>, collectionName: String) = withContext(Dispatchers.IO) {
+        val trimmed = collectionName.trim()
+        if (trimmed.isNotBlank() && itemIds.isNotEmpty()) {
+            if (!trimmed.equals("General", ignoreCase = true)) {
+                addCustomCollection(trimmed)
+            }
+            dao.updateItemsCollection(itemIds, trimmed)
+        }
+    }
+
+    suspend fun removeItemFromCollection(itemId: String) = withContext(Dispatchers.IO) {
+        dao.updateItemCollection(itemId, "General")
+    }
+
+    suspend fun removeItemsFromCollection(itemIds: List<String>) = withContext(Dispatchers.IO) {
+        if (itemIds.isNotEmpty()) {
+            dao.removeItemsFromCollection(itemIds)
+        }
+    }
+
+    suspend fun moveItemToCollection(itemId: String, targetCollection: String) = withContext(Dispatchers.IO) {
+        val trimmed = targetCollection.trim().ifBlank { "General" }
+        if (!trimmed.equals("General", ignoreCase = true)) {
+            addCustomCollection(trimmed)
+        }
+        dao.updateItemCollection(itemId, trimmed)
+    }
+
+    suspend fun moveItemsToCollection(itemIds: List<String>, targetCollection: String) = withContext(Dispatchers.IO) {
+        val trimmed = targetCollection.trim().ifBlank { "General" }
+        if (itemIds.isNotEmpty()) {
+            if (!trimmed.equals("General", ignoreCase = true)) {
+                addCustomCollection(trimmed)
+            }
+            dao.updateItemsCollection(itemIds, trimmed)
+        }
+    }
+
     fun getThemeModeName(): String {
         return settingsPrefs.getString("theme_mode", "DARK") ?: "DARK"
     }

@@ -206,6 +206,53 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun addItemsToCollection(itemIds: List<String>, collectionName: String, onDone: (() -> Unit)? = null) {
+        viewModelScope.launch {
+            repository.addItemsToCollection(itemIds, collectionName)
+            _customCollections.value = repository.getCustomCollections()
+            _userMessage.value = "Added ${itemIds.size} items to '$collectionName'"
+            onDone?.invoke()
+        }
+    }
+
+    fun removeItemFromCollection(item: VaultItem) {
+        viewModelScope.launch {
+            repository.removeItemFromCollection(item.id)
+            if (_selectedItem.value?.id == item.id) {
+                _selectedItem.value = _selectedItem.value?.copy(collection = "General")
+            }
+            _userMessage.value = "Removed from collection"
+        }
+    }
+
+    fun removeItemsFromCollection(itemIds: List<String>, onDone: (() -> Unit)? = null) {
+        viewModelScope.launch {
+            repository.removeItemsFromCollection(itemIds)
+            _userMessage.value = "Removed ${itemIds.size} items from collection"
+            onDone?.invoke()
+        }
+    }
+
+    fun moveItemToCollection(item: VaultItem, targetCollection: String) {
+        viewModelScope.launch {
+            repository.moveItemToCollection(item.id, targetCollection)
+            _customCollections.value = repository.getCustomCollections()
+            if (_selectedItem.value?.id == item.id) {
+                _selectedItem.value = _selectedItem.value?.copy(collection = targetCollection)
+            }
+            _userMessage.value = "Moved to '$targetCollection'"
+        }
+    }
+
+    fun moveItemsToCollection(itemIds: List<String>, targetCollection: String, onDone: (() -> Unit)? = null) {
+        viewModelScope.launch {
+            repository.moveItemsToCollection(itemIds, targetCollection)
+            _customCollections.value = repository.getCustomCollections()
+            _userMessage.value = "Moved ${itemIds.size} items to '$targetCollection'"
+            onDone?.invoke()
+        }
+    }
+
     fun selectItem(item: VaultItem?) {
         _selectedItem.value = item
     }

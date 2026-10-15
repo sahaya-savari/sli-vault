@@ -54,5 +54,10 @@ This document inventories the vector drawables, adaptive launcher icons, design 
 8. **`TypeFilterChips`**: Segmented filter pills with active fiery gradient selection.
 9. **`VaultLockScreen` (`com.example.ui.screens.VaultLockScreen`)**: Full-screen frosted biometric lock barrier with fiery flame badge, error banner, and primary Unlock CTA.
 10. **`SliVaultLightColorScheme`**: Cohesive porcelain-white and slate light theme with dark typography, subtle borders, and fiery gradient accents.
+11. **`ItemSelectionSheet` (`com.example.ui.screens.ItemSelectionSheet`)**: Modal bottom sheet for mixed-media selection across links, images, and screenshots with search, type filters, and tactile check indicators.
+12. **`CollectionDetailScreen` (`com.example.ui.screens.CollectionDetailScreen`)**: Dedicated collection view with mixed-media item cards, search, type filtering, and multi-select batch controls.
+13. **`MoveItemDialog` (`com.example.ui.components.MoveItemDialog`)**: Dialog for moving single or batch items between collections or creating a new collection on the fly.
+14. **`EditorialSerifFontFamily` (`Type.kt`)**: Clean serif typography applied to prominent headers, screen titles, and empty states.
+
 
 
