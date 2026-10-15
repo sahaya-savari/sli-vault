@@ -87,6 +87,7 @@ fun CollectionsScreen(
     var collectionToRename by remember { mutableStateOf<String?>(null) }
     var renameInput by remember { mutableStateOf("") }
     var collectionToDelete by remember { mutableStateOf<String?>(null) }
+    var collectionForSelectionSheet by remember { mutableStateOf<String?>(null) }
 
     // Aggregate counts & cover images from DB items and persisted distinctCollections
     val collectionsList = remember(items, distinctCollections) {
@@ -201,6 +202,7 @@ fun CollectionsScreen(
                 val trimmed = newCollectionName.trim()
                 if (trimmed.isNotEmpty()) {
                     viewModel.createCollection(trimmed)
+                    collectionForSelectionSheet = trimmed
                 }
                 newCollectionName = ""
                 showCreateDialog = false
@@ -305,6 +307,21 @@ fun CollectionsScreen(
                 color = SecondaryText
             )
         }
+    }
+
+    collectionForSelectionSheet?.let { targetColl ->
+        ItemSelectionSheet(
+            targetCollectionName = targetColl,
+            allItems = items,
+            initialSelectedIds = emptySet(),
+            onDismiss = { collectionForSelectionSheet = null },
+            onConfirmSelection = { selectedIds ->
+                viewModel.addItemsToCollection(selectedIds, targetColl) {
+                    collectionForSelectionSheet = null
+                    onSelectCollection(targetColl)
+                }
+            }
+        )
     }
 }
 

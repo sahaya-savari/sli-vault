@@ -34,6 +34,15 @@ interface VaultItemDao {
     @Query("UPDATE vault_items SET collection = :newName WHERE collection = :oldName")
     suspend fun renameCollection(oldName: String, newName: String)
 
+    @Query("UPDATE vault_items SET collection = :collection, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun updateItemCollection(id: String, collection: String, updatedAt: Long = System.currentTimeMillis())
+
+    @Query("UPDATE vault_items SET collection = :collection, updatedAt = :updatedAt WHERE id IN (:ids)")
+    suspend fun updateItemsCollection(ids: List<String>, collection: String, updatedAt: Long = System.currentTimeMillis())
+
+    @Query("UPDATE vault_items SET collection = 'General', updatedAt = :updatedAt WHERE id IN (:ids)")
+    suspend fun removeItemsFromCollection(ids: List<String>, updatedAt: Long = System.currentTimeMillis())
+
     @Query("""
         SELECT * FROM vault_items 
         WHERE title LIKE '%' || :query || '%' 

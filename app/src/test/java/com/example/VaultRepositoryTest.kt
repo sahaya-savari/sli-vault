@@ -320,6 +320,123 @@ class VaultRepositoryTest {
         assertTrue(emptyListResult.isSuccess)
         assertEquals(0, emptyListResult.getOrNull())
     }
+
+    @Test
+    fun `test mixed-media collection creation and persistence with links, images, screenshots`() = runBlocking {
+        // Create 3 items of different media types
+        val linkItem = VaultItem(
+            id = "link_1",
+            title = "Android Architecture Docs",
+            type = ItemType.LINK,
+            url = "https://developer.android.com",
+            collection = "General"
+        )
+        val imageItem = VaultItem(
+            id = "image_1",
+            title = "Design Board Infographic",
+            type = ItemType.IMAGE,
+            localImagePath = "/storage/emulated/0/vault_images/img_1.jpg",
+            collection = "General"
+        )
+        val screenshotItem = VaultItem(
+            id = "screen_1",
+            title = "Checkout Flow Bug",
+            type = ItemType.SCREENSHOT,
+            localImagePath = "/storage/emulated/0/vault_images/screen_1.png",
+            collection = "General"
+        )
+        database.vaultItemDao().insertAll(listOf(linkItem, imageItem, screenshotItem))
+
+        // Group all 3 items into a single named collection
+        repository.addItemsToCollection(
+            listOf("link_1", "image_1", "screen_1"),
+            "Sprint 42 Deliverables"
+        )
+
+        // Verify collection was registered in persistent custom collections
+        val customCollections = repository.getCustomCollections()
+        assertTrue(customCollections.contains("Sprint 42 Deliverables"))
+
+        // Verify all 3 items now belong to the collection
+        val allItems = database.vaultItemDao().getAllItemsOnce()
+        val inCollection = allItems.filter { it.collection == "Sprint 42 Deliverables" }
+        assertEquals(3, inCollection.size)
+
+        // Verify content types in the collection are mixed
+        val types = inCollection.map { it.type }.toSet()
+        assertEquals(setOf(ItemType.LINK, ItemType.IMAGE, ItemType.SCREENSHOT), types)
+    }
+
+    @Test
+    fun `test moving items between collections preserves original media and content`() = runBlocking {
+        val imageItem = VaultItem(
+            id = "img_move_1",
+            title = "Moodboard Image",
+            type = ItemType.IMAGE,
+            localImagePath = "/data/user/0/com.example/files/vault_images/moodboard.jpg",
+            collection = "Inspiration"
+        )
+        database.vaultItemDao().insertItem(imageItem)
+
+        // Move image to "Final Assets"
+        repository.moveItemToCollection("img_move_1", "Final Assets")
+
+        val retrieved = database.vaultItemDao().getItemByIdOnce("img_move_1")
+        assertNotNull(retrieved)
+        assertEquals("Final Assets", retrieved?.collection)
+        assertEquals("Moodboard Image", retrieved?.title)
+        assertEquals("/data/user/0/com.example/files/vault_images/moodboard.jpg", retrieved?.localImagePath)
+    }
+
+    @Test
+    fun `test removing item from collection resets to General without deleting item`() = runBlocking {
+        val linkItem = VaultItem(
+            id = "link_remove_1",
+            title = "Reference Link",
+            type = ItemType.LINK,
+            url = "https://kotlinlang.org",
+            collection = "DevTools"
+        )
+        database.vaultItemDao().insertItem(linkItem)
+
+        // Remove item from collection
+        repository.removeItemFromCollection("link_remove_1")
+
+        // Item must still exist in vault, moved safely to General
+        val retrieved = database.vaultItemDao().getItemByIdOnce("link_remove_1")
+        assertNotNull(retrieved)
+        assertEquals("General", retrieved?.collection)
+        assertEquals("https://kotlinlang.org", retrieved?.url)
+    }
+
+    @Test
+    fun `test batch removing items from collection resets all to General`() = runBlocking {
+        val item1 = VaultItem(id = "batch_1", title = "Item 1", type = ItemType.LINK, collection = "ProjectX")
+        val item2 = VaultItem(id = "batch_2", title = "Item 2", type = ItemType.IMAGE, collection = "ProjectX")
+        database.vaultItemDao().insertAll(listOf(item1, item2))
+
+        repository.removeItemsFromCollection(listOf("batch_1", "batch_2"))
+
+        val retrieved1 = database.vaultItemDao().getItemByIdOnce("batch_1")
+        val retrieved2 = database.vaultItemDao().getItemByIdOnce("batch_2")
+        assertEquals("General", retrieved1?.collection)
+        assertEquals("General", retrieved2?.collection)
+    }
+
+    @Test
+    fun `test duplicate collection assignment does not duplicate vault items`() = runBlocking {
+        val item = VaultItem(id = "item_dup_1", title = "Single Item", type = ItemType.LINK, collection = "General")
+        database.vaultItemDao().insertItem(item)
+
+        // Assign to "UniqueColl" twice
+        repository.addItemsToCollection(listOf("item_dup_1"), "UniqueColl")
+        repository.addItemsToCollection(listOf("item_dup_1"), "UniqueColl")
+
+        val allItems = database.vaultItemDao().getAllItemsOnce()
+        val matching = allItems.filter { it.id == "item_dup_1" }
+        assertEquals(1, matching.size)
+        assertEquals("UniqueColl", matching[0].collection)
+    }
 }
 
 

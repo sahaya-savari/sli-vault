@@ -78,6 +78,8 @@ import com.example.data.ItemType
 import com.example.data.VaultItem
 import com.example.ui.VaultViewModel
 import com.example.ui.components.GlassCard
+import com.example.ui.components.MoveItemDialog
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.components.GlassDialog
 import com.example.ui.components.formatFileSize
 import com.example.ui.theme.ElevatedCharcoal
@@ -112,6 +114,8 @@ fun ItemDetailScreen(
     var isAddTagOpen by remember { mutableStateOf(false) }
     var newTagText by remember { mutableStateOf("") }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
+    var showMoveDialog by remember { mutableStateOf(false) }
+    val distinctCollections by viewModel.distinctCollections.collectAsStateWithLifecycle()
 
     val formattedDate = remember(item.createdAt) {
         val sdf = SimpleDateFormat("MMM d, yyyy, h:mm a", Locale.getDefault())
@@ -505,7 +509,12 @@ fun ItemDetailScreen(
                     DetailRow(label = "File Size", value = formatFileSize(item.fileSizeBytes))
                 }
 
-                DetailRow(label = "Collection", value = item.collection)
+                DetailRow(
+                    label = "Collection",
+                    value = "${item.collection} • Tap to Move",
+                    isClickable = true,
+                    onCopy = { showMoveDialog = true }
+                )
                 DetailRow(label = "Added", value = formattedDate)
             }
         }
@@ -641,6 +650,19 @@ fun ItemDetailScreen(
                 lineHeight = 18.sp
             )
         }
+    }
+
+    if (showMoveDialog) {
+        MoveItemDialog(
+            itemCount = 1,
+            currentCollection = item.collection,
+            availableCollections = distinctCollections,
+            onDismissRequest = { showMoveDialog = false },
+            onConfirmMove = { targetCollection ->
+                viewModel.moveItemToCollection(item, targetCollection)
+                showMoveDialog = false
+            }
+        )
     }
 }
 
