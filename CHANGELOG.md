@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Release prep (docs and ignore rules only): documented that the app is not Play-ready, that no license has been chosen, and that `FLAG_SECURE` stays commented until the owner asks to restore it. Recorded the prior QA baseline (62 host tests, clean analyze, debug-signed release APK/AAB about 60.6 MB) separately from older 21/25-test notes. No keystore, application ID, or version-code change.
+- Release prep: added MIT licensing for project-owned code and documentation, with an explicit third-party asset boundary. The app remains not Play-ready, and `FLAG_SECURE` stays commented until the owner asks to restore it. No keystore, application ID, version-code, font binary, or behavior change.
+- Verified on 2026-10-16 with Flutter 3.47.7: `flutter pub get`, `flutter analyze` (no issues), `flutter test` (62 passed), release APK and AAB builds, and APK certificate verification. Artifacts are development/debug-signed and not for Play Store upload; physical-device checks remain NOT TESTED.
 - Stopped ignoring the Android Gradle wrapper (`gradlew`, `gradlew.bat`, `gradle-wrapper.jar`) so a clone can reproduce a build. `local.properties` and signing files stay ignored.
 - `FLAG_SECURE` remains paused in `MainActivity.kt` (commented `addFlags`, with a restore comment). Older changelog lines that describe black screencaps describe the previous behavior.
 - Fixed vault-init loading arts never appearing: `main()` previously awaited `initialize()` before `runApp`, so `SliLoadingScreen` was unreachable. Boot gate now paints owner loading arts for ~2.2s after first Flutter frame; loading JPGs re-synced byte-identical from `IMG FILES` (`street_lamp`, `night_city`, `forest_cabin`).

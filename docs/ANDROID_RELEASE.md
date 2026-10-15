@@ -2,15 +2,24 @@
 
 Status: **not production-ready.** This file records what is verified, what is blocked, and how to finish the release setup safely. Nothing in the "Signing setup guide" section has been applied to the project.
 
-## Verified earlier
+## Verified in this pass — 2026-10-16
 
-These commands have succeeded on Windows with Flutter 3.47.7. This documentation pass did **not** rebuild them.
+These commands succeeded on Windows with Flutter 3.47.7 and the Android Studio JBR:
 
-- `flutter build apk --debug`
+- `flutter pub get`
+- `flutter analyze` — no issues found
+- `flutter test` — **62 tests passed**
 - `flutter build apk --release`
 - `flutter build appbundle --release`
 
-Historical size notes in this repo do not all match each other (debug APK around 226 MB; release APK/AAB reported near 59 MB, 60.5 MB, and a later QA baseline of about **60.6 MB**). Treat those figures as past build outputs under `build/app/outputs/`, not as committed artifacts. The QA baseline of about 60.6 MB was debug-signed.
+Current generated artifact sizes (not committed):
+
+- `build/app/outputs/flutter-apk/app-release.apk` — **63,521,428 bytes (60.58 MiB)**
+- `build/app/outputs/bundle/release/app-release.aab` — **63,540,169 bytes (60.60 MiB)**
+
+The release APK was verified with `apksigner`. It uses the `Android Debug` certificate
+(SHA-256: `db6c8a91b7691c7e64e5cb20c46cc79976d852125739e8766c335c50862cadd0`).
+These artifacts are **DEVELOPMENT/DEBUG-SIGNED — NOT FOR PLAY STORE UPLOAD**.
 
 If `JAVA_HOME` points at a JDK that is not installed, set it before Gradle runs:
 
@@ -54,7 +63,7 @@ The Android implementation also includes:
 - About text hard-codes `1.0.0` in `lib/features/settings/settings_screen.dart` and `lib/features/settings/legal_screens.dart`. `pubspec.yaml` is `version: 1.0.0+1`, which Gradle already maps to `versionName` / `versionCode`. `package_info_plus` is not a dependency and was not added, so the Dart strings can drift from `pubspec.yaml`.
 - Adaptive icon: `mipmap-anydpi-v26/ic_launcher.xml` uses `@drawable/ic_launcher_foreground`, which is a bitmap of `drawable-nodpi/sli_vault_launcher.png` with `android:gravity="fill"`. The bitmap is a complete rounded app icon, so the system mask can crop the outer glow and frame. `assets/android/launcher-foreground.svg` is drawn inside the 66dp safe zone but is not what the adaptive XML uses. The PNG was not modified.
 - The bundled **Anthropic Serif** font files have no license file and are described by public sources as a proprietary Anthropic brand typeface. They must not ship in a public repository, a Play release, or an AAB until rights are confirmed in writing. See `assets/fonts/claude/README.md` and `docs/RELEASE_READINESS.md`.
-- No `LICENSE` file exists. The project license has not been chosen.
+- `LICENSE` now covers project-owned code and documentation under MIT. It does not cover Anthropic Serif or other third-party assets.
 - `file_picker` and `share_plus` have been warned by Gradle for applying the Kotlin Gradle Plugin. That is a future upgrade, not a reason to drop the plugins.
 - Real-device checks are **NOT TESTED**. See `docs/ANDROID_DEVICE_CHECKLIST.md`.
 
@@ -198,10 +207,9 @@ Today this prints an `Android Debug` certificate. A production build must not.
 
 1. Owner picks the final application ID.
 2. Owner confirms or replaces the Anthropic Serif font.
-3. Owner chooses the license.
-4. Owner creates the upload keystore outside the repo and approves the Gradle wiring.
-5. Owner decides on the version-display approach and launcher-icon inset.
-6. Owner runs `docs/ANDROID_DEVICE_CHECKLIST.md` on a real device.
-7. Only then build a signed AAB for Play internal testing.
+3. Owner creates the upload keystore outside the repo and approves the Gradle wiring.
+4. Owner decides on the version-display approach and launcher-icon inset.
+5. Owner runs `docs/ANDROID_DEVICE_CHECKLIST.md` on a real device.
+6. Only then build a signed AAB for Play internal testing.
 
 Do not describe the app as production-ready until signing and the device checklist are complete.
