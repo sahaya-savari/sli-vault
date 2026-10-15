@@ -14,8 +14,10 @@ key.properties
 **/*.keystore
 **/*.jks
 **/*.enc
+**/*.env
+!.env.example
 
-# Encrypted backup folder: ignore contents; allow only ignore docs + README
+# Local signing restore: ignore contents; allow only ignore docs + README
 /secrets/**
 !/secrets/.gitignore
 !/secrets/.ignore

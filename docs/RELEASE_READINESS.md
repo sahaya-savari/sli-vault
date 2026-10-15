@@ -19,7 +19,7 @@ Android release preparation steps live in [ANDROID_RELEASE.md](ANDROID_RELEASE.m
 | Legal / About UI | PASS (in-app copy) | Privacy and Terms are Settings-reachable and do not say "Draft" | Version label is hard-coded `1.0.0`. No hosted public policy URL. |
 | Android debug build | PASS (earlier) | Prior debug APK under `build/app/outputs/` (not committed) | Not rebuilt in this prep pass |
 | Android release builds | PASS (signed sideload) | `flutter build apk --release` on 2026-10-16 with owner keystore. Published as GitHub Release `v1.0.0` (`sli-vault-1.0.0-release.apk`). | Not for Play Store upload. Keep secrets local. |
-| Android release signing | PASS (local) | `apksigner` shows owner DN (`CN=Sahaya Savari F…`), not Android Debug. `key.properties` + `.jks` stay outside git; optional encrypted backup under `android/secrets/`. | Keep secrets local. Play App Signing not enrolled (no Play Store target). |
+| Android release signing | PASS (local) | `apksigner` shows owner DN (`CN=Sahaya Savari F…`), not Android Debug. `key.properties` + `.jks` stay outside git; optional local `.env` restore under `android/secrets/`. | Keep secrets local. Play App Signing not enrolled (no Play Store target). |
 | Application ID | PASS | `com.sahayasavari.slivault` in `build.gradle.kts` and Kotlin package path. | Stable for GitHub sideload releases. |
 | `FLAG_SECURE` | BLOCKED | Commented out in `MainActivity.kt` at the owner's request | Leave it off until the owner explicitly asks to restore it. |
 | Launcher safe zone | BLOCKED | Adaptive foreground bitmap uses `gravity="fill"` | Do not replace the approved logo. Adjust padding only after a visual check the owner accepts. |
