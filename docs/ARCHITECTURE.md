@@ -12,7 +12,7 @@ SLI Vault is a local-first Flutter application with no account, cloud sync, tele
 
 `VaultController` exposes the current application state through `ChangeNotifier`. Persistence remains behind `VaultDatabase`, `LocalImageStorage`, and `VaultBackupService`.
 
-The shell exposes exactly five primary destinations: Home, Browse, Favorites, Collections, and Settings via `IndexedStack` (tap-only; no horizontal page swipe). Semantic light/dark palette tokens and identical typography metrics are centralized in `SliTheme`; `SliGlassSurface` provides frosted panels with reduced-motion-aware blur. Primary UI typefaces are Anthropic Serif (`Claude` / `ClaudeDisplay`) with JetBrains Mono for technical labels. Vault-init loading uses `SliLoadingScreen` with rotating owner-provided arts under `assets/illustrations/loading/`.
+The shell exposes exactly five primary destinations: Home, Browse, Favorites, Collections, and Settings via `IndexedStack` (tap-only; no horizontal page swipe). The Add FAB is shown on library tabs only (hidden on Settings). Semantic light/dark palette tokens and identical typography metrics are centralized in `SliTheme`; `SliGlassSurface` provides frosted panels with reduced-motion-aware blur. List cards use restrained press feedback without pan-following spotlight glow. Primary UI typefaces are Anthropic Serif (`Claude` / `ClaudeDisplay`) with JetBrains Mono for technical labels. Vault-init loading uses `SliLoadingScreen` with rotating arts under `assets/illustrations/loading/`. Onboarding can play a muted looping welcome clip with still-image fallback under `assets/illustrations/onboarding/`.
 
 ## Security Boundary
 

@@ -153,11 +153,23 @@ class _HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final identity = Row(
       children: [
-        SliIllustration(
-          SliAssets.symbolForBrightness(Theme.of(context).brightness),
-          width: 36,
-          height: 36,
-          semanticLabel: 'SLI Vault',
+        // Official square brand mark (same asset as launcher master).
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.asset(
+            SliAssets.symbol,
+            width: 40,
+            height: 40,
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.medium,
+            semanticLabel: 'SLI Vault',
+            errorBuilder: (_, _, _) => SliIllustration(
+              SliAssets.brandMark,
+              width: 40,
+              height: 40,
+              semanticLabel: 'SLI Vault',
+            ),
+          ),
         ),
         SizedBox(width: SliTokens.spaceMd),
         Expanded(

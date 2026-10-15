@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Removed dark-mode swipe spotlight glow (`SliSpotlightCard` pan tracking); kept restrained InkWell press feedback.
+- Hide Add FAB on Settings; keep it on Home/Browse/Favorites/Collections.
+- Home header uses official `sli_vault_logo_official.png` mark with SVG fallback.
+- Privacy Policy and Terms of Use titles no longer say “(Draft)”; copy matches on-device behavior (no invented company/contact).
+- Onboarding welcome media: owner stills + short `cabin_rain.mp4` loop (muted, lifecycle-paused); stills fallback if video fails. No ~30s welcome video was found in approved asset folders.
 - Added restrained glass surfaces and layered light/dark atmosphere (soft ambient glows, luminous strokes) across Home, Settings, and key cards.
 - Stabilized five-tab bottom navigation and Home type filters without horizontal swipe strips; Collections label scales to fit.
 - Bundled owner-provided Anthropic Serif (Claude/MB) as primary UI typeface plus JetBrains Mono (OFL) for technical labels.
@@ -18,8 +23,9 @@
 - Fixed onboarding replay persistence and resilient five-destination navigation at narrow widths and large text.
 - Unified light/dark semantic typography, theme interpolation, transparent branding, and empty-state surfaces.
 - Added backup format v2 SHA-256/size integrity checks, schema enforcement, duplicate/orphan rejection, strict image validation, and rollback coverage while retaining v1 compatibility.
-- Added Settings-reachable About, runtime open-source licenses, and clearly labeled local draft Privacy Policy and Terms.
+- Added Settings-reachable About, runtime open-source licenses, Privacy Policy, and Terms of Use.
 - Removed the unused Internet permission from the production Android manifest; development manifests retain Flutter tooling access.
 - Hardened glass blur compositing and loading-art decode caps; fixed equal-width five-tab nav (no swipe / no horizontal scroll strip) at font scale 1.15.
 - Recorded real-device smoke on CPH2569 (Android 15, font scale 1.15): five tabs, Light theme persistence, Share Target save, favorites, `SmokeTest` collection persistence, non-destructive ZIP export, `FLAG_SECURE` all-black screencap; 0 RenderFlex overflows. Device library was empty at session start (prior reinstall likely); no destructive restore performed.
-- Build artifacts (debug-signed release config): debug APK ~225 MB, release APK ~58 MB, release AAB ~57 MB under `build/app/outputs/`.
+- Build artifacts (debug-signed release config): debug APK ~226 MB, release APK ~60 MB, release AAB ~60 MB under `build/app/outputs/`.
+- Device re-smoke (CPH2569): Add FAB present on library tabs and absent on Settings; legal screens without “Draft”; swipe/list with 0 RenderFlex overflows; `FLAG_SECURE` screencap all-black (~17.7 KB). Welcome video playback on-device: NOT VERIFIED this session.

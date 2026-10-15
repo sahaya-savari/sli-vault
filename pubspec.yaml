@@ -23,6 +23,7 @@ dependencies:
   archive: ^4.0.4
   crypto: ^3.0.7
   local_auth: ^2.3.0
+  video_player: ^2.14.1
 
 dev_dependencies:
   flutter_test:
@@ -38,6 +39,7 @@ flutter:
     - assets/android/
     - assets/illustrations/
     - assets/illustrations/loading/
+    - assets/illustrations/onboarding/
     - assets/tokens/
     - assets/icons/navigation/
     - assets/icons/content/

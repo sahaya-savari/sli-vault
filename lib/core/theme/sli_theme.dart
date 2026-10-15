@@ -308,8 +308,10 @@ class SliTheme {
       fontFamily: SliTokens.fontFamily,
       extensions: const [palette],
       dividerColor: SliTokens.border,
-      splashColor: SliTokens.orange.withValues(alpha: 0.12),
-      highlightColor: SliTokens.orange.withValues(alpha: 0.08),
+      // Restrained ink — avoid large orange blooms while scrolling dark lists.
+      splashColor: SliTokens.orange.withValues(alpha: 0.08),
+      highlightColor: SliTokens.orange.withValues(alpha: 0.04),
+      splashFactory: InkRipple.splashFactory,
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         foregroundColor: SliTokens.textPrimary,

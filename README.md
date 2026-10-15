@@ -64,6 +64,8 @@ Primary UI typography uses Anthropic Serif (Claude/MB package, owner-provided) v
 
 Flutter vault-init loading uses a rotating set of owner-provided dark arts under `assets/illustrations/loading/` with brand mark + glass progress. The Android native splash (`@drawable/sli_vault_splash`) stays a simple centered mark; wiring full-bleed bitmaps into native splash needs extra density assets / splash tooling and was intentionally not done here.
 
+Onboarding welcome media lives under `assets/illustrations/onboarding/` (owner stills plus a short muted `cabin_rain.mp4` loop with stills fallback). A ~30-second welcome video was **not found** in the approved `D:\SLI FILES\` asset folders searched.
+
 ## Verification
 
 ```powershell
@@ -77,6 +79,6 @@ flutter build appbundle --release
 
 Synthetic fixtures cover v1 database upgrades, Kotlin JSON metadata/image restoration, duplicate IDs, ZIP checksums and exact round trips, malformed/unsafe archives, rollback and image collisions, large libraries, URL/tag validation, onboarding persistence, narrow scaled navigation, collections, search, and favorites. Host suite: **21** tests (`flutter test`).
 
-Latest local Android artifacts (not committed): `build/app/outputs/flutter-apk/app-debug.apk`, `app-release.apk`, and `build/app/outputs/bundle/release/app-release.aab`. Release builds remain **debug-signed** until a production keystore is configured.
+Latest local Android artifacts (not committed): debug APK ~226 MB, release APK ~60 MB, release AAB ~60 MB under `build/app/outputs/`. Release builds remain **debug-signed** until a production keystore is configured.
 
 The original Kotlin checkpoint is `760d9e5a26a5c1ed600ce725911237e109e9e381`.

@@ -40,9 +40,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const _DocumentScaffold(
-      title: 'Privacy Policy (Draft)',
+      title: 'Privacy Policy',
       children: [
-        _DraftNotice(),
         _DocumentSection(
           heading: 'Data stored by the app',
           body: 'SLI Vault stores saved links, titles, descriptions, tags, favorite state, collection assignments, timestamps, settings, and imported image files locally in app-private storage.',
@@ -70,9 +69,8 @@ class TermsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const _DocumentScaffold(
-      title: 'Terms of Use (Draft)',
+      title: 'Terms of Use',
       children: [
-        _DraftNotice(),
         _DocumentSection(
           heading: 'Local storage and backups',
           body: 'You are responsible for maintaining device access and any backup files you create. SLI Vault does not provide hosted storage, account recovery, or cloud restoration.',
@@ -83,7 +81,7 @@ class TermsScreen extends StatelessWidget {
         ),
         _DocumentSection(
           heading: 'Availability',
-          body: 'This draft describes the current app behavior and does not promise uninterrupted operation or recovery from device loss, storage failure, or deletion.',
+          body: 'The app describes current on-device behavior and does not promise uninterrupted operation or recovery from device loss, storage failure, or deletion.',
         ),
       ],
     );
@@ -105,26 +103,6 @@ class _DocumentScaffold extends StatelessWidget {
           padding: const EdgeInsets.all(SliTokens.spaceLg),
           children: children,
         ),
-      ),
-    );
-  }
-}
-
-class _DraftNotice extends StatelessWidget {
-  const _DraftNotice();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: SliTokens.spaceLg),
-      padding: const EdgeInsets.all(SliTokens.spaceMd),
-      decoration: BoxDecoration(
-        color: context.sli.elevated,
-        border: Border.all(color: SliTokens.warning),
-        borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-      ),
-      child: const Text(
-        'Local factual draft — requires legal review and a hosted public URL before store publication.',
       ),
     );
   }
