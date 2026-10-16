@@ -18,6 +18,9 @@ import {
   FolderHeart,
   Sparkles,
   Play,
+  Download,
+  Laptop,
+  Terminal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +29,6 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { IPhone } from "@/components/ui/iphone";
 import { ScreenshotGallery } from "@/components/screenshot-gallery";
 import { SampleVault } from "@/components/sample-vault";
 import { ArchitectureBeam } from "@/components/architecture-beam";
@@ -34,11 +36,20 @@ import { Highlighter } from "@/components/ui/highlighter";
 import { MagicCard } from "@/components/ui/magic-card";
 import { PixelCard } from "@/components/ui/pixel-card";
 import { DotPattern } from "@/components/ui/dot-pattern";
-import { ShineBorder } from "@/components/ui/shine-border";
-import { HyperText } from "@/components/ui/hyper-text";
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
-import { repositoryUrl, screenshots } from "@/lib/screenshots";
+import {
+  apkDownloadUrl,
+  apkFileSize,
+  latestVersion,
+  releaseNotesUrl,
+  releasesUrl,
+  repositoryUrl,
+  screenshots,
+} from "@/lib/screenshots";
 import logo from "@/assets/sli_vault_logo_official.png";
+import heroBg from "@/assets/hero-bg.webp";
+import heroCenter from "@/assets/hero-center.webp";
+import heroLeft from "@/assets/hero-left.webp";
+import heroRight from "@/assets/hero-right.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -135,7 +146,7 @@ const faqs = [
   ],
   [
     "Where can I download SLI Vault or find project updates?",
-    "The supplied project address is github.com/sahaya-savari/sli-vault. It currently returns 404 publicly, as does its releases page. A verified public download is not available, so this showcase does not offer an APK or store link.",
+    "Official signed releases are available on GitHub Releases (github.com/sahaya-savari/sli-vault/releases). You can download the latest verified APK (v1.0.1) directly from the Download section above for Android sideloading. SLI Vault is not published to the Google Play Store.",
   ],
 ];
 
@@ -150,8 +161,6 @@ function Index() {
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [menuOpen]);
-
-  const homeScreen = screenshots.find((screen) => screen.id === "home");
 
   return (
     <div className="vault-site min-h-screen bg-[#0A0B0D] text-foreground selection:bg-primary/30">
@@ -178,7 +187,7 @@ function Index() {
             id="main-navigation"
             aria-label="Main navigation"
           >
-            {["Home", "Features", "Architecture", "Screenshots", "Privacy", "FAQ"].map((item) => (
+            {["Home", "Features", "Architecture", "Screenshots", "Download", "Privacy", "FAQ"].map((item) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
@@ -239,24 +248,35 @@ function Index() {
           id="home"
           className="hero relative overflow-hidden pt-8 pb-16 sm:py-20 border-b border-border/60"
         >
-          <DotPattern className="[mask-image:radial-gradient(550px_circle_at_center,white,transparent)] opacity-25" />
+          {/* Supplied Hero Background */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden z-0 select-none">
+            <img
+              src={heroBg}
+              alt=""
+              className="h-full w-full max-w-6xl object-contain object-center opacity-40 mix-blend-screen"
+              aria-hidden="true"
+            />
+          </div>
+          <DotPattern className="[mask-image:radial-gradient(550px_circle_at_center,white,transparent)] opacity-15" />
 
-          <div className="hero-inner max-w-6xl mx-auto px-4 sm:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="hero-copy lg:col-span-7">
-              <div className="version-tag inline-flex items-center gap-2 rounded-full border border-primary/30 bg-card/80 px-3.5 py-1.5 text-xs text-muted-foreground backdrop-blur-sm">
-                <span className="size-2 rounded-full bg-primary animate-pulse" />
-                <HyperText className="text-xs tracking-wider uppercase font-semibold text-foreground">
-                  ANDROID · LOCAL-FIRST
-                </HyperText>
-                <span className="text-primary font-mono">•</span>
-                <span className="text-[11px] text-muted-foreground">OPEN SOURCE DESIGN</span>
+          <div className="hero-inner max-w-6xl mx-auto px-4 sm:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            <div className="hero-copy lg:col-span-6">
+              {/* Reference-Style Compact Pill Badge */}
+              <div
+                dir="ltr"
+                className="version-tag inline-flex items-center flex-wrap gap-2 rounded-full border border-border/80 bg-card/80 px-3.5 py-1.5 text-xs text-muted-foreground backdrop-blur-md shadow-sm"
+              >
+                <span className="rounded-full bg-primary/20 px-2 py-0.5 font-mono text-[11px] font-semibold text-primary">
+                  {latestVersion}
+                </span>
+                <span className="font-semibold text-foreground">Android</span>
+                <span className="text-muted-foreground/60">•</span>
+                <span className="font-mono text-muted-foreground">com.sahayasavari.slivault</span>
+                <span className="text-muted-foreground/60">•</span>
+                <span className="text-muted-foreground font-medium">Open Source</span>
               </div>
 
-              <div className="mt-4 font-mono text-xs font-semibold uppercase tracking-widest text-primary">
-                SLI Vault Companion Showcase
-              </div>
-
-              <h1 className="mt-3 font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.12]">
+              <h1 className="mt-5 font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.12]">
                 Everything Worth Keeping,
                 <br />
                 In One{" "}
@@ -266,85 +286,117 @@ function Index() {
                 .
               </h1>
 
-              <p className="mt-3 font-mono text-sm sm:text-base text-primary/90 font-medium">
-                Save Links • Screenshots • Images
-              </p>
-
-              <p className="hero-lede mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
+              <p className="hero-lede mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed max-w-lg">
                 A serene space for useful links, inspiring images, and the screenshots you return
                 to. Saved together on your device. Found when it matters.
               </p>
 
+              {/* Reference-Style Pill Action Buttons */}
               <div className="hero-actions mt-8 flex flex-wrap items-center gap-3">
                 <Button
                   size="lg"
                   asChild
-                  className="download-button bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 shadow-lg shadow-primary/20"
+                  className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-semibold px-7 shadow-xl shadow-white/5 gap-2 h-12"
                 >
-                  <Link to="/demo">
-                    <Sparkles className="mr-2 size-4" />
-                    Explore Live Demo
-                  </Link>
+                  <a href={apkDownloadUrl} download>
+                    <Download className="size-4" />
+                    Download APK
+                  </a>
                 </Button>
 
                 <Button
                   size="lg"
                   variant="outline"
                   asChild
-                  className="border-border hover:border-primary/50"
+                  className="rounded-full border-border/80 bg-card/60 hover:bg-card text-foreground font-semibold px-6 h-12 gap-2"
                 >
-                  <a href="#screenshots">
-                    View App Screens
-                    <ArrowDown className="ml-2 size-4" />
+                  <a href={repositoryUrl} target="_blank" rel="noopener noreferrer">
+                    <Github className="size-4" />
+                    Source code
                   </a>
+                </Button>
+
+                <Button
+                  size="lg"
+                  variant="ghost"
+                  asChild
+                  className="rounded-full text-muted-foreground hover:text-foreground h-12 px-4"
+                >
+                  <Link to="/demo">
+                    <Sparkles className="mr-1.5 size-4 text-primary" />
+                    Live Demo
+                  </Link>
                 </Button>
               </div>
 
-              <div className="hero-assurances mt-6 flex flex-wrap items-center gap-6 text-xs text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5">
-                  <Check className="size-4 text-primary" />
-                  100% On-device storage
+              {/* Reference-Style Metadata & Stats Row */}
+              <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-muted-foreground/90 font-mono">
+                <span className="inline-flex items-center gap-1.5 text-foreground font-medium">
+                  <Download className="size-3.5 text-primary" />
+                  {latestVersion} ({apkFileSize})
                 </span>
+                <span>•</span>
                 <span className="inline-flex items-center gap-1.5">
-                  <Check className="size-4 text-primary" />
-                  No account or registration required
+                  <span className="text-primary font-bold">★</span>
+                  100% Offline SQLite
                 </span>
+                <span>•</span>
                 <span className="inline-flex items-center gap-1.5">
-                  <Check className="size-4 text-primary" />
-                  Biometric lock option
+                  <Check className="size-3.5 text-primary" />
+                  Zero Accounts Required
                 </span>
               </div>
             </div>
 
-            {/* Hero Visual: Phone with genuine Home screen */}
-            <div className="hero-visual lg:col-span-5 flex flex-col items-center justify-center relative">
-              <div className="relative group">
-                <ShineBorder
-                  borderRadius={46}
-                  borderWidth={2}
-                  duration={9}
-                  shineColor={["#FF6A24", "#FFAA64", "#FF8C42"]}
-                  className="rounded-[46px]"
-                />
-                {homeScreen && (
-                  <IPhone
-                    src={homeScreen.src}
-                    alt="SLI Vault Home screen showing genuine local personal library"
-                    eager
-                    className="w-[260px] sm:w-[280px] shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]"
+            {/* Responsive Hero Composition with 3 Upright Phones matching reference image */}
+            <div className="hero-visual lg:col-span-6 flex flex-col items-center justify-center relative w-full pt-4">
+              <div className="relative flex items-end justify-center w-full max-w-[500px] min-h-[380px] sm:min-h-[460px]">
+                {/* Left Device: Browse Library (Upright, slightly behind) */}
+                <div className="hidden sm:block absolute left-4 lg:left-0 bottom-2 z-10 w-[185px] lg:w-[205px] transition-all duration-500 hover:z-30 hover:-translate-y-2">
+                  <img
+                    src={heroLeft}
+                    alt="SLI Vault Browse screen"
+                    width={760}
+                    height={1637}
+                    className="w-full h-auto drop-shadow-[0_25px_35px_rgba(0,0,0,0.85)] rounded-[36px] opacity-90 hover:opacity-100 transition-opacity"
                   />
-                )}
+                </div>
+
+                {/* Center Device: Home Screen (Primary Focal Point, Upright, Foreground) */}
+                <div className="relative z-20 w-[225px] sm:w-[250px] lg:w-[275px] transition-transform duration-500 hover:scale-[1.02]">
+                  <img
+                    src={heroCenter}
+                    alt="SLI Vault Home screen showing genuine local personal library"
+                    width={900}
+                    height={1938}
+                    className="w-full h-auto drop-shadow-[0_30px_60px_rgba(0,0,0,0.95)] rounded-[44px]"
+                  />
+                </div>
+
+                {/* Right Device: Favorites Screen (Upright, slightly behind) */}
+                <div className="hidden sm:block absolute right-4 lg:right-0 bottom-2 z-10 w-[185px] lg:w-[205px] transition-all duration-500 hover:z-30 hover:-translate-y-2">
+                  <img
+                    src={heroRight}
+                    alt="SLI Vault Favorites screen"
+                    width={760}
+                    height={1637}
+                    className="w-full h-auto drop-shadow-[0_25px_35px_rgba(0,0,0,0.85)] rounded-[36px] opacity-90 hover:opacity-100 transition-opacity"
+                  />
+                </div>
               </div>
 
-              <div className="local-note mt-4 inline-flex items-center gap-3 rounded-2xl border border-border bg-card/90 px-4 py-2.5 shadow-xl backdrop-blur-md">
-                <span className="flex size-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              {/* Centered, non-overlapping descriptive card */}
+              <div className="local-note mt-6 flex items-center gap-3 rounded-2xl border border-border bg-card/95 px-4 py-3 shadow-xl backdrop-blur-md w-full max-w-[320px]">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
                   <HardDrive className="size-4" />
                 </span>
-                <div className="text-left text-xs">
-                  <strong className="block text-foreground font-semibold">
-                    Authentic Android Home Screen
+                <div className="text-left text-xs min-w-0">
+                  <strong className="block text-foreground font-semibold truncate">
+                    Authentic Android App Interface
                   </strong>
-                  <span className="text-muted-foreground">Saved SQLite database & local media</span>
+                  <span className="text-muted-foreground text-[11px] block truncate">
+                    Home, Browse &amp; Favorites on SQLite
+                  </span>
                 </div>
               </div>
             </div>
@@ -617,39 +669,219 @@ function Index() {
           </div>
         </section>
 
-        {/* Project Availability Section */}
+        {/* Platform-Grouped Download Section (BUG 10) */}
         <section
-          id="project"
-          className="section py-16 sm:py-24 border-b border-border/60 bg-card/20"
+          id="download"
+          className="section scroll-mt-20 py-16 sm:py-24 border-b border-border/60 bg-gradient-to-b from-[#0A0B0D] via-card/20 to-[#0A0B0D]"
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="section-heading mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
                 <span className="eyebrow text-primary text-xs font-semibold tracking-widest uppercase">
-                  FOLLOW THE PROJECT
+                  GET SLI VAULT
                 </span>
-                <h2 className="mt-2 font-serif text-3xl font-bold text-foreground">
-                  SLI Vault, beyond the screenshots.
+                <h2 className="mt-2 font-serif text-3xl sm:text-4xl font-bold text-foreground">
+                  Available for Android.
+                  <br />
+                  <span className="text-primary font-serif">Direct, verified sideload.</span>
                 </h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  An open-source Android personal library for everything worth keeping.
-                </p>
+              </div>
+              <p className="text-sm sm:text-base text-muted-foreground max-w-md leading-relaxed">
+                Download the official signed release APK directly to your phone. Zero cloud servers,
+                no Google Play account required.
+              </p>
+            </div>
+
+            {/* Platform Cards Grid */}
+            <div className="grid gap-6 md:grid-cols-3">
+              {/* Android Card (Primary & Ready) */}
+              <div className="relative rounded-3xl border-2 border-primary/50 bg-card/85 p-6 sm:p-7 shadow-2xl backdrop-blur-md flex flex-col justify-between group hover:border-primary transition-all duration-300">
+                <div>
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 border border-primary/30 text-primary">
+                      <Smartphone className="size-6" />
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 font-mono text-xs font-semibold text-primary">
+                      <span className="size-1.5 rounded-full bg-primary animate-pulse" />
+                      Official Release
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-foreground">Android</h3>
+                  <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+                    Universal APK for phones and tablets running Android 8.0 or newer.
+                  </p>
+
+                  <div className="mt-5 space-y-2.5 rounded-xl border border-border/70 bg-black/40 p-3.5 text-xs font-mono">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Version:</span>
+                      <span className="text-foreground font-semibold">{latestVersion} (code 2)</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Package ID:</span>
+                      <span className="text-foreground">com.sahayasavari.slivault</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Download Size:</span>
+                      <span className="text-primary font-semibold">{apkFileSize}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Compatibility:</span>
+                      <span className="text-foreground">Universal (ARM64 / ARMv7 / x86_64)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-5 border-t border-border/60 space-y-3">
+                  <Button
+                    size="lg"
+                    asChild
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 gap-2"
+                  >
+                    <a href={apkDownloadUrl} download>
+                      <Download className="size-4" />
+                      Download APK ({latestVersion})
+                    </a>
+                  </Button>
+
+                  <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+                    <a
+                      href={releaseNotesUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-1 font-medium"
+                    >
+                      Release notes <ArrowUpRight className="size-3" />
+                    </a>
+                    <span>•</span>
+                    <a
+                      href="https://github.com/sahaya-savari/sli-vault/blob/main/docs/ANDROID_RELEASE.md"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-foreground inline-flex items-center gap-1"
+                    >
+                      Sideload guide <ArrowUpRight className="size-3" />
+                    </a>
+                  </div>
+
+                  <p className="text-[11px] text-muted-foreground/80 leading-relaxed bg-primary/5 border border-primary/10 rounded-lg p-2.5">
+                    <strong>Note:</strong> Android may ask to allow installation from your browser
+                    or file manager. This package is signed with the official owner release key.
+                  </p>
+                </div>
               </div>
 
-              <Button size="lg" variant="outline" asChild className="gap-2 shrink-0">
-                <a href={repositoryUrl} target="_blank" rel="noopener noreferrer">
-                  <Github className="size-4" />
-                  GitHub Repository
-                  <ArrowUpRight className="size-4" />
+              {/* Windows Card (In Planning) */}
+              <div className="rounded-3xl border border-border/80 bg-card/40 p-6 sm:p-7 flex flex-col justify-between opacity-85">
+                <div>
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="flex size-12 items-center justify-center rounded-2xl bg-muted/60 border border-border text-muted-foreground">
+                      <Laptop className="size-6" />
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/60 px-3 py-1 font-mono text-xs text-muted-foreground">
+                      Not available yet
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-foreground">Windows</h3>
+                  <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+                    Native desktop client for Windows 10 &amp; 11 with offline local database sync.
+                  </p>
+
+                  <div className="mt-5 space-y-2.5 rounded-xl border border-border/50 bg-black/20 p-3.5 text-xs font-mono text-muted-foreground">
+                    <div className="flex justify-between">
+                      <span>Status:</span>
+                      <span className="text-foreground">In Planning</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Platform:</span>
+                      <span>Windows x64 / ARM</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Distribution:</span>
+                      <span>MSIX / ZIP</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-5 border-t border-border/50 space-y-3">
+                  <Button
+                    variant="outline"
+                    disabled
+                    className="w-full border-border/60 text-muted-foreground cursor-not-allowed bg-transparent"
+                  >
+                    Desktop Build Coming Soon
+                  </Button>
+                  <p className="text-[11px] text-muted-foreground text-center">
+                    No verified Windows binaries are available at this time.
+                  </p>
+                </div>
+              </div>
+
+              {/* Linux Card (In Planning) */}
+              <div className="rounded-3xl border border-border/80 bg-card/40 p-6 sm:p-7 flex flex-col justify-between opacity-85">
+                <div>
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="flex size-12 items-center justify-center rounded-2xl bg-muted/60 border border-border text-muted-foreground">
+                      <Terminal className="size-6" />
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/60 px-3 py-1 font-mono text-xs text-muted-foreground">
+                      Not available yet
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-foreground">Linux</h3>
+                  <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+                    Native Linux packaging for desktop distributions with system keyring support.
+                  </p>
+
+                  <div className="mt-5 space-y-2.5 rounded-xl border border-border/50 bg-black/20 p-3.5 text-xs font-mono text-muted-foreground">
+                    <div className="flex justify-between">
+                      <span>Status:</span>
+                      <span className="text-foreground">In Planning</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Platform:</span>
+                      <span>x86_64 / aarch64</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Distribution:</span>
+                      <span>Flatpak / AppImage</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-5 border-t border-border/50 space-y-3">
+                  <Button
+                    variant="outline"
+                    disabled
+                    className="w-full border-border/60 text-muted-foreground cursor-not-allowed bg-transparent"
+                  >
+                    Linux Build Coming Soon
+                  </Button>
+                  <p className="text-[11px] text-muted-foreground text-center">
+                    No verified Linux packages are available at this time.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom GitHub releases link */}
+            <div className="mt-10 rounded-2xl border border-border bg-card/40 p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <Github className="size-5 text-primary shrink-0" />
+                <span className="text-xs sm:text-sm text-muted-foreground">
+                  Need raw assets, source code archives, or commit history? All releases are published
+                  on GitHub.
+                </span>
+              </div>
+              <Button variant="outline" size="sm" asChild className="shrink-0 gap-1.5">
+                <a href={releasesUrl} target="_blank" rel="noopener noreferrer">
+                  All Files &amp; Release Notes
+                  <ArrowUpRight className="size-3.5" />
                 </a>
               </Button>
             </div>
-
-            <p className="mt-6 rounded-2xl border border-border/70 bg-card/40 p-4 text-xs text-muted-foreground leading-relaxed max-w-3xl">
-              The project is distributed as an open-source Android project on GitHub. Verified
-              signed APK releases are made available directly through GitHub Releases. No public
-              commercial store listing or third-party download is offered.
-            </p>
           </div>
         </section>
 
@@ -715,7 +947,7 @@ function Index() {
               className="flex flex-wrap items-center justify-center gap-6"
               aria-label="Footer navigation"
             >
-              {["Home", "Features", "Architecture", "Screenshots", "Privacy", "FAQ"].map((item) => (
+              {["Home", "Features", "Architecture", "Screenshots", "Download", "Privacy", "FAQ"].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
@@ -724,6 +956,14 @@ function Index() {
                   {item}
                 </a>
               ))}
+              <a
+                href={apkDownloadUrl}
+                download
+                className="text-primary hover:underline font-medium inline-flex items-center gap-1"
+              >
+                <Download className="size-3" />
+                APK ({latestVersion})
+              </a>
               <Link to="/demo" className="text-primary hover:underline font-medium">
                 Sample Vault Demo
               </Link>
@@ -752,7 +992,7 @@ function Index() {
               </p>
             </div>
 
-            <div className="flex items-center gap-4 text-[11px]">
+            <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 text-[11px]">
               <a
                 href="https://github.com/sahaya-savari"
                 target="_blank"
@@ -769,6 +1009,15 @@ function Index() {
                 className="hover:text-foreground transition-colors"
               >
                 Repository
+              </a>
+              <span>•</span>
+              <a
+                href={releasesUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+              >
+                Releases ({latestVersion})
               </a>
               <span>•</span>
               <Link to="/demo" className="text-primary hover:underline">
