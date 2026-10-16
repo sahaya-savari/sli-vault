@@ -28,11 +28,15 @@ cd website
 bun run build
 ```
 
-Preview the production server locally:
+Preview the production build locally (run `bun run build` first):
 
 ```powershell
+cd website
+bun run build
 bun run preview
 ```
+
+`bun run preview` prepares Nitro output from `.output/` for Vite’s preview server (static assets in `dist/client` and a local SSR shim at `dist/server/server.js`). Use `bun run dev` for day-to-day development with hot reload.
 
 ## Lint and tests
 
