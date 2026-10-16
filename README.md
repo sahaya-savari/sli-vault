@@ -16,9 +16,11 @@
 </p>
 
 <p align="center">
+  <a href="#overview">Overview</a> ·
   <a href="#features">Features</a> ·
-  <a href="#screenshots">Screenshots</a> ·
+  <a href="#qa--verification-gallery">Gallery</a> ·
   <a href="#privacy">Privacy</a> ·
+  <a href="#download">Download</a> ·
   <a href="#setup">Setup</a> ·
   <a href="#build">Build</a> ·
   <a href="#known-limitations">Limitations</a> ·
@@ -31,11 +33,24 @@
 
 SLI Vault is a Flutter Android app for saving links and images into **app-private** storage. There is no account, no cloud sync, and no analytics SDK. The production manifest does not request Internet access.
 
-| Platform | Status |
-|----------|--------|
-| Android | Primary target; development builds compile successfully |
+| Property | Current Detail |
+|---|---|
+| **Application ID** | `com.sahayasavari.slivault` |
+| **Current Version** | `1.0.1` (`versionCode` `2`) |
+| **Distribution** | Signed APK on [GitHub Releases](https://github.com/sahaya-savari/sli-vault/releases) — sideload only, no Play Store listing |
+| **Data Model** | 100% local-first: SQLite + app-private image files |
+| **License** | [MIT](LICENSE) for project-owned code and docs (third-party assets separate — see [License](#license)) |
+
+The Flutter mobile application resides directly at the **repository root**. The repository is architected as a lightweight monorepo accommodating:
+1. The **Flutter/Dart Android mobile app** at the repository root.
+2. The **companion website** (React + TypeScript + Vite + TanStack Start) under `website/`, integrated from the verified Lovable export.
+
+| Component / Platform | Status |
+|----------------------|--------|
+| Android (Root) | Primary target; signed GitHub Release available (`v1.0.1+2` targets active) |
 | iOS | Phase 2 - scaffold only, not verified as a shipping target |
 | Web / Desktop | Flutter platform folders only - not the shipping target |
+| Website (`website/`) | Integrated showcase site (React/Vite/TanStack); see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md) |
 
 **Download / release status:** a **signed GitHub Release APK** is available under [Releases](https://github.com/sahaya-savari/sli-vault/releases). Application ID `com.sahayasavari.slivault`. There is **no Play Store listing** - sideload / open-source distribution only.
 
@@ -45,38 +60,46 @@ The project-owned code and documentation are licensed under [MIT](LICENSE). Thir
 
 ## Features
 
-- Save **links** and import **images** into durable app-private storage
-- Browse, search, filter (All / Links / Images), favorite, tag, and organize into **collections**
-- Legacy rows stored as type `screenshot` remain that type and appear under **Images**
-- ZIP backup format **v2** (`manifest.json` + `images/<id>`) with SHA-256 and byte length per image; v1 archives still import
-- Import of the earlier Kotlin vault JSON shape (including Base64 image bytes)
-- Theme: **Dark**, **Light**, or **System**
-- Optional lock when backgrounded (device biometric or credential - SQLite is **not** encrypted)
-- Onboarding with a short welcome clip and still fallbacks
+### Save and organize
+- Save links and import images into durable app-private storage
+- Browse, search, filter (All / Links / Images), favorite, tag, and organize into collections
+- Legacy rows stored as type `screenshot` remain that type and appear under Images
 - Android share-in (`ACTION_SEND` / `ACTION_SEND_MULTIPLE` for text and images)
+
+### Backup and migration
+- ZIP backup format v2 (`manifest.json` + `images/<id>`) with SHA-256 and byte length per image; v1 archives still import
+- Import of the earlier Kotlin vault JSON shape (including Base64 image bytes)
+
+### Look and feel
+- Theme: Dark, Light, or System
+- Onboarding with a short welcome clip and still fallbacks
 - Five destinations: Home, Browse, Favorites, Collections, Settings
+
+### Privacy controls
+- Optional lock when backgrounded (device biometric or credential - SQLite is not encrypted)
+- `FLAG_SECURE` enabled on the main activity
 
 ---
 
-## Screenshots
+## QA / verification gallery
 
 The current Android UI, captured from the six primary destinations and onboarding:
 
 <div align="center">
 
 <img src="docs/screenshots/ui-verification/welcome.png" alt="Welcome" width="145" />
-<img src="docs/screenshots/ui-verification/home.png" alt="Home" width="145" />
+<img src="docs/screenshots/ui-verification/31-dark-home.png" alt="Home" width="145" />
 <img src="docs/screenshots/ui-verification/browse.png" alt="Browse" width="145" />
-<img src="docs/screenshots/ui-verification/collections.png" alt="Collections" width="145" />
+<img src="docs/screenshots/ui-verification/20-light-coll.png" alt="Collections" width="145" />
 
 <img src="docs/screenshots/ui-verification/favourites.png" alt="Favorites" width="145" />
-<img src="docs/screenshots/ui-verification/settings.png" alt="Settings" width="145" />
+<img src="docs/screenshots/ui-verification/30-dark-settings-top.png" alt="Settings" width="145" />
 
 <sub><b>Welcome</b> · <b>Home</b> · <b>Browse</b> · <b>Collections</b> · <b>Favorites</b> · <b>Settings</b></sub>
 
 </div>
 
-### QA / verification gallery
+### Selected light/dark and Add-sheet checks
 
 Selected light/dark and Add-sheet checks (not a full device suite):
 
@@ -203,11 +226,13 @@ flutter test
 
 On PowerShell, quote any `--name` filter that contains `|` so the shell does not treat it as a pipe.
 
-There is **no CI workflow** on `HEAD` of this repository. Do not treat badges above as live GitHub Actions status.
+Automated pull_request / push CI is not enabled on `HEAD` for Flutter; `.github/workflows/android-release.yml` provides manual production release builds (`workflow_dispatch` only). Website changes under `website/` are validated by `.github/workflows/website-ci.yml` (lint, test, build — no deploy).
 
 ---
 
 ## Architecture
+
+The Flutter mobile application resides directly at the **repository root**. The companion website under `website/` has an independent Bun/npm dependency lifecycle — see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md).
 
 | Path | Role |
 |------|------|
@@ -220,6 +245,7 @@ There is **no CI workflow** on `HEAD` of this repository. Do not treat badges ab
 | `docs/` | Architecture, backup, testing, release notes |
 | `docs/screenshots/ui-verification/` | Approved showcase + selected QA PNGs |
 | `test/` | Host tests with temporary databases |
+| `website/` | Companion React + TypeScript + Vite showcase (isolated workspace; Bun lockfile) |
 
 `VaultController` is a `ChangeNotifier`. The shell uses an `IndexedStack`. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 

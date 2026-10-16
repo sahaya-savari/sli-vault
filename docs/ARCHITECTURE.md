@@ -2,6 +2,20 @@
 
 SLI Vault is a local-first Flutter application with no account, cloud sync, telemetry, or server dependency.
 
+## Repository Layout & Monorepo Boundary
+
+### Current State
+
+- **Root Flutter Application:** The Flutter/Dart mobile codebase lives directly at the repository root (`lib/`, `android/`, `ios/`, `assets/`, `test/`, `pubspec.yaml`). It is not nested under an `app/` subfolder, preserving the existing Android release build scripts and established tooling without path churn.
+- **Companion Website:** The Lovable showcase (TanStack Start + Vite + React + TypeScript) lives under `website/` with its own `package.json`, `bun.lock`, and Vite config. Gallery PNGs and branding are vendored locally; Lovable remote asset stubs are not used at runtime.
+- **Android Release Process:** Kept intact at `.github/workflows/android-release.yml` with manual dispatch.
+
+### Monorepo Boundaries
+
+- **Dependency & Build Isolation:** Install Node/Bun dependencies only inside `website/`. Do not add a root `package.json` or install website packages at the repository root.
+- **Independent CI:** `.github/workflows/website-ci.yml` linting, tests, and production build run on `website/**` changes. The Android release workflow is unchanged.
+- **Website setup:** See [WEBSITE_SETUP.md](WEBSITE_SETUP.md).
+
 ## Layers
 
 - `domain/`: typed vault entities, item types, validation, search semantics, and serialization.
