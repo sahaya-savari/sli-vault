@@ -1,4 +1,6 @@
 import { cn } from "@/lib/utils";
+import { IPhone } from "@/components/ui/iphone";
+
 export function Phone({
   src,
   alt,
@@ -10,13 +12,5 @@ export function Phone({
   className?: string;
   eager?: boolean;
 }) {
-  return (
-    <div className={cn("phone", className)}>
-      <div className="phone-screen">
-        <img src={src} alt={alt} loading={eager ? "eager" : "lazy"} width="860" height="1920" />
-        <span className="punch-hole" aria-hidden="true" />
-      </div>
-      <span className="phone-key" aria-hidden="true" />
-    </div>
-  );
+  return <IPhone src={src} alt={alt} eager={eager} className={cn("phone", className)} />;
 }
