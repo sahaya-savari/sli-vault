@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for looking at SLI Vault. A project license has not been chosen, and there is no `LICENSE` file. Do not assume contributions are under MIT, Apache-2.0, or any other license until the owner adds one. Please ask before sending a large patch.
+Thanks for looking at SLI Vault. Project-owned code and documentation are under the [MIT License](LICENSE). Third-party assets (for example Anthropic Serif) remain separately licensed — see [assets/fonts/claude/README.md](assets/fonts/claude/README.md).
 
 ## Local checks
 
@@ -14,11 +14,25 @@ flutter test
 
 On PowerShell, quote test name filters that contain `|`.
 
+### Website (`website/`)
+
+Install and run checks only inside `website/` (see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md)):
+
+```powershell
+cd website
+bun install
+bun run lint
+bun run test
+bun run build
+```
+
+Do not run `bun install` or `npm install` at the repository root.
+
 ## What not to change without an explicit owner decision
 
 - Application ID `com.sahayasavari.slivault`
 - Release signing (local `android/key.properties` + owner keystore; never commit secrets)
-- `FLAG_SECURE` in `MainActivity.kt` (the owner paused it; the `addFlags` call stays commented)
+- `FLAG_SECURE` behavior in `MainActivity.kt` (enabled via `applySecureFlag()` in `onCreate` / `onResume`)
 - `kotlin.incremental=false` in `android/gradle.properties`
 - Bundled fonts and the approved launcher artwork
 

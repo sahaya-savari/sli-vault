@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Added
+
+- Integrated the Lovable showcase site under `website/` (TanStack Start + Vite + React + TypeScript) with local gallery PNGs from `docs/screenshots/ui-verification/`.
+- Added [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md) and path-filtered `.github/workflows/website-ci.yml` (lint, test, build — no deploy).
+
 ## 1.0.1
 
 - Version `1.0.1+2`. Application ID remains `com.sahayasavari.slivault`.
