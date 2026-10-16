@@ -9,7 +9,14 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 const pagesBase = process.env.GITHUB_PAGES === "true" ? "/sli-vault/" : "./";
 
 export default defineConfig({
-  vite: { base: pagesBase },
+  vite: {
+    base: pagesBase,
+    server: {
+      fs: {
+        allow: ["D:/sli-vault", "C:/Users/SANTO", ".."],
+      },
+    },
+  },
   tanstackStart: {
     pages: [{ path: "/" }, { path: "/demo" }],
     prerender: { enabled: true, autoStaticPathsDiscovery: false },
