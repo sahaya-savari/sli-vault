@@ -1,12 +1,23 @@
 # Android Real-Device Verification Checklist
 
-Every item below is **NOT TESTED**. No row may be changed to PASS unless the step was actually performed on a physical Android device and the result was observed. Automated host tests do not replace these checks.
+Every item below is **NOT TESTED**. No row may be changed to PASS unless the step was actually performed on a physical Android device and the result was observed. Automated host tests do not replace these checks. ADB was **not** available in the last host cleanup pass — do not invent device results.
 
 Status values: `NOT TESTED`, `PASS`, `FAIL`, `BLOCKED`.
 
+## Quick plan for published `v1.0.1` (all NOT TESTED until run)
+
+1. Install `artifacts/github-release/sli-vault-1.0.1-release.apk` (or the GitHub Release asset) — owner-signed, app ID `com.sahayasavari.slivault`.
+2. Launch → complete or skip onboarding → confirm five tabs.
+3. Save link + image; search; favorite; collections.
+4. Export ZIP → confirm image binaries inside → import (duplicates skipped) → clear test vault → restore.
+5. Force-stop and reboot → data/theme persist.
+6. Check `FLAG_SECURE` (screenshot / recording / recent-apps).
+7. Cutout, status bar, keyboard on Add sheet; airplane-mode offline use; error paths.
+8. About shows `1.0.1`; launcher icon appearance under system mask.
+
 ## Setup
 
-- [ ] Record the device model, Android version, and app build (debug or release, and its signing state).
+- [ ] Record the device model, Android version, and app build (**v1.0.1** release APK, owner-signed).
 - [ ] Use a **test vault**. Do not run destructive steps on the only copy of real data.
 - [ ] Keep a ZIP backup of any real vault before starting.
 - [ ] Do not clear app data, uninstall, or reset onboarding unless a step says so.
@@ -62,8 +73,8 @@ Status values: `NOT TESTED`, `PASS`, `FAIL`, `BLOCKED`.
 
 | # | Step | Expected | Status | Notes |
 |---|---|---|---|---|
-| 4.1 | Add links and images, then swipe the app away and reopen | All items present | NOT TESTED | |
-| 4.2 | Restart the phone, then open the app | All items, images, tags, and collections present | NOT TESTED | |
+| 4.1 | Add links and images, then swipe the app away (force-stop) and reopen | All items present | NOT TESTED | |
+| 4.2 | Restart / reboot the phone, then open the app | All items, images, tags, and collections present | NOT TESTED | |
 | 4.3 | Change the theme to Light, then Dark, then System, restarting each time | Choice persists | NOT TESTED | |
 | 4.4 | Favorite and unfavorite items, then restart | Favorites persist | NOT TESTED | |
 | 4.5 | Create, rename, and delete a collection, then restart | Collections persist; deleted items move to General | NOT TESTED | |
@@ -99,6 +110,10 @@ Status values: `NOT TESTED`, `PASS`, `FAIL`, `BLOCKED`.
 | 6.7 | Welcome clip plays and loops | Video plays or falls back to stills | NOT TESTED | |
 | 6.8 | Launcher icon on the home screen | Icon is not cropped badly under the system mask | NOT TESTED | |
 | 6.9 | Splash screen on cold start | Branding displays correctly | NOT TESTED | |
+| 6.10 | Display cutout / notch / camera hole | Content not permanently hidden under unsafe insets | NOT TESTED | |
+| 6.11 | Status bar / system bars on main tabs | Readable; no permanent overlap of primary controls | NOT TESTED | |
+| 6.12 | Open Add sheet and focus a text field (keyboard) | Fields remain usable; no blocking overflow | NOT TESTED | |
+| 6.13 | Screenshot the app; screen-record; open Recents | App window blank/blocked when `FLAG_SECURE` is on | NOT TESTED | |
 
 ## 7. Release build checks (after signing exists)
 
@@ -107,8 +122,8 @@ Status values: `NOT TESTED`, `PASS`, `FAIL`, `BLOCKED`.
 | 7.1 | `apksigner verify --print-certs` on the release APK | Production certificate, not `Android Debug` | NOT TESTED | |
 | 7.2 | Install the release build and repeat sections 1 to 5 | Same results as debug | NOT TESTED | |
 | 7.3 | Inspect the installed app's declared permissions | Only `USE_BIOMETRIC` | NOT TESTED | |
-| 7.4 | Confirm the version shown in About matches `pubspec.yaml` | Same version | NOT TESTED | Blocked until the About string is fixed. |
-| 7.5 | Confirm the final application ID in App info | Matches the approved ID | NOT TESTED | Blocked until an ID is chosen. |
+| 7.4 | Confirm the version shown in About matches `pubspec.yaml` | Shows `1.0.1` (matches `1.0.1+2`) | NOT TESTED | Source already uses `1.0.1`; still needs on-device confirmation. |
+| 7.5 | Confirm the final application ID in App info | `com.sahayasavari.slivault` | NOT TESTED | |
 
 ## Recording results
 

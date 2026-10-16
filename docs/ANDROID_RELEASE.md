@@ -138,6 +138,21 @@ $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
 - Adaptive XML uses `@drawable/ic_launcher_foreground` (bitmap of `sli_vault_launcher` with `gravity="fill"`).
 - The system mask can crop the outer glow. Inset changes need owner approval.
 
+## Keystore password rotation (prepare only — do not run until approved)
+
+If the keystore password may have been exposed, **change passwords on the existing `.jks`**. Do **not** generate a new keystore (that would break update continuity for installed `v1.0.1`).
+
+1. Back up `%USERPROFILE%\keystores\sli-vault-release.jks` offline.
+2. Change store password:
+   `keytool -storepasswd -keystore "%USERPROFILE%\keystores\sli-vault-release.jks"`
+3. Change key password for alias `sli-vault`:
+   `keytool -keypasswd -alias sli-vault -keystore "%USERPROFILE%\keystores\sli-vault-release.jks"`
+4. Update local `android/key.properties` and `android/secrets/keystore.env` / `.env` (never commit).
+5. Update GitHub Actions secrets (names only): `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_PASSWORD` (and re-upload `ANDROID_KEYSTORE_BASE64` only if the file bytes changed — password-only rotation usually keeps the same keystore file after `keytool` rewrites it; re-base64 the `.jks` after password change).
+6. Verify with a **local** signed build and `apksigner` (owner CN unchanged). Publish a new version only if you choose to ship after rotation — password rotation alone does not require republishing `v1.0.1`.
+
+Never paste passwords into chat, issues, README, or CI logs.
+
 ## Manifest and permission review
 
 - Production permissions: `USE_BIOMETRIC` only.
