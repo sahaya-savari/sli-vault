@@ -11,7 +11,7 @@ class AboutSliVaultScreen extends StatelessWidget {
       title: 'About SLI Vault',
       children: [
         const _DocumentSection(
-          heading: 'SLI Vault 1.0.0',
+          heading: 'SLI Vault 1.0.1',
           body: 'SLI Vault is a local-first personal library for links and images (including screenshots you import). Records and imported media are stored in app-private storage on this device.',
         ),
         const _DocumentSection(
@@ -26,7 +26,7 @@ class AboutSliVaultScreen extends StatelessWidget {
           onTap: () => showLicensePage(
             context: context,
             applicationName: 'SLI Vault',
-            applicationVersion: '1.0.0',
+            applicationVersion: '1.0.1',
           ),
         ),
       ],

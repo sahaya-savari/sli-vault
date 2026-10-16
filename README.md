@@ -126,7 +126,7 @@ Additional facts from the current tree:
 - Optional **lock when backgrounded** uses the system biometric / device credential prompt. It does **not** encrypt the SQLite database.
 - Backup ZIPs are **not** encrypted. Treat exported files as private copies.
 - Opening a saved URL hands it to another app the user chooses. Copy URL is the only clipboard write from the app.
-- **`FLAG_SECURE` is currently OFF** (owner request for local debugging). Screenshot and recent-apps protection is paused until the owner explicitly asks to restore it. See `android/app/src/main/kotlin/com/sahayasavari/slivault/MainActivity.kt`.
+- **`FLAG_SECURE` is ON** in `MainActivity` (`onCreate` / `onResume`). On supporting devices this blocks screenshots, screen recording of the app window, and recent-apps content previews. Physical-device confirmation of those limitations remains **NOT TESTED**.
 
 ---
 
@@ -216,7 +216,7 @@ There is **no CI workflow** on `HEAD` of this repository. Do not treat badges ab
 | `lib/features/` | Screens: onboarding, home, browse, favorites, collections, settings, add sheet, … |
 | `lib/core/` | Theme, assets, shared widgets |
 | `lib/app/` | Five-tab shell and background lock |
-| `android/` | Manifest, share intents, `FLAG_SECURE` hook (currently commented) |
+| `android/` | Manifest, share intents, `FLAG_SECURE` enabled on the main activity |
 | `docs/` | Architecture, backup, testing, release notes |
 | `docs/screenshots/ui-verification/` | Approved showcase + selected QA PNGs |
 | `test/` | Host tests with temporary databases |
@@ -233,8 +233,8 @@ These are **release blockers** or open gaps, not marketing copy:
 |------|----------------|
 | Application ID | `com.sahayasavari.slivault` |
 | Signing | Release builds use a **local** owner keystore via `android/key.properties` (never committed). Not enrolled in Play App Signing |
-| Version display | About UI hard-codes `1.0.0`; `pubspec.yaml` is `1.0.0+1` |
-| `FLAG_SECURE` | **Off** until the owner restores the commented `addFlags` call |
+| Version display | About UI and `pubspec.yaml` are `1.0.1` / versionCode `2` (still hard-coded strings, not `package_info_plus`) |
+| `FLAG_SECURE` | **On** in `MainActivity` (source + contract test); physical-device capture checks remain **NOT TESTED** |
 | License | MIT for project-owned code and documentation; third-party assets remain separately licensed |
 | Fonts | JetBrains Mono is SIL OFL. Anthropic Serif under `assets/fonts/claude/` is **not cleared for redistribution**; keep this repository private until permission or replacement |
 | Launcher icon | Adaptive foreground fills the canvas; system mask may crop outer glow |
@@ -271,8 +271,10 @@ Third-party notices that do exist:
 
 - [Latest Releases](https://github.com/sahaya-savari/sli-vault/releases) — install the attached `sli-vault-*-release.apk`
 - Application ID: `com.sahayasavari.slivault`
-- Signing: owner release keystore (local `android/key.properties`; never in Git)
-- Platforms: Android only for this package; iOS remains Phase 2
+- Current tree version: `1.0.1` (`versionCode` `2`)
+- Signing: owner release keystore (local `android/key.properties` or GitHub Actions secrets; never in Git)
+- Production CI: [Android production release](.github/workflows/android-release.yml) (`workflow_dispatch` only)
+- Platforms: Android only for this package; iOS remains Phase 2 — see [docs/IOS_RELEASE.md](docs/IOS_RELEASE.md)
 - Play Store: **not listed** — this is a GitHub sideload package, not a Play upload
 
-To reproduce a signed build you need your own `android/key.properties` and keystore outside the repo (see [docs/ANDROID_RELEASE.md](docs/ANDROID_RELEASE.md)).
+To reproduce a signed build locally you need `android/key.properties` and the keystore outside the repo (see [docs/ANDROID_RELEASE.md](docs/ANDROID_RELEASE.md)).

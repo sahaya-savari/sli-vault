@@ -49,9 +49,9 @@ Host tests live in `test/widget_test.dart`, `test/backup_hardening_test.dart`, a
 
 ## Evidence classification
 
-- **Static:** source and manifest review, dependency list, permissions, theme/semantics. `FLAG_SECURE` is **not** currently enabled; see below.
+- **Static:** source and manifest review, dependency list, permissions, theme/semantics. `FLAG_SECURE` is enabled in source (`MainActivity` + contract test); physical capture behavior is **NOT TESTED**.
 - **Automated host tests:** temporary directories and deterministic fault injection. They do not prove device backup import or biometrics.
-- **Build:** APK/AAB compilation proves packaging only. Release outputs remain debug-signed.
+- **Build:** APK/AAB compilation proves packaging. Production releases must be owner-keystore signed (local `key.properties` or GitHub Actions secrets); CI fails closed if secrets are missing.
 - **Physical device:** NOT TESTED in this pass. Use `docs/ANDROID_DEVICE_CHECKLIST.md`; do not infer device readiness from host tests or build success.
 
 ### Real-device results
@@ -77,4 +77,4 @@ Collection name dialogs (`CollectionNameDialog` in `lib/features/collections/col
 - Export a real ZIP, move the file, import it, and confirm skipped IDs and image bytes.
 - Turn the background lock on and walk through biometric and device-credential success, cancel, and not-enrolled paths.
 - TalkBack and rotation.
-- Confirm loading art and the short welcome clip by eye with `FLAG_SECURE` left off (the owner has not asked to restore it).
+- Confirm loading art and the short welcome clip by eye. With `FLAG_SECURE` on, expect screenshots / screen recording of the app window / recent-apps previews to be blocked or blank on supporting devices (**NOT TESTED** until checked on hardware).
