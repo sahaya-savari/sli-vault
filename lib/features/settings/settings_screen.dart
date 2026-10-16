@@ -426,7 +426,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               iconAsset: SliAssets.utilInfo,
               children: [
                 Text(
-                  'SLI Vault v1.0.0 (Flutter + Dart Canonical Build)',
+                  'SLI Vault v1.0.1 (Flutter + Dart Canonical Build)',
                   style: SliTheme.mono(
                     context,
                     fontSize: 12.5,

@@ -19,9 +19,18 @@ class MainActivity : FlutterFragmentActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		// Protection paused for local debugging until explicit user request.
-		// window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+		applySecureFlag()
 		captureShareIntent(intent)
+	}
+
+	override fun onResume() {
+		super.onResume()
+		// Re-assert after recreation / return from background so the protected UI stays covered.
+		applySecureFlag()
+	}
+
+	private fun applySecureFlag() {
+		window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
 	}
 
 	override fun configureFlutterEngine(flutterEngine: FlutterEngine) {

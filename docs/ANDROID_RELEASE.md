@@ -1,6 +1,6 @@
 # Android Release
 
-Status: **signed GitHub sideload release available** (`v1.0.0`). Not on Google Play. Keep the repository **private** until Anthropic Serif redistribution is cleared.
+Status: **signed GitHub sideload releases** (`v1.0.0`, preparing `v1.0.1`). Not on Google Play. Keep the repository **private** until Anthropic Serif redistribution is cleared.
 
 ## Verified in this pass — 2026-10-16
 
@@ -25,7 +25,7 @@ Current generated artifact (not committed):
 
 - Signer DN includes `CN=Sahaya Savari F, OU=SLI Vault, O=Sahaya Savari F, C=IN`
 - Application ID from `aapt dump badging`: `com.sahayasavari.slivault`
-- Version: `1.0.0` (`versionCode` `1`)
+- Version for `v1.0.0`: `1.0.0` (`versionCode` `1`). Tree now targets `1.0.1` (`versionCode` `2`).
 
 ## Current Android configuration (read from the tree)
 
@@ -35,8 +35,8 @@ Current generated artifact (not committed):
 | Kotlin package | `com.sahayasavari.slivault` | `android/app/src/main/kotlin/com/sahayasavari/slivault/MainActivity.kt` |
 | `compileSdk` | 36 | `android/app/build.gradle.kts` |
 | `minSdk` / `targetSdk` | From Flutter (`flutter.minSdkVersion`, `flutter.targetSdkVersion`) | `android/app/build.gradle.kts` |
-| `versionName` / `versionCode` | From `pubspec.yaml` `version: 1.0.0+1` | `flutter.versionName`, `flutter.versionCode` |
-| Release signing | Owner keystore via local `android/key.properties` (fail closed if missing) | `buildTypes.release.signingConfig` |
+| `versionName` / `versionCode` | From `pubspec.yaml` `version: 1.0.1+2` | `flutter.versionName`, `flutter.versionCode` |
+| Release signing | Owner keystore via local `android/key.properties` (fail closed if missing); CI uses repository Actions secrets | `buildTypes.release.signingConfig` |
 | Production manifest permissions | `USE_BIOMETRIC` only | `android/app/src/main/AndroidManifest.xml` |
 | Debug / profile manifest | Adds `INTERNET` for Flutter tooling | `android/app/src/debug`, `android/app/src/profile` |
 | Backup | `allowBackup="false"`, `fullBackupContent="false"` | main manifest |
@@ -48,18 +48,26 @@ The Android implementation also includes:
 - `local_auth` plugin integration. The activity is a `FlutterFragmentActivity` because the biometric prompt needs a fragment host.
 - `kotlin.incremental=false` in `android/gradle.properties`. Leave that flag as it is.
 
-`FLAG_SECURE` is **not** active. `MainActivity.onCreate` leaves this commented until the owner asks to restore it:
+`FLAG_SECURE` is **enabled** in `MainActivity` via `applySecureFlag()` from `onCreate` and `onResume`. On supporting devices this blocks screenshots, screen recording of the app window, and recent-apps content previews. Physical-device confirmation remains **NOT TESTED**. Contract coverage: `test/flag_secure_contract_test.dart`.
 
-```kotlin
-// Protection paused for local debugging until explicit user request.
-// window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-```
+## GitHub Actions production build
+
+Manual workflow: [`.github/workflows/android-release.yml`](../.github/workflows/android-release.yml) (`workflow_dispatch` only).
+
+Required repository secrets (never commit values):
+
+| Secret | Purpose |
+|--------|---------|
+| `ANDROID_KEYSTORE_BASE64` | Base64-encoded release `.jks` |
+| `ANDROID_KEYSTORE_PASSWORD` | Keystore password |
+| `ANDROID_KEY_ALIAS` | Key alias |
+| `ANDROID_KEY_PASSWORD` | Key password |
+
+The workflow fails closed if any secret is missing (no silent debug signing). It runs `flutter analyze`, `flutter test`, signed APK + AAB, verifies package ID / version / owner signer CN, uploads artifacts, and optionally creates a GitHub Release when requested.
 
 ## Remaining blockers (not Play / public)
 
 - Play Store upload is out of scope unless the owner enrolls later.
-- `FLAG_SECURE` is paused by owner request.
-- About text hard-codes `1.0.0` in Settings/legal screens; `pubspec.yaml` is `version: 1.0.0+1`.
 - Adaptive launcher foreground may be cropped by the system mask (see below).
 - Bundled **Anthropic Serif** fonts are not cleared for public redistribution — keep the repo private.
 - Real-device checks are **NOT TESTED**. See `docs/ANDROID_DEVICE_CHECKLIST.md`.
@@ -122,8 +130,8 @@ $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
 
 ## Version identity
 
-- `pubspec.yaml` is the single source for Android `versionName` and `versionCode` (`1.0.0+1`).
-- The About line and the licenses page still print `1.0.0` from Dart strings.
+- `pubspec.yaml` is the single source for Android `versionName` and `versionCode` (`1.0.1+2`).
+- The About line and the licenses page print matching hard-coded `1.0.1` Dart strings (not yet wired through `package_info_plus`).
 
 ## Launcher icon review (no changes made)
 

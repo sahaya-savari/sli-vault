@@ -10,7 +10,7 @@ Status values: `NOT TESTED`, `PASS`, `FAIL`, `BLOCKED`.
 - [ ] Use a **test vault**. Do not run destructive steps on the only copy of real data.
 - [ ] Keep a ZIP backup of any real vault before starting.
 - [ ] Do not clear app data, uninstall, or reset onboarding unless a step says so.
-- [ ] Note that `FLAG_SECURE` is off, so screenshots and recent-apps previews are not blocked.
+- [ ] Confirm `FLAG_SECURE` is on: screenshots / screen recording of the app window / recent-apps previews should be blocked or blank (NOT TESTED until checked on device).
 
 ## 1. Backup and restore
 
