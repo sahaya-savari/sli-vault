@@ -19,7 +19,7 @@ export function IPhone({
   return (
     <div
       className={cn(
-        "relative mx-auto w-[250px] sm:w-[270px] select-none rounded-[44px] bg-[#1a1b1e] p-[8px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.08)] ring-1 ring-white/10 transition-transform duration-300",
+        "relative mx-auto w-full max-w-[320px] select-none rounded-[44px] bg-[#1a1b1e] p-[8px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.08)] ring-1 ring-white/10 transition-transform duration-300",
         className,
       )}
       {...props}

@@ -129,6 +129,9 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 100px;
 }
+[id] {
+  scroll-margin-top: 5.5rem;
+}
 body {
   margin: 0;
   font-family: var(--font-sans);
@@ -260,14 +263,17 @@ h3,
 .version-tag {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  flex-wrap: wrap;
+  direction: ltr;
+  gap: 8px;
   font-size: 11px;
   font-weight: 500;
-  border: 1px solid var(--border);
-  padding: 7px 12px;
-  border-radius: 30px;
-  background: var(--card);
+  border: 1px solid color-mix(in oklab, var(--primary) 30%, var(--border));
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--card) 92%, transparent);
   color: var(--muted-foreground);
+  max-width: 100%;
 }
 .status-dot {
   width: 6px;
@@ -402,18 +408,17 @@ h3,
   transform: rotate(7deg);
 }
 .local-note {
-  position: absolute;
-  bottom: 71px;
-  left: 0;
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
   background: color-mix(in oklab, var(--card) 94%, transparent);
   border: 1px solid var(--border);
   padding: 13px 18px 13px 12px;
-  border-radius: 8px;
+  border-radius: 16px;
   backdrop-filter: blur(15px);
-  box-shadow: var(--phone-shadow);
+  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.5);
+  max-width: 100%;
 }
 .note-icon {
   width: 34px;
@@ -891,8 +896,7 @@ h2 {
     width: 224px;
   }
   .local-note {
-    left: -10px;
-    bottom: 55px;
+    margin-top: 14px;
   }
   .trust-strip {
     gap: 45px;
@@ -1020,9 +1024,8 @@ h2 {
     transform: rotate(5deg);
   }
   .local-note {
-    bottom: 60px;
-    left: -8px;
-    padding: 10px;
+    margin-top: 14px;
+    padding: 10px 14px;
     text-align: left;
     gap: 9px;
   }
@@ -1208,8 +1211,7 @@ h2 {
   transform: none;
 }
 .local-note {
-  bottom: 24px;
-  box-shadow: none;
+  margin-top: 16px;
 }
 .feature-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1298,7 +1300,12 @@ h2 {
   .hero-visual {
     padding-bottom: 0;
   }
-  .local-note,
+  .local-note {
+    display: flex;
+    margin-top: 16px;
+    width: 100%;
+    max-width: 280px;
+  }
   .visual-caption {
     display: none;
   }

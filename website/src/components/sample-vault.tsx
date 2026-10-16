@@ -140,16 +140,25 @@ export function SampleVault() {
 
   return (
     <div>
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <span className="eyebrow">INTERACTIVE PREVIEW • FICTIONAL DATA</span>
-          <h2>Explore a sample vault.</h2>
-          <p className="mt-2 text-muted-foreground">
-            Try searching, filtering and favouriting. Nothing here is saved.
+          <span className="text-primary text-xs font-mono font-semibold tracking-widest uppercase block">
+            INTERACTIVE PREVIEW • FICTIONAL DATA
+          </span>
+          <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-bold text-foreground">
+            Explore a sample vault.
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Try searching, filtering and favouriting. All operations are simulated client-side.
           </p>
         </div>
-        <Button variant="outline" onClick={reset}>
-          <RotateCcw />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={reset}
+          className="gap-1.5 border-border hover:border-primary/50 text-xs"
+        >
+          <RotateCcw className="size-3.5" />
           Reset demo
         </Button>
       </div>
@@ -159,8 +168,8 @@ export function SampleVault() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search titles, sources, notes"
-          className="w-full rounded-xl border border-border bg-card py-3 pl-10 pr-4 text-foreground placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-primary"
+          placeholder="Search titles, sources, notes (e.g. 'design', 'tailwind', 'dark')"
+          className="w-full rounded-xl border border-border bg-black/40 py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-primary transition-colors"
         />
       </label>
       <div className="mb-3 flex flex-wrap gap-2" role="group" aria-label="Type filter">
@@ -200,10 +209,13 @@ export function SampleVault() {
         ))}
       </div>
       {shown.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">
-          <p>No items match these filters.</p>
-          <Button variant="link" onClick={clear}>
-            Clear filters
+        <div className="rounded-2xl border border-dashed border-border/80 bg-black/25 p-10 text-center text-muted-foreground">
+          <p className="text-sm font-medium text-foreground">No items match these filters.</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Try adjusting your query or resetting filter chips.
+          </p>
+          <Button variant="outline" size="sm" onClick={clear} className="mt-4 gap-1.5 text-xs">
+            Clear all filters
           </Button>
         </div>
       ) : (
