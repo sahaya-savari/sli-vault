@@ -187,16 +187,18 @@ function Index() {
             id="main-navigation"
             aria-label="Main navigation"
           >
-            {["Home", "Features", "Architecture", "Screenshots", "Download", "Privacy", "FAQ"].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => setMenuOpen(false)}
-              >
-                {item}
-              </a>
-            ))}
+            {["Home", "Features", "Architecture", "Screenshots", "Download", "Privacy", "FAQ"].map(
+              (item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {item}
+                </a>
+              ),
+            )}
             <Link
               to="/demo"
               className="text-sm font-medium text-primary hover:text-primary/90 transition-colors flex items-center gap-1"
@@ -715,7 +717,9 @@ function Index() {
                   <div className="mt-5 space-y-2.5 rounded-xl border border-border/70 bg-black/40 p-3.5 text-xs font-mono">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Version:</span>
-                      <span className="text-foreground font-semibold">{latestVersion} (code 2)</span>
+                      <span className="text-foreground font-semibold">
+                        {latestVersion} (code 2)
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Package ID:</span>
@@ -871,8 +875,8 @@ function Index() {
               <div className="flex items-center gap-3">
                 <Github className="size-5 text-primary shrink-0" />
                 <span className="text-xs sm:text-sm text-muted-foreground">
-                  Need raw assets, source code archives, or commit history? All releases are published
-                  on GitHub.
+                  Need raw assets, source code archives, or commit history? All releases are
+                  published on GitHub.
                 </span>
               </div>
               <Button variant="outline" size="sm" asChild className="shrink-0 gap-1.5">
@@ -947,7 +951,15 @@ function Index() {
               className="flex flex-wrap items-center justify-center gap-6"
               aria-label="Footer navigation"
             >
-              {["Home", "Features", "Architecture", "Screenshots", "Download", "Privacy", "FAQ"].map((item) => (
+              {[
+                "Home",
+                "Features",
+                "Architecture",
+                "Screenshots",
+                "Download",
+                "Privacy",
+                "FAQ",
+              ].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
