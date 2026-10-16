@@ -18,6 +18,7 @@
 <p align="center">
   <a href="#overview">Overview</a> ·
   <a href="#features">Features</a> ·
+  <a href="#visual-tour--features">Tour</a> ·
   <a href="#qa--verification-gallery">Gallery</a> ·
   <a href="#privacy">Privacy</a> ·
   <a href="#download">Download</a> ·
@@ -78,6 +79,55 @@ The project-owned code and documentation are licensed under [MIT](LICENSE). Thir
 ### Privacy controls
 - Optional lock when backgrounded (device biometric or credential - SQLite is not encrypted)
 - `FLAG_SECURE` enabled on the main activity
+
+---
+
+## Visual tour & features
+
+The key capabilities of SLI Vault across daily capture, organization, and backup:
+
+<table align="center" width="100%">
+  <tr>
+    <td align="center" valign="top" width="33%">
+      <img src="docs/images/promo/01-keep.webp" alt="Keep Everything Worth Keeping" width="100%" />
+      <br>
+      <b>01 · Keep Everything</b><br>
+      <sub>Save links, captures, and images with 100% on-device SQLite storage.</sub>
+    </td>
+    <td align="center" valign="top" width="33%">
+      <img src="docs/images/promo/02-find.webp" alt="Find When It Matters" width="100%" />
+      <br>
+      <b>02 · Instant Search</b><br>
+      <sub>Search across titles, URLs, notes, and filter by type in milliseconds.</sub>
+    </td>
+    <td align="center" valign="top" width="33%">
+      <img src="docs/images/promo/03-favourites.webp" alt="Pin Your Favourites" width="100%" />
+      <br>
+      <b>03 · Favourites Shortlist</b><br>
+      <sub>Quickly access your most valued bookmarks and reference material.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" width="33%">
+      <img src="docs/images/promo/04-collections.webp" alt="Organise Collections" width="100%" />
+      <br>
+      <b>04 · Custom Collections</b><br>
+      <sub>Group items into dedicated workspaces like Design Systems and Inspiration.</sub>
+    </td>
+    <td align="center" valign="top" width="33%">
+      <img src="docs/images/promo/05-backup.webp" alt="Safe Local Backups" width="100%" />
+      <br>
+      <b>05 · Backup & Export</b><br>
+      <sub>Portable ZIP v2 archives with SHA-256 verification and zero lock-in.</sub>
+    </td>
+    <td align="center" valign="top" width="33%">
+      <img src="docs/images/promo/06-private.webp" alt="100% Private By Design" width="100%" />
+      <br>
+      <b>06 · Private by Design</b><br>
+      <sub>Zero analytics, no accounts, and optional biometric authentication.</sub>
+    </td>
+  </tr>
+</table>
 
 ---
 
