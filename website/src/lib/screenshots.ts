@@ -1,14 +1,18 @@
-import welcome from "@/assets/welcome.png";
-import home from "@/assets/home.png";
-import browse from "@/assets/browse.png";
-import favourites from "@/assets/favourites.png";
-import collections from "@/assets/collections.png";
-import settings from "@/assets/settings.png";
+import welcome from "@/assets/look-inside/welcome.webp";
+import home from "@/assets/look-inside/home.webp";
+import browse from "@/assets/look-inside/browse.webp";
+import favourites from "@/assets/look-inside/favourites.webp";
+import collections from "@/assets/look-inside/collections.webp";
+import settings from "@/assets/look-inside/settings.webp";
 
 export const repositoryUrl = "https://github.com/sahaya-savari/sli-vault";
-export const downloadUrl: string | null = null;
-export const projectAvailability = "unavailable" as const;
+export const latestVersion = "v1.0.1";
+export const apkFileSize = "60.6 MB";
+export const apkDownloadUrl = `${repositoryUrl}/releases/download/${latestVersion}/sli-vault-1.0.1-release.apk`;
+export const downloadUrl: string | null = apkDownloadUrl;
+export const projectAvailability = "available" as const;
 export const releasesUrl = `${repositoryUrl}/releases`;
+export const releaseNotesUrl = `${repositoryUrl}/releases/tag/${latestVersion}`;
 export const screenshots = [
   { id: "welcome", title: "Welcome", subtitle: "The first welcome.", src: welcome },
   { id: "home", title: "Home", subtitle: "Your personal library.", src: home },

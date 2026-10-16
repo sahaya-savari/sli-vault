@@ -79,7 +79,7 @@ export function ScreenshotGallery() {
         {screenshots.map((screen, i) => (
           <figure
             key={screen.id}
-            className="screen-figure flex-shrink-0 w-[240px] sm:w-[260px] md:w-[275px] snap-start"
+            className="screen-figure flex-shrink-0 w-[270px] sm:w-[290px] md:w-[310px] snap-start"
           >
             {/* Clickable Phone Frame without any obstructing overlays */}
             <button
