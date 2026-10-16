@@ -90,12 +90,11 @@ The current Android UI, captured from the six primary destinations and onboardin
 <img src="docs/screenshots/ui-verification/welcome.png" alt="Welcome" width="145" />
 <img src="docs/screenshots/ui-verification/31-dark-home.png" alt="Home" width="145" />
 <img src="docs/screenshots/ui-verification/browse.png" alt="Browse" width="145" />
-<img src="docs/screenshots/ui-verification/20-light-coll.png" alt="Collections" width="145" />
-
 <img src="docs/screenshots/ui-verification/favourites.png" alt="Favorites" width="145" />
+<img src="docs/screenshots/ui-verification/20-light-coll.png" alt="Collections" width="145" />
 <img src="docs/screenshots/ui-verification/30-dark-settings-top.png" alt="Settings" width="145" />
 
-<sub><b>Welcome</b> · <b>Home</b> · <b>Browse</b> · <b>Collections</b> · <b>Favorites</b> · <b>Settings</b></sub>
+<sub><b>Welcome</b> · <b>Home</b> · <b>Browse</b> · <b>Favorites</b> · <b>Collections</b> · <b>Settings</b></sub>
 
 </div>
 

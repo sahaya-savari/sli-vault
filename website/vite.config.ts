@@ -11,7 +11,7 @@ const pagesBase = process.env.GITHUB_PAGES === "true" ? "/sli-vault/" : "./";
 export default defineConfig({
   vite: { base: pagesBase },
   tanstackStart: {
-    pages: [{ path: "/" }],
+    pages: [{ path: "/" }, { path: "/demo" }],
     prerender: { enabled: true, autoStaticPathsDiscovery: false },
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
