@@ -1,6 +1,6 @@
 # SLI Vault showcase
 
-TanStack Start + Vite showcase for SLI Vault: phone frames, screenshot gallery, interactive Sample Vault demo, and static-prerender configuration. Integrated into the main `sli-vault` monorepo under `website/`.
+TanStack Start + Vite showcase for SLI Vault: phone frames, screenshot gallery, and static-prerender configuration. Integrated into the main `sli-vault` monorepo under `website/`.
 
 ## Development and validation
 
