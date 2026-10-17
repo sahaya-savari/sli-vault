@@ -24,6 +24,14 @@ export const projectAvailability = "available" as const;
 export const releasesUrl = `${repositoryUrl}/releases`;
 export const releaseNotesUrl = `${repositoryUrl}/releases/tag/${latestVersion}`;
 
+// Canonical production origin for the companion website (GitHub Pages, /sli-vault/).
+export const siteUrl = "https://sahaya-savari.github.io/sli-vault";
+// External resource credited on the local /resources page. Inspected from
+// https://inlitx.github.io/streak/resources/ — Streak (github.com/InlitX/streak)
+// publishes free focus scenes, wallpapers and sounds. No affiliation is implied.
+export const streakResourceUrl = "https://inlitx.github.io/streak/resources/";
+export const streakRepositoryUrl = "https://github.com/InlitX/streak";
+
 export interface ArchitectureDownload {
   id: string;
   architecture: string;

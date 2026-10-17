@@ -1,6 +1,6 @@
 # Website setup
 
-The companion showcase site lives in `website/`. It is a **TanStack Start + Vite + React + TypeScript** app (exported from Lovable). It is isolated from the Flutter toolchain: install dependencies only inside `website/`.
+The companion showcase site lives in `website/`. It is a **TanStack Start + Vite + React + TypeScript** app. It is isolated from the Flutter toolchain: install dependencies only inside `website/`.
 
 ## Requirements
 
