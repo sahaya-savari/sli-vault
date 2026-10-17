@@ -29,6 +29,7 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { ScreenshotGallery } from "@/components/screenshot-gallery";
+import { IPhone } from "@/components/ui/iphone";
 import { Highlighter } from "@/components/ui/highlighter";
 import { MagicCard } from "@/components/ui/magic-card";
 import { PixelCard } from "@/components/ui/pixel-card";
@@ -58,7 +59,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Explore SLI Vault: a local-first personal library for links, screenshots and images on Android. Browse six genuine app screens, and inspect features.",
+          "Explore SLI Vault: a local-first personal library for links, screenshots and images on Android. Browse genuine app screens, and inspect features.",
       },
       { property: "og:title", content: "SLI Vault — Your personal, local-first Android vault" },
       {
@@ -79,42 +80,31 @@ export const Route = createFileRoute("/")({
 const features = [
   {
     icon: Link2,
-    title: "Save the good stuff",
-    description: "Keep useful links, screenshots and images together in your personal library.",
+    title: "Save everything worth keeping",
+    description:
+      "A serene personal vault bringing useful links, screenshots, and inspiring images together on your device.",
     label: "LINKS · SCREENSHOTS · IMAGES",
   },
   {
     icon: Search,
-    title: "Find it again",
-    description: "Browse your library and narrow it down by title, domain, URL or content type.",
-    label: "BROWSE & SEARCH",
-  },
-  {
-    icon: Heart,
-    title: "Keep favourites close",
+    title: "Find it again in seconds",
     description:
-      "Give the things you return to a place of their own. Your favourites are always within reach.",
-    label: "YOUR PERSONAL SHORTLIST",
+      "Instantly search and filter across titles, web domains, full URLs, and content types completely offline.",
+    label: "INSTANT OFFLINE SEARCH",
   },
   {
     icon: FolderHeart,
-    title: "A place for every interest",
-    description: "Group saved items into collections, so related ideas stay together.",
-    label: "COLLECTIONS",
+    title: "Favourites & Collections",
+    description:
+      "Give your favourite items a dedicated shortlist and group related ideas into custom personal collections.",
+    label: "CURATE & PIN",
   },
   {
     icon: HardDrive,
-    title: "Local storage & backups",
+    title: "Local-first control & themes",
     description:
-      "A local-first library with storage information, Export and Import Backup controls in Settings.",
-    label: "KEEPING YOU IN CONTROL",
-  },
-  {
-    icon: Palette,
-    title: "Make yourself at home",
-    description:
-      "Choose Dark, Light or System appearance in Settings to match the way you like to browse.",
-    label: "THREE THEME OPTIONS",
+      "100% on-device SQLite storage with backup export/import controls, plus Dark, Light, and System appearances.",
+    label: "OFFLINE SQLITE · THEMES",
   },
 ];
 
@@ -472,9 +462,9 @@ function Index() {
                   <Download className="size-3.5 text-primary" />
                   {latestVersion} ({apkFileSize})
                 </span>
-                <span>•</span>
+                <span className="meta-separator">•</span>
                 <span className="inline-flex items-center gap-1.5">100% Offline SQLite</span>
-                <span>•</span>
+                <span className="meta-separator">•</span>
                 <span className="inline-flex items-center gap-1.5">
                   <Check className="size-3.5 text-primary" />
                   Zero Accounts Required
@@ -484,8 +474,8 @@ function Index() {
 
             {/* Responsive Hero Composition with 3 Upright Phones matching Streak reference */}
             <div className="hero-visual">
-              {/* Supplied Hero Background Tile Pattern (Decorative Orange Pixel Sphere) */}
-              <div className="hero-grid-bg" aria-hidden="true">
+              {/* Supplied Hero Background Tile Pattern (Decorative Orange Pixel Sphere) - hidden on mobile */}
+              <div className="hero-grid-bg hidden sm:flex" aria-hidden="true">
                 <div className="hero-grid-glow" />
                 <img
                   src={heroBg}
@@ -496,26 +486,34 @@ function Index() {
                 />
               </div>
 
-              {/* 3 Upright Phones Composition */}
+              {/* 3 Upright Phones Composition with authentic frames */}
               <div className="hero-phone-cluster">
                 {/* Left Device: Browse Library (Upright, flanking left) */}
                 <div className="hero-phone-side hero-phone-left">
-                  <img src={heroLeft} alt="SLI Vault Browse screen" width={760} height={1637} />
+                  <IPhone
+                    src={heroLeft}
+                    alt="SLI Vault Browse screen"
+                    className="w-full shadow-xl pointer-events-none"
+                  />
                 </div>
 
                 {/* Center Device: Home Screen (Primary Focal Point, Upright, Foreground) */}
                 <div className="hero-phone-main">
-                  <img
+                  <IPhone
                     src={heroCenter}
                     alt="SLI Vault Home screen showing genuine local personal library"
-                    width={900}
-                    height={1938}
+                    eager
+                    className="w-full shadow-2xl"
                   />
                 </div>
 
                 {/* Right Device: Favorites Screen (Upright, flanking right) */}
                 <div className="hero-phone-side hero-phone-right">
-                  <img src={heroRight} alt="SLI Vault Favorites screen" width={760} height={1637} />
+                  <IPhone
+                    src={heroRight}
+                    alt="SLI Vault Favorites screen"
+                    className="w-full shadow-xl pointer-events-none"
+                  />
                 </div>
               </div>
 
@@ -535,8 +533,8 @@ function Index() {
         </section>
 
         {/* Trust strip */}
-        <div className="trust-strip border-b border-border/60 bg-card/30 py-5">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-medium text-muted-foreground">
+        <div className="trust-strip border-b border-border/60 bg-card/30 py-4 sm:py-5">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-xs font-medium text-muted-foreground">
             <div className="flex items-center justify-center gap-2">
               <Smartphone className="size-4 text-primary" />
               <span>Android Native App</span>
@@ -576,7 +574,7 @@ function Index() {
               </p>
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2">
               {features.map((feature) => (
                 <MagicCard
                   key={feature.title}
@@ -625,7 +623,7 @@ function Index() {
                   </div>
                   <Button
                     asChild
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shrink-0"
+                    className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shrink-0"
                   >
                     <a href="#download">Get SLI Vault</a>
                   </Button>
@@ -646,8 +644,8 @@ function Index() {
         </section>
 
         {/* Privacy Section */}
-        <section id="privacy" className="section py-16 sm:py-24 border-b border-border/60">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <section id="privacy" className="section py-12 sm:py-20 lg:py-24 border-b border-border/60">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             <div className="lg:col-span-5">
               <span className="eyebrow text-primary text-xs font-semibold tracking-widest uppercase">
                 LOCAL FIRST. PLAINLY EXPLAINED.
@@ -691,13 +689,15 @@ function Index() {
               ].map((item) => (
                 <div
                   key={item.title}
-                  className="flex gap-4 rounded-2xl border border-border bg-card/60 p-5"
+                  className="flex items-start gap-4 rounded-2xl border border-border/80 bg-card/60 p-5 backdrop-blur-md transition-colors hover:border-primary/40"
                 >
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 text-primary">
                     <item.icon className="size-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
+                    <h3 className="text-base font-semibold text-foreground tracking-tight">
+                      {item.title}
+                    </h3>
                     <p className="mt-1 text-xs sm:text-sm text-muted-foreground leading-relaxed">
                       {item.text}
                     </p>
@@ -711,10 +711,10 @@ function Index() {
         {/* Platform-Grouped Download Section (BUG 10) */}
         <section
           id="download"
-          className="section scroll-mt-20 py-16 sm:py-24 border-b border-border/60 bg-gradient-to-b from-[#0A0B0D] via-card/20 to-[#0A0B0D]"
+          className="section scroll-mt-20 py-12 sm:py-20 lg:py-24 border-b border-border/60 bg-gradient-to-b from-[#0A0B0D] via-card/20 to-[#0A0B0D]"
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="section-heading mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="section-heading mb-8 sm:mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
                 <span className="eyebrow text-primary text-xs font-semibold tracking-widest uppercase">
                   GET SLI VAULT
@@ -731,16 +731,16 @@ function Index() {
               </p>
             </div>
 
-            {/* Platform Cards Grid */}
-            <div className="grid gap-6 md:grid-cols-3">
+            {/* Platform Cards Grid - collapses to single column on mobile, tablet layout, 3 columns on desktop */}
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               {/* Android Card (Primary & Ready) */}
-              <div className="relative rounded-3xl border-2 border-primary/50 bg-card/85 p-6 sm:p-7 shadow-2xl backdrop-blur-md flex flex-col justify-between group hover:border-primary transition-all duration-300">
+              <div className="relative rounded-3xl border-2 border-primary/50 bg-card/85 p-5 sm:p-6 lg:p-7 shadow-2xl backdrop-blur-md flex flex-col justify-between group hover:border-primary transition-all duration-300 min-w-0 md:col-span-2 lg:col-span-1">
                 <div>
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 border border-primary/30 text-primary">
-                      <Smartphone className="size-6" />
+                  <div className="flex items-center justify-between gap-3 mb-5 flex-wrap sm:flex-nowrap">
+                    <div className="flex size-11 sm:size-12 items-center justify-center rounded-2xl bg-primary/15 border border-primary/30 text-primary shrink-0">
+                      <Smartphone className="size-5 sm:size-6" />
                     </div>
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 font-mono text-xs font-semibold text-primary">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-2.5 sm:px-3 py-1 font-mono text-xs font-semibold text-primary shrink-0">
                       <span className="size-1.5 rounded-full bg-primary animate-pulse" />
                       Official Release
                     </span>
@@ -752,24 +752,24 @@ function Index() {
                     for full compatibility.
                   </p>
 
-                  <div className="mt-5 space-y-2.5 rounded-xl border border-border/70 bg-black/40 p-3.5 text-xs font-mono">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Version:</span>
-                      <span className="text-foreground font-semibold">
+                  <div className="mt-5 space-y-2 rounded-xl border border-border/70 bg-black/40 p-3 sm:p-3.5 text-xs font-mono min-w-0">
+                    <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1">
+                      <span className="text-muted-foreground shrink-0">Version:</span>
+                      <span className="text-foreground font-semibold break-words">
                         {latestVersion} (code 3)
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Min. Android:</span>
+                    <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1">
+                      <span className="text-muted-foreground shrink-0">Min. Android:</span>
                       <span className="text-foreground">8.0 (Oreo) or newer</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Recommended Size:</span>
+                    <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1">
+                      <span className="text-muted-foreground shrink-0">Recommended Size:</span>
                       <span className="text-primary font-semibold">{arm64ApkFileSize} (ARM64)</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Compatibility:</span>
-                      <span className="text-foreground text-right sm:text-left">
+                    <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+                      <span className="text-muted-foreground shrink-0">Compatibility:</span>
+                      <span className="text-foreground text-left sm:text-right text-[11px] sm:text-xs break-words [overflow-wrap:anywhere]">
                         ARM64 / Universal / ARM32 / x86_64
                       </span>
                     </div>
@@ -780,11 +780,15 @@ function Index() {
                   <Button
                     size="lg"
                     asChild
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 gap-2"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 gap-2 h-auto min-h-11 py-2.5 px-4 text-center"
                   >
-                    <a href={apkDownloadUrl} download>
-                      <Download className="size-4" />
-                      Download APK ({latestVersion} • ARM64)
+                    <a
+                      href={apkDownloadUrl}
+                      download
+                      className="flex items-center justify-center gap-2 flex-wrap sm:flex-nowrap"
+                    >
+                      <Download className="size-4 shrink-0" />
+                      <span className="break-words">Download APK ({latestVersion} • ARM64)</span>
                     </a>
                   </Button>
 
@@ -796,20 +800,20 @@ function Index() {
                         Direct APK links
                       </span>
                     </div>
-                    <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
+                    <div className="grid grid-cols-2 gap-1.5 text-xs font-mono min-w-0">
                       {architectureDownloads.map((pkg) => (
                         <a
                           key={pkg.id}
                           href={pkg.url}
                           download
-                          className="flex flex-col justify-between p-2 rounded-lg border border-border/80 bg-black/40 hover:border-primary/60 hover:bg-primary/5 transition-colors group"
+                          className="flex flex-col justify-between p-2 rounded-lg border border-border/80 bg-black/40 hover:border-primary/60 hover:bg-primary/5 transition-colors group min-w-0"
                           title={pkg.description}
                         >
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="font-semibold text-foreground text-[11px] group-hover:text-primary">
+                          <div className="flex items-center justify-between gap-1 min-w-0">
+                            <span className="font-semibold text-foreground text-[11px] group-hover:text-primary truncate">
                               {pkg.label}
                             </span>
-                            <Download className="size-3 text-muted-foreground group-hover:text-primary" />
+                            <Download className="size-3 text-muted-foreground group-hover:text-primary shrink-0" />
                           </div>
                           <span className="text-[10px] text-muted-foreground mt-0.5">
                             {pkg.fileSize}
@@ -824,7 +828,7 @@ function Index() {
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs text-muted-foreground px-1 pt-1">
+                  <div className="flex items-center justify-between gap-2 flex-wrap text-xs text-muted-foreground px-1 pt-1">
                     <a
                       href={releaseNotesUrl}
                       target="_blank"
@@ -833,7 +837,7 @@ function Index() {
                     >
                       Release notes <ArrowUpRight className="size-3" />
                     </a>
-                    <span>•</span>
+                    <span className="text-muted-foreground/40">•</span>
                     <a
                       href="https://github.com/sahaya-savari/sli-vault/blob/main/docs/ANDROID_RELEASE.md"
                       target="_blank"
@@ -852,13 +856,13 @@ function Index() {
               </div>
 
               {/* Windows Card (In Planning) */}
-              <div className="rounded-3xl border border-border/80 bg-card/40 p-6 sm:p-7 flex flex-col justify-between opacity-85">
+              <div className="rounded-3xl border border-border/80 bg-card/40 p-5 sm:p-6 lg:p-7 flex flex-col justify-between opacity-85 min-w-0 md:col-span-1">
                 <div>
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="flex size-12 items-center justify-center rounded-2xl bg-muted/60 border border-border text-muted-foreground">
-                      <Laptop className="size-6" />
+                  <div className="flex items-center justify-between gap-3 mb-5">
+                    <div className="flex size-11 sm:size-12 items-center justify-center rounded-2xl bg-muted/60 border border-border text-muted-foreground shrink-0">
+                      <Laptop className="size-5 sm:size-6" />
                     </div>
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/60 px-3 py-1 font-mono text-xs text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/60 px-3 py-1 font-mono text-xs text-muted-foreground shrink-0">
                       Not available yet
                     </span>
                   </div>
@@ -868,16 +872,16 @@ function Index() {
                     Native desktop client for Windows 10 &amp; 11 with offline local database sync.
                   </p>
 
-                  <div className="mt-5 space-y-2.5 rounded-xl border border-border/50 bg-black/20 p-3.5 text-xs font-mono text-muted-foreground">
-                    <div className="flex justify-between">
+                  <div className="mt-5 space-y-2.5 rounded-xl border border-border/50 bg-black/20 p-3 sm:p-3.5 text-xs font-mono text-muted-foreground min-w-0">
+                    <div className="flex justify-between gap-2">
                       <span>Status:</span>
                       <span className="text-foreground">In Planning</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-2">
                       <span>Platform:</span>
                       <span>Windows x64 / ARM</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-2">
                       <span>Distribution:</span>
                       <span>MSIX / ZIP</span>
                     </div>
@@ -899,13 +903,13 @@ function Index() {
               </div>
 
               {/* Linux Card (In Planning) */}
-              <div className="rounded-3xl border border-border/80 bg-card/40 p-6 sm:p-7 flex flex-col justify-between opacity-85">
+              <div className="rounded-3xl border border-border/80 bg-card/40 p-5 sm:p-6 lg:p-7 flex flex-col justify-between opacity-85 min-w-0 md:col-span-1">
                 <div>
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="flex size-12 items-center justify-center rounded-2xl bg-muted/60 border border-border text-muted-foreground">
-                      <Terminal className="size-6" />
+                  <div className="flex items-center justify-between gap-3 mb-5">
+                    <div className="flex size-11 sm:size-12 items-center justify-center rounded-2xl bg-muted/60 border border-border text-muted-foreground shrink-0">
+                      <Terminal className="size-5 sm:size-6" />
                     </div>
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/60 px-3 py-1 font-mono text-xs text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/60 px-3 py-1 font-mono text-xs text-muted-foreground shrink-0">
                       Not available yet
                     </span>
                   </div>
@@ -915,16 +919,16 @@ function Index() {
                     Native Linux packaging for desktop distributions with system keyring support.
                   </p>
 
-                  <div className="mt-5 space-y-2.5 rounded-xl border border-border/50 bg-black/20 p-3.5 text-xs font-mono text-muted-foreground">
-                    <div className="flex justify-between">
+                  <div className="mt-5 space-y-2.5 rounded-xl border border-border/50 bg-black/20 p-3 sm:p-3.5 text-xs font-mono text-muted-foreground min-w-0">
+                    <div className="flex justify-between gap-2">
                       <span>Status:</span>
                       <span className="text-foreground">In Planning</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-2">
                       <span>Platform:</span>
                       <span>x86_64 / aarch64</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-2">
                       <span>Distribution:</span>
                       <span>Flatpak / AppImage</span>
                     </div>
@@ -947,7 +951,7 @@ function Index() {
             </div>
 
             {/* Bottom GitHub releases link */}
-            <div className="mt-10 rounded-2xl border border-border bg-card/40 p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="mt-8 sm:mt-10 rounded-2xl border border-border bg-card/40 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <Github className="size-5 text-primary shrink-0" />
                 <span className="text-xs sm:text-sm text-muted-foreground">
@@ -955,7 +959,12 @@ function Index() {
                   published on GitHub.
                 </span>
               </div>
-              <Button variant="outline" size="sm" asChild className="shrink-0 gap-1.5">
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="w-full sm:w-auto shrink-0 gap-1.5"
+              >
                 <a href={releasesUrl} target="_blank" rel="noopener noreferrer">
                   All Files &amp; Release Notes
                   <ArrowUpRight className="size-3.5" />
@@ -966,8 +975,8 @@ function Index() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="section py-16 sm:py-24">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <section id="faq" className="section py-12 sm:py-20 lg:py-24">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
             <div className="lg:col-span-5">
               <span className="eyebrow text-primary text-xs font-semibold tracking-widest uppercase">
                 A FEW THINGS YOU MIGHT WONDER
@@ -996,10 +1005,10 @@ function Index() {
                   <AccordionItem
                     value={`faq-${i}`}
                     key={question}
-                    className="rounded-2xl border border-border bg-card/60 px-5"
+                    className="rounded-2xl border border-border bg-card/60 px-4 sm:px-5 min-w-0"
                   >
-                    <AccordionTrigger className="text-left font-medium text-foreground py-4 hover:text-primary">
-                      {question}
+                    <AccordionTrigger className="text-left font-medium text-foreground py-4 hover:text-primary gap-3">
+                      <span className="pr-2">{question}</span>
                     </AccordionTrigger>
                     <AccordionContent className="text-xs sm:text-sm text-muted-foreground pb-4 leading-relaxed">
                       {answer}
@@ -1013,25 +1022,29 @@ function Index() {
       </main>
 
       {/* Footer with Creator Attribution (Fix 4) */}
-      <footer className="border-t border-border/80 bg-[#0A0B0D] py-10 text-sm text-muted-foreground">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex flex-wrap items-center gap-3">
+      <footer className="border-t border-border/80 bg-[#0A0B0D] py-8 sm:py-10 text-sm text-muted-foreground">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center sm:text-left flex-wrap">
             <a
               href="#home"
               onClick={(e) => handleNavClick(e, "home")}
-              className="flex items-center gap-2.5 font-bold tracking-tight rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              className="flex items-center gap-2 font-bold tracking-tight rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 shrink-0"
               aria-label="SLI Vault home"
             >
-              <img src={logo} width="28" height="28" alt="" className="rounded-lg" />
-              <span className="font-serif text-base font-bold text-foreground">
+              <img src={logo} width="24" height="24" alt="" className="rounded-md shrink-0" />
+              <span className="font-serif text-sm sm:text-base font-bold text-foreground">
                 SLI Vault<span className="text-primary">.</span>
               </span>
             </a>
-            <span className="text-border/80">|</span>
+            <span className="hidden sm:inline text-border/80" aria-hidden="true">
+              •
+            </span>
             <p className="text-xs sm:text-sm text-muted-foreground">
               Created by <span className="text-foreground font-medium">Sahaya Savari F.</span>
             </p>
-            <span className="text-border/80">•</span>
+            <span className="hidden sm:inline text-border/80" aria-hidden="true">
+              •
+            </span>
             <p className="text-xs sm:text-sm text-muted-foreground">
               Design reference:{" "}
               <a
@@ -1045,11 +1058,16 @@ function Index() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-5 text-xs sm:text-sm">
+          <nav
+            aria-label="Footer navigation"
+            className="flex flex-wrap items-center justify-center md:justify-end gap-x-5 gap-y-2.5 text-xs sm:text-sm font-medium"
+          >
             <Link to="/resources" className="hover:text-foreground transition-colors">
               Resources
             </Link>
-            <span className="text-border/80">•</span>
+            <span className="hidden sm:inline text-border/80" aria-hidden="true">
+              •
+            </span>
             <a
               href="https://github.com/sahaya-savari"
               target="_blank"
@@ -1058,7 +1076,9 @@ function Index() {
             >
               GitHub Profile
             </a>
-            <span className="text-border/80">•</span>
+            <span className="hidden sm:inline text-border/80" aria-hidden="true">
+              •
+            </span>
             <a
               href={repositoryUrl}
               target="_blank"
@@ -1067,7 +1087,9 @@ function Index() {
             >
               Repository
             </a>
-            <span className="text-border/80">•</span>
+            <span className="hidden sm:inline text-border/80" aria-hidden="true">
+              •
+            </span>
             <a
               href={releasesUrl}
               target="_blank"
@@ -1076,7 +1098,7 @@ function Index() {
             >
               Releases ({latestVersion})
             </a>
-          </div>
+          </nav>
         </div>
       </footer>
     </div>

@@ -9,7 +9,7 @@ import '../theme/sli_theme.dart';
 import 'sli_spotlight_card.dart';
 import 'sli_svg.dart';
 
-class VaultItemCard extends StatelessWidget {
+class VaultItemCard extends StatefulWidget {
   final VaultItem item;
   final VaultController controller;
   final VoidCallback onTap;
@@ -24,6 +24,40 @@ class VaultItemCard extends StatelessWidget {
     required this.onToggleFavorite,
     this.isGrid = false,
   });
+
+  @override
+  State<VaultItemCard> createState() => _VaultItemCardState();
+}
+
+class _VaultItemCardState extends State<VaultItemCard> {
+  Future<File?>? _imageFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _initImageFuture();
+  }
+
+  @override
+  void didUpdateWidget(covariant VaultItemCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.item.localImageId != widget.item.localImageId ||
+        oldWidget.item.type != widget.item.type ||
+        oldWidget.controller != widget.controller) {
+      _initImageFuture();
+    }
+  }
+
+  void _initImageFuture() {
+    final imageId = widget.item.localImageId;
+    if (widget.item.type == VaultItemType.link ||
+        imageId == null ||
+        imageId.trim().isEmpty) {
+      _imageFuture = null;
+    } else {
+      _imageFuture = widget.controller.resolveImageFile(imageId);
+    }
+  }
 
   String _formatDate(DateTime dt) {
     final months = [
@@ -45,7 +79,7 @@ class VaultItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isGrid) {
+    if (widget.isGrid) {
       return _buildGridCard(context);
     }
     return _buildListCard(context);
@@ -56,7 +90,7 @@ class VaultItemCard extends StatelessWidget {
     required double width,
     required double height,
   }) {
-    if (item.type == VaultItemType.link) {
+    if (widget.item.type == VaultItemType.link) {
       return Container(
         width: width,
         height: height,
@@ -74,8 +108,12 @@ class VaultItemCard extends StatelessWidget {
       );
     }
 
+    if (_imageFuture == null) {
+      return _missingImageFallback(context, width: width, height: height);
+    }
+
     return FutureBuilder<File?>(
-      future: controller.resolveImageFile(item.localImageId),
+      future: _imageFuture,
       builder: (context, snapshot) {
         final file = snapshot.data;
         if (file != null) {
@@ -130,10 +168,14 @@ class VaultItemCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SliIcon(item.type.iconAsset, size: 12, color: context.sli.amberText),
+          SliIcon(
+            widget.item.type.iconAsset,
+            size: 12,
+            color: context.sli.amberText,
+          ),
           SizedBox(width: 4),
           Text(
-            item.type.label,
+            widget.item.type.label,
             style: TextStyle(
               color: context.sli.textSecondary,
               fontSize: 11,
@@ -150,24 +192,26 @@ class VaultItemCard extends StatelessWidget {
       width: SliTokens.minTouchTarget,
       height: SliTokens.minTouchTarget,
       child: IconButton(
-        tooltip: item.isFavorite ? 'Remove from favorites' : 'Add to favorites',
-        onPressed: onToggleFavorite,
+        tooltip: widget.item.isFavorite
+            ? 'Remove from favorites'
+            : 'Add to favorites',
+        onPressed: widget.onToggleFavorite,
         icon: AnimatedSwitcher(
           duration: const Duration(milliseconds: 180),
           transitionBuilder: (child, animation) =>
               ScaleTransition(scale: animation, child: child),
           child: SliIcon(
-            item.isFavorite
+            widget.item.isFavorite
                 ? SliAssets.actionFavoriteFilled
                 : SliAssets.actionFavoriteOutline,
-            key: ValueKey<bool>(item.isFavorite),
+            key: ValueKey<bool>(widget.item.isFavorite),
             size: 20,
-            color: item.isFavorite
+            color: widget.item.isFavorite
                 ? SliTokens.coral
                 : context.sli.textSecondary,
-            semanticLabel: item.isFavorite
-                ? 'Unfavorite ${item.title}'
-                : 'Favorite ${item.title}',
+            semanticLabel: widget.item.isFavorite
+                ? 'Unfavorite ${widget.item.title}'
+                : 'Favorite ${widget.item.title}',
           ),
         ),
       ),
@@ -175,12 +219,12 @@ class VaultItemCard extends StatelessWidget {
   }
 
   Widget _buildListCard(BuildContext context) {
-    final subtitle = item.type == VaultItemType.link
-        ? (item.domain ?? item.url ?? 'Saved link')
-        : _formatDate(item.createdAt);
+    final subtitle = widget.item.type == VaultItemType.link
+        ? (widget.item.domain ?? widget.item.url ?? 'Saved link')
+        : _formatDate(widget.item.createdAt);
 
     return SliSpotlightCard(
-      onTap: onTap,
+      onTap: widget.onTap,
       padding: EdgeInsets.all(SliTokens.spaceMd),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,7 +241,7 @@ class VaultItemCard extends StatelessWidget {
                     SizedBox(width: SliTokens.spaceSm),
                     Expanded(
                       child: Text(
-                        _formatDate(item.createdAt),
+                        _formatDate(widget.item.createdAt),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -210,7 +254,7 @@ class VaultItemCard extends StatelessWidget {
                 ),
                 SizedBox(height: 6),
                 Text(
-                  item.title,
+                  widget.item.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium,
@@ -222,12 +266,12 @@ class VaultItemCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                if (item.tags.isNotEmpty) ...[
+                if (widget.item.tags.isNotEmpty) ...[
                   SizedBox(height: 8),
                   Wrap(
                     spacing: 6,
                     runSpacing: 4,
-                    children: item.tags.take(3).map((t) {
+                    children: widget.item.tags.take(3).map((t) {
                       return Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 8,
@@ -262,12 +306,12 @@ class VaultItemCard extends StatelessWidget {
   }
 
   Widget _buildGridCard(BuildContext context) {
-    final subtitle = item.type == VaultItemType.link
-        ? (item.domain ?? 'Saved link')
-        : _formatDate(item.createdAt);
+    final subtitle = widget.item.type == VaultItemType.link
+        ? (widget.item.domain ?? 'Saved link')
+        : _formatDate(widget.item.createdAt);
 
     return SliSpotlightCard(
-      onTap: onTap,
+      onTap: widget.onTap,
       padding: EdgeInsets.all(SliTokens.spaceMd),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,7 +333,7 @@ class VaultItemCard extends StatelessWidget {
           ),
           SizedBox(height: SliTokens.spaceSm),
           Text(
-            item.title,
+            widget.item.title,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.titleMedium,
