@@ -37,7 +37,7 @@ class SliScreenHeader extends StatelessWidget {
       padding: margin,
       child: SliGlassSurface(
         enableBlur: true,
-        blurSigma: 10,
+        blurSigma: 6,
         borderRadius: BorderRadius.circular(SliTokens.radiusLg),
         padding: EdgeInsets.fromLTRB(
           SliTokens.spaceLg,

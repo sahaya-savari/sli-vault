@@ -36,6 +36,8 @@ import { DotPattern } from "@/components/ui/dot-pattern";
 import {
   apkDownloadUrl,
   apkFileSize,
+  architectureDownloads,
+  arm64ApkFileSize,
   latestVersion,
   releaseNotesUrl,
   releasesUrl,
@@ -137,6 +139,7 @@ const faqs = [
 
 function Index() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -147,6 +150,98 @@ function Index() {
     return () => window.removeEventListener("keydown", close);
   }, [menuOpen]);
 
+  // Robust hash-based navigation for direct visits, reloads, and browser history
+  useEffect(() => {
+    const scrollToTarget = (targetId: string, smooth = false) => {
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({
+          behavior: smooth ? "smooth" : "auto",
+          block: "start",
+        });
+        setActiveSection(targetId);
+        return true;
+      }
+      return false;
+    };
+
+    const handleHash = (smooth = false) => {
+      if (typeof window === "undefined") return;
+      const hash = window.location.hash.replace(/^#/, "");
+      if (!hash) return;
+      if (!scrollToTarget(hash, smooth)) {
+        const raf = requestAnimationFrame(() => {
+          if (!scrollToTarget(hash, smooth)) {
+            setTimeout(() => scrollToTarget(hash, smooth), 100);
+          }
+        });
+        return () => cancelAnimationFrame(raf);
+      }
+    };
+
+    // 1. Initial direct visit or refresh
+    handleHash(false);
+
+    // 2. Post-hydration stabilization pass once hero images and fonts settle
+    const timer = setTimeout(() => {
+      const hash = window.location.hash.replace(/^#/, "");
+      if (hash && hash !== "home") {
+        scrollToTarget(hash, false);
+      }
+    }, 300);
+
+    // 3. Listen for back/forward navigation and hash changes
+    const onHashChange = () => {
+      handleHash(true);
+    };
+
+    window.addEventListener("hashchange", onHashChange);
+    window.addEventListener("popstate", onHashChange);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("hashchange", onHashChange);
+      window.removeEventListener("popstate", onHashChange);
+    };
+  }, []);
+
+  // Scroll spy to highlight active section in navbar
+  useEffect(() => {
+    const sections = ["home", "features", "download"];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        }
+      },
+      {
+        rootMargin: "-20% 0px -65% 0px",
+        threshold: 0,
+      },
+    );
+
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    setMenuOpen(false);
+    const element = document.getElementById(targetId);
+    if (element) {
+      if (window.location.hash !== `#${targetId}`) {
+        window.history.pushState(null, "", `#${targetId}`);
+      }
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      setActiveSection(targetId);
+    }
+  };
+
   return (
     <div className="vault-site min-h-screen bg-[#0A0B0D] text-foreground selection:bg-primary/30">
       <a className="skip-link" href="#main">
@@ -155,69 +250,163 @@ function Index() {
 
       {/* Header */}
       <header className="site-header sticky top-0 z-50 border-b border-border/80 bg-[#0A0B0D]/85 backdrop-blur-md">
-        <div className="header-inner max-w-6xl mx-auto px-4 sm:px-6 flex h-16 items-center justify-between">
+        <div className="header-inner max-w-6xl mx-auto px-4 sm:px-6 flex h-16 items-center justify-between gap-4">
+          {/* Left: Brand Icon & Wordmark */}
           <a
             href="#home"
-            className="brand flex items-center gap-2.5 font-bold tracking-tight"
+            onClick={(e) => handleNavClick(e, "home")}
+            className="brand flex items-center gap-2.5 font-bold tracking-tight shrink-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
             aria-label="SLI Vault home"
           >
-            <img src={logo} alt="" width="34" height="34" className="rounded-lg shadow-sm" />
-            <span className="font-serif text-xl font-bold">
+            <img src={logo} alt="" width="30" height="30" className="rounded-lg shadow-sm" />
+            <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-foreground">
               SLI Vault<span className="text-primary">.</span>
             </span>
           </a>
 
+          {/* Middle: Navigation Links (Desktop) */}
           <nav
-            className={menuOpen ? "main-nav is-open" : "main-nav"}
+            className="hidden md:flex items-center gap-1 lg:gap-1.5"
             id="main-navigation"
             aria-label="Main navigation"
           >
             <a
               href="#home"
-              className="text-[14.5px] font-semibold text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5"
-              onClick={() => setMenuOpen(false)}
+              onClick={(e) => handleNavClick(e, "home")}
+              className={`text-[14px] font-semibold transition-colors px-3 py-1.5 rounded-lg ${
+                activeSection === "home"
+                  ? "text-foreground bg-white/[0.08]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+              }`}
             >
               Home
             </a>
             <a
               href="#features"
-              className="text-[14.5px] font-semibold text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5"
-              onClick={() => setMenuOpen(false)}
+              onClick={(e) => handleNavClick(e, "features")}
+              className={`text-[14px] font-semibold transition-colors px-3 py-1.5 rounded-lg ${
+                activeSection === "features"
+                  ? "text-foreground bg-white/[0.08]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+              }`}
             >
               Features
             </a>
             <a
               href="#download"
-              className="text-[14.5px] font-semibold text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5"
-              onClick={() => setMenuOpen(false)}
+              onClick={(e) => handleNavClick(e, "download")}
+              className={`text-[14px] font-semibold transition-colors px-3 py-1.5 rounded-lg ${
+                activeSection === "download"
+                  ? "text-foreground bg-white/[0.08]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+              }`}
             >
               Download
+            </a>
+            <a
+              href="https://inlitx.github.io/streak/resources/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[14px] font-semibold text-muted-foreground hover:text-foreground hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1 px-3 py-1.5 rounded-lg"
+            >
+              <span>Resources</span>
+              <ArrowUpRight className="size-3 opacity-60" />
+            </a>
+          </nav>
+
+          {/* Far Right: GitHub Button & Mobile Menu Toggle */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            <a
+              href={repositoryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="header-github inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border/80 bg-card/60 hover:bg-card hover:border-border text-xs sm:text-[13px] font-semibold text-muted-foreground hover:text-foreground transition-all duration-200 shadow-sm"
+              aria-label="SLI Vault repository on GitHub"
+            >
+              <Github className="size-3.5 sm:size-4" />
+              <span>GitHub</span>
+              <ArrowUpRight className="size-3 opacity-70" />
+            </a>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="menu-toggle md:hidden h-8 w-8 text-muted-foreground hover:text-foreground"
+              aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-navigation"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile Dropdown Menu */}
+        {menuOpen && (
+          <nav
+            id="mobile-navigation"
+            className="md:hidden border-b border-border/80 bg-[#0A0B0D]/95 backdrop-blur-xl px-4 py-4 space-y-1 animate-in fade-in slide-in-from-top-2 duration-200"
+            aria-label="Mobile navigation"
+          >
+            <a
+              href="#home"
+              className={`block px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                activeSection === "home"
+                  ? "text-foreground bg-white/[0.08]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+              }`}
+              onClick={(e) => handleNavClick(e, "home")}
+            >
+              Home
+            </a>
+            <a
+              href="#features"
+              className={`block px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                activeSection === "features"
+                  ? "text-foreground bg-white/[0.08]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+              }`}
+              onClick={(e) => handleNavClick(e, "features")}
+            >
+              Features
+            </a>
+            <a
+              href="#download"
+              className={`block px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                activeSection === "download"
+                  ? "text-foreground bg-white/[0.08]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+              }`}
+              onClick={(e) => handleNavClick(e, "download")}
+            >
+              Download
+            </a>
+            <a
+              href="https://inlitx.github.io/streak/resources/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between px-3 py-2 rounded-lg text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-white/[0.04] transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              <span>Resources</span>
+              <ArrowUpRight className="size-3.5 opacity-60" />
             </a>
             <a
               href={repositoryUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[14.5px] font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-white/5"
+              className="flex items-center justify-between px-3 py-2 rounded-lg text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-white/[0.04] transition-colors"
               onClick={() => setMenuOpen(false)}
             >
-              <Github className="size-4" />
-              <span>GitHub</span>
-              <ArrowUpRight className="size-3.5 opacity-70" />
+              <span className="flex items-center gap-2">
+                <Github className="size-4" />
+                <span>GitHub</span>
+              </span>
+              <ArrowUpRight className="size-3.5 opacity-60" />
             </a>
           </nav>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="menu-toggle md:hidden"
-            aria-label={menuOpen ? "Close navigation" : "Open navigation"}
-            aria-expanded={menuOpen}
-            aria-controls="main-navigation"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <X /> : <Menu />}
-          </Button>
-        </div>
+        )}
       </header>
 
       <main id="main">
@@ -244,8 +433,7 @@ function Index() {
 
               <h1>
                 Everything Worth Keeping,
-                <br className="hidden sm:inline" />{" "}
-                In One{" "}
+                <br className="hidden sm:inline" /> In One{" "}
                 <Highlighter color="#FF6A24" action="highlight">
                   Local-First Vault
                 </Highlighter>
@@ -563,27 +751,32 @@ function Index() {
 
                   <h3 className="text-xl font-bold text-foreground">Android</h3>
                   <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
-                    Universal APK for phones and tablets running Android 8.0 or newer.
+                    Available for Android 8.0 or newer. Choose ARM64 for modern devices or Universal
+                    for full compatibility.
                   </p>
 
                   <div className="mt-5 space-y-2.5 rounded-xl border border-border/70 bg-black/40 p-3.5 text-xs font-mono">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Version:</span>
                       <span className="text-foreground font-semibold">
-                        {latestVersion} (code 2)
+                        {latestVersion} (code 3)
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Package ID:</span>
-                      <span className="text-foreground break-all text-right sm:text-left">com.sahayasavari.slivault</span>
+                      <span className="text-foreground break-all text-right sm:text-left">
+                        com.sahayasavari.slivault
+                      </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Download Size:</span>
-                      <span className="text-primary font-semibold">{apkFileSize}</span>
+                      <span className="text-muted-foreground">Recommended Size:</span>
+                      <span className="text-primary font-semibold">{arm64ApkFileSize} (ARM64)</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Compatibility:</span>
-                      <span className="text-foreground text-right sm:text-left">Universal (ARM64 / ARMv7 / x86_64)</span>
+                      <span className="text-foreground text-right sm:text-left">
+                        ARM64 / Universal / ARM32 / x86_64
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -596,11 +789,47 @@ function Index() {
                   >
                     <a href={apkDownloadUrl} download>
                       <Download className="size-4" />
-                      Download APK ({latestVersion})
+                      Download APK ({latestVersion} • ARM64)
                     </a>
                   </Button>
 
-                  <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+                  {/* Architecture-Specific Downloads */}
+                  <div className="space-y-2 pt-1">
+                    <div className="flex items-center justify-between text-xs font-semibold text-foreground">
+                      <span>Choose Architecture:</span>
+                      <span className="text-[11px] text-muted-foreground font-normal">
+                        Direct APK links
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
+                      {architectureDownloads.map((pkg) => (
+                        <a
+                          key={pkg.id}
+                          href={pkg.url}
+                          download
+                          className="flex flex-col justify-between p-2 rounded-lg border border-border/80 bg-black/40 hover:border-primary/60 hover:bg-primary/5 transition-colors group"
+                          title={pkg.description}
+                        >
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="font-semibold text-foreground text-[11px] group-hover:text-primary">
+                              {pkg.label}
+                            </span>
+                            <Download className="size-3 text-muted-foreground group-hover:text-primary" />
+                          </div>
+                          <span className="text-[10px] text-muted-foreground mt-0.5">
+                            {pkg.fileSize}
+                          </span>
+                        </a>
+                      ))}
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-normal">
+                      <strong>Which package?</strong> Most users should download{" "}
+                      <strong>ARM64</strong> (supported by almost all phones since 2016). Choose{" "}
+                      <strong>Universal</strong> if you are unsure.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-muted-foreground px-1 pt-1">
                     <a
                       href={releaseNotesUrl}
                       target="_blank"
@@ -794,7 +1023,8 @@ function Index() {
           <div className="flex flex-wrap items-center gap-3">
             <a
               href="#home"
-              className="flex items-center gap-2.5 font-bold tracking-tight"
+              onClick={(e) => handleNavClick(e, "home")}
+              className="flex items-center gap-2.5 font-bold tracking-tight rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
               aria-label="SLI Vault home"
             >
               <img src={logo} width="28" height="28" alt="" className="rounded-lg" />

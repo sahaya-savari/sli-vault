@@ -16,7 +16,7 @@ See [../docs/WEBSITE_SETUP.md](../docs/WEBSITE_SETUP.md) for full setup notes.
 
 ## Assets and typography
 
-Six gallery screens are mapped in `src/lib/screenshots.ts` and stored as PNGs in `src/assets/` (sourced from `docs/screenshots/ui-verification/`). The header/footer logo is `src/assets/sli_vault_logo_official.png` (from `assets/branding/`).
+Six gallery screens are mapped in `src/lib/screenshots.ts` and vendored under `src/assets/look-inside/`. The header/footer logo is `src/assets/sli_vault_logo_official.png` (from `assets/branding/`).
 
 Display typography uses **Georgia / Times** with system UI sans-serif for body text. Anthropic Serif is not bundled in the website (license unclear for redistribution); the Android app continues to use bundled Claude fonts separately.
 
