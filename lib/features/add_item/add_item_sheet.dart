@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -61,27 +60,24 @@ class AddItemSheet extends StatefulWidget {
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(SliTokens.radiusXl),
             ),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: context.sli.elevated.withValues(alpha: 0.98),
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(SliTokens.radiusXl),
-                  ),
-                  border: Border.all(color: context.sli.border),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: context.sli.elevated.withValues(alpha: 0.98),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(SliTokens.radiusXl),
                 ),
-                // Material gives InkWell/Ink descendants a surface that is
-                // *above* the sheet decoration (an Ink painted on the route's
-                // Material would be hidden underneath it).
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: AddItemSheet(
-                    controller: controller,
-                    initialType: initialType,
-                    initialUrl: initialUrl,
-                    initialImagePath: initialImagePath,
-                  ),
+                border: Border.all(color: context.sli.border),
+              ),
+              // Material gives InkWell/Ink descendants a surface that is
+              // *above* the sheet decoration (an Ink painted on the route's
+              // Material would be hidden underneath it).
+              child: Material(
+                type: MaterialType.transparency,
+                child: AddItemSheet(
+                  controller: controller,
+                  initialType: initialType,
+                  initialUrl: initialUrl,
+                  initialImagePath: initialImagePath,
                 ),
               ),
             ),

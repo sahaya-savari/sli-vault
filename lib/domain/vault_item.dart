@@ -70,7 +70,7 @@ enum VaultTypeFilter {
 enum VaultSortOption {
   newestFirst('Recently saved'),
   oldestFirst('Oldest first'),
-  titleAZ('Title A–Z');
+  titleAZ('Title A-Z');
 
   final String label;
   const VaultSortOption(this.label);

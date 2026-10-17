@@ -27,7 +27,7 @@ class SliGlassSurface extends StatelessWidget {
     this.fillColor,
     this.fillDeepColor,
     this.borderColor,
-    this.blurSigma = 14,
+    this.blurSigma = 6,
   });
 
   @override

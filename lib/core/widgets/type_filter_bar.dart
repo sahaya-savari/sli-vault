@@ -27,8 +27,7 @@ class TypeFilterBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: SliTokens.spaceLg),
       child: SliGlassSurface(
-        enableBlur: true,
-        blurSigma: 10,
+        enableBlur: false,
         borderRadius: BorderRadius.circular(SliTokens.radiusLg),
         padding: const EdgeInsets.all(4),
         child: LayoutBuilder(

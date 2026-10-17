@@ -18,8 +18,8 @@
 <p align="center">
   <a href="#overview">Overview</a> ·
   <a href="#features">Features</a> ·
+  <a href="#translating-sli-vault">Translations</a> ·
   <a href="#visual-tour--features">Tour</a> ·
-  <a href="#qa--verification-gallery">Gallery</a> ·
   <a href="#privacy">Privacy</a> ·
   <a href="#download">Download</a> ·
   <a href="#setup">Setup</a> ·
@@ -82,6 +82,21 @@ The project-owned code and documentation are licensed under [MIT](LICENSE). Thir
 
 ---
 
+## Translating SLI Vault
+
+Translations can be contributed by the community as the project expands its language support.
+
+If community translation support is not yet configured, contributors can open a [GitHub issue](https://github.com/sahaya-savari/sli-vault/issues) to discuss adding or improving a translation. Automated translation pipelines or platforms (such as Weblate) are not currently configured for this repository.
+
+### Translation guidelines
+
+- **Propose a translation or new language:** Open an issue titled `[i18n] Add <Language> translation` to coordinate before beginning work on string extraction or file formats.
+- **Tone & style:** Keep translations concise, natural, and consistent with SLI Vault's calm, privacy-focused tone. Avoid marketing buzzwords or unnecessary embellishments.
+- **Placeholders & technical terms:** Preserve all code placeholders (e.g. `%s`, `{count}`) and formatting markers exactly. Do not translate the product name (`SLI Vault`), local storage format identifiers (`SQLite`, `ZIP v2`), or system properties (`FLAG_SECURE`).
+- **Reporting translation issues:** Report typos, wording suggestions, or UI truncation bugs directly on the [GitHub Issues](https://github.com/sahaya-savari/sli-vault/issues) tracker.
+
+---
+
 ## Visual tour & features
 
 The key capabilities of SLI Vault across daily capture, organization, and backup:
@@ -128,54 +143,6 @@ The key capabilities of SLI Vault across daily capture, organization, and backup
     </td>
   </tr>
 </table>
-
----
-
-## QA / verification gallery
-
-The current Android UI, captured from the six primary destinations and onboarding:
-
-<div align="center">
-
-<img src="docs/screenshots/ui-verification/welcome.png" alt="Welcome" width="145" />
-<img src="docs/screenshots/ui-verification/31-dark-home.png" alt="Home" width="145" />
-<img src="docs/screenshots/ui-verification/browse.png" alt="Browse" width="145" />
-<img src="docs/screenshots/ui-verification/favourites.png" alt="Favorites" width="145" />
-<img src="docs/screenshots/ui-verification/20-light-coll.png" alt="Collections" width="145" />
-<img src="docs/screenshots/ui-verification/30-dark-settings-top.png" alt="Settings" width="145" />
-
-<sub><b>Welcome</b> · <b>Home</b> · <b>Browse</b> · <b>Favorites</b> · <b>Collections</b> · <b>Settings</b></sub>
-
-</div>
-
-### Selected light/dark and Add-sheet checks
-
-Selected light/dark and Add-sheet checks (not a full device suite):
-
-<p align="center"><b>Home</b></p>
-<p align="center">
-  <a href="docs/screenshots/ui-verification/21-light-home.png"><img src="docs/screenshots/ui-verification/21-light-home.png" alt="QA Home in light theme" width="120"></a>
-  <a href="docs/screenshots/ui-verification/31-dark-home.png"><img src="docs/screenshots/ui-verification/31-dark-home.png" alt="QA Home in dark theme" width="120"></a>
-</p>
-<p align="center"><b>Collections</b></p>
-<p align="center"><a href="docs/screenshots/ui-verification/20-light-coll.png"><img src="docs/screenshots/ui-verification/20-light-coll.png" alt="QA Collections in light theme" width="120"></a></p>
-<p align="center"><b>Add Link / Image</b></p>
-<p align="center">
-  <a href="docs/screenshots/ui-verification/02-add-sheet-light-link.png"><img src="docs/screenshots/ui-verification/02-add-sheet-light-link.png" alt="QA Add Link sheet" width="120"></a>
-  <a href="docs/screenshots/ui-verification/03-add-sheet-light-image.png"><img src="docs/screenshots/ui-verification/03-add-sheet-light-image.png" alt="QA Add Image sheet" width="120"></a>
-  <a href="docs/screenshots/ui-verification/32-dark-add-link.png"><img src="docs/screenshots/ui-verification/32-dark-add-link.png" alt="QA Add Link sheet in dark theme" width="120"></a>
-</p>
-<p align="center"><b>Image Validation</b></p>
-<p align="center"><a href="docs/screenshots/ui-verification/35-image-validation.png"><img src="docs/screenshots/ui-verification/35-image-validation.png" alt="QA Image validation" width="120"></a></p>
-<p align="center"><b>Settings</b></p>
-<p align="center">
-  <a href="docs/screenshots/ui-verification/22-light-settings-top.png"><img src="docs/screenshots/ui-verification/22-light-settings-top.png" alt="QA Settings in light theme" width="120"></a>
-  <a href="docs/screenshots/ui-verification/30-dark-settings-top.png"><img src="docs/screenshots/ui-verification/30-dark-settings-top.png" alt="QA Settings in dark theme" width="120"></a>
-</p>
-<p align="center"><b>Privacy / Danger Zone</b></p>
-<p align="center"><a href="docs/screenshots/ui-verification/21-light-settings-2.png"><img src="docs/screenshots/ui-verification/21-light-settings-2.png" alt="QA Privacy and Danger Zone" width="120"></a></p>
-
-Full QA notes: [docs/TESTING.md](docs/TESTING.md) · [docs/RELEASE_READINESS.md](docs/RELEASE_READINESS.md).
 
 ---
 
@@ -292,7 +259,6 @@ The Flutter mobile application resides directly at the **repository root**. The 
 | `lib/app/` | Five-tab shell and background lock |
 | `android/` | Manifest, share intents, `FLAG_SECURE` enabled on the main activity |
 | `docs/` | Architecture, backup, testing, release notes |
-| `docs/screenshots/ui-verification/` | Approved showcase + selected QA PNGs |
 | `test/` | Host tests with temporary databases |
 | `website/` | Companion React + TypeScript + Vite showcase (isolated workspace; Bun lockfile) |
 
@@ -353,3 +319,13 @@ Third-party notices that do exist:
 - Play Store: **not listed** — this is a GitHub sideload package, not a Play upload
 
 To reproduce a signed build locally you need `android/key.properties` and the keystore outside the repo (see [docs/ANDROID_RELEASE.md](docs/ANDROID_RELEASE.md)).
+
+---
+
+<div align="center">
+
+Built with 🖤
+
+Thank you for supporting SLI Vault.
+
+</div>

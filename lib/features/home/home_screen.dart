@@ -53,8 +53,7 @@ class HomeScreen extends StatelessWidget {
                 },
                 borderRadius: BorderRadius.circular(SliTokens.radiusMd),
                 child: SliGlassSurface(
-                  enableBlur: true,
-                  blurSigma: 10,
+                  enableBlur: false,
                   borderRadius: BorderRadius.circular(SliTokens.radiusMd),
                   padding: const EdgeInsets.symmetric(
                     horizontal: SliTokens.spaceLg,
@@ -240,7 +239,7 @@ class _HomeHeader extends StatelessWidget {
     // panel) keeps the title/subtitle legible over the background artwork.
     return SliGlassSurface(
       enableBlur: true,
-      blurSigma: 10,
+      blurSigma: 6,
       borderRadius: BorderRadius.circular(SliTokens.radiusLg),
       padding: const EdgeInsets.symmetric(
         horizontal: SliTokens.spaceMd,

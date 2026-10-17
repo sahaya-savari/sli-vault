@@ -50,7 +50,7 @@ TypeScript is checked as part of `bun run build` (Vite + project references). Th
 
 ## Assets
 
-Gallery screenshots are vendored under `website/src/assets/` from `docs/screenshots/ui-verification/`. The app logo is copied from `assets/branding/sli_vault_logo_official.png`.
+Gallery screenshots are vendored under `website/src/assets/look-inside/`. The app logo is copied from `assets/branding/sli_vault_logo_official.png`.
 
 Typography on the site uses system UI sans-serif for body text and **Georgia / Times** for display headings. Anthropic Serif is used in the Android app only; it is not bundled in the website because redistribution rights for web use are unclear.
 
