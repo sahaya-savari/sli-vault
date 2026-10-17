@@ -28,7 +28,7 @@ export function ScreenshotGallery() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full min-w-0 max-w-full">
       <div className="section-heading mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <span className="eyebrow text-primary text-xs font-semibold tracking-widest uppercase">
@@ -70,7 +70,7 @@ export function ScreenshotGallery() {
         ref={scrollContainerRef}
         role="group"
         aria-label="SLI Vault app screenshots gallery - 6 screens in order"
-        className="screenshot-row-wrapper flex flex-nowrap items-start gap-6 sm:gap-8 overflow-x-auto pb-6 pt-2 scroll-smooth snap-x snap-mandatory"
+        className="screenshot-row-wrapper flex flex-nowrap items-start gap-4 sm:gap-6 md:gap-8 overflow-x-auto pb-6 pt-2 scroll-smooth snap-x snap-mandatory min-w-0 max-w-full"
         style={{
           scrollbarWidth: "thin",
           scrollbarColor: "var(--primary) transparent",
@@ -79,7 +79,7 @@ export function ScreenshotGallery() {
         {screenshots.map((screen, i) => (
           <figure
             key={screen.id}
-            className="screen-figure flex-shrink-0 w-[270px] sm:w-[290px] md:w-[310px] snap-start"
+            className="screen-figure flex-shrink-0 w-[240px] xs:w-[260px] sm:w-[290px] md:w-[310px] snap-start"
           >
             {/* Clickable Phone Frame without any obstructing overlays */}
             <button
