@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
   ArrowDown,
@@ -43,6 +43,7 @@ import {
   releasesUrl,
   repositoryUrl,
   screenshots,
+  siteUrl,
 } from "@/lib/screenshots";
 import logo from "@/assets/sli_vault_logo_official.png";
 import heroBg from "@/assets/hero-bg.webp";
@@ -66,8 +67,11 @@ export const Route = createFileRoute("/")({
           "Save what matters in one calm, searchable workspace. Your library stays on your device.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: `${siteUrl}/` },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "robots", content: "index, follow" },
     ],
+    links: [{ rel: "canonical", href: `${siteUrl}/` }],
   }),
   component: Index,
 });
@@ -303,15 +307,12 @@ function Index() {
             >
               Download
             </a>
-            <a
-              href="https://inlitx.github.io/streak/resources/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/resources"
               className="text-[14px] font-semibold text-muted-foreground hover:text-foreground hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1 px-3 py-1.5 rounded-lg"
             >
               <span>Resources</span>
-              <ArrowUpRight className="size-3 opacity-60" />
-            </a>
+            </Link>
           </nav>
 
           {/* Far Right: GitHub Button & Mobile Menu Toggle */}
@@ -382,16 +383,13 @@ function Index() {
             >
               Download
             </a>
-            <a
-              href="https://inlitx.github.io/streak/resources/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/resources"
               className="flex items-center justify-between px-3 py-2 rounded-lg text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-white/[0.04] transition-colors"
               onClick={() => setMenuOpen(false)}
             >
               <span>Resources</span>
-              <ArrowUpRight className="size-3.5 opacity-60" />
-            </a>
+            </Link>
             <a
               href={repositoryUrl}
               target="_blank"
@@ -419,14 +417,13 @@ function Index() {
               {/* Reference-Style Compact Pill Badge */}
               <div
                 dir="ltr"
+                data-testid="release-badge"
                 className="version-tag inline-flex items-center flex-wrap gap-2 rounded-full border border-border/80 bg-card/80 px-3.5 py-1.5 text-xs text-muted-foreground backdrop-blur-md shadow-sm"
               >
                 <span className="rounded-full bg-primary/20 px-2 py-0.5 font-mono text-[11px] font-semibold text-primary">
                   {latestVersion}
                 </span>
                 <span className="font-semibold text-foreground">Android</span>
-                <span className="text-muted-foreground/60">•</span>
-                <span className="font-mono text-muted-foreground">com.sahayasavari.slivault</span>
                 <span className="text-muted-foreground/60">•</span>
                 <span className="text-muted-foreground font-medium">Open Source</span>
               </div>
@@ -763,10 +760,8 @@ function Index() {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Package ID:</span>
-                      <span className="text-foreground break-all text-right sm:text-left">
-                        com.sahayasavari.slivault
-                      </span>
+                      <span className="text-muted-foreground">Min. Android:</span>
+                      <span className="text-foreground">8.0 (Oreo) or newer</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Recommended Size:</span>
@@ -1051,6 +1046,10 @@ function Index() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-5 text-xs sm:text-sm">
+            <Link to="/resources" className="hover:text-foreground transition-colors">
+              Resources
+            </Link>
+            <span className="text-border/80">•</span>
             <a
               href="https://github.com/sahaya-savari"
               target="_blank"
