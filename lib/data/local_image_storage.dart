@@ -56,6 +56,27 @@ class LocalImageStorage {
     if (bytes[0] == 0x42 && bytes[1] == 0x4D) {
       return '.bmp';
     }
+    // HEIF / HEIC: starts with ftyp box at offset 4
+    if (bytes.length >= 12 &&
+        bytes[4] == 0x66 &&
+        bytes[5] == 0x74 &&
+        bytes[6] == 0x79 &&
+        bytes[7] == 0x70) {
+      final brand = String.fromCharCodes(bytes.sublist(8, 12)).toLowerCase();
+      if (brand == 'heic' ||
+          brand == 'heix' ||
+          brand == 'heim' ||
+          brand == 'heis' ||
+          brand == 'hevc' ||
+          brand == 'hevx' ||
+          brand == 'mif1' ||
+          brand == 'msf1' ||
+          (fileNameHint != null &&
+              (fileNameHint.toLowerCase().endsWith('.heic') ||
+                  fileNameHint.toLowerCase().endsWith('.heif')))) {
+        return '.heic';
+      }
+    }
     return null;
   }
 
@@ -68,7 +89,7 @@ class LocalImageStorage {
     final ext = detectImageExtension(bytes, fileNameHint: fileNameHint);
     if (ext == null) {
       throw const FormatException(
-        'Unsupported or unreadable image format. Choose a PNG, JPG, WEBP, GIF, or BMP file.',
+        'Unsupported or unreadable image format. Choose a PNG, JPG, WEBP, GIF, BMP, or HEIC file.',
       );
     }
 
@@ -81,7 +102,8 @@ class LocalImageStorage {
             p
                     .extension(explicitImageId)
                     .toLowerCase()
-                    .replaceFirst('.jpeg', '.jpg') !=
+                    .replaceFirst('.jpeg', '.jpg')
+                    .replaceFirst('.heif', '.heic') !=
                 ext)) {
       throw const FormatException(
         'Explicit image ID must be a safe filename matching the image format.',

@@ -177,7 +177,40 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           clipBehavior: Clip.antiAlias,
                           child: file != null
                               ? InteractiveViewer(
-                                  child: Image.file(file, fit: BoxFit.contain),
+                                  child: Image.file(
+                                    file,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(
+                                            SliTokens.spaceXl,
+                                          ),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SliIllustration(
+                                                SliAssets.illImagePlaceholder,
+                                                width: 120,
+                                                height: 120,
+                                              ),
+                                              SizedBox(
+                                                height: SliTokens.spaceSm,
+                                              ),
+                                              Text(
+                                                'Preview unavailable for this format (${file.path.split('.').last.toUpperCase()}).\nOriginal file is safely preserved.',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color:
+                                                      context.sli.textSecondary,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 )
                               : Center(
                                   child: Padding(
@@ -451,6 +484,7 @@ class _EditItemDialogState extends State<_EditItemDialog> {
   late final TextEditingController _tags = TextEditingController(
     text: widget.item.tags.join(', '),
   );
+  late String _selectedCollection = widget.item.collection;
   String? _errorText;
   bool _saving = false;
 
@@ -479,6 +513,7 @@ class _EditItemDialogState extends State<_EditItemDialog> {
         newTitle: title,
         newDescription: _description.text,
         newTags: VaultValidators.parseTagInput(_tags.text),
+        newCollection: _selectedCollection,
       );
       if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
@@ -492,6 +527,11 @@ class _EditItemDialogState extends State<_EditItemDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final availableCollections =
+        widget.controller.collections.contains(_selectedCollection)
+        ? widget.controller.collections
+        : [_selectedCollection, ...widget.controller.collections];
+
     return AlertDialog(
       scrollable: true,
       title: const Text('Edit Item'),
@@ -525,6 +565,34 @@ class _EditItemDialogState extends State<_EditItemDialog> {
             decoration: const InputDecoration(
               labelText: 'Tags (comma-separated)',
             ),
+          ),
+          const SizedBox(height: SliTokens.spaceMd),
+          DropdownButtonFormField<String>(
+            key: const Key('edit_collection_field'),
+            initialValue: _selectedCollection,
+            isExpanded: true,
+            dropdownColor: context.sli.elevated,
+            style: TextStyle(color: context.sli.textPrimary),
+            decoration: const InputDecoration(labelText: 'Collection'),
+            items: [
+              for (final c in availableCollections)
+                DropdownMenuItem(
+                  value: c,
+                  child: Text(
+                    c,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: context.sli.textPrimary),
+                  ),
+                ),
+            ],
+            onChanged: _saving
+                ? null
+                : (val) {
+                    if (val != null) {
+                      setState(() => _selectedCollection = val);
+                    }
+                  },
           ),
         ],
       ),

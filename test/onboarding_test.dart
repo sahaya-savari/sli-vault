@@ -18,9 +18,7 @@ void main() {
   Widget buildTestableOnboarding({required VoidCallback onFinish}) {
     return MaterialApp(
       theme: SliTheme.darkTheme,
-      home: Scaffold(
-        body: OnboardingScreen(onFinish: onFinish),
-      ),
+      home: Scaffold(body: OnboardingScreen(onFinish: onFinish)),
     );
   }
 
@@ -106,7 +104,9 @@ void main() {
       },
     );
 
-    testWidgets('Skip button on Page 1 triggers completion immediately', (tester) async {
+    testWidgets('Skip button on Page 1 triggers completion immediately', (
+      tester,
+    ) async {
       bool finished = false;
       await tester.pumpWidget(
         buildTestableOnboarding(onFinish: () => finished = true),
@@ -119,7 +119,9 @@ void main() {
       expect(finished, isTrue);
     });
 
-    testWidgets('Skip button on Page 2 triggers completion immediately', (tester) async {
+    testWidgets('Skip button on Page 2 triggers completion immediately', (
+      tester,
+    ) async {
       bool finished = false;
       await tester.pumpWidget(
         buildTestableOnboarding(onFinish: () => finished = true),
@@ -134,15 +136,15 @@ void main() {
       expect(finished, isTrue);
     });
 
-    testWidgets('supports horizontal swipe navigation between pages', (tester) async {
+    testWidgets('supports horizontal swipe navigation between pages', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 2.75;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(
-        buildTestableOnboarding(onFinish: () {}),
-      );
+      await tester.pumpWidget(buildTestableOnboarding(onFinish: () {}));
       await tester.pumpAndSettle();
 
       // Starts at Page 1
@@ -170,98 +172,125 @@ void main() {
       );
     });
 
-    testWidgets('renders cleanly without overflow on small screen devices (320x568)', (tester) async {
-      tester.view.physicalSize = const Size(320, 568);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+    testWidgets(
+      'renders cleanly without overflow on small screen devices (320x568)',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 568);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(
-        buildTestableOnboarding(onFinish: () {}),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildTestableOnboarding(onFinish: () {}));
+        await tester.pumpAndSettle();
 
-      // Page 1
-      expect(
-        find.text('Your personal vault for everything worth keeping.'),
-        findsOneWidget,
-      );
-      expect(tester.takeException(), isNull);
+        // Page 1
+        expect(
+          find.text('Your personal vault for everything worth keeping.'),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
 
-      // Advance to Page 2
-      await advanceNext(tester);
-      expect(
-        find.text('Links, images, and moments, all in one place.'),
-        findsOneWidget,
-      );
-      expect(tester.takeException(), isNull);
+        // Advance to Page 2
+        await advanceNext(tester);
+        expect(
+          find.text('Links, images, and moments, all in one place.'),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
 
-      // Advance to Page 3
-      await advanceNext(tester);
-      expect(
-        find.text('Everything saved. Nothing lost in the scroll.'),
-        findsOneWidget,
-      );
-      expect(tester.takeException(), isNull);
-    });
+        // Advance to Page 3
+        await advanceNext(tester);
+        expect(
+          find.text('Everything saved. Nothing lost in the scroll.'),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
 
-    test('Skip marks onboarding complete and persists across app restarts', () async {
-      SharedPreferences.setMockInitialValues({});
-      final tempDir = await Directory.systemTemp.createTemp('sli_onboarding_restart_skip_');
-      addTearDown(() async {
-        if (await tempDir.exists()) await tempDir.delete(recursive: true);
-      });
+    test(
+      'Skip marks onboarding complete and persists across app restarts',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final tempDir = await Directory.systemTemp.createTemp(
+          'sli_onboarding_restart_skip_',
+        );
+        addTearDown(() async {
+          if (await tempDir.exists()) await tempDir.delete(recursive: true);
+        });
 
-      final controller1 = VaultController(
-        database: VaultDatabase(overrideDbPath: p.join(tempDir.path, 'vault.db')),
-        imageStorage: LocalImageStorage(overrideBaseDir: Directory(p.join(tempDir.path, 'images'))),
-      );
-      await controller1.initialize();
-      expect(controller1.onboardingCompleted, isFalse);
+        final controller1 = VaultController(
+          database: VaultDatabase(
+            overrideDbPath: p.join(tempDir.path, 'vault.db'),
+          ),
+          imageStorage: LocalImageStorage(
+            overrideBaseDir: Directory(p.join(tempDir.path, 'images')),
+          ),
+        );
+        await controller1.initialize();
+        expect(controller1.onboardingCompleted, isFalse);
 
-      // Skip onboarding (which calls completeOnboarding internally)
-      await controller1.completeOnboarding();
-      expect(controller1.onboardingCompleted, isTrue);
-      await controller1.database.close();
+        // Skip onboarding (which calls completeOnboarding internally)
+        await controller1.completeOnboarding();
+        expect(controller1.onboardingCompleted, isTrue);
+        await controller1.database.close();
 
-      // Simulate app restart / new launch
-      final controller2 = VaultController(
-        database: VaultDatabase(overrideDbPath: p.join(tempDir.path, 'vault.db')),
-        imageStorage: LocalImageStorage(overrideBaseDir: Directory(p.join(tempDir.path, 'images'))),
-      );
-      await controller2.initialize();
+        // Simulate app restart / new launch
+        final controller2 = VaultController(
+          database: VaultDatabase(
+            overrideDbPath: p.join(tempDir.path, 'vault.db'),
+          ),
+          imageStorage: LocalImageStorage(
+            overrideBaseDir: Directory(p.join(tempDir.path, 'images')),
+          ),
+        );
+        await controller2.initialize();
 
-      expect(controller2.onboardingCompleted, isTrue);
-      await controller2.database.close();
-    });
+        expect(controller2.onboardingCompleted, isTrue);
+        await controller2.database.close();
+      },
+    );
 
-    test('Get Started completion persists across app and controller restart', () async {
-      SharedPreferences.setMockInitialValues({});
-      final tempDir = await Directory.systemTemp.createTemp('sli_onboarding_restart_start_');
-      addTearDown(() async {
-        if (await tempDir.exists()) await tempDir.delete(recursive: true);
-      });
+    test(
+      'Get Started completion persists across app and controller restart',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final tempDir = await Directory.systemTemp.createTemp(
+          'sli_onboarding_restart_start_',
+        );
+        addTearDown(() async {
+          if (await tempDir.exists()) await tempDir.delete(recursive: true);
+        });
 
-      final controller1 = VaultController(
-        database: VaultDatabase(overrideDbPath: p.join(tempDir.path, 'vault.db')),
-        imageStorage: LocalImageStorage(overrideBaseDir: Directory(p.join(tempDir.path, 'images'))),
-      );
-      await controller1.initialize();
-      expect(controller1.onboardingCompleted, isFalse);
+        final controller1 = VaultController(
+          database: VaultDatabase(
+            overrideDbPath: p.join(tempDir.path, 'vault.db'),
+          ),
+          imageStorage: LocalImageStorage(
+            overrideBaseDir: Directory(p.join(tempDir.path, 'images')),
+          ),
+        );
+        await controller1.initialize();
+        expect(controller1.onboardingCompleted, isFalse);
 
-      // Complete onboarding as Get Started does
-      await controller1.completeOnboarding();
-      expect(controller1.onboardingCompleted, isTrue);
-      await controller1.database.close();
+        // Complete onboarding as Get Started does
+        await controller1.completeOnboarding();
+        expect(controller1.onboardingCompleted, isTrue);
+        await controller1.database.close();
 
-      // Launch fresh controller after restart
-      final controller2 = VaultController(
-        database: VaultDatabase(overrideDbPath: p.join(tempDir.path, 'vault.db')),
-        imageStorage: LocalImageStorage(overrideBaseDir: Directory(p.join(tempDir.path, 'images'))),
-      );
-      await controller2.initialize();
-      expect(controller2.onboardingCompleted, isTrue);
-      await controller2.database.close();
-    });
+        // Launch fresh controller after restart
+        final controller2 = VaultController(
+          database: VaultDatabase(
+            overrideDbPath: p.join(tempDir.path, 'vault.db'),
+          ),
+          imageStorage: LocalImageStorage(
+            overrideBaseDir: Directory(p.join(tempDir.path, 'images')),
+          ),
+        );
+        await controller2.initialize();
+        expect(controller2.onboardingCompleted, isTrue);
+        await controller2.database.close();
+      },
+    );
   });
 }

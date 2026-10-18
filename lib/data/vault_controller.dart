@@ -365,6 +365,7 @@ class VaultController extends ChangeNotifier {
     required String newTitle,
     String? newDescription,
     required List<String> newTags,
+    String? newCollection,
   }) async {
     final existing = findById(itemId);
     if (existing == null) {
@@ -380,9 +381,34 @@ class VaultController extends ChangeNotifier {
       description: cleanedDescription.isEmpty ? null : cleanedDescription,
       clearDescription: cleanedDescription.isEmpty,
       tags: VaultValidators.normalizeTags(newTags),
+      collection: (newCollection != null && newCollection.trim().isNotEmpty)
+          ? newCollection.trim()
+          : existing.collection,
       updatedAt: DateTime.now(),
     );
     await database.upsertItem(updated);
+    await reloadLibrary();
+  }
+
+  /// Exports the entire library into a portable ZIP including empty custom collections.
+  Future<Uint8List> createBackupArchiveBytes() {
+    final customList = _customCollections
+        .where((c) => c.trim().isNotEmpty && c.trim() != 'General')
+        .toList();
+    return backupService.createBackupArchiveBytes(
+      customCollections: customList,
+    );
+  }
+
+  /// Commits an import preview safely, restoring items, images, and custom collections.
+  Future<void> commitImportPreview(ImportPreviewSummary preview) async {
+    await backupService.commitImportPreview(preview);
+    for (final col in preview.customCollectionsToRestore) {
+      if (col != 'General' && !_customCollections.contains(col)) {
+        _customCollections = {..._customCollections, col};
+      }
+    }
+    await _persistCollections();
     await reloadLibrary();
   }
 

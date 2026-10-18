@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/sli_theme.dart';
@@ -12,7 +12,7 @@ class AboutSliVaultScreen extends StatelessWidget {
       title: 'About SLI Vault',
       children: [
         const _DocumentSection(
-          heading: 'SLI Vault 1.0.1',
+          heading: 'SLI Vault 1.0.2',
           body: 'SLI Vault is a local-first personal library for links and images (including screenshots you import). Records and imported media are stored in app-private storage on this device.',
         ),
         const _DocumentSection(
@@ -42,7 +42,7 @@ class AboutSliVaultScreen extends StatelessWidget {
           onTap: () => showLicensePage(
             context: context,
             applicationName: 'SLI Vault',
-            applicationVersion: '1.0.1',
+            applicationVersion: '1.0.2',
           ),
         ),
       ],

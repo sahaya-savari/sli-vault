@@ -1,11 +1,26 @@
 # Changelog
 
-## Unreleased
+## 1.0.2
 
-### Added
-
-- Integrated the Lovable showcase site under `website/` (TanStack Start + Vite + React + TypeScript) with local gallery PNGs from `docs/screenshots/ui-verification/`.
-- Added [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md) and path-filtered `.github/workflows/website-ci.yml` (lint, test, build — no deploy).
+- Version `1.0.2+4`. Application ID remains `com.sahayasavari.slivault`.
+- **Portable ZIP Backup & Restore (Format v3)**:
+  - Complete recoverable archive containing `manifest.json` (v3), locally stored full-resolution images under `images/`, `links.csv` for desktop spreadsheet review, and `README.txt`.
+  - Spreadsheet formula injection defense in CSV exports: prefixes formula-triggering characters (`=`, `+`, `-`, `@`, `\t`, `\r`) with a single quote `'` and quotes cells per RFC 4180.
+  - Full-resolution HEIC/HEIF image detection via ISO BMFF `ftyp` box analysis (`heic`, `heix`, `heim`, `heis`, `hevc`, `hevx`, `mif1`, `msf1`) with binary preservation and graceful fallback preview handling when decoding is unsupported on older Android devices.
+  - Custom collection preservation: custom collections (including empty collections) are tracked in the backup manifest and restored cleanly into local preferences.
+  - Backward compatibility: seamlessly validates and restores v1 and v2 archives without requiring CSV or README files.
+  - Security hardening: rejects path traversal attempts (`..`), absolute paths, and rogue archive entries during validation.
+- **Settings Redesign**:
+  - Compact, polished layout grouped into: Local Storage & Backup, Appearance, Privacy & Security, Library & Data, and About SLI Vault.
+  - Honest privacy and security notices: clarifies that biometric locking protects application access while SQLite storage on disk is managed via app-private storage.
+  - Preserved test keys and accessible touch targets for theme chips, backup actions, and data clearance.
+- **Collection Management**:
+  - Inline collection creation during the Add Item sheet flow without losing active form input.
+  - Collection reassignment support in the Edit Item dialog.
+- **Quality & Verification**:
+  - 85 automated tests passing (including 10 dedicated v1.0.2 portable backup and collection tests).
+  - Static analysis passing with 0 issues (`flutter analyze`).
+  - Production release artifacts built and signed with the owner keystore (`CN=Sahaya Savari F`): universal APK, split-per-abi APKs (arm64-v8a, armeabi-v7a, x86_64), and Android App Bundle (.aab).
 
 ## 1.0.1
 

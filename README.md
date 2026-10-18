@@ -37,8 +37,8 @@ SLI Vault is a Flutter Android app for saving links and images into **app-privat
 | Property | Current Detail |
 |---|---|
 | **Application ID** | `com.sahayasavari.slivault` |
-| **Current Version** | `1.0.1` (`versionCode` `2`) |
-| **Distribution** | Signed APK on [GitHub Releases](https://github.com/sahaya-savari/sli-vault/releases) — sideload only, no Play Store listing |
+| **Current Version** | `1.0.2` (`versionCode` `4`) |
+| **Distribution** | Signed APK and AAB on [GitHub Releases](https://github.com/sahaya-savari/sli-vault/releases) — sideload only, no Play Store listing |
 | **Data Model** | 100% local-first: SQLite + app-private image files |
 | **License** | [MIT](LICENSE) for project-owned code and docs (third-party assets separate — see [License](#license)) |
 
@@ -48,7 +48,7 @@ The Flutter mobile application resides directly at the **repository root**. The 
 
 | Component / Platform | Status |
 |----------------------|--------|
-| Android (Root) | Primary target; signed GitHub Release available (`v1.0.1+2` targets active) |
+| Android (Root) | Primary target; signed GitHub Release available (`v1.0.2+4` targets active) |
 | iOS | Phase 2 - scaffold only, not verified as a shipping target |
 | Web / Desktop | Flutter platform folders only - not the shipping target |
 | Website (`website/`) | Integrated showcase site (React/Vite/TanStack); see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md) |
@@ -62,13 +62,17 @@ The project-owned code and documentation are licensed under [MIT](LICENSE). Thir
 ## Features
 
 ### Save and organize
-- Save links and import images into durable app-private storage
-- Browse, search, filter (All / Links / Images), favorite, tag, and organize into collections
-- Legacy rows stored as type `screenshot` remain that type and appear under Images
+- Save links and import images into durable app-private storage (supports PNG, JPG, WEBP, GIF, BMP, HEIC/HEIF)
+- Organize into collections on save with inline collection creation in the Add flow
+- Browse, search, filter (All / Links / Images), favorite, tag, and organize into custom collections
+- Reassign collections when editing existing items
 - Android share-in (`ACTION_SEND` / `ACTION_SEND_MULTIPLE` for text and images)
 
 ### Backup and migration
-- ZIP backup format v2 (`manifest.json` + `images/<id>`) with SHA-256 and byte length per image; v1 archives still import
+- Complete portable ZIP backup format v3 (`manifest.json` + `images/<id>` + `links.csv` + `README.txt`) with SHA-256 and byte length per image
+- Standalone CSV export with spreadsheet formula injection protection
+- Empty custom collection retention and restoration
+- Backward compatible: imports legacy v1 and v2 archives safely
 - Import of the earlier Kotlin vault JSON shape (including Base64 image bytes)
 
 ### Look and feel

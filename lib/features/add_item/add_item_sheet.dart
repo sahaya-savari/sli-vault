@@ -163,7 +163,7 @@ class _AddItemSheetState extends State<AddItemSheet> {
     final extension = LocalImageStorage.detectImageExtension(bytes);
     setState(() {
       if (extension == null) {
-        _errorMessage = 'That file is not a supported image. Choose a PNG, JPG, WEBP, GIF, or BMP file.';
+        _errorMessage = 'That file is not a supported image. Choose a PNG, JPG, WEBP, GIF, BMP, or HEIC file.';
         return;
       }
       _selectedImageBytes = bytes;
@@ -278,6 +278,80 @@ class _AddItemSheetState extends State<AddItemSheet> {
       setState(() {
         _isSaving = false;
         _errorMessage = e.toString().replaceFirst('FormatException: ', '');
+      });
+    }
+  }
+
+  Future<void> _createNewCollectionInline() async {
+    final textController = TextEditingController();
+    String? errorText;
+
+    final name = await showDialog<String>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (dialogCtx, setDialogState) {
+          final dialogPalette = dialogCtx.sli;
+          return AlertDialog(
+            scrollable: true,
+            title: const Text('New Collection'),
+            content: TextField(
+              key: const Key('inline_collection_name_field'),
+              controller: textController,
+              autofocus: true,
+              style: TextStyle(color: dialogPalette.textPrimary),
+              decoration: InputDecoration(
+                labelText: 'Collection Name',
+                hintText: 'e.g., Work, Reading, Recipes',
+                errorText: errorText,
+                errorStyle: TextStyle(color: dialogPalette.errorText),
+              ),
+              onSubmitted: (val) async {
+                final trimmed = val.trim();
+                try {
+                  await widget.controller.createCollection(trimmed);
+                  if (dialogCtx.mounted) Navigator.of(dialogCtx).pop(trimmed);
+                } catch (e) {
+                  setDialogState(() {
+                    errorText = e.toString().replaceFirst(
+                      'FormatException: ',
+                      '',
+                    );
+                  });
+                }
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogCtx).pop(),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                key: const Key('inline_collection_save_button'),
+                onPressed: () async {
+                  final trimmed = textController.text.trim();
+                  try {
+                    await widget.controller.createCollection(trimmed);
+                    if (dialogCtx.mounted) Navigator.of(dialogCtx).pop(trimmed);
+                  } catch (e) {
+                    setDialogState(() {
+                      errorText = e.toString().replaceFirst(
+                        'FormatException: ',
+                        '',
+                      );
+                    });
+                  }
+                },
+                child: const Text('Create'),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    if (name != null && name.isNotEmpty && mounted) {
+      setState(() {
+        _selectedCollection = name;
       });
     }
   }
@@ -412,38 +486,75 @@ class _AddItemSheetState extends State<AddItemSheet> {
                   ),
                 ),
                 const SizedBox(height: SliTokens.spaceMd),
-                DropdownButtonFormField<String>(
-                  key: const Key('add_collection_field'),
-                  initialValue: collectionValue,
-                  isExpanded: true,
-                  dropdownColor: palette.elevated,
-                  style: TextStyle(color: palette.textPrimary),
-                  decoration: const InputDecoration(
-                    labelText: 'Collection',
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.all(12),
-                      child: SliIcon(SliAssets.contentCollection, size: 18),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        key: const Key('add_collection_field'),
+                        initialValue: collectionValue,
+                        isExpanded: true,
+                        dropdownColor: palette.elevated,
+                        style: TextStyle(color: palette.textPrimary),
+                        decoration: const InputDecoration(
+                          labelText: 'Collection',
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(12),
+                            child: SliIcon(
+                              SliAssets.contentCollection,
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                        items: [
+                          for (final c in collections)
+                            DropdownMenuItem(
+                              value: c,
+                              child: Text(
+                                c,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(color: palette.textPrimary),
+                              ),
+                            ),
+                        ],
+                        onChanged: _isSaving
+                            ? null
+                            : (val) {
+                                if (val != null) {
+                                  setState(() => _selectedCollection = val);
+                                }
+                              },
+                      ),
                     ),
-                  ),
-                  items: [
-                    for (final c in collections)
-                      DropdownMenuItem(
-                        value: c,
-                        child: Text(
-                          c,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: palette.textPrimary),
+                    const SizedBox(width: SliTokens.spaceSm),
+                    Tooltip(
+                      message: 'Create new collection',
+                      child: InkWell(
+                        key: const Key('add_new_collection_button'),
+                        borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+                        onTap: _isSaving ? null : _createNewCollectionInline,
+                        child: Container(
+                          height: 56,
+                          width: 52,
+                          decoration: BoxDecoration(
+                            color: palette.elevated,
+                            borderRadius: BorderRadius.circular(
+                              SliTokens.radiusMd,
+                            ),
+                            border: Border.all(color: palette.border),
+                          ),
+                          alignment: Alignment.center,
+                          child: SliIcon(
+                            SliAssets.actionAdd,
+                            size: 20,
+                            color: palette.accentText,
+                            semanticLabel: 'Create new collection',
+                          ),
                         ),
                       ),
+                    ),
                   ],
-                  onChanged: _isSaving
-                      ? null
-                      : (val) {
-                          if (val != null) {
-                            setState(() => _selectedCollection = val);
-                          }
-                        },
                 ),
                 if (_errorMessage != null) ...[
                   const SizedBox(height: SliTokens.spaceMd),
