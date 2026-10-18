@@ -41,8 +41,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (_isWorking) return;
     setState(() => _isWorking = true);
     try {
-      final zipBytes = await widget.controller.backupService
-          .createBackupArchiveBytes();
+      final zipBytes = await widget.controller.createBackupArchiveBytes();
       final tempDir = await getTemporaryDirectory();
       final fileName =
           'sli-vault-backup-${DateTime.now().millisecondsSinceEpoch}.zip';
@@ -69,7 +68,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               SizedBox(height: SliTokens.spaceSm),
               Text(
-                'Created $fileName (${_formatBytes(zipBytes.length)}) containing ${widget.controller.allItems.length} items and original image bytes.',
+                'Created $fileName (${_formatBytes(zipBytes.length)}) containing ${widget.controller.allItems.length} items, links.csv, and full-resolution images.',
                 textAlign: TextAlign.center,
               ),
             ],
@@ -77,7 +76,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Close'),
+              child: const Text('Close'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -86,7 +85,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   XFile(tempFile.path),
                 ], text: 'SLI Vault Backup Archive');
               },
-              child: Text('Share / Save Archive'),
+              child: const Text('Share / Save Archive'),
             ),
           ],
         ),
@@ -117,7 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         bytes = await File(file.path!).readAsBytes();
       }
       if (bytes == null) {
-        throw FormatException('Could not read selected backup archive.');
+        throw const FormatException('Could not read selected backup archive.');
       }
 
       final isJson = file.name.toLowerCase().endsWith('.json');
@@ -129,7 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Confirm Backup Restore'),
+          title: const Text('Confirm Backup Restore'),
           content: Text(
             '${preview.sourceFormat == 'kotlin_json' ? 'Kotlin JSON' : 'Flutter ZIP'} format v${preview.formatVersion} validated.\n\n'
             '• Total items in archive: ${preview.totalItemsInArchive}\n'
@@ -141,18 +140,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: Text('Import Items'),
+              child: const Text('Import Items'),
             ),
           ],
         ),
       );
 
       if (confirmed == true) {
-        await widget.controller.backupService.commitImportPreview(preview);
+        await widget.controller.commitImportPreview(preview);
         await widget.controller.reloadLibrary();
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -192,7 +191,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -212,7 +211,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           scrollable: true,
           title: const Text('Clear Entire Vault?'),
           content: const Text(
-            'This permanently deletes all saved links and images, their tags, and any collections you created from this device. Without an exported backup ZIP, this cannot be undone.',
+            'This permanently deletes all saved links and images, their tags, and any custom collections from this device. Without an exported backup ZIP, this cannot be undone.',
           ),
           actions: [
             TextButton(
@@ -282,12 +281,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   '$total total ${total == 1 ? 'item' : 'items'} ($links ${links == 1 ? 'link' : 'links'} • $images ${images == 1 ? 'image' : 'images'})',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   'Approximate local storage used: ${_formatBytes(widget.controller.approxStorageBytes)}',
                   style: SliTheme.mono(context, fontSize: 12.5),
                 ),
-                SizedBox(height: SliTokens.spaceMd),
+                const SizedBox(height: SliTokens.spaceSm),
+                Text(
+                  'Backups produce a portable ZIP containing manifest.json, links.csv, and full-resolution image binaries for offline preservation.',
+                  style: TextStyle(
+                    color: palette.textSecondary,
+                    fontSize: 13,
+                    height: 1.35,
+                  ),
+                ),
+                const SizedBox(height: SliTokens.spaceMd),
                 _ActionPair(
                   primary: SliGradientButton(
                     label: 'Export Backup',
@@ -309,7 +317,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ],
             ),
-            SizedBox(height: SliTokens.spaceMd),
+            const SizedBox(height: SliTokens.spaceMd),
             _SectionCard(
               title: 'Appearance',
               iconAsset: SliAssets.utilTheme,
@@ -321,7 +329,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   'Choose the appearance used by SLI Vault.',
                   style: TextStyle(
@@ -329,13 +337,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     fontSize: 13,
                   ),
                 ),
-                SizedBox(height: SliTokens.spaceSm),
+                const SizedBox(height: SliTokens.spaceSm),
                 _ThemeChoiceRow(controller: widget.controller),
               ],
             ),
-            SizedBox(height: SliTokens.spaceMd),
+            const SizedBox(height: SliTokens.spaceMd),
             _SectionCard(
-              title: 'Privacy & Data Architecture',
+              title: 'Privacy & Security',
               iconAsset: SliAssets.utilPrivacy,
               children: [
                 Material(
@@ -353,7 +361,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     subtitle: Text(
-                      'Uses biometrics or the device credential. No custom PIN is stored.',
+                      'Uses biometrics or device credentials. Biometric lock guards app access; SQLite database on disk is not hardware-encrypted.',
                       style: TextStyle(
                         color: palette.textSecondary,
                         fontSize: 13,
@@ -362,18 +370,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: SliTokens.spaceSm),
+                const SizedBox(height: SliTokens.spaceSm),
                 Text(
                   '• 100% Local-First: Saved links, tags, and imported images are stored in app-private storage on this device.\n'
-                  '• Zero Telemetry: No user accounts, cloud sync, analytics, or advertising SDKs are included.\n'
-                  '• Honest Security Notice: Local storage is not hardware encryption. Protect your device lock screen and keep backup exports in a safe place.',
+                  '• Zero Telemetry: No accounts, cloud sync, analytics, or advertising SDKs.\n'
+                  '• Security Notice: Keep your phone lock screen protected and store backup archives securely.',
                   style: TextStyle(
                     color: context.sli.textSecondary,
                     fontSize: 13,
                     height: 1.45,
                   ),
                 ),
-                SizedBox(height: SliTokens.spaceMd),
+              ],
+            ),
+            const SizedBox(height: SliTokens.spaceMd),
+            _SectionCard(
+              title: 'Library & Data',
+              iconAsset: SliAssets.contentCollection,
+              children: [
                 OutlinedButton.icon(
                   onPressed: widget.controller.reopenOnboarding,
                   icon: SliIcon(
@@ -383,14 +397,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   label: const _ButtonLabel('View Welcome Guide Again'),
                 ),
-              ],
-            ),
-            SizedBox(height: SliTokens.spaceMd),
-            _SectionCard(
-              title: 'Danger Zone',
-              iconAsset: SliAssets.statusWarning,
-              danger: true,
-              children: [
+                const SizedBox(height: SliTokens.spaceMd),
+                Divider(color: palette.border),
+                const SizedBox(height: SliTokens.spaceSm),
                 Text(
                   'Clearing your vault removes all database records and stored image files from this device.',
                   style: TextStyle(
@@ -398,7 +407,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     fontSize: 13,
                   ),
                 ),
-                SizedBox(height: SliTokens.spaceMd),
+                const SizedBox(height: SliTokens.spaceMd),
                 OutlinedButton.icon(
                   key: const ValueKey('clear-all-button'),
                   style: OutlinedButton.styleFrom(
@@ -420,13 +429,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ],
             ),
-            SizedBox(height: SliTokens.spaceMd),
+            const SizedBox(height: SliTokens.spaceMd),
             _SectionCard(
               title: 'About SLI Vault',
               iconAsset: SliAssets.utilInfo,
               children: [
                 Text(
-                  'SLI Vault v1.0.1 (Flutter + Dart Canonical Build)',
+                  'SLI Vault v1.0.2 (Flutter + Dart Canonical Build)',
                   style: SliTheme.mono(
                     context,
                     fontSize: 12.5,
@@ -434,12 +443,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: context.sli.textPrimary,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   'Save links and images',
                   style: TextStyle(color: palette.amberText, fontSize: 13),
                 ),
-                SizedBox(height: SliTokens.spaceMd),
+                const SizedBox(height: SliTokens.spaceMd),
                 for (final destination in [
                   (
                     'About',
@@ -464,7 +473,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       contentPadding: EdgeInsets.zero,
                       title: Text(destination.$1),
                       subtitle: Text(destination.$2),
-                      trailing: Icon(Icons.chevron_right),
+                      trailing: const Icon(Icons.chevron_right),
                       onTap: () => Navigator.of(
                         context,
                       ).push(MaterialPageRoute(builder: (_) => destination.$3)),
@@ -571,13 +580,11 @@ class _SectionCard extends StatelessWidget {
   final String title;
   final String iconAsset;
   final List<Widget> children;
-  final bool danger;
 
   const _SectionCard({
     required this.title,
     required this.iconAsset,
     required this.children,
-    this.danger = false,
   });
 
   @override
@@ -585,7 +592,6 @@ class _SectionCard extends StatelessWidget {
     return SliGlassSurface(
       enableBlur: true,
       blurSigma: 12,
-      danger: danger,
       borderRadius: BorderRadius.circular(SliTokens.radiusLg),
       padding: const EdgeInsets.all(SliTokens.spaceLg),
       child: Column(
@@ -593,11 +599,7 @@ class _SectionCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              SliIcon(
-                iconAsset,
-                size: 18,
-                color: danger ? context.sli.errorText : context.sli.accentText,
-              ),
+              SliIcon(iconAsset, size: 18, color: context.sli.accentText),
               SizedBox(width: SliTokens.spaceSm),
               Expanded(
                 child: Text(

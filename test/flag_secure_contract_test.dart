@@ -16,12 +16,16 @@ void main() {
     expect(source.contains('override fun onResume()'), isTrue);
     // Must not leave the enable call commented out.
     expect(
-      RegExp(r'^\s*//\s*window\.addFlags\(WindowManager\.LayoutParams\.FLAG_SECURE\)', multiLine: true)
-          .hasMatch(source),
+      RegExp(
+        r'^\s*//\s*window\.addFlags\(WindowManager\.LayoutParams\.FLAG_SECURE\)',
+        multiLine: true,
+      ).hasMatch(source),
       isFalse,
     );
     expect(
-      source.contains('window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)'),
+      source.contains(
+        'window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)',
+      ),
       isTrue,
     );
   });

@@ -7,23 +7,25 @@ Android release preparation steps live in [ANDROID_RELEASE.md](ANDROID_RELEASE.m
 | Area | Status | Evidence | Required action |
 |---|---|---|---|
 | Project license | PASS (scope-limited) | `LICENSE` added with MIT terms for project-owned code and documentation. | Keep third-party notices separate; MIT does not cover Anthropic Serif or other third-party assets. |
-| Flutter formatting | PASS (earlier) | Intended Dart files were formatted in prior passes. This prep pass did not reformat Dart. | Re-run `dart format --output=none --set-exit-if-changed lib test` before commit if Dart changes again. |
-| Static analysis | PASS | `flutter analyze` on 2026-10-16: no issues found (Flutter 3.47.7). | None from this pass. 23 packages have newer versions outside current constraints; do not upgrade them just to silence the notice. |
-| Automated tests | PASS | `flutter test` on 2026-10-16: **62 passed**. | Real-file backup and biometric device walks are still open. |
+| Flutter formatting | PASS | `dart format` run across `lib/` and `test/` (37 files checked, 9 formatted). | Re-run `dart format` before future commits if Dart changes. |
+| Static analysis | PASS | `flutter analyze` on 2026-10-19: **0 issues found** (Flutter 3.47.7). | None. |
+| Automated tests | PASS | `flutter test` on 2026-10-19: **85 passed** (0 failures). | Real-file backup and biometric device walks remain not tested on physical hardware. |
 | Flutter v1 database migration | PASS | Synthetic v1 upgrade test | None |
 | Kotlin JSON import | PASS | Synthetic fixture | Still confirm with a user-generated backup on device |
-| Flutter ZIP restore | PASS | v1 compatibility and v2 SHA-256 round trip | Real-file export/import walkthrough still open |
+| Flutter ZIP restore (v1/v2/v3) | PASS | v1/v2 backward compatibility and v3 portable round trip with SHA-256 and media | Real-file export/import walkthrough on physical device still open |
+| Portable CSV & README export | PASS | CSV RFC 4180 escaping with formula injection defense and README generation verified | None |
+| HEIC/HEIF preservation | PASS | Magic bytes detection and byte-for-byte binary preservation verified in round-trip tests | None |
 | Unsafe/corrupt restore handling | PASS | Traversal, duplicate, corruption, size, collision, orphan, rollback fixtures | Device interruption testing still open |
-| Collections and mixed media | PASS | Host fixtures, including dialog controller lifetime | `_dependents.isEmpty` still unresolved; see below |
+| Collections and mixed media | PASS | Host fixtures, inline collection creation in Add sheet, and edit dialog reassignment | None |
 | Theme / navigation / accessibility | PASS (host) | Narrow shell and font-scale widget tests; five labels | Physical TalkBack and rotation still open |
-| Legal / About UI | PASS (in-app copy) | Privacy and Terms are Settings-reachable and do not say "Draft" | Version label hard-coded `1.0.1` (aligned with `pubspec.yaml`). No hosted public policy URL. |
+| Legal / About UI | PASS (in-app copy) | Privacy and Terms are Settings-reachable; About shows `SLI Vault 1.0.2` | Version label hard-coded `1.0.2` (aligned with `pubspec.yaml`). |
 | Android debug build | PASS (earlier) | Prior debug APK under `build/app/outputs/` (not committed) | Not rebuilt in this prep pass |
-| Android release builds | PASS (signed sideload) | `flutter build apk --release` on 2026-10-16 with owner keystore. Published as GitHub Release `v1.0.0` (`sli-vault-1.0.0-release.apk`). | Not for Play Store upload. Keep secrets local. |
-| Android release signing | PASS (local) | `apksigner` shows owner DN (`CN=Sahaya Savari F…`), not Android Debug. `key.properties` + `.jks` stay outside git; optional local `.env` restore under `android/secrets/`. | Keep secrets local. Play App Signing not enrolled (no Play Store target). |
+| Android release builds | PASS (signed sideload) | Universal APK, split APKs (arm64-v8a, armeabi-v7a, x86_64), and App Bundle built for `v1.0.2` with owner keystore. | Not for Play Store upload. Keep secrets local. |
+| Android release signing | PASS (local) | `apksigner` shows owner DN (`CN=Sahaya Savari F…`), not Android Debug. `key.properties` + `.jks` stay outside git. | Keep secrets local. |
 | Application ID | PASS | `com.sahayasavari.slivault` in `build.gradle.kts` and Kotlin package path. | Stable for GitHub sideload releases. |
 | `FLAG_SECURE` | PASS (source) | Enabled in `MainActivity` `onCreate` / `onResume`; contract test present | Physical-device screenshot/recents confirmation remains **NOT TESTED**. |
 | Launcher safe zone | BLOCKED | Adaptive foreground bitmap uses `gravity="fill"` | Do not replace the approved logo. Adjust padding only after a visual check the owner accepts. |
-| Anthropic Serif redistribution | BLOCKED (public) | 25 tracked files in `assets/fonts/claude/`, no license file, and public sources describe Anthropic Serif as a proprietary brand typeface offered for personal use only. Fonts are registered in `pubspec.yaml`, so they ship in every APK and AAB. The `origin` repository is **private**. | Keep the repo private. Do **not** make the repo public, publish a **public** Release, or upload to Play with these files. A private sideload pre-release for collaborators is owner-approved and does not clear public redistribution. Owner chooses written permission, an OFL replacement such as Newsreader or Source Serif 4, or history rewrite before any public step. Details: `assets/fonts/claude/README.md`. JetBrains Mono OFL is fine if `OFL.txt` stays. |
+| Anthropic Serif redistribution | BLOCKED (public) | Proprietary typeface for personal use only. Keep the repo private. | Keep repository private until font rights settled. |
 | Android device runtime | NOT TESTED | No physical-device checks were performed in this pass. | Run the complete physical-device checklist; do not infer runtime readiness from host tests or build success. |
 | Android real-device checklist | NOT TESTED | `docs/ANDROID_DEVICE_CHECKLIST.md` lists backup and restore, image handling, biometric lock, persistence after restart, and error states. Every row is NOT TESTED. | Owner or tester runs it on a physical device and records results. No row is PASS until performed. |
 | iOS build / runtime | BLOCKED | Windows has no Xcode | macOS/Xcode later |
@@ -37,8 +39,8 @@ Reported on Flutter 3.47.7 from `InheritedElement.debugDeactivated` in `framewor
 
 ## Version identity
 
-- `pubspec.yaml`: `1.0.1+2` (source for Android `versionName` / `versionCode`)
-- Settings About line and the licenses page: hard-coded `1.0.1`
+- `pubspec.yaml`: `1.0.2+4` (source for Android `versionName` / `versionCode`)
+- Settings About line and the licenses page: `1.0.2`
 - `package_info_plus` is not a dependency and was not added
 
 ## Verdict

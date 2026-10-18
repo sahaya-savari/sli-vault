@@ -171,80 +171,68 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     final pages = [
       _OnboardingPageData(
         title: 'Your personal vault for everything worth keeping.',
-        description:
-            'Save useful links, screenshots, and images in one calm, searchable workspace, without accounts or cloud tracking.',
+        description: 'Save useful links, screenshots, and images in one calm, searchable workspace, without accounts or cloud tracking.',
         stillAsset: SliAssets.welcomeStills[_stillIndex],
         isVideoPage: true,
         featureTiles: const [
           _FeatureTileData(
             iconAsset: SliAssets.contentLink,
             title: 'Links, Screenshots & Images',
-            subtitle:
-                'Capture URLs with clean domain fallbacks or import images directly into app-private storage.',
+            subtitle: 'Capture URLs with clean domain fallbacks or import images directly into app-private storage.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.utilPrivacy,
             title: 'Local-First & Zero Tracking',
-            subtitle:
-                'No accounts, no cloud sync, and no analytics SDKs. Your library stays on this device.',
+            subtitle: 'No accounts, no cloud sync, and no analytics SDKs. Your library stays on this device.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.utilExport,
             title: 'Honest Storage & Backup',
-            subtitle:
-                'Local storage is not hardware encryption. Use Export in Settings anytime to back up your items and original images.',
+            subtitle: 'Local storage is not hardware encryption. Use Export in Settings anytime to back up your items and original images.',
           ),
         ],
       ),
       const _OnboardingPageData(
         title: 'Links, images, and moments, all in one place.',
-        description:
-            'Keep useful websites, screenshots, images, and video inspiration organized in your personal library.',
+        description: 'Keep useful websites, screenshots, images, and video inspiration organized in your personal library.',
         stillAsset: SliAssets.welcomeLanternTree,
         featureTiles: [
           _FeatureTileData(
             iconAsset: SliAssets.contentLink,
             title: 'Websites & Moments',
-            subtitle:
-                'Save article links, research, and favorite web tools with clean domain icons.',
+            subtitle: 'Save article links, research, and favorite web tools with clean domain icons.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.contentImage,
             title: 'Screenshots & Images',
-            subtitle:
-                'Import photos, design inspiration, and screenshots directly into your private library.',
+            subtitle: 'Import photos, design inspiration, and screenshots directly into your private library.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.contentLayers,
             title: 'Clear Media Badges',
-            subtitle:
-                'Spot links, images, and visual clips instantly with dedicated type badges.',
+            subtitle: 'Spot links, images, and visual clips instantly with dedicated type badges.',
           ),
         ],
       ),
       const _OnboardingPageData(
         title: 'Everything saved. Nothing lost in the scroll.',
-        description:
-            'Search your library, organize collections, and favorite the things you want to revisit.',
+        description: 'Search your library, organize collections, and favorite the things you want to revisit.',
         stillAsset: SliAssets.welcomeValleyRiver,
         featureTiles: [
           _FeatureTileData(
             iconAsset: SliAssets.navBrowse,
             title: 'Instant Search',
-            subtitle:
-                'Narrow your vault by title, domain, URL, or personal notes in milliseconds.',
+            subtitle: 'Narrow your vault by title, domain, URL, or personal notes in milliseconds.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.contentCollection,
             title: 'Organized Collections',
-            subtitle:
-                'Group ideas and related items into custom folders so nothing gets scattered.',
+            subtitle: 'Group ideas and related items into custom folders so nothing gets scattered.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.navFavorites,
             title: 'Quick Favorites',
-            subtitle:
-                'Star your top references for immediate one-tap retrieval anytime.',
+            subtitle: 'Star your top references for immediate one-tap retrieval anytime.',
           ),
         ],
       ),
@@ -313,9 +301,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                 Text(
                                   page.description,
                                   textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
+                                  style: Theme.of(context).textTheme.bodyLarge
                                       ?.copyWith(
                                         color: SliTokens.textPrimary.withValues(
                                           alpha: 0.92,
@@ -339,18 +325,20 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                 physics: const BouncingScrollPhysics(),
                                 child: Column(
                                   children: [
-                                    for (int i = 0;
-                                        i < page.featureTiles.length;
-                                        i++) ...[
+                                    for (
+                                      int i = 0;
+                                      i < page.featureTiles.length;
+                                      i++
+                                    ) ...[
                                       if (i > 0)
                                         const SizedBox(
-                                            height: SliTokens.spaceSm),
+                                          height: SliTokens.spaceSm,
+                                        ),
                                       _FeatureTile(
                                         iconAsset:
                                             page.featureTiles[i].iconAsset,
                                         title: page.featureTiles[i].title,
-                                        subtitle:
-                                            page.featureTiles[i].subtitle,
+                                        subtitle: page.featureTiles[i].subtitle,
                                       ),
                                     ],
                                   ],
@@ -612,7 +600,8 @@ class _WelcomeMedia extends StatelessWidget {
   Widget build(BuildContext context) {
     final reduceMotion =
         MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    final useVideo = isVideoPage &&
+    final useVideo =
+        isVideoPage &&
         !reduceMotion &&
         videoReady &&
         video != null &&
