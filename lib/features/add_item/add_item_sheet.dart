@@ -112,8 +112,16 @@ class _AddItemSheetState extends State<AddItemSheet> {
   Timer? _metadataDebounceTimer;
   String? _lastFetchedUrl;
   String? _metadataFeedbackMessage;
+  bool _duplicateConfirmed = false;
 
   bool get _isLinkMode => _selectedType == VaultItemType.link;
+
+  VaultItem? get _duplicateItem {
+    if (!_isLinkMode) return null;
+    final text = _urlController.text.trim();
+    if (text.isEmpty) return null;
+    return widget.controller.findExistingLink(text);
+  }
 
   @override
   void initState() {
@@ -151,8 +159,10 @@ class _AddItemSheetState extends State<AddItemSheet> {
   }
 
   void _onUrlChanged() {
+    _duplicateConfirmed = false;
+    if (mounted) setState(() {});
     if (_urlError != null) {
-      setState(() => _urlError = null);
+      _urlError = null;
     }
     if (!_isLinkMode || !widget.controller.autoFetchMetadata) return;
 
@@ -337,6 +347,42 @@ class _AddItemSheetState extends State<AddItemSheet> {
           _errorMessage = null;
         });
         return;
+      }
+      final existing = widget.controller.findExistingLink(_urlController.text);
+      if (existing != null && !_duplicateConfirmed) {
+        final proceed = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Row(
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: Color(0xFFF59E0B),
+                  size: 24,
+                ),
+                SizedBox(width: 8),
+                Text('Duplicate Link'),
+              ],
+            ),
+            content: Text(
+              'This link is already in your vault ("${existing.title}").\n\nDo you want to save another copy anyway?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Save Duplicate'),
+              ),
+            ],
+          ),
+        );
+        if (proceed != true) {
+          return;
+        }
+        _duplicateConfirmed = true;
       }
     } else if (_selectedImageBytes == null) {
       setState(() {
@@ -566,6 +612,40 @@ class _AddItemSheetState extends State<AddItemSheet> {
                     onPick: _pickImageFile,
                     onRemove: _removeImage,
                   ),
+                if (_isLinkMode && _duplicateItem != null) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    key: const Key('duplicate_link_warning'),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.warning_amber_rounded,
+                          color: Color(0xFFF59E0B),
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Link already saved in your vault ("${_duplicateItem!.title}")',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFFF59E0B),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 if (_isLinkMode &&
                     _fetchedMetadata != null &&
                     _fetchedMetadata!.hasContent) ...[
