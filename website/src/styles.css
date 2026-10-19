@@ -505,15 +505,15 @@ h2,
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 530px;
+  max-width: clamp(280px, 36vw, 440px);
   margin-inline: auto;
 }
 
 .hero-phone-main {
   position: relative;
   z-index: 20;
-  flex-shrink: 0;
-  width: clamp(220px, 17.5vw, 255px);
+  flex: 0 0 auto;
+  width: 46%;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -701,23 +701,34 @@ h2,
   .hero-phone-cluster {
     width: 100%;
     max-width: 100%;
-    overflow: hidden;
+    overflow: visible;
     padding-inline: 0;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .hero-phone-main {
-    width: clamp(150px, 44vw, 205px);
+    width: clamp(230px, 70vw, 285px);
+    margin-inline: auto;
   }
   .hero-phone-side {
-    width: clamp(105px, 30vw, 145px);
+    display: none;
   }
-  .hero-phone-left {
-    margin-right: clamp(-36px, -8vw, -22px);
-  }
-  .hero-phone-right {
-    margin-left: clamp(-36px, -8vw, -22px);
+  @media (min-width: 520px) {
+    .hero-phone-side {
+      display: block;
+      width: clamp(120px, 24vw, 155px);
+    }
+    .hero-phone-main {
+      width: clamp(180px, 36vw, 220px);
+      margin-inline: 0;
+    }
+    .hero-phone-left {
+      margin-right: -24px;
+    }
+    .hero-phone-right {
+      margin-left: -24px;
+    }
   }
 }
 
@@ -818,7 +829,7 @@ h2,
 .visual-caption {
   position: absolute;
   bottom: -2px;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 0;
   color: var(--muted-foreground);
 }
@@ -827,7 +838,7 @@ h2,
   justify-content: center;
   align-items: center;
   gap: 9px;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted-foreground);
   padding-bottom: 27px;
 }
@@ -843,7 +854,7 @@ h2,
   gap: 9px;
   align-items: center;
   color: var(--muted-foreground);
-  font-size: 11px;
+  font-size: 12.5px;
 }
 .trust-strip svg {
   width: 16px;
@@ -858,9 +869,10 @@ h2,
 .eyebrow {
   display: block;
   color: var(--primary);
-  font-size: 9px;
-  font-weight: 650;
-  letter-spacing: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   margin-bottom: 17px;
 }
 h2 {
@@ -918,22 +930,23 @@ h2 {
   height: 21px;
 }
 .feature-card h3 {
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 16px;
+  line-height: 1.5;
   font-weight: 650;
   min-height: 48px;
 }
 .feature-card p {
-  font-size: 12px;
-  line-height: 1.9;
+  font-size: 13px;
+  line-height: 1.8;
   color: var(--muted-foreground);
   margin-top: 12px;
 }
 .feature-label {
   display: block;
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted-foreground);
-  letter-spacing: 0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   margin-top: 27px;
 }
 .screenshot-section {
@@ -1120,7 +1133,7 @@ h2 {
   display: flex;
   gap: 8px;
   align-items: center;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted-foreground);
   margin-top: 30px;
 }
@@ -1134,12 +1147,12 @@ h2 {
 }
 .faq-section > div > p {
   margin-top: 22px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted-foreground);
 }
 .text-link {
   color: var(--primary);
-  font-size: 12px;
+  font-size: 13px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1147,7 +1160,7 @@ h2 {
 }
 .faq-list button {
   padding-block: 20px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
 }
 .faq-list > div:first-child button {
@@ -1169,14 +1182,14 @@ h2 {
   font-size: 16px;
 }
 .site-footer p {
-  font-size: 9px;
+  font-size: 12px;
   color: var(--muted-foreground);
 }
 .footer-github {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted-foreground);
 }
 
@@ -1258,15 +1271,15 @@ h2 {
 
   .local-note {
     margin-top: 14px;
-    padding: 10px 14px;
+    padding: 12px 14px;
     text-align: left;
-    gap: 9px;
+    gap: 10px;
   }
   .local-note strong {
-    font-size: 10px;
+    font-size: 13px;
   }
   .local-note div > span {
-    font-size: 9px;
+    font-size: 12px;
   }
   .local-note > .status-dot {
     margin-left: 4px;
@@ -1276,24 +1289,27 @@ h2 {
     height: 30px;
   }
   .visual-caption {
-    font-size: 7px;
+    font-size: 11px;
   }
   .discover-link {
     padding-bottom: 23px;
+    font-size: 12px;
   }
   .trust-strip {
     padding-block: 16px;
     padding-inline: 0;
+    flex-wrap: wrap;
+    gap: 12px 20px;
   }
   .trust-strip div {
-    font-size: 10px;
+    font-size: 12px;
     justify-content: center;
   }
   .section {
     padding-block: 57px;
   }
   h2 {
-    font-size: 29px;
+    font-size: 26px;
   }
   .section-heading {
     align-items: flex-start;
@@ -1304,32 +1320,34 @@ h2 {
     display: none;
   }
   .feature-grid {
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
   .feature-card {
-    padding: 19px 16px;
+    padding: 20px 18px;
   }
   .feature-icon {
-    width: 35px;
-    height: 35px;
-    margin-bottom: 20px;
+    width: 38px;
+    height: 38px;
+    margin-bottom: 18px;
   }
   .feature-card h3 {
-    font-size: 13px;
-    line-height: 1.6;
+    font-size: 17px;
+    line-height: 1.4;
   }
   .feature-card p {
-    font-size: 11px;
-    line-height: 1.8;
+    font-size: 13.5px;
+    line-height: 1.6;
   }
   .feature-label {
-    font-size: 6px;
-    letter-spacing: 0;
-    line-height: 1.8;
-    margin-top: 20px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    text-transform: uppercase;
+    margin-top: 16px;
   }
   .section-heading p {
-    font-size: 12px;
+    font-size: 14px;
   }
   .phone {
     width: 210px;
@@ -1344,6 +1362,7 @@ h2 {
   }
   .privacy-signature {
     margin-top: 24px;
+    font-size: 12px;
   }
   .download-section {
     padding-block: 50px;
@@ -1351,10 +1370,10 @@ h2 {
   .download-top {
     flex-direction: column;
     align-items: flex-start;
-    gap: 25px;
+    gap: 20px;
   }
   .faq-list button {
-    font-size: 12px;
+    font-size: 14px;
   }
   .site-footer {
     flex-wrap: wrap;
@@ -1364,7 +1383,7 @@ h2 {
   .site-footer p {
     order: 3;
     flex-basis: 100%;
-    font-size: 9px;
+    font-size: 12px;
   }
   .site-footer .footer-github {
     margin-left: auto;
@@ -1443,15 +1462,20 @@ h2 {
   }
 }
 @media (max-width: 640px) {
-  .header-github {
+  .header-github span,
+  .header-github svg:last-child {
     display: none;
+  }
+  .header-github {
+    padding-inline: 8px;
+    height: 32px;
   }
 
   .feature-grid {
     grid-template-columns: 1fr;
   }
   .feature-card h3 {
-    font-size: 20px;
+    font-size: 18px;
   }
   .section-heading {
     display: flex;

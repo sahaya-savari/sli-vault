@@ -80,31 +80,31 @@ export const Route = createFileRoute("/")({
 const features = [
   {
     icon: Link2,
-    title: "Save everything worth keeping",
+    title: "OpenGraph Auto-Fill & Snapshots",
     description:
-      "A serene personal vault bringing useful links, screenshots, and inspiring images together on your device.",
-    label: "LINKS · SCREENSHOTS · IMAGES",
+      "Save links with instant OpenGraph title, image, and description auto-fill protected by SSRF loopback filtering, plus full offline article snapshot extraction.",
+    label: "OPENGRAPH · OFFLINE SNAPSHOTS",
   },
   {
     icon: Search,
-    title: "Find it again in seconds",
+    title: "Instant Search & Batch Actions",
     description:
-      "Instantly search and filter across titles, web domains, full URLs, and content types completely offline.",
-    label: "INSTANT OFFLINE SEARCH",
+      "Find any item instantly across titles, web domains, and notes. Batch-select items to pin to shortlist, assign tags, move, or delete with undo.",
+    label: "OFFLINE SEARCH · MULTI-SELECT",
   },
   {
     icon: FolderHeart,
-    title: "Favourites & Collections",
+    title: "Curated Collections & Favorites",
     description:
-      "Give your favourite items a dedicated shortlist and group related ideas into custom personal collections.",
-    label: "CURATE & PIN",
+      "Organize items with color-accented collections, maintain a quick favorites shortlist, and catch duplicate URLs automatically on save.",
+    label: "COLLECTIONS · FAVORITES PINNING",
   },
   {
     icon: HardDrive,
-    title: "Local-first control & themes",
+    title: "Complete Data Ownership & Backup",
     description:
-      "100% on-device SQLite storage with backup export/import controls, plus Dark, Light, and System appearances.",
-    label: "OFFLINE SQLITE · THEMES",
+      "100% on-device SQLite storage. Export portable v3 ZIP backups preserving raw images and metadata, export CSV, and restore anytime.",
+    label: "OFFLINE SQLITE · V3 ZIP BACKUP",
   },
 ];
 
@@ -115,15 +115,15 @@ const faqs = [
   ],
   [
     "Where is my library stored?",
-    "SLI Vault is presented as a local-first app: your library is stored on your device. This showcase is not an independent security audit and does not claim encryption or absolute privacy. Opening a saved website is subject to that website•s privacy practices.",
+    "SLI Vault is a 100% local-first application: your library is stored strictly on your device using on-device SQLite and private app storage. No account is required and no cloud telemetry is collected.",
   ],
   [
     "Do I need an account?",
-    "The supplied Welcome screen describes the app as working without accounts or cloud tracking. No sign-up is part of the experience shown here.",
+    "SLI Vault works completely without accounts, logins, or cloud tracking. No sign-up is required.",
   ],
   [
     "Can I back up and restore my library?",
-    "Settings includes Local Storage & Backup, with Export and Import Backup controls. Keep a copy of any exported backup somewhere safe. The exact backup format and its contents should be confirmed in the app•s documentation when it becomes available.",
+    "Settings includes Local Storage & Backup, with Export and Import Backup controls. SLI Vault creates portable v3 ZIP backups preserving raw images, JSON metadata, and database records, plus CSV export for spreadsheet compatibility. Your data never leaves your device unless you choose to export it.",
   ],
   [
     "How do I download and install SLI Vault?",

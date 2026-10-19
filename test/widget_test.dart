@@ -480,28 +480,26 @@ void main() {
         // Navigate to Settings tab
         await tester.tap(find.text('Settings'));
         await tester.pumpAndSettle();
-        expect(find.text('Local Storage & Backup'), findsOneWidget);
         final settingsScrollable = find.descendant(
           of: find.byKey(const ValueKey('settings-scroll')),
           matching: find.byType(Scrollable),
         );
         await tester.scrollUntilVisible(
-          find.byKey(const ValueKey('Privacy Policy')),
+          find.text('About this app'),
           100,
           scrollable: settingsScrollable,
         );
+        expect(find.text('About this app'), findsOneWidget);
+        await tester.tap(find.text('About this app'));
         await tester.pumpAndSettle();
-        await tester.tap(find.byKey(const ValueKey('Privacy Policy')).first);
+
+        await tester.tap(find.byKey(const ValueKey('Privacy Policy')));
         await tester.pumpAndSettle();
         expect(find.textContaining('app-private storage'), findsWidgets);
         await tester.pageBack();
         await tester.pumpAndSettle();
-        await tester.scrollUntilVisible(
-          find.byKey(const ValueKey('Terms of Use')),
-          100,
-          scrollable: settingsScrollable,
-        );
-        await tester.tap(find.byKey(const ValueKey('Terms of Use')).first);
+
+        await tester.tap(find.byKey(const ValueKey('Terms of Use')));
         await tester.pumpAndSettle();
         expect(find.textContaining('hosted storage'), findsOneWidget);
         await tester.pageBack();
@@ -628,6 +626,9 @@ void main() {
       );
       // Settings must be tappable without horizontal drag.
       await tester.tap(find.text('Settings'));
+      await tester.pumpAndSettle();
+      expect(find.text('Data'), findsOneWidget);
+      await tester.tap(find.text('Data'));
       await tester.pumpAndSettle();
       expect(find.text('Local Storage & Backup'), findsOneWidget);
       expect(tester.takeException(), isNull);
