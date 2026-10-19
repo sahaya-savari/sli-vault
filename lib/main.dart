@@ -71,16 +71,18 @@ class _SliVaultAppState extends State<SliVaultApp> {
             widget.controller.themeModeName == 'light' ||
             (widget.controller.themeModeName == 'system' &&
                 MediaQuery.platformBrightnessOf(context) == Brightness.light);
+        final isAmoled = widget.controller.themeModeName == 'amoled';
         final ready = widget.controller.isInitialized && _holdElapsed;
+        final navBarColor = isLight
+            ? Colors.white
+            : (isAmoled ? Colors.black : SliTokens.charcoal);
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
             statusBarIconBrightness: isLight
                 ? Brightness.dark
                 : Brightness.light,
-            systemNavigationBarColor: isLight
-                ? Colors.white
-                : SliTokens.charcoal,
+            systemNavigationBarColor: navBarColor,
             systemNavigationBarIconBrightness: isLight
                 ? Brightness.dark
                 : Brightness.light,
@@ -88,8 +90,18 @@ class _SliVaultAppState extends State<SliVaultApp> {
           child: MaterialApp(
             title: 'SLI Vault',
             debugShowCheckedModeBanner: false,
-            theme: SliTheme.lightTheme,
-            darkTheme: SliTheme.darkTheme,
+            theme: SliTheme.buildTheme(
+              mode: 'light',
+              accent: widget.controller.accentPreset,
+              atmosphereEnabled: widget.controller.atmosphereEnabled,
+              reduceMotion: widget.controller.reduceMotion,
+            ),
+            darkTheme: SliTheme.buildTheme(
+              mode: isAmoled ? 'amoled' : 'dark',
+              accent: widget.controller.accentPreset,
+              atmosphereEnabled: widget.controller.atmosphereEnabled,
+              reduceMotion: widget.controller.reduceMotion,
+            ),
             themeMode: switch (widget.controller.themeModeName) {
               'light' => ThemeMode.light,
               'system' => ThemeMode.system,

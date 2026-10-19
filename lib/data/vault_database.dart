@@ -174,6 +174,13 @@ class VaultDatabase {
     return 0;
   }
 
+  Future<void> vacuum() async {
+    final db = await database;
+    if (db.path != inMemoryDatabasePath) {
+      await db.execute('VACUUM');
+    }
+  }
+
   Future<void> clearAllItems() async {
     final db = await database;
     await db.delete(tableVaultItems);

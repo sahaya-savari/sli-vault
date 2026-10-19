@@ -97,7 +97,7 @@ class _FilterSegment extends StatelessWidget {
           child: Ink(
             height: SliTokens.minTouchTarget,
             decoration: BoxDecoration(
-              gradient: selected ? SliTokens.primaryGradient : null,
+              gradient: selected ? context.sli.primaryGradient : null,
               color: selected
                   ? null
                   : (isDark

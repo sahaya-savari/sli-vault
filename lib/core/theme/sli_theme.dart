@@ -72,6 +72,92 @@ class SliTokens {
 /// * [destructive] / [onDestructive] - filled danger buttons.
 /// * [surfaceFill] .. [plateStroke] - translucent card, glass and "empty-state
 ///   plate" fills that stay legible over the full-bleed background art.
+/// Curated accent palettes that maintain strict WCAG AA/AAA contrast ratios.
+class SliAccentPreset {
+  final String key;
+  final String name;
+  final Color primary;
+  final Color secondary;
+  final Color accentTextDark;
+  final Color accentTextLight;
+
+  const SliAccentPreset({
+    required this.key,
+    required this.name,
+    required this.primary,
+    required this.secondary,
+    required this.accentTextDark,
+    required this.accentTextLight,
+  });
+
+  LinearGradient get gradient => LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [primary, secondary],
+      );
+
+  static const List<SliAccentPreset> presets = [
+    SliAccentPreset(
+      key: 'orange',
+      name: 'Flame Orange',
+      primary: Color(0xFFFF6A24),
+      secondary: Color(0xFFFF4545),
+      accentTextDark: Color(0xFFFF6A24),
+      accentTextLight: Color(0xFFC2410C),
+    ),
+    SliAccentPreset(
+      key: 'amber',
+      name: 'Cyber Amber',
+      primary: Color(0xFFF59E0B),
+      secondary: Color(0xFFD97706),
+      accentTextDark: Color(0xFFFFB347),
+      accentTextLight: Color(0xFFB45309),
+    ),
+    SliAccentPreset(
+      key: 'teal',
+      name: 'Emerald Teal',
+      primary: Color(0xFF14B8A6),
+      secondary: Color(0xFF0D9488),
+      accentTextDark: Color(0xFF2DD4BF),
+      accentTextLight: Color(0xFF0F766E),
+    ),
+    SliAccentPreset(
+      key: 'violet',
+      name: 'Electric Violet',
+      primary: Color(0xFF8B5CF6),
+      secondary: Color(0xFF6366F1),
+      accentTextDark: Color(0xFFA78BFA),
+      accentTextLight: Color(0xFF6D28D9),
+    ),
+    SliAccentPreset(
+      key: 'coral',
+      name: 'Rose Coral',
+      primary: Color(0xFFF43F5E),
+      secondary: Color(0xFFE11D48),
+      accentTextDark: Color(0xFFFB7185),
+      accentTextLight: Color(0xFFBE123C),
+    ),
+  ];
+
+  static SliAccentPreset find(String? key) {
+    return presets.firstWhere(
+      (p) => p.key == key,
+      orElse: () => presets.first,
+    );
+  }
+}
+
+/// Theme-aware surface and text tokens. Brand colors stay fixed; these values
+/// are the semantic tokens that differ between light and dark appearances.
+///
+/// Every colour that must keep a WCAG contrast ratio against a themed surface
+/// lives here so screens never hard-code a brand colour for text:
+/// * [onAccent] - label/icon colour on the orange/coral gradient (>=5.8:1).
+/// * [accentText] / [amberText] / [errorText] / [successText] - brand hues
+///   tuned to read as text/icons on this theme's surfaces (>=4.5:1).
+/// * [destructive] / [onDestructive] - filled danger buttons.
+/// * [surfaceFill] .. [plateStroke] - translucent card, glass and "empty-state
+///   plate" fills that stay legible over the full-bleed background art.
 @immutable
 class SliPalette extends ThemeExtension<SliPalette> {
   final Color obsidian;
@@ -92,6 +178,11 @@ class SliPalette extends ThemeExtension<SliPalette> {
   final Color surfaceStroke;
   final Color plateFill;
   final Color plateStroke;
+  final Color primaryAccent;
+  final Color secondaryAccent;
+  final LinearGradient primaryGradient;
+  final bool atmosphereEnabled;
+  final bool reduceMotion;
 
   const SliPalette({
     required this.obsidian,
@@ -112,6 +203,11 @@ class SliPalette extends ThemeExtension<SliPalette> {
     required this.surfaceStroke,
     required this.plateFill,
     required this.plateStroke,
+    this.primaryAccent = SliTokens.orange,
+    this.secondaryAccent = SliTokens.coral,
+    this.primaryGradient = SliTokens.primaryGradient,
+    this.atmosphereEnabled = true,
+    this.reduceMotion = false,
   });
 
   @override
@@ -134,6 +230,11 @@ class SliPalette extends ThemeExtension<SliPalette> {
     Color? surfaceStroke,
     Color? plateFill,
     Color? plateStroke,
+    Color? primaryAccent,
+    Color? secondaryAccent,
+    LinearGradient? primaryGradient,
+    bool? atmosphereEnabled,
+    bool? reduceMotion,
   }) => SliPalette(
     obsidian: obsidian ?? this.obsidian,
     charcoal: charcoal ?? this.charcoal,
@@ -153,6 +254,11 @@ class SliPalette extends ThemeExtension<SliPalette> {
     surfaceStroke: surfaceStroke ?? this.surfaceStroke,
     plateFill: plateFill ?? this.plateFill,
     plateStroke: plateStroke ?? this.plateStroke,
+    primaryAccent: primaryAccent ?? this.primaryAccent,
+    secondaryAccent: secondaryAccent ?? this.secondaryAccent,
+    primaryGradient: primaryGradient ?? this.primaryGradient,
+    atmosphereEnabled: atmosphereEnabled ?? this.atmosphereEnabled,
+    reduceMotion: reduceMotion ?? this.reduceMotion,
   );
 
   @override
@@ -178,6 +284,11 @@ class SliPalette extends ThemeExtension<SliPalette> {
       surfaceStroke: mix(surfaceStroke, other.surfaceStroke),
       plateFill: mix(plateFill, other.plateFill),
       plateStroke: mix(plateStroke, other.plateStroke),
+      primaryAccent: mix(primaryAccent, other.primaryAccent),
+      secondaryAccent: mix(secondaryAccent, other.secondaryAccent),
+      primaryGradient: t < 0.5 ? primaryGradient : other.primaryGradient,
+      atmosphereEnabled: other.atmosphereEnabled,
+      reduceMotion: other.reduceMotion,
     );
   }
 }
@@ -189,253 +300,299 @@ extension SliThemeContext on BuildContext {
 class SliTheme {
   SliTheme._();
 
-  static ThemeData get lightTheme {
-    final base = ThemeData.light(useMaterial3: true);
-    const palette = SliPalette(
-      obsidian: Color(0xFFF3F5F9),
-      charcoal: Color(0xFFFCFDFE),
-      elevated: Color(0xFFFAFBFD),
-      border: Color(0xFFD0D5DE),
-      textPrimary: Color(0xFF17181B),
-      textSecondary: Color(0xFF5B616B),
-      onAccent: SliTokens.onPrimaryGradient, // 6.88:1 on orange
-      accentText: Color(0xFFC2410C), // 5.18:1 on white
-      amberText: Color(0xFF8A4B00), // 6.80:1 on white
-      errorText: Color(0xFFB42318), // 6.57:1 on white
-      successText: Color(0xFF1F7A3D), // 5.37:1 on white
-      destructive: Color(0xFFB42318),
-      onDestructive: Colors.white, // 6.57:1 on destructive
-      surfaceFill: Color(0xF2FFFFFF), // 95% white: clear separation from art
-      surfaceFillDeep: Color(0xE6FFFFFF),
-      surfaceStroke: Color(0xFFD0D5DE),
-      plateFill: Color(0xE6FFFFFF),
-      plateStroke: Color(0xFFD0D5DE),
-    );
-    const colorScheme = ColorScheme.light(
-      primary: SliTokens.orange,
-      onPrimary: SliTokens.onPrimaryGradient,
-      secondary: SliTokens.coral,
-      onSecondary: SliTokens.onPrimaryGradient,
-      surface: Color(0xFFF3F5F9),
-      onSurface: Color(0xFF17181B),
-      onSurfaceVariant: Color(0xFF5B616B),
-      surfaceContainerHighest: Color(0xFFFAFBFD),
-      outline: Color(0xFFD0D5DE),
-      error: Color(0xFFB42318),
-      onError: Colors.white,
-    );
+  static ThemeData buildTheme({
+    required String mode, // 'light', 'dark', 'amoled'
+    String accent = 'orange',
+    bool atmosphereEnabled = true,
+    bool reduceMotion = false,
+  }) {
+    final preset = SliAccentPreset.find(accent);
+    final isAmoled = mode == 'amoled';
+    final isLight = mode == 'light';
 
-    return base.copyWith(
-      extensions: const [palette],
-      scaffoldBackgroundColor: palette.obsidian,
-      colorScheme: colorScheme,
-      dividerColor: palette.border,
-      splashColor: SliTokens.orange.withValues(alpha: 0.12),
-      highlightColor: SliTokens.orange.withValues(alpha: 0.08),
-      appBarTheme: AppBarTheme(
-        backgroundColor: Colors.transparent,
-        foregroundColor: palette.textPrimary,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        titleTextStyle: TextStyle(
-          fontFamily: SliTokens.fontFamilyDisplay,
-          color: palette.textPrimary,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      cardTheme: CardThemeData(
-        color: palette.surfaceFill,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(SliTokens.radiusLg)),
-          side: BorderSide(color: palette.border),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.96),
-        hintStyle: TextStyle(
-          fontFamily: SliTokens.fontFamily,
-          color: palette.textSecondary,
-          fontSize: 14,
-        ),
-        labelStyle: TextStyle(
-          fontFamily: SliTokens.fontFamily,
-          color: palette.textSecondary,
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: SliTokens.spaceLg,
-          vertical: 14,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-          borderSide: BorderSide(color: palette.border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-          borderSide: BorderSide(color: palette.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-          borderSide: const BorderSide(color: SliTokens.orange, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-          borderSide: BorderSide(color: palette.errorText),
-        ),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: SliTokens.orange,
-          foregroundColor: palette.onAccent,
-          minimumSize: const Size(SliTokens.minTouchTarget, 52),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-          ),
-          textStyle: const TextStyle(
-            fontFamily: SliTokens.fontFamily,
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.1,
-          ),
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
+    if (isLight) {
+      final base = ThemeData.light(useMaterial3: true);
+      final palette = SliPalette(
+        obsidian: const Color(0xFFF3F5F9),
+        charcoal: const Color(0xFFFCFDFE),
+        elevated: const Color(0xFFFAFBFD),
+        border: const Color(0xFFD0D5DE),
+        textPrimary: const Color(0xFF17181B),
+        textSecondary: const Color(0xFF5B616B),
+        onAccent: SliTokens.onPrimaryGradient,
+        accentText: preset.accentTextLight,
+        amberText: const Color(0xFF8A4B00),
+        errorText: const Color(0xFFB42318),
+        successText: const Color(0xFF1F7A3D),
+        destructive: const Color(0xFFB42318),
+        onDestructive: Colors.white,
+        surfaceFill: const Color(0xF2FFFFFF),
+        surfaceFillDeep: const Color(0xE6FFFFFF),
+        surfaceStroke: const Color(0xFFD0D5DE),
+        plateFill: const Color(0xE6FFFFFF),
+        plateStroke: const Color(0xFFD0D5DE),
+        primaryAccent: preset.primary,
+        secondaryAccent: preset.secondary,
+        primaryGradient: preset.gradient,
+        atmosphereEnabled: atmosphereEnabled,
+        reduceMotion: reduceMotion,
+      );
+      final colorScheme = ColorScheme.light(
+        primary: preset.primary,
+        onPrimary: SliTokens.onPrimaryGradient,
+        secondary: preset.secondary,
+        onSecondary: SliTokens.onPrimaryGradient,
+        surface: const Color(0xFFF3F5F9),
+        onSurface: const Color(0xFF17181B),
+        onSurfaceVariant: const Color(0xFF5B616B),
+        surfaceContainerHighest: const Color(0xFFFAFBFD),
+        outline: const Color(0xFFD0D5DE),
+        error: const Color(0xFFB42318),
+        onError: Colors.white,
+      );
+
+      return base.copyWith(
+        extensions: [palette],
+        scaffoldBackgroundColor: palette.obsidian,
+        colorScheme: colorScheme,
+        dividerColor: palette.border,
+        splashColor: preset.primary.withValues(alpha: 0.12),
+        highlightColor: preset.primary.withValues(alpha: 0.08),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.transparent,
           foregroundColor: palette.textPrimary,
-          minimumSize: const Size(SliTokens.minTouchTarget, 48),
-          side: BorderSide(color: palette.border),
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          centerTitle: false,
+          titleTextStyle: TextStyle(
+            fontFamily: SliTokens.fontFamilyDisplay,
+            color: palette.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        cardTheme: CardThemeData(
+          color: palette.surfaceFill,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(SliTokens.radiusLg)),
+            side: BorderSide(color: palette.border),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white.withValues(alpha: 0.96),
+          hintStyle: TextStyle(
+            fontFamily: SliTokens.fontFamily,
+            color: palette.textSecondary,
+            fontSize: 14,
+          ),
+          labelStyle: TextStyle(
+            fontFamily: SliTokens.fontFamily,
+            color: palette.textSecondary,
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: SliTokens.spaceLg,
+            vertical: 14,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderSide: BorderSide(color: palette.border),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderSide: BorderSide(color: palette.border),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderSide: BorderSide(color: preset.primary, width: 1.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderSide: BorderSide(color: palette.errorText),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: preset.primary,
+            foregroundColor: palette.onAccent,
+            minimumSize: const Size(SliTokens.minTouchTarget, 52),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            ),
+            textStyle: const TextStyle(
+              fontFamily: SliTokens.fontFamily,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.1,
+            ),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: palette.textPrimary,
+            minimumSize: const Size(SliTokens.minTouchTarget, 48),
+            side: BorderSide(color: palette.border),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            ),
+            textStyle: const TextStyle(
+              fontFamily: SliTokens.fontFamily,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        snackBarTheme: SnackBarThemeData(
+          backgroundColor: Colors.white,
+          contentTextStyle: TextStyle(
+            fontFamily: SliTokens.fontFamily,
+            color: palette.textPrimary,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            side: BorderSide(color: palette.border),
           ),
-          textStyle: const TextStyle(
+          behavior: SnackBarBehavior.floating,
+        ),
+        switchTheme: _switchTheme(palette),
+        checkboxTheme: _checkboxTheme(palette),
+        chipTheme: _chipTheme(palette),
+        listTileTheme: ListTileThemeData(
+          iconColor: palette.textSecondary,
+          textColor: palette.textPrimary,
+          subtitleTextStyle: TextStyle(
             fontFamily: SliTokens.fontFamily,
-            fontWeight: FontWeight.w600,
+            color: palette.textSecondary,
+            fontSize: 13,
+            height: 1.35,
           ),
         ),
-      ),
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: Colors.white,
-        contentTextStyle: TextStyle(
-          fontFamily: SliTokens.fontFamily,
-          color: palette.textPrimary,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-          side: BorderSide(color: palette.border),
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
-      switchTheme: _switchTheme(palette),
-      checkboxTheme: _checkboxTheme(palette),
-      chipTheme: _chipTheme(palette),
-      listTileTheme: ListTileThemeData(
-        iconColor: palette.textSecondary,
-        textColor: palette.textPrimary,
-        subtitleTextStyle: TextStyle(
-          fontFamily: SliTokens.fontFamily,
-          color: palette.textSecondary,
-          fontSize: 13,
-          height: 1.35,
-        ),
-      ),
-      popupMenuTheme: PopupMenuThemeData(
-        color: palette.elevated,
-        textStyle: TextStyle(
-          fontFamily: SliTokens.fontFamily,
-          color: palette.textPrimary,
-        ),
-      ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: palette.accentText,
-          minimumSize: const Size(SliTokens.minTouchTarget, 48),
-          textStyle: const TextStyle(
+        popupMenuTheme: PopupMenuThemeData(
+          color: palette.elevated,
+          textStyle: TextStyle(
             fontFamily: SliTokens.fontFamily,
-            fontWeight: FontWeight.w600,
+            color: palette.textPrimary,
           ),
         ),
-      ),
-      textTheme: _textTheme(palette),
-      dialogTheme: DialogThemeData(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusLg),
-          side: BorderSide(color: palette.border.withValues(alpha: 0.8)),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: palette.accentText,
+            minimumSize: const Size(SliTokens.minTouchTarget, 48),
+            textStyle: const TextStyle(
+              fontFamily: SliTokens.fontFamily,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
-        titleTextStyle: TextStyle(
-          fontFamily: SliTokens.fontFamilyDisplay,
-          color: palette.textPrimary,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
+        textTheme: _textTheme(palette),
+        dialogTheme: DialogThemeData(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(SliTokens.radiusLg),
+            side: BorderSide(color: palette.border.withValues(alpha: 0.8)),
+          ),
+          titleTextStyle: TextStyle(
+            fontFamily: SliTokens.fontFamilyDisplay,
+            color: palette.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
+          contentTextStyle: TextStyle(
+            fontFamily: SliTokens.fontFamily,
+            color: palette.textSecondary,
+            fontSize: 14,
+            height: 1.4,
+          ),
         ),
-        contentTextStyle: TextStyle(
-          fontFamily: SliTokens.fontFamily,
-          color: palette.textSecondary,
-          fontSize: 14,
-          height: 1.4,
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+            TargetPlatform.iOS: ZoomPageTransitionsBuilder(),
+            TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
+          },
         ),
-      ),
-      pageTransitionsTheme: const PageTransitionsTheme(
-        builders: {
-          TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
-          TargetPlatform.iOS: ZoomPageTransitionsBuilder(),
-          TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
-        },
-      ),
-    );
-  }
+      );
+    }
 
-  static ThemeData get darkTheme {
-    const palette = SliPalette(
-      obsidian: SliTokens.obsidian,
-      charcoal: SliTokens.charcoal,
-      elevated: SliTokens.elevated,
-      border: SliTokens.border,
-      textPrimary: SliTokens.textPrimary,
-      textSecondary: SliTokens.textSecondary,
-      onAccent: SliTokens.onPrimaryGradient,
-      accentText: SliTokens.orange, // 6.50:1 on charcoal
-      amberText: SliTokens.amber, // 10.4:1 on charcoal
-      errorText: Color(0xFFF87171), // 6.17:1 on elevated
-      successText: SliTokens.success,
-      destructive: SliTokens.error,
-      onDestructive: SliTokens.obsidian, // 5.23:1 on destructive
-      surfaceFill: Color(0xD6111317), // charcoal @84%: legible over bright art
-      surfaceFillDeep: Color(0xD0111317),
-      surfaceStroke: Color(0x47FF6A24), // orange @28%
-      plateFill: Color(0xE6111317), // charcoal @90%
-      plateStroke: Color(0x59FF6A24),
-    );
-    const colorScheme = ColorScheme.dark(
-      primary: SliTokens.orange,
+    // Dark & AMOLED modes
+    final palette = isAmoled
+        ? SliPalette(
+            obsidian: const Color(0xFF000000),
+            charcoal: const Color(0xFF0A0A0C),
+            elevated: const Color(0xFF141418),
+            border: const Color(0xFF24262E),
+            textPrimary: SliTokens.textPrimary,
+            textSecondary: const Color(0xFFA0A5B0),
+            onAccent: SliTokens.onPrimaryGradient,
+            accentText: preset.accentTextDark,
+            amberText: SliTokens.amber,
+            errorText: const Color(0xFFF87171),
+            successText: SliTokens.success,
+            destructive: SliTokens.error,
+            onDestructive: const Color(0xFF000000),
+            surfaceFill: const Color(0xEB0A0A0C),
+            surfaceFillDeep: const Color(0xF40A0A0C),
+            surfaceStroke: preset.primary.withValues(alpha: 0.28),
+            plateFill: const Color(0xF20A0A0C),
+            plateStroke: preset.primary.withValues(alpha: 0.35),
+            primaryAccent: preset.primary,
+            secondaryAccent: preset.secondary,
+            primaryGradient: preset.gradient,
+            atmosphereEnabled: atmosphereEnabled,
+            reduceMotion: reduceMotion,
+          )
+        : SliPalette(
+            obsidian: SliTokens.obsidian,
+            charcoal: SliTokens.charcoal,
+            elevated: SliTokens.elevated,
+            border: SliTokens.border,
+            textPrimary: SliTokens.textPrimary,
+            textSecondary: SliTokens.textSecondary,
+            onAccent: SliTokens.onPrimaryGradient,
+            accentText: preset.accentTextDark,
+            amberText: SliTokens.amber,
+            errorText: const Color(0xFFF87171),
+            successText: SliTokens.success,
+            destructive: SliTokens.error,
+            onDestructive: SliTokens.obsidian,
+            surfaceFill: const Color(0xD6111317),
+            surfaceFillDeep: const Color(0xD0111317),
+            surfaceStroke: preset.primary.withValues(alpha: 0.28),
+            plateFill: const Color(0xE6111317),
+            plateStroke: preset.primary.withValues(alpha: 0.35),
+            primaryAccent: preset.primary,
+            secondaryAccent: preset.secondary,
+            primaryGradient: preset.gradient,
+            atmosphereEnabled: atmosphereEnabled,
+            reduceMotion: reduceMotion,
+          );
+
+    final colorScheme = ColorScheme.dark(
+      primary: preset.primary,
       onPrimary: SliTokens.onPrimaryGradient,
-      secondary: SliTokens.coral,
+      secondary: preset.secondary,
       onSecondary: SliTokens.onPrimaryGradient,
       tertiary: SliTokens.amber,
       onTertiary: SliTokens.onPrimaryGradient,
-      surface: SliTokens.charcoal,
+      surface: palette.charcoal,
       onSurface: SliTokens.textPrimary,
       onSurfaceVariant: SliTokens.textSecondary,
-      surfaceContainerHighest: SliTokens.elevated,
+      surfaceContainerHighest: palette.elevated,
       error: SliTokens.error,
-      onError: SliTokens.obsidian,
-      outline: SliTokens.border,
+      onError: isAmoled ? const Color(0xFF000000) : SliTokens.obsidian,
+      outline: palette.border,
     );
 
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: SliTokens.obsidian,
+      scaffoldBackgroundColor: palette.obsidian,
       colorScheme: colorScheme,
       fontFamily: SliTokens.fontFamily,
-      extensions: const [palette],
-      dividerColor: SliTokens.border,
-      // Restrained ink — avoid large orange blooms while scrolling dark lists.
-      splashColor: SliTokens.orange.withValues(alpha: 0.08),
-      highlightColor: SliTokens.orange.withValues(alpha: 0.04),
+      extensions: [palette],
+      dividerColor: palette.border,
+      splashColor: preset.primary.withValues(alpha: 0.08),
+      highlightColor: preset.primary.withValues(alpha: 0.04),
       splashFactory: InkRipple.splashFactory,
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
@@ -456,14 +613,14 @@ class SliTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(SliTokens.radiusLg),
           side: BorderSide(
-            color: SliTokens.orange.withValues(alpha: 0.22),
+            color: preset.primary.withValues(alpha: 0.22),
             width: 1,
           ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: SliTokens.elevated,
+        fillColor: palette.elevated,
         hintStyle: const TextStyle(
           color: SliTokens.textSecondary,
           fontSize: 14,
@@ -475,15 +632,15 @@ class SliTheme {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-          borderSide: const BorderSide(color: SliTokens.border),
+          borderSide: BorderSide(color: palette.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-          borderSide: const BorderSide(color: SliTokens.border),
+          borderSide: BorderSide(color: palette.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-          borderSide: const BorderSide(color: SliTokens.orange, width: 1.5),
+          borderSide: BorderSide(color: preset.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SliTokens.radiusMd),
@@ -492,7 +649,7 @@ class SliTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: SliTokens.orange,
+          backgroundColor: preset.primary,
           foregroundColor: SliTokens.onPrimaryGradient,
           minimumSize: const Size(SliTokens.minTouchTarget, 52),
           shape: RoundedRectangleBorder(
@@ -510,7 +667,7 @@ class SliTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: SliTokens.textPrimary,
           minimumSize: const Size(SliTokens.minTouchTarget, 48),
-          side: const BorderSide(color: SliTokens.border),
+          side: BorderSide(color: palette.border),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(SliTokens.radiusMd),
           ),
@@ -521,22 +678,22 @@ class SliTheme {
         ),
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: SliTokens.elevated,
+        backgroundColor: palette.elevated,
         contentTextStyle: const TextStyle(
           fontFamily: SliTokens.fontFamily,
           color: SliTokens.textPrimary,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-          side: const BorderSide(color: SliTokens.border),
+          side: BorderSide(color: palette.border),
         ),
         behavior: SnackBarBehavior.floating,
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: SliTokens.elevated,
+        backgroundColor: palette.elevated,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(SliTokens.radiusLg),
-          side: const BorderSide(color: SliTokens.border),
+          side: BorderSide(color: palette.border),
         ),
         titleTextStyle: const TextStyle(
           fontFamily: SliTokens.fontFamilyDisplay,
@@ -592,6 +749,12 @@ class SliTheme {
     );
   }
 
+  static ThemeData get lightTheme => buildTheme(mode: 'light');
+
+  static ThemeData get darkTheme => buildTheme(mode: 'dark');
+
+  static ThemeData get amoledTheme => buildTheme(mode: 'amoled');
+
   /// Switch: the "on" state is an orange track with an ink thumb (>=3:1 against
   /// both the track and the card); the "off" state is a visible outlined track
   /// with a dark/light thumb so an inactive switch never disappears into a
@@ -611,13 +774,13 @@ class SliTheme {
           return palette.border.withValues(alpha: 0.5);
         }
         return states.contains(WidgetState.selected)
-            ? SliTokens.orange
+            ? palette.primaryAccent
             : palette.border.withValues(alpha: 0.35);
       }),
       trackOutlineColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.focused)) return palette.textPrimary;
         return states.contains(WidgetState.selected)
-            ? SliTokens.orange
+            ? palette.primaryAccent
             : palette.textSecondary;
       }),
       trackOutlineWidth: const WidgetStatePropertyAll(1.5),
@@ -628,7 +791,7 @@ class SliTheme {
     return CheckboxThemeData(
       fillColor: WidgetStateProperty.resolveWith(
         (states) => states.contains(WidgetState.selected)
-            ? SliTokens.orange
+            ? palette.primaryAccent
             : palette.surfaceFill,
       ),
       checkColor: WidgetStatePropertyAll(palette.onAccent),
@@ -639,7 +802,7 @@ class SliTheme {
   static ChipThemeData _chipTheme(SliPalette palette) {
     return ChipThemeData(
       backgroundColor: palette.elevated,
-      selectedColor: SliTokens.orange,
+      selectedColor: palette.primaryAccent,
       disabledColor: palette.border.withValues(alpha: 0.4),
       checkmarkColor: palette.onAccent,
       side: BorderSide(color: palette.border),
@@ -757,9 +920,10 @@ class SliAtmosphere extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final palette = context.sli;
-    final hasArt = imageAsset != null && imageAsset!.isNotEmpty;
+    final hasArt =
+        palette.atmosphereEnabled && imageAsset != null && imageAsset!.isNotEmpty;
 
-    if (variant == SliAtmosphereVariant.surfaceOnly && !hasArt) {
+    if ((variant == SliAtmosphereVariant.surfaceOnly || !palette.atmosphereEnabled) && !hasArt) {
       return ColoredBox(color: palette.obsidian, child: child);
     }
 
@@ -774,8 +938,8 @@ class SliAtmosphere extends StatelessWidget {
         glowColors = isDark
             ? [
                 [
-                  SliTokens.orange.withValues(alpha: 0.20 * glowScale),
-                  SliTokens.coral.withValues(alpha: 0.05 * glowScale),
+                  palette.primaryAccent.withValues(alpha: 0.20 * glowScale),
+                  palette.secondaryAccent.withValues(alpha: 0.05 * glowScale),
                   Colors.transparent,
                 ],
                 [
@@ -803,7 +967,7 @@ class SliAtmosphere extends StatelessWidget {
                   Colors.transparent,
                 ],
                 [
-                  SliTokens.orange.withValues(alpha: 0.07 * glowScale),
+                  palette.primaryAccent.withValues(alpha: 0.07 * glowScale),
                   Colors.transparent,
                 ],
               ]
@@ -823,8 +987,8 @@ class SliAtmosphere extends StatelessWidget {
         glowColors = isDark
             ? [
                 [
-                  SliTokens.orange.withValues(alpha: 0.14 * glowScale),
-                  SliTokens.coral.withValues(alpha: 0.04 * glowScale),
+                  palette.primaryAccent.withValues(alpha: 0.14 * glowScale),
+                  palette.secondaryAccent.withValues(alpha: 0.04 * glowScale),
                   Colors.transparent,
                 ],
                 [
@@ -835,7 +999,7 @@ class SliAtmosphere extends StatelessWidget {
             : [
                 [
                   const Color(0xFFFFE4D2).withValues(alpha: 0.55 * glowScale),
-                  SliTokens.orange.withValues(alpha: 0.08 * glowScale),
+                  palette.primaryAccent.withValues(alpha: 0.08 * glowScale),
                   Colors.transparent,
                 ],
                 [
@@ -900,7 +1064,7 @@ class SliAtmosphere extends StatelessWidget {
                 ),
               ),
             ),
-          if (variant != SliAtmosphereVariant.surfaceOnly)
+          if (palette.atmosphereEnabled && variant != SliAtmosphereVariant.surfaceOnly)
             for (var i = 0; i < centers.length; i++)
               Positioned.fill(
                 child: DecoratedBox(

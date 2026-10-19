@@ -30,10 +30,13 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     final uri = Uri.tryParse(url);
     if (uri == null) return;
     try {
-      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      final mode = widget.controller.inAppBrowser
+          ? LaunchMode.inAppBrowserView
+          : LaunchMode.externalApplication;
+      final ok = await launchUrl(uri, mode: mode);
       if (!ok && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open external browser.')),
+          const SnackBar(content: Text('Could not open browser.')),
         );
       }
     } catch (e) {
