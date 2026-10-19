@@ -7,13 +7,13 @@ import logo from "@/assets/sli_vault_logo_official.png";
 export const Route = createFileRoute("/resources")({
   head: () => ({
     meta: [
-      { title: "Resources — SLI Vault" },
+      { title: "Resources - SLI Vault" },
       {
         name: "description",
         content:
           "External resources referenced by the SLI Vault showcase site, credited to their original authors, including the free Streak focus project.",
       },
-      { property: "og:title", content: "Resources — SLI Vault" },
+      { property: "og:title", content: "Resources - SLI Vault" },
       {
         property: "og:description",
         content:
@@ -82,7 +82,7 @@ function Resources() {
                 Streak
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Free focus scenes, wallpapers and sounds — design reference
+                Free focus scenes, wallpapers and sounds - design reference
               </p>
             </div>
             <BookOpen className="size-6 shrink-0 text-primary" aria-hidden="true" />

@@ -32,7 +32,7 @@ class SliLoadingScreen extends StatelessWidget {
     final reduceMotion = media?.disableAnimations ?? false;
     final dpr = media?.devicePixelRatio ?? 1.0;
     final logicalSize = media?.size;
-    // Decode near display pixels — arts are already ~500×1024 and under 150 KB.
+    // Decode near display pixels - arts are already ~500×1024 and under 150 KB.
     final cacheWidth = logicalSize == null
         ? null
         : (logicalSize.width * dpr).round().clamp(360, 1440);
@@ -73,7 +73,7 @@ class SliLoadingScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Readability veil — keep art recognizable (not a flat black plate).
+          // Readability veil - keep art recognizable (not a flat black plate).
           DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(

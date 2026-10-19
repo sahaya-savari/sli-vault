@@ -40,7 +40,7 @@ SLI Vault is a Flutter Android app for saving links and images into **app-privat
 | **Current Version** | `1.0.2` (`versionCode` `4`) |
 | **Distribution** | Signed APK and AAB on [GitHub Releases](https://github.com/sahaya-savari/sli-vault/releases) — sideload only, no Play Store listing |
 | **Data Model** | 100% local-first: SQLite + app-private image files |
-| **License** | [MIT](LICENSE) for project-owned code and docs (third-party assets separate — see [License](#license)) |
+| **License** | [MIT](LICENSE) for project-owned code and docs (third-party assets separate - see [License](#license)) |
 
 The Flutter mobile application resides directly at the **repository root**. The repository is architected as a lightweight monorepo accommodating:
 1. The **Flutter/Dart Android mobile app** at the repository root.
@@ -82,7 +82,7 @@ The project-owned code and documentation are licensed under [MIT](LICENSE). Thir
 
 ### Privacy controls
 - Optional lock when backgrounded (device biometric or credential - SQLite is not encrypted)
-- `FLAG_SECURE` enabled on the main activity
+- Screenshot capture enabled (`FLAG_SECURE` removed so users can take screenshots normally)
 
 ---
 
@@ -152,10 +152,10 @@ The key capabilities of SLI Vault across daily capture, organization, and backup
 
 ## Release documentation
 
-- [Android release guide](docs/ANDROID_RELEASE.md) — build, signing, and artifact verification
-- [Android device checklist](docs/ANDROID_DEVICE_CHECKLIST.md) — all physical-device checks remain **NOT TESTED**
-- [Release readiness gate](docs/RELEASE_READINESS.md) — blockers and evidence
-- [Testing notes](docs/TESTING.md) — automated coverage and validation classification
+- [Android release guide](docs/ANDROID_RELEASE.md) - build, signing, and artifact verification
+- [Android device checklist](docs/ANDROID_DEVICE_CHECKLIST.md) - all physical-device checks remain **NOT TESTED**
+- [Release readiness gate](docs/RELEASE_READINESS.md) - blockers and evidence
+- [Testing notes](docs/TESTING.md) - automated coverage and validation classification
 
 ---
 
@@ -169,7 +169,7 @@ Additional facts from the current tree:
 - Optional **lock when backgrounded** uses the system biometric / device credential prompt. It does **not** encrypt the SQLite database.
 - Backup ZIPs are **not** encrypted. Treat exported files as private copies.
 - Opening a saved URL hands it to another app the user chooses. Copy URL is the only clipboard write from the app.
-- **`FLAG_SECURE` is ON** in `MainActivity` (`onCreate` / `onResume`). On supporting devices this blocks screenshots, screen recording of the app window, and recent-apps content previews. Physical-device confirmation of those limitations remains **NOT TESTED**.
+- **`FLAG_SECURE` is removed** in `MainActivity` (`onCreate` / `onResume`), allowing users to take screenshots and record screens normally. Privacy is maintained via app lock and biometric authentication.
 
 ---
 
@@ -217,7 +217,7 @@ $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
 flutter build apk --debug
 ```
 
-Release-mode APK and App Bundle (**still debug-signed** until a production keystore exists — do **not** upload these as store artifacts):
+Release-mode APK and App Bundle (**still debug-signed** until a production keystore exists - do **not** upload these as store artifacts):
 
 ```powershell
 $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
@@ -246,13 +246,13 @@ flutter test
 
 On PowerShell, quote any `--name` filter that contains `|` so the shell does not treat it as a pipe.
 
-Automated pull_request / push CI is not enabled on `HEAD` for Flutter; `.github/workflows/android-release.yml` provides manual production release builds (`workflow_dispatch` only). Website changes under `website/` are validated by `.github/workflows/website-ci.yml` (lint, test, build — no deploy).
+Automated pull_request / push CI is not enabled on `HEAD` for Flutter; `.github/workflows/android-release.yml` provides manual production release builds (`workflow_dispatch` only). Website changes under `website/` are validated by `.github/workflows/website-ci.yml` (lint, test, build - no deploy).
 
 ---
 
 ## Architecture
 
-The Flutter mobile application resides directly at the **repository root**. The companion website under `website/` has an independent Bun/npm dependency lifecycle — see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md).
+The Flutter mobile application resides directly at the **repository root**. The companion website under `website/` has an independent Bun/npm dependency lifecycle - see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md).
 
 | Path | Role |
 |------|------|
@@ -261,7 +261,7 @@ The Flutter mobile application resides directly at the **repository root**. The 
 | `lib/features/` | Screens: onboarding, home, browse, favorites, collections, settings, add sheet, … |
 | `lib/core/` | Theme, assets, shared widgets |
 | `lib/app/` | Five-tab shell and background lock |
-| `android/` | Manifest, share intents, `FLAG_SECURE` enabled on the main activity |
+| `android/` | Manifest, share intents, biometrics, screenshot capture enabled |
 | `docs/` | Architecture, backup, testing, release notes |
 | `test/` | Host tests with temporary databases |
 | `website/` | Companion React + TypeScript + Vite showcase (isolated workspace; Bun lockfile) |
@@ -278,12 +278,12 @@ These are **release blockers** or open gaps, not marketing copy:
 |------|----------------|
 | Application ID | `com.sahayasavari.slivault` |
 | Signing | Release builds use a **local** owner keystore via `android/key.properties` (never committed). Not enrolled in Play App Signing |
-| Version display | About UI and `pubspec.yaml` are `1.0.1` / versionCode `2` (still hard-coded strings, not `package_info_plus`) |
-| `FLAG_SECURE` | **On** in `MainActivity` (source + contract test); physical-device capture checks remain **NOT TESTED** |
+| Version display | Harmonized via `SliVersion`: `1.0.1` / versionCode `2008` (centralized in `lib/core/constants/sli_version.dart`) |
+| `FLAG_SECURE` | **Removed** from `MainActivity` so users can take screenshots normally; verified via contract test |
 | License | MIT for project-owned code and documentation; third-party assets remain separately licensed |
-| Fonts | JetBrains Mono is SIL OFL. Anthropic Serif under `assets/fonts/claude/` is **not cleared for redistribution**; keep this repository private until permission or replacement |
+| Fonts | All fonts licensed under SIL Open Font License 1.1 (**Figtree**, **Google Sans Flex**, and **JetBrains Mono**). Unverified Claude fonts removed from app bundle |
 | Launcher icon | Adaptive foreground fills the canvas; system mask may crop outer glow |
-| Device QA gaps | Backup export/import with real files, image handling, biometric lock, restart persistence, and error states are **not tested** on a real device — see [docs/ANDROID_DEVICE_CHECKLIST.md](docs/ANDROID_DEVICE_CHECKLIST.md) |
+| Device QA gaps | Backup export/import with real files, image handling, biometric lock, restart persistence, and error states are **not tested** on a real device - see [docs/ANDROID_DEVICE_CHECKLIST.md](docs/ANDROID_DEVICE_CHECKLIST.md) |
 | Framework assert | `_dependents.isEmpty` reported historically; **not reproduced** in the last QA pass |
 | Download | GitHub **signed** APK (owner keystore); not on Play Store |
 
@@ -305,8 +305,8 @@ Project-owned code and documentation are licensed under the [MIT License](LICENS
 
 Third-party notices that do exist:
 
-- **JetBrains Mono** — SIL Open Font License 1.1 (`assets/fonts/jetbrains_mono/OFL.txt`)
-- Dart / Flutter package licenses — available in-app via the open-source licenses screen
+- **JetBrains Mono** - SIL Open Font License 1.1 (`assets/fonts/jetbrains_mono/OFL.txt`)
+- Dart / Flutter package licenses - available in-app via the open-source licenses screen
 
 ---
 
@@ -319,8 +319,8 @@ Third-party notices that do exist:
 - Current tree version: `1.0.1` (`versionCode` `2`)
 - Signing: owner release keystore (local `android/key.properties` or GitHub Actions secrets; never in Git)
 - Production CI: [Android production release](.github/workflows/android-release.yml) (`workflow_dispatch` only)
-- Platforms: Android only for this package; iOS remains Phase 2 — see [docs/IOS_RELEASE.md](docs/IOS_RELEASE.md)
-- Play Store: **not listed** — this is a GitHub sideload package, not a Play upload
+- Platforms: Android only for this package; iOS remains Phase 2 - see [docs/IOS_RELEASE.md](docs/IOS_RELEASE.md)
+- Play Store: **not listed** - this is a GitHub sideload package, not a Play upload
 
 To reproduce a signed build locally you need `android/key.properties` and the keystore outside the repo (see [docs/ANDROID_RELEASE.md](docs/ANDROID_RELEASE.md)).
 

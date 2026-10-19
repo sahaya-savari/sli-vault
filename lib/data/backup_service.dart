@@ -172,9 +172,9 @@ class VaultBackupService {
       if (rawName == 'manifest.json') {
         manifestFile = entry;
       } else if (rawName == 'links.csv') {
-        // Portable CSV catalog — accepted in archive
+        // Portable CSV catalog - accepted in archive
       } else if (rawName == 'README.txt') {
-        // Portable instructions — accepted in archive
+        // Portable instructions - accepted in archive
       } else if (rawName.startsWith('images/')) {
         final base = p.basename(rawName);
         if (rawName != 'images/$base' || base.isEmpty) {

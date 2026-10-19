@@ -37,7 +37,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     _pageController = PageController();
     WidgetsBinding.instance.addObserver(this);
     _stillIndex = DateTime.now().day % SliAssets.welcomeStills.length;
-    // Host widget tests have no video plugin surface — stills-only there.
+    // Host widget tests have no video plugin surface - stills-only there.
     if (_isTestBinding) {
       _videoFailed = true;
     } else {

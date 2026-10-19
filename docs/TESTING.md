@@ -21,7 +21,7 @@ Release APK/AAB commands compile a release-mode binary that is still signed with
 
 | Baseline | Tests | Analyze | Release artifacts | Notes |
 |---|---|---|---|---|
-| Earlier docs in this folder | 21, later written as 25 | Reported clean at the time | Several historical sizes (about 59–60.5 MB) | Superseded counts. Kept so older notes stay traceable. |
+| Earlier docs in this folder | 21, later written as 25 | Reported clean at the time | Several historical sizes (about 59-60.5 MB) | Superseded counts. Kept so older notes stay traceable. |
 | QA baseline stated before this release-prep pass | **62 passing** | Clean | Release APK and AAB about **60.6 MB**, debug-signed | Superseded by the current build evidence below. |
 | This release-prep pass | **62 passing** | **No issues found** | APK 63,521,428 bytes; AAB 63,540,169 bytes; debug-signed | Completed 2026-10-16 with Flutter 3.47.7. |
 
@@ -31,8 +31,8 @@ Run on 2026-10-16 with Flutter 3.47.7 (Dart 3.13.5). No Dart source was edited i
 
 - `flutter analyze`: **No issues found** (exit 0, about 9.2s). Pub reported 23 packages with newer versions incompatible with current constraints. That notice is not an analyzer failure.
 - `flutter test`: **62 tests passed** (exit 0).
-- `flutter build apk --release`: succeeded; APK is **DEVELOPMENT/DEBUG-SIGNED — NOT FOR PLAY STORE UPLOAD**.
-- `flutter build appbundle --release`: succeeded; AAB is **DEVELOPMENT/DEBUG-SIGNED — NOT FOR PLAY STORE UPLOAD**.
+- `flutter build apk --release`: succeeded; APK is **DEVELOPMENT/DEBUG-SIGNED - NOT FOR PLAY STORE UPLOAD**.
+- `flutter build appbundle --release`: succeeded; AAB is **DEVELOPMENT/DEBUG-SIGNED - NOT FOR PLAY STORE UPLOAD**.
 
 ## Current automated coverage
 
@@ -49,7 +49,7 @@ Host tests live in `test/widget_test.dart`, `test/backup_hardening_test.dart`, a
 
 ## Evidence classification
 
-- **Static:** source and manifest review, dependency list, permissions, theme/semantics. `FLAG_SECURE` is enabled in source (`MainActivity` + contract test); physical capture behavior is **NOT TESTED**.
+- **Static:** source and manifest review, dependency list, permissions, theme/semantics. `FLAG_SECURE` has been removed in `MainActivity` (verified by contract test) so users can capture screenshots normally.
 - **Automated host tests:** temporary directories and deterministic fault injection. They do not prove device backup import or biometrics.
 - **Build:** APK/AAB compilation proves packaging. Production releases must be owner-keystore signed (local `key.properties` or GitHub Actions secrets); CI fails closed if secrets are missing.
 - **Physical device:** NOT TESTED in this pass. Use `docs/ANDROID_DEVICE_CHECKLIST.md`; do not infer device readiness from host tests or build success.
@@ -77,4 +77,4 @@ Collection name dialogs (`CollectionNameDialog` in `lib/features/collections/col
 - Export a real ZIP, move the file, import it, and confirm skipped IDs and image bytes.
 - Turn the background lock on and walk through biometric and device-credential success, cancel, and not-enrolled paths.
 - TalkBack and rotation.
-- Confirm loading art and the short welcome clip by eye. With `FLAG_SECURE` on, expect screenshots / screen recording of the app window / recent-apps previews to be blocked or blank on supporting devices (**NOT TESTED** until checked on hardware).
+- Confirm loading art and the short welcome clip by eye. With `FLAG_SECURE` removed, confirm screenshots and screen recordings capture the UI normally.

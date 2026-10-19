@@ -6,11 +6,11 @@ TanStack Start + Vite showcase for SLI Vault: phone frames, screenshot gallery, 
 
 From this directory:
 
-- `bun run dev` — development server
-- `bun run test` — Vitest suite
-- `bun run lint` — ESLint
-- `bun run build` — production build (includes TypeScript checking)
-- `bun run export:static` — optional portable `static-site/` export via `scripts/export-static.mjs`
+- `bun run dev` - development server
+- `bun run test` - Vitest suite
+- `bun run lint` - ESLint
+- `bun run build` - production build (includes TypeScript checking)
+- `bun run export:static` - optional portable `static-site/` export via `scripts/export-static.mjs`
 
 See [../docs/WEBSITE_SETUP.md](../docs/WEBSITE_SETUP.md) for full setup notes.
 

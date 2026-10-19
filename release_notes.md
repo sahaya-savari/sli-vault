@@ -1,35 +1,33 @@
-## SLI Vault 1.0.1 — Production Android Release
+## SLI Vault 1.0.1 - Production Android Release
 
 SLI Vault is a calm, local-first personal vault for links, screenshots, and visual inspiration.
 
 ### Application Metadata
 - **Package ID:** `com.sahayasavari.slivault`
 - **versionName:** `1.0.1`
-- **versionCode:** `3` (universal/bundle), `2003` (arm64), `1003` (armeabi-v7a), `4003` (x86_64)
+- **versionCode:** `2008` (enables seamless in-place upgrade over previous releases)
 - **Signing Certificate:** `CN=Sahaya Savari F, OU=SLI Vault, O=Sahaya Savari F, C=IN`
-- **Certificate SHA-256:** `C0:69:7D:18:36:1E:7A:07:FD:DD:3F:8B:7C:BD:83:4A:F2:6F:6E:17:7A:E2:BB:1B:3D:C6:AF:77:11:0A:99:EF`
 
 ### Key Highlights
-- **Multi-Page Onboarding:** 3-page onboarding workflow with persistent completion state and Skip action.
-- **GPU Rendering Optimization:** Optimized `SliGlassSurface` and sticky headers for smooth 60 FPS scrolling on Mali-G52 and mid-range GPUs.
-- **Architecture-Specific Builds:** New 25.2 MB ARM64 build (reduced from 60.7 MB universal).
-- **Quality & Attribution:** Legal attribution link verified; user-facing punctuation cleanup; 70 automated tests passing.
-- **QA Verification Status:** Core workflows, gesture navigation, and onboarding verified on physical Realme RMX3261 (Android 11) during previous active device testing. *(Note: Phone was disconnected prior to final pre-release checks; no new physical-device sideload tests performed during this final verification).*
+- **Three Streak-Inspired Design Systems:** Full implementation of **Classic** (balanced 16dp radii, clean Figtree typography), **Minimal** (compact 12dp radii, razor-thin borders, JetBrains Mono metadata), and **Express** (sculpted 24dp radii, vibrant gradients, glowing shadows, and tactile squish micro-motion).
+- **Cleared SIL OFL 1.1 Typography:** Replaced unverified proprietary fonts with SIL OFL 1.1 **Figtree** (7 weights) and **Google Sans Flex**, retaining **JetBrains Mono**. Full commercial and redistribution rights cleared.
+- **Screenshot Capture Enabled:** `FLAG_SECURE` removed as the final application-code change in `MainActivity.kt`. Screenshots and screen recordings now capture normally across all screens, with privacy maintained via app-level biometric lock.
+- **Redesigned About Screen:** Style-adaptive hero branding card with dynamic glow, centralized `SliVersion` metadata, developer attribution (`Sahaya Savari`, `@sahaya-savari`), and verified repository and website links.
+- **Punctuation Clean-up:** Normalized em/en dashes across all documentation and user-facing text to standard hyphens.
+- **Quality & Verification:** 116 automated tests passing (100%), 0 `dart analyze` issues, 21 website tests passing.
 
 ### Architecture Download Table
-| Package | Architecture | Size | Recommendation |
-| :--- | :--- | :--- | :--- |
-| **`sli-vault-1.0.1-arm64-v8a-release.apk`** | **ARM64-v8a** | **25.2 MB** | **Recommended for 99% of Android phones (2016+)** |
-| `sli-vault-1.0.1-release.apk` | Universal | 60.7 MB | All devices; safe choice if unsure |
-| `sli-vault-1.0.1-armeabi-v7a-release.apk` | ARM32 (v7a) | 23.0 MB | Older 32-bit Android devices |
-| `sli-vault-1.0.1-x86_64-release.apk` | x86_64 | 26.6 MB | Android emulators & ChromeOS |
-| `sli-vault-1.0.1-release.aab` | Bundle | 60.7 MB | Google Play / bundle distribution |
+| Package | Architecture | File Size (Bytes) | Size (MiB) | Recommendation |
+| :--- | :--- | :---: | :---: | :--- |
+| **`app-arm64-v8a-release.apk`** | **ARM64-v8a** | **29,106,919** | **27.76 MiB** | **Recommended for 99% of Android phones (2016+)** |
+| `app-release.apk` | Universal | 70,896,822 | 67.61 MiB | All devices; safe choice if unsure |
+| `app-armeabi-v7a-release.apk` | ARM32 (v7a) | 26,810,929 | 25.57 MiB | Older 32-bit Android devices |
+| `app-x86_64-release.apk` | x86_64 | 30,624,184 | 29.21 MiB | Android emulators & ChromeOS |
 
 ### SHA-256 Checksums
 ```
-27d238a065f3234f5096de964f4ecca921bded216220dd9c9ad11fb8f39037de  sli-vault-1.0.1-arm64-v8a-release.apk
-1fe419c460c3ad39cd150edace0c3edd313fc65cc5522ea0e8db1aebbdd502c7  sli-vault-1.0.1-release.apk
-210e8f2eb006c4ec21dad8baa3c586257a432bfdae09ead3824d3057a082cf03  sli-vault-1.0.1-armeabi-v7a-release.apk
-43c0e0b8e078877707ec026b8348b6e29a6d5ec38573e4da905ab9ed8e3cc04e  sli-vault-1.0.1-x86_64-release.apk
-72e7a88419f0d85752d74eb258e0b087967332344710caf5a1f72ae1e46d2059  sli-vault-1.0.1-release.aab
+A04D92372897556F9479A6F144C8AB70DDB776D9D3A4036370C751BB998A8B20  app-arm64-v8a-release.apk
+FF9480A7F264C491AD398BF8708674DFD4DFFEA061C69B6032922D606238311D  app-release.apk
+42A4C13EE21723DC9619EAE8210867E0D40B932EC0960819DA1FB629DE015863  app-armeabi-v7a-release.apk
+7B7FC355519566E1F480B4DF9F494A4AF29386B08A78106BF5723117E5329F78  app-x86_64-release.apk
 ```

@@ -2,14 +2,14 @@
 
 Status: **signed GitHub sideload releases** (`v1.0.0`, preparing `v1.0.1`). Not on Google Play. Keep the repository **private** until Anthropic Serif redistribution is cleared.
 
-## Verified in this pass — 2026-10-16
+## Verified in this pass - 2026-10-16
 
 These commands succeeded on Windows with Flutter 3.47.7 and the Android Studio JBR:
 
 - `flutter pub get`
-- `flutter analyze` — no issues found
-- `flutter test` — **62 tests passed**
-- `flutter build apk --release` — owner-keystore signed
+- `flutter analyze` - no issues found
+- `flutter test` - **62 tests passed**
+- `flutter build apk --release` - owner-keystore signed
 
 Set `JAVA_HOME` before Gradle if the default JDK path is invalid:
 
@@ -19,7 +19,7 @@ $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
 
 Current generated artifact (not committed):
 
-- `build/app/outputs/flutter-apk/app-release.apk` — published as `sli-vault-1.0.0-release.apk` on GitHub Release `v1.0.0`
+- `build/app/outputs/flutter-apk/app-release.apk` - published as `sli-vault-1.0.0-release.apk` on GitHub Release `v1.0.0`
 
 `apksigner verify --print-certs` must show the owner certificate, **not** `CN=Android Debug`:
 
@@ -48,7 +48,7 @@ The Android implementation also includes:
 - `local_auth` plugin integration. The activity is a `FlutterFragmentActivity` because the biometric prompt needs a fragment host.
 - `kotlin.incremental=false` in `android/gradle.properties`. Leave that flag as it is.
 
-`FLAG_SECURE` is **enabled** in `MainActivity` via `applySecureFlag()` from `onCreate` and `onResume`. On supporting devices this blocks screenshots, screen recording of the app window, and recent-apps content previews. Physical-device confirmation remains **NOT TESTED**. Contract coverage: `test/flag_secure_contract_test.dart`.
+`FLAG_SECURE` has been **removed** in `MainActivity` (`onCreate` and `onResume`) so users can capture screenshots and record screens normally. Contract coverage: `test/flag_secure_contract_test.dart`.
 
 ## GitHub Actions production build
 
@@ -69,7 +69,7 @@ The workflow fails closed if any secret is missing (no silent debug signing). It
 
 - Play Store upload is out of scope unless the owner enrolls later.
 - Adaptive launcher foreground may be cropped by the system mask (see below).
-- Bundled **Anthropic Serif** fonts are not cleared for public redistribution — keep the repo private.
+- Bundled **Anthropic Serif** fonts are not cleared for public redistribution - keep the repo private.
 - Real-device checks are **NOT TESTED**. See `docs/ANDROID_DEVICE_CHECKLIST.md`.
 
 ## Local signing files
@@ -98,8 +98,8 @@ A machine-local `.env` restore file for keystore credentials may live under `and
 
 Typical local files (not in Git):
 
-- `android/secrets/.env` — `STORE_FILE`, `KEY_ALIAS`, `STORE_PASSWORD`, `KEY_PASSWORD`
-- `android/secrets/keystore.env` — same values using `key.properties` field names
+- `android/secrets/.env` - `STORE_FILE`, `KEY_ALIAS`, `STORE_PASSWORD`, `KEY_PASSWORD`
+- `android/secrets/keystore.env` - same values using `key.properties` field names
 
 The `.jks` keystore stays outside the repo (example: `%USERPROFILE%\keystores\sli-vault-release.jks`).
 
@@ -108,7 +108,7 @@ Create from a working `android/key.properties` (do not commit):
 ```powershell
 New-Item -ItemType Directory -Force -Path android\secrets | Out-Null
 Copy-Item android\key.properties android\secrets\keystore.env
-# Or write android/secrets/.env with STORE_* / KEY_* keys — see android/secrets/README.md
+# Or write android/secrets/.env with STORE_* / KEY_* keys - see android/secrets/README.md
 ```
 
 Restore:
@@ -138,7 +138,7 @@ $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
 - Adaptive XML uses `@drawable/ic_launcher_foreground` (bitmap of `sli_vault_launcher` with `gravity="fill"`).
 - The system mask can crop the outer glow. Inset changes need owner approval.
 
-## Keystore password rotation (prepare only — do not run until approved)
+## Keystore password rotation (prepare only - do not run until approved)
 
 If the keystore password may have been exposed, **change passwords on the existing `.jks`**. Do **not** generate a new keystore (that would break update continuity for installed `v1.0.1`).
 
@@ -148,8 +148,8 @@ If the keystore password may have been exposed, **change passwords on the existi
 3. Change key password for alias `sli-vault`:
    `keytool -keypasswd -alias sli-vault -keystore "%USERPROFILE%\keystores\sli-vault-release.jks"`
 4. Update local `android/key.properties` and `android/secrets/keystore.env` / `.env` (never commit).
-5. Update GitHub Actions secrets (names only): `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_PASSWORD` (and re-upload `ANDROID_KEYSTORE_BASE64` only if the file bytes changed — password-only rotation usually keeps the same keystore file after `keytool` rewrites it; re-base64 the `.jks` after password change).
-6. Verify with a **local** signed build and `apksigner` (owner CN unchanged). Publish a new version only if you choose to ship after rotation — password rotation alone does not require republishing `v1.0.1`.
+5. Update GitHub Actions secrets (names only): `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_PASSWORD` (and re-upload `ANDROID_KEYSTORE_BASE64` only if the file bytes changed - password-only rotation usually keeps the same keystore file after `keytool` rewrites it; re-base64 the `.jks` after password change).
+6. Verify with a **local** signed build and `apksigner` (owner CN unchanged). Publish a new version only if you choose to ship after rotation - password rotation alone does not require republishing `v1.0.1`.
 
 Never paste passwords into chat, issues, README, or CI logs.
 

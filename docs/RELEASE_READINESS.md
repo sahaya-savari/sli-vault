@@ -18,19 +18,19 @@ Android release preparation steps live in [ANDROID_RELEASE.md](ANDROID_RELEASE.m
 | Unsafe/corrupt restore handling | PASS | Traversal, duplicate, corruption, size, collision, orphan, rollback fixtures | Device interruption testing still open |
 | Collections and mixed media | PASS | Host fixtures, inline collection creation in Add sheet, and edit dialog reassignment | None |
 | Theme / navigation / accessibility | PASS (host) | Narrow shell and font-scale widget tests; five labels | Physical TalkBack and rotation still open |
-| Legal / About UI | PASS (in-app copy) | Privacy and Terms are Settings-reachable; About shows `SLI Vault 1.0.2` | Version label hard-coded `1.0.2` (aligned with `pubspec.yaml`). |
+| Legal / About UI | PASS (in-app copy) | Privacy and Terms are Settings-reachable; About shows `SLI Vault 1.0.1` | Harmonized via `SliVersion` (`1.0.1`, build `2008`). |
 | Android debug build | PASS (earlier) | Prior debug APK under `build/app/outputs/` (not committed) | Not rebuilt in this prep pass |
-| Android release builds | PASS (signed sideload) | Universal APK, split APKs (arm64-v8a, armeabi-v7a, x86_64), and App Bundle built for `v1.0.2` with owner keystore. | Not for Play Store upload. Keep secrets local. |
+| Android release builds | PASS (signed sideload) | Universal APK, split APKs (arm64-v8a, armeabi-v7a, x86_64) built for `v1.0.1` with owner keystore. | Not for Play Store upload. Keep secrets local. |
 | Android release signing | PASS (local) | `apksigner` shows owner DN (`CN=Sahaya Savari F…`), not Android Debug. `key.properties` + `.jks` stay outside git. | Keep secrets local. |
 | Application ID | PASS | `com.sahayasavari.slivault` in `build.gradle.kts` and Kotlin package path. | Stable for GitHub sideload releases. |
-| `FLAG_SECURE` | PASS (source) | Enabled in `MainActivity` `onCreate` / `onResume`; contract test present | Physical-device screenshot/recents confirmation remains **NOT TESTED**. |
+| `FLAG_SECURE` | PASS (removed) | Removed in `MainActivity` `onCreate` / `onResume` so users can capture screenshots normally; contract test present | Physical-device confirmation remains **NOT TESTED** (no device attached). |
 | Launcher safe zone | BLOCKED | Adaptive foreground bitmap uses `gravity="fill"` | Do not replace the approved logo. Adjust padding only after a visual check the owner accepts. |
-| Anthropic Serif redistribution | BLOCKED (public) | Proprietary typeface for personal use only. Keep the repo private. | Keep repository private until font rights settled. |
+| Font redistribution | PASS | Unverified proprietary fonts removed from app bundle; replaced by SIL OFL 1.1 fonts (Figtree, Google Sans Flex, JetBrains Mono). | Full commercial and redistribution rights cleared under SIL OFL 1.1. |
 | Android device runtime | NOT TESTED | No physical-device checks were performed in this pass. | Run the complete physical-device checklist; do not infer runtime readiness from host tests or build success. |
 | Android real-device checklist | NOT TESTED | `docs/ANDROID_DEVICE_CHECKLIST.md` lists backup and restore, image handling, biometric lock, persistence after restart, and error states. Every row is NOT TESTED. | Owner or tester runs it on a physical device and records results. No row is PASS until performed. |
 | iOS build / runtime | BLOCKED | Windows has no Xcode | macOS/Xcode later |
 | iOS Share Extension | BLOCKED | No extension target | Add only if inbound iOS share is required |
-| GitHub Actions | PASS (workflow present) | `.github/workflows/android-release.yml` — manual `workflow_dispatch` signed production build | Requires four `ANDROID_*` repository secrets; fails closed if missing. |
+| GitHub Actions | PASS (workflow present) | `.github/workflows/android-release.yml` - manual `workflow_dispatch` signed production build | Requires four `ANDROID_*` repository secrets; fails closed if missing. |
 | Public GitHub / store publish | BLOCKED | Font rights unverified; device checks not tested | Keep the repository private. Private signed GitHub Release APK for sideload is OK; do not publicize or upload to Play until blockers are resolved. |
 
 ## `_dependents.isEmpty`
@@ -39,20 +39,19 @@ Reported on Flutter 3.47.7 from `InheritedElement.debugDeactivated` in `framewor
 
 ## Version identity
 
-- `pubspec.yaml`: `1.0.2+4` (source for Android `versionName` / `versionCode`)
-- Settings About line and the licenses page: `1.0.2`
-- `package_info_plus` is not a dependency and was not added
+- `pubspec.yaml`: `1.0.1+2008` (source for Android `versionName` / `versionCode`)
+- Settings About line and the licenses page: `1.0.1` (`2008`)
+- Centralized via `lib/core/constants/sli_version.dart`
 
 ## Verdict
 
-The Flutter app is a working local-first library with host coverage and a **private signed GitHub sideload release**. It is **not** Play-ready. Public / store publication waits on font redistribution clearance, launcher safe-zone review, and the remaining device walkthroughs.
+The Flutter app is a working local-first library with host coverage and a **signed GitHub sideload release candidate**. Font redistribution rights are fully cleared under SIL OFL 1.1, `FLAG_SECURE` has been removed to allow normal screenshot taking, and three Streak-inspired design systems (Classic, Minimal, Express) are implemented.
 
 ## Next session
 
 Local handoff for the following work session. This section is documentation, not a private scratch file.
 
-1. Do not move the Flutter project into `app/` until the website import is planned. Intended later layout: `app/` (this Flutter project), `website/` (existing Lovable showcase), `docs/`, root `README.md`, root `.gitignore`. Keep the website deploy independent of `flutter build`.
-2. Before editing the website, inspect its ZIP, git state, dependencies, assets, and build config. Do not create a website project in the Flutter tree tonight.
-3. Settled locally: MIT license (project-owned), application ID `com.sahayasavari.slivault`, owner release keystore, `FLAG_SECURE` on. Still open: Anthropic Serif redistribution (replacement font or written permission), `package_info_plus` for version display, and whether to inset the launcher bitmap. The repository stays **private** until font rights are settled.
-4. Finish manual device checks using `docs/ANDROID_DEVICE_CHECKLIST.md`: real ZIP export/import, image handling, biometric lock, persistence after restart, error states, TalkBack, rotation. All are NOT TESTED. Leave `_dependents.isEmpty` visible if it returns; do not hide it.
-5. `kotlin.incremental=false` stays. Do not commit `build/`, `.dart_tool/`, `artifacts/`, or signing files.
+1. Do not move the Flutter project into `app/` until the website import is planned. Keep the website deploy independent of `flutter build`.
+2. Settled locally: MIT license (project-owned), application ID `com.sahayasavari.slivault`, owner release keystore, `FLAG_SECURE` removed for screenshot capture, fonts cleared under SIL OFL 1.1 (**Figtree**, **Google Sans Flex**, **JetBrains Mono**).
+3. Finish manual device checks using `docs/ANDROID_DEVICE_CHECKLIST.md` when an Android device is attached.
+4. `kotlin.incremental=false` stays. Do not commit `build/`, `.dart_tool/`, `artifacts/`, or signing files.

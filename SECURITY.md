@@ -10,6 +10,6 @@ If this GitHub repository has private vulnerability reporting enabled, use that.
 
 ## Current privacy gaps (known)
 
-- `FLAG_SECURE` is enabled in `MainActivity.kt` (`onCreate` and `onResume`). Screenshots, screen recording of the app window, and recent-apps previews should be blocked on supporting devices; physical-device confirmation is **NOT TESTED**.
+- `FLAG_SECURE` has been removed in `MainActivity.kt` so users can capture screenshots normally. App lock and biometrics protect access to library contents.
 - Optional background lock uses the device authenticator. It does not encrypt SQLite.
 - The application ID is `com.sahayasavari.slivault`. Release signing uses a local owner keystore referenced by `android/key.properties` (and GitHub Actions secrets for CI). No keystore or `key.properties` is in this repository.

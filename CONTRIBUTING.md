@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for looking at SLI Vault. Project-owned code and documentation are under the [MIT License](LICENSE). Third-party assets (for example Anthropic Serif) remain separately licensed — see [assets/fonts/claude/README.md](assets/fonts/claude/README.md).
+Thanks for looking at SLI Vault. Project-owned code and documentation are under the [MIT License](LICENSE). Third-party assets (for example Anthropic Serif) remain separately licensed - see [assets/fonts/claude/README.md](assets/fonts/claude/README.md).
 
 ## Local checks
 

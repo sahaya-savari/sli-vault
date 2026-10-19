@@ -15,6 +15,7 @@ import '../../core/widgets/sli_svg.dart';
 import '../../data/backup_service.dart';
 import '../../data/vault_controller.dart';
 import '../../domain/vault_item.dart';
+import '../../core/constants/sli_version.dart';
 import 'legal_screens.dart';
 
 bool _isDark(BuildContext context) =>
@@ -1831,8 +1832,8 @@ class _SupportSubpage extends StatelessWidget {
 
   Future<void> _shareApp() async {
     await Share.share(
-      'SLI Vault — A privacy-first, local-first personal vault for links, screenshots, and visual inspiration.\nhttps://sahaya-savari.github.io/sli-vault/',
-      subject: 'SLI Vault — Local-First Personal Vault',
+      'SLI Vault - A privacy-first, local-first personal vault for links, screenshots, and visual inspiration.\nhttps://sahaya-savari.github.io/sli-vault/',
+      subject: 'SLI Vault - Local-First Personal Vault',
     );
   }
 
@@ -1927,9 +1928,27 @@ class _AboutSubpage extends StatelessWidget {
 
   const _AboutSubpage({required this.controller});
 
+  Future<void> _openExternal(BuildContext context, String url) async {
+    final uri = Uri.parse(url);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not open: $url')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final palette = context.sli;
+    final style = controller.visualStyle;
+    final isExpress = style == SliVisualStyle.express;
+    final isMinimal = style == SliVisualStyle.minimal;
+
+    final double iconRadius = isExpress ? 24.0 : (isMinimal ? 12.0 : 18.0);
 
     return Scaffold(
       appBar: AppBar(
@@ -1939,46 +1958,109 @@ class _AboutSubpage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
-          // App Hero
+          // App Hero Branding Card
           Center(
             child: Column(
               children: [
                 const SizedBox(height: 12),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(22),
-                  child: Image.asset(
-                    SliAssets.symbol,
-                    width: 76,
-                    height: 76,
-                    fit: BoxFit.cover,
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(iconRadius),
+                    boxShadow: [
+                      BoxShadow(
+                        color: palette.primaryAccent.withValues(alpha: isExpress ? 0.32 : 0.18),
+                        blurRadius: isExpress ? 28 : 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(iconRadius),
+                    child: Image.asset(
+                      SliAssets.symbol,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 16),
                 Text(
                   'SLI Vault',
                   style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
+                    fontFamily: isExpress ? SliTokens.fontFamilyDisplay : SliTokens.fontFamily,
+                    fontSize: isExpress ? 26 : (isMinimal ? 22 : 24),
+                    fontWeight: isExpress ? FontWeight.w900 : FontWeight.w800,
                     color: palette.textPrimary,
-                    letterSpacing: -0.3,
+                    letterSpacing: -0.4,
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  'Version 1.0.3 (Build 2007)',
-                  style: TextStyle(
-                    fontFamily: SliTokens.fontFamilyMono,
-                    fontSize: 13,
-                    color: palette.primaryAccent,
-                    fontWeight: FontWeight.w600,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: palette.primaryAccent.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(isExpress ? 9999 : 6),
+                    border: Border.all(
+                      color: palette.primaryAccent.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    SliVersion.buildLabel,
+                    style: TextStyle(
+                      fontFamily: SliTokens.fontFamilyMono,
+                      fontSize: 12,
+                      color: palette.primaryAccent,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  'Privacy-first • Offline-first • Zero-tracking',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: palette.textSecondary,
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    'A privacy-first, local-first personal vault for links, screenshots, and visual inspiration. Stored securely on-device with zero tracking or telemetry.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: SliTokens.fontFamily,
+                      fontSize: 13.5,
+                      height: 1.45,
+                      color: palette.textSecondary,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                // Developer Attribution
+                InkWell(
+                  onTap: () => _openExternal(context, 'https://github.com/sahaya-savari'),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Created with care by ',
+                          style: TextStyle(
+                            fontFamily: SliTokens.fontFamily,
+                            fontSize: 13,
+                            color: palette.textSecondary,
+                          ),
+                        ),
+                        Text(
+                          '${SliVersion.authorName} (${SliVersion.authorHandle})',
+                          style: TextStyle(
+                            fontFamily: SliTokens.fontFamily,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: palette.primaryAccent,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -1986,7 +2068,37 @@ class _AboutSubpage extends StatelessWidget {
             ),
           ),
 
-          // Legal & Licenses
+          // Primary Actions (GitHub, Issues, Website)
+          Row(
+            children: [
+              Expanded(
+                child: _ActionTileButton(
+                  icon: Icons.star_rounded,
+                  label: 'Star GitHub',
+                  onTap: () => _openExternal(context, SliVersion.repositoryUrl),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _ActionTileButton(
+                  icon: Icons.bug_report_rounded,
+                  label: 'Issues',
+                  onTap: () => _openExternal(context, SliVersion.issuesUrl),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _ActionTileButton(
+                  icon: Icons.language_rounded,
+                  label: 'Website',
+                  onTap: () => _openExternal(context, SliVersion.websiteUrl),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // Legal, Privacy & Licenses Section
           _SettingsCard(
             children: [
               ListTile(
@@ -2014,17 +2126,85 @@ class _AboutSubpage extends StatelessWidget {
               ListTile(
                 leading: const _IconBadge(icon: Icons.code_rounded),
                 title: const Text('Open Source Licenses', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                subtitle: Text('Third-party software libraries and licenses.', style: TextStyle(color: palette.textSecondary, fontSize: 13)),
+                subtitle: Text('Third-party software libraries, Figtree & JetBrains Mono.', style: TextStyle(color: palette.textSecondary, fontSize: 13)),
                 trailing: const Icon(Icons.chevron_right_rounded, size: 20),
                 onTap: () => showLicensePage(
                   context: context,
                   applicationName: 'SLI Vault',
-                  applicationVersion: '1.0.3+2007',
+                  applicationVersion: SliVersion.fullVersion,
                 ),
+              ),
+              _settingsDivider(context),
+              ListTile(
+                leading: const _IconBadge(icon: Icons.policy_outlined),
+                title: const Text('MIT License', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                subtitle: Text('Project-owned code and documentation license terms.', style: TextStyle(color: palette.textSecondary, fontSize: 13)),
+                trailing: const Icon(Icons.open_in_new_rounded, size: 18),
+                onTap: () => _openExternal(context, SliVersion.licenseUrl),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ActionTileButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _ActionTileButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.sli;
+    final style = palette.visualStyle;
+    final isExpress = style == SliVisualStyle.express;
+    final isMinimal = style == SliVisualStyle.minimal;
+    final radius = isExpress ? 9999.0 : (isMinimal ? 8.0 : 14.0);
+
+    return Material(
+      color: isMinimal ? palette.elevated : palette.surfaceFill,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(radius),
+        side: BorderSide(
+          color: palette.border.withValues(alpha: isMinimal ? 0.9 : 0.6),
+          width: 1,
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: isExpress ? 14 : 12,
+            horizontal: 8,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 20, color: palette.primaryAccent),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: isMinimal ? SliTokens.fontFamilyMono : SliTokens.fontFamily,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: palette.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

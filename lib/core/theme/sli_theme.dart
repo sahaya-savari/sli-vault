@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class SliTokens {
   SliTokens._();
 
-  /// Primary UI (Anthropic Serif Text from MB Claude package).
-  static const String fontFamily = 'Claude';
+  /// Primary UI - Figtree (SIL Open Font License 1.1).
+  static const String fontFamily = 'Figtree';
 
-  /// Display / headline face (Anthropic Serif Display).
-  static const String fontFamilyDisplay = 'ClaudeDisplay';
+  /// Display / headline face - GoogleSansFlex (SIL Open Font License 1.1).
+  static const String fontFamilyDisplay = 'GoogleSansFlex';
 
-  /// Technical / mono UI (JetBrains Mono, OFL).
+  /// Technical / mono UI - JetBrains Mono (SIL Open Font License 1.1).
   static const String fontFamilyMono = 'JetBrainsMono';
 
   // Canonical Surface Palette (Combined PRD/FRD v2)

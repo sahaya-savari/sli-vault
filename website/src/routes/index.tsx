@@ -55,13 +55,13 @@ import heroRight from "@/assets/hero-right.webp";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SLI Vault — Everything worth keeping. Entirely yours." },
+      { title: "SLI Vault - Everything worth keeping. Entirely yours." },
       {
         name: "description",
         content:
           "Explore SLI Vault: a local-first personal library for links, screenshots and images on Android. Browse genuine app screens, and inspect features.",
       },
-      { property: "og:title", content: "SLI Vault — Your personal, local-first Android vault" },
+      { property: "og:title", content: "SLI Vault - Your personal, local-first Android vault" },
       {
         property: "og:description",
         content:

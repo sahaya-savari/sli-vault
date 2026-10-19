@@ -1,17 +1,17 @@
 # Android Real-Device Verification Checklist
 
-Every item below is **NOT TESTED**. No row may be changed to PASS unless the step was actually performed on a physical Android device and the result was observed. Automated host tests do not replace these checks. ADB was **not** available in the last host cleanup pass — do not invent device results.
+Every item below is **NOT TESTED**. No row may be changed to PASS unless the step was actually performed on a physical Android device and the result was observed. Automated host tests do not replace these checks. ADB was **not** available in the last host cleanup pass - do not invent device results.
 
 Status values: `NOT TESTED`, `PASS`, `FAIL`, `BLOCKED`.
 
 ## Quick plan for published `v1.0.1` (all NOT TESTED until run)
 
-1. Install `artifacts/github-release/sli-vault-1.0.1-release.apk` (or the GitHub Release asset) — owner-signed, app ID `com.sahayasavari.slivault`.
+1. Install `artifacts/github-release/sli-vault-1.0.1-release.apk` (or the GitHub Release asset) - owner-signed, app ID `com.sahayasavari.slivault`.
 2. Launch → complete or skip onboarding → confirm five tabs.
 3. Save link + image; search; favorite; collections.
 4. Export ZIP → confirm image binaries inside → import (duplicates skipped) → clear test vault → restore.
 5. Force-stop and reboot → data/theme persist.
-6. Check `FLAG_SECURE` (screenshot / recording / recent-apps).
+6. Check screenshot capture (verify screenshots capture UI normally without black screen).
 7. Cutout, status bar, keyboard on Add sheet; airplane-mode offline use; error paths.
 8. About shows `1.0.1`; launcher icon appearance under system mask.
 
@@ -21,7 +21,7 @@ Status values: `NOT TESTED`, `PASS`, `FAIL`, `BLOCKED`.
 - [ ] Use a **test vault**. Do not run destructive steps on the only copy of real data.
 - [ ] Keep a ZIP backup of any real vault before starting.
 - [ ] Do not clear app data, uninstall, or reset onboarding unless a step says so.
-- [ ] Confirm `FLAG_SECURE` is on: screenshots / screen recording of the app window / recent-apps previews should be blocked or blank (NOT TESTED until checked on device).
+- [ ] Confirm screenshot capture works: screenshots / screen recording of the app window should render normally now that `FLAG_SECURE` is removed (NOT TESTED until checked on device).
 
 ## 1. Backup and restore
 
@@ -113,7 +113,7 @@ Status values: `NOT TESTED`, `PASS`, `FAIL`, `BLOCKED`.
 | 6.10 | Display cutout / notch / camera hole | Content not permanently hidden under unsafe insets | NOT TESTED | |
 | 6.11 | Status bar / system bars on main tabs | Readable; no permanent overlap of primary controls | NOT TESTED | |
 | 6.12 | Open Add sheet and focus a text field (keyboard) | Fields remain usable; no blocking overflow | NOT TESTED | |
-| 6.13 | Screenshot the app; screen-record; open Recents | App window blank/blocked when `FLAG_SECURE` is on | NOT TESTED | |
+| 6.13 | Screenshot the app; screen-record; open Recents | UI visible and captured cleanly (FLAG_SECURE removed) | NOT TESTED | |
 
 ## 7. Release build checks (after signing exists)
 
