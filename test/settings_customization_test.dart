@@ -237,10 +237,19 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Verify Card Headers are present
+        // Verify Streak-style headers and navigation cards are present
         expect(find.text('Settings'), findsOneWidget);
-        expect(find.text('Local Storage & Backup'), findsOneWidget);
+        expect(find.text('Inlitx'), findsOneWidget);
+        expect(find.text('App style'), findsOneWidget);
         expect(find.text('Appearance'), findsOneWidget);
+        expect(find.text('Preferences'), findsOneWidget);
+        expect(find.text('Data'), findsOneWidget);
+        expect(find.text('Support'), findsOneWidget);
+        expect(find.text('About this app'), findsOneWidget);
+
+        // --- Test Appearance Subpage ---
+        await tester.tap(find.text('Appearance'));
+        await tester.pumpAndSettle();
 
         // Tapping OLED Black Chip updates theme
         final oledChip = find.byKey(const ValueKey('theme-chip-amoled'));
@@ -249,40 +258,21 @@ void main() {
         await tester.pumpAndSettle();
         expect(controller.themeModeName, 'amoled');
 
-        final settingsScrollable = find.descendant(
-          of: find.byKey(const ValueKey('settings-scroll')),
-          matching: find.byType(Scrollable),
-        );
-
-        // Scroll to reveal Privacy & Security
-        await tester.scrollUntilVisible(
-          find.text('Privacy & Security'),
-          50,
-          scrollable: settingsScrollable,
-        );
-        expect(find.text('Privacy & Security'), findsOneWidget);
-
-        // Scroll to reveal Accent Palette
-        await tester.scrollUntilVisible(
-          find.byKey(const ValueKey('accent-chip-teal')),
-          50,
-          scrollable: settingsScrollable,
-        );
-        await tester.pumpAndSettle();
-
         final tealChip = find.byKey(const ValueKey('accent-chip-teal'));
         expect(tealChip, findsOneWidget);
         await tester.tap(tealChip);
         await tester.pumpAndSettle();
         expect(controller.accentPreset, 'teal');
 
-        // Scroll to reveal Storage Diagnostics
-        await tester.scrollUntilVisible(
-          find.byKey(const ValueKey('vacuum-db-button')),
-          200,
-          scrollable: settingsScrollable,
-        );
+        // Pop back to main settings
+        await tester.tap(find.byType(BackButton));
         await tester.pumpAndSettle();
+
+        // --- Test Data Subpage ---
+        await tester.tap(find.text('Data'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Local Storage & Backup'), findsOneWidget);
 
         final vacuumBtn = find.byKey(const ValueKey('vacuum-db-button'));
         expect(vacuumBtn, findsOneWidget);
@@ -315,6 +305,26 @@ void main() {
         await tester.tap(find.text('Done'));
         await tester.pumpAndSettle();
         expect(find.text('Vault Integrity Report'), findsNothing);
+
+        // Pop back to main settings
+        await tester.tap(find.byType(BackButton));
+        await tester.pumpAndSettle();
+
+        // --- Test App Style Subpage ---
+        await tester.tap(find.text('App style'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Classic'), findsAtLeastNWidgets(1));
+        expect(find.text('Minimal'), findsOneWidget);
+        expect(find.text('Express'), findsOneWidget);
+
+        await tester.tap(find.text('Minimal'));
+        await tester.pumpAndSettle();
+        expect(controller.visualStyle, SliVisualStyle.minimal);
+
+        await tester.tap(find.byType(BackButton));
+        await tester.pumpAndSettle();
+        expect(find.text('Minimal'), findsOneWidget);
       },
     );
   });

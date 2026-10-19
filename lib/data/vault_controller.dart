@@ -51,6 +51,8 @@ class VaultController extends ChangeNotifier {
   static const String _prefBrowseDensity = 'sli_vault_browse_density_v1';
   static const String _prefScreenProtection =
       'sli_vault_screen_protection_v1';
+  static const String _prefProfileName = 'sli_vault_profile_name_v1';
+  static const String _prefProfilePhoto = 'sli_vault_profile_photo_v1';
 
   final VaultDatabase database;
   final LocalImageStorage imageStorage;
@@ -78,6 +80,8 @@ class VaultController extends ChangeNotifier {
   bool _autoFetchMetadata = true;
   String _browseDensity = 'comfortable';
   bool _screenProtectionEnabled = true;
+  String _profileName = 'Inlitx';
+  String _profilePhotoPath = '';
   final Map<String, (VaultItem item, Uint8List? imageBytes)> _undoCache = {};
   final Map<String, List<(VaultItem item, Uint8List? imageBytes)>> _batchUndoCache = {};
 
@@ -128,6 +132,8 @@ class VaultController extends ChangeNotifier {
   bool get autoFetchMetadata => _autoFetchMetadata;
   String get browseDensity => _browseDensity;
   bool get screenProtectionEnabled => _screenProtectionEnabled;
+  String get profileName => _profileName;
+  String get profilePhotoPath => _profilePhotoPath;
 
   List<String> get collections {
     final names = <String>{'General', ..._customCollections};
@@ -169,6 +175,8 @@ class VaultController extends ChangeNotifier {
     _autoFetchMetadata = prefs.getBool(_prefAutoFetchMetadata) ?? true;
     _browseDensity = prefs.getString(_prefBrowseDensity) ?? 'comfortable';
     _screenProtectionEnabled = prefs.getBool(_prefScreenProtection) ?? true;
+    _profileName = prefs.getString(_prefProfileName) ?? 'Inlitx';
+    _profilePhotoPath = prefs.getString(_prefProfilePhoto) ?? '';
     if (Platform.isAndroid) {
       try {
         const MethodChannel('sli_vault/security').invokeMethod(
@@ -179,6 +187,21 @@ class VaultController extends ChangeNotifier {
     }
     await reloadLibrary();
     _isInitialized = true;
+    notifyListeners();
+  }
+
+  Future<void> setProfileName(String name) async {
+    final trimmed = name.trim();
+    _profileName = trimmed.isEmpty ? 'Inlitx' : trimmed;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_prefProfileName, _profileName);
+    notifyListeners();
+  }
+
+  Future<void> setProfilePhotoPath(String path) async {
+    _profilePhotoPath = path.trim();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_prefProfilePhoto, _profilePhotoPath);
     notifyListeners();
   }
 

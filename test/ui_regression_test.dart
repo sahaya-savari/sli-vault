@@ -683,15 +683,9 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Settings').last);
       await tester.pumpAndSettle();
+      await tester.tap(find.text('Preferences'));
+      await tester.pumpAndSettle();
       final switchFinder = find.byKey(const ValueKey('lock-vault-switch'));
-      await tester.scrollUntilVisible(
-        switchFinder,
-        200,
-        scrollable: find.descendant(
-          of: find.byKey(const ValueKey('settings-scroll')),
-          matching: find.byType(Scrollable),
-        ),
-      );
       await tester.ensureVisible(switchFinder);
       await _settle(tester);
       expect(env.controller.lockEnabled, isFalse);
@@ -736,6 +730,13 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Settings').last);
       await tester.pumpAndSettle();
+      await tester.drag(
+        find.byKey(const ValueKey('settings-scroll')),
+        const Offset(0, -300),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Data'));
+      await tester.pumpAndSettle();
       final export = tester.getTopLeft(find.text('Export Backup'));
       final import = tester.getTopLeft(find.text('Import Backup'));
       expect(import.dy, greaterThan(export.dy), reason: 'stacked vertically');
@@ -750,11 +751,13 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Settings').last);
       await tester.pumpAndSettle();
-      final before = find.text('Appearance').evaluate().length;
+      await tester.tap(find.text('Appearance'));
+      await tester.pumpAndSettle();
+      final before = find.text('Theme Mode').evaluate().length;
       await tester.tap(find.byKey(const ValueKey('theme-chip-light')));
       await _settle(tester);
       expect(env.controller.themeModeName, 'light');
-      expect(find.text('Appearance').evaluate().length, before);
+      expect(find.text('Theme Mode').evaluate().length, before);
       await tester.tap(find.byKey(const ValueKey('theme-chip-dark')));
       await _settle(tester);
       expect(env.controller.themeModeName, 'dark');
