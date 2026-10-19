@@ -221,7 +221,11 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                             decoration: BoxDecoration(
                               color: palette.elevated,
                               borderRadius: BorderRadius.circular(
-                                SliTokens.radiusMd,
+                                palette.visualStyle == SliVisualStyle.minimal
+                                    ? 6.0
+                                    : (palette.visualStyle == SliVisualStyle.express
+                                        ? 16.0
+                                        : 12.0),
                               ),
                               border: Border.all(color: palette.border),
                             ),

@@ -143,7 +143,7 @@ class _SliGradientButtonState extends State<SliGradientButton> {
               if (mounted) setState(() => _isPressed = highlighted);
             },
             onTap: enabled ? widget.onPressed : null,
-            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderRadius: BorderRadius.circular(context.sli.buttonRadius),
             child: Ink(
               height: 52,
               padding: const EdgeInsets.symmetric(
@@ -152,7 +152,7 @@ class _SliGradientButtonState extends State<SliGradientButton> {
               decoration: BoxDecoration(
                 gradient: active ? context.sli.primaryGradient : null,
                 color: active ? null : context.sli.border,
-                borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+                borderRadius: BorderRadius.circular(context.sli.buttonRadius),
                 boxShadow: active
                     ? [
                         BoxShadow(
@@ -249,7 +249,7 @@ class SliEmptyState extends StatelessWidget {
             fillDeepColor: palette.plateFill,
             borderColor: palette.plateStroke,
             blurSigma: 12,
-            borderRadius: BorderRadius.circular(SliTokens.radiusXl),
+            borderRadius: BorderRadius.circular(palette.sheetRadius),
             padding: const EdgeInsets.symmetric(
               horizontal: SliTokens.spaceXl,
               vertical: SliTokens.spaceXl,

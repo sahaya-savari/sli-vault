@@ -253,17 +253,12 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
           },
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            // The Add sheet (and dialogs) own their keyboard inset. Letting
-            // this Scaffold also shrink made the tab behind the sheet reflow
-            // and overflow (RenderFlex stripes) every time the keyboard
-            // opened.
             resizeToAvoidBottomInset: false,
             body: IndexedStack(
               sizing: StackFit.expand,
               index: _selectedIndex,
               children: pages,
             ),
-            // Add belongs on library surfaces only — never on Settings.
             floatingActionButton: _selectedIndex == 4
                 ? null
                 : SliShimmerFab(onTap: _showAddSheet),
@@ -296,10 +291,101 @@ class _BottomNavBar extends StatelessWidget {
     (label: 'Collections', icon: SliAssets.contentCollection),
     (label: 'Settings', icon: SliAssets.navSettings),
   ];
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final palette = context.sli;
+    final style = palette.visualStyle;
+    final isExpress = style == SliVisualStyle.express;
+    final isMinimal = style == SliVisualStyle.minimal;
+
+    if (isExpress) {
+      return Material(
+        color: Colors.transparent,
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+            child: Center(
+              heightFactor: 1.0,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: Container(
+                  key: const ValueKey('sli-bottom-nav'),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Color.alphaBlend(
+                      palette.primaryAccent.withValues(alpha: isDark ? 0.18 : 0.12),
+                      isDark ? palette.surfaceFillDeep : Colors.white,
+                    ),
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(
+                      color: palette.primaryAccent.withValues(alpha: isDark ? 0.28 : 0.22),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: isDark ? 0.40 : 0.12),
+                        blurRadius: 20,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      for (var i = 0; i < _destinations.length; i++)
+                        _ExpressNavBarItem(
+                          label: _destinations[i].label,
+                          iconAsset: _destinations[i].icon,
+                          selected: selectedIndex == i,
+                          onTap: () => onSelect(i),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (isMinimal) {
+      return Material(
+        color: Colors.transparent,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: isDark ? palette.charcoal : Colors.white,
+            border: Border(
+              top: BorderSide(
+                color: palette.border.withValues(alpha: 0.6),
+                width: 1,
+              ),
+            ),
+          ),
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              key: const ValueKey('sli-bottom-nav'),
+              height: 56,
+              child: Row(
+                children: [
+                  for (var i = 0; i < _destinations.length; i++)
+                    _MinimalNavBarItem(
+                      label: _destinations[i].label,
+                      iconAsset: _destinations[i].icon,
+                      selected: selectedIndex == i,
+                      onTap: () => onSelect(i),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Classic style: signature elevated frosted bar with luminous border
     return Material(
       color: Colors.transparent,
       child: DecoratedBox(
@@ -310,8 +396,8 @@ class _BottomNavBar extends StatelessWidget {
           border: Border(
             top: BorderSide(
               color: isDark
-                  ? context.sli.primaryAccent.withValues(alpha: 0.22)
-                  : context.sli.border.withValues(alpha: 0.9),
+                  ? palette.primaryAccent.withValues(alpha: 0.22)
+                  : palette.border.withValues(alpha: 0.9),
             ),
           ),
           boxShadow: [
@@ -327,7 +413,6 @@ class _BottomNavBar extends StatelessWidget {
           child: SizedBox(
             key: const ValueKey('sli-bottom-nav'),
             height: 64,
-            // Fixed equal-width destinations — never a horizontal scroll strip.
             child: Row(
               children: [
                 for (var i = 0; i < _destinations.length; i++)
@@ -338,6 +423,182 @@ class _BottomNavBar extends StatelessWidget {
                     onTap: () => onSelect(i),
                   ),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ExpressNavBarItem extends StatelessWidget {
+  final String label;
+  final String iconAsset;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _ExpressNavBarItem({
+    required this.label,
+    required this.iconAsset,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.sli;
+    final reduceMotion = palette.reduceMotion;
+    final color = selected ? palette.onAccent : palette.textSecondary;
+    final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
+    final fontSize = textScale > 1.4 ? 9.5 : (textScale > 1.15 ? 10.5 : 11.0);
+
+    return Expanded(
+      child: Semantics(
+        selected: selected,
+        button: true,
+        label: label,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(22),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minHeight: SliTokens.minTouchTarget,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 1),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnimatedContainer(
+                    duration: reduceMotion ? Duration.zero : SliMotion.express,
+                    curve: SliMotion.bouncy,
+                    width: 50,
+                    height: 28,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      gradient: selected ? palette.primaryGradient : null,
+                      color: selected ? null : Colors.transparent,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: selected
+                          ? [
+                              BoxShadow(
+                                color: palette.primaryAccent.withValues(alpha: 0.35),
+                                blurRadius: 10,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: AnimatedScale(
+                      scale: selected ? 1.06 : 1.0,
+                      duration: reduceMotion ? Duration.zero : SliMotion.fast,
+                      curve: SliMotion.bouncy,
+                      child: SliIcon(iconAsset, size: 19, color: color),
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.center,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.clip,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: SliTokens.fontFamily,
+                        color: selected ? palette.accentText : palette.textSecondary,
+                        fontSize: fontSize,
+                        fontWeight: selected ? FontWeight.w800 : FontWeight.w500,
+                        height: 1.1,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MinimalNavBarItem extends StatelessWidget {
+  final String label;
+  final String iconAsset;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _MinimalNavBarItem({
+    required this.label,
+    required this.iconAsset,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.sli;
+    final color = selected ? palette.accentText : palette.textSecondary;
+    final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
+    final fontSize = textScale > 1.4 ? 9.5 : (textScale > 1.15 ? 10.5 : 11.0);
+
+    return Expanded(
+      child: Semantics(
+        selected: selected,
+        button: true,
+        label: label,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(6),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minHeight: SliTokens.minTouchTarget,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 38,
+                    height: 22,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? palette.accentText.withValues(alpha: 0.14)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: SliIcon(iconAsset, size: 18, color: color),
+                  ),
+                  const SizedBox(height: 2),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.center,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.clip,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: SliTokens.fontFamily,
+                        color: selected ? palette.textPrimary : palette.textSecondary,
+                        fontSize: fontSize,
+                        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                        height: 1.05,
+                        letterSpacing: -0.1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -393,7 +654,7 @@ class _NavBarItem extends StatelessWidget {
                       color: selected
                           ? context.sli.accentText.withValues(alpha: 0.16)
                           : Colors.transparent,
-                      borderRadius: BorderRadius.circular(SliTokens.radiusPill),
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
                     child: SliIcon(iconAsset, size: 20, color: color),
                   ),
@@ -431,3 +692,4 @@ class _NavBarItem extends StatelessWidget {
     );
   }
 }
+

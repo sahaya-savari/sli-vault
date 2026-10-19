@@ -1,7 +1,19 @@
 # Changelog
 
-## Unreleased
+## 1.0.3
 
+- Version `1.0.3+2007`. Application ID remains `com.sahayasavari.slivault`.
+- **Three-Style Design System (Classic, Minimal, Express)**:
+  - Added selectable `SliVisualStyle` enum (`classic`, `minimal`, `express`) with persistent preference in `VaultController`.
+  - Geometric, spacing, and motion design tokens exposed via `SliPalette`:
+    - `cardRadius`: Classic (16dp), Minimal (8dp), Express (24dp).
+    - `buttonRadius`: Classic (12dp), Minimal (6dp), Express (pill / 9999dp).
+    - `sheetRadius`: Classic (24dp), Minimal (12dp), Express (32dp).
+    - `cardPadding`: Classic (16dp), Minimal (12dp), Express (18dp).
+    - `motionDuration`: Classic (250ms), Minimal (140ms), Express (320ms; 0ms with reduced motion).
+    - `motionCurve`: Classic (`easeInOutCubic`), Minimal (`easeOutQuad`), Express (`fastOutSlowIn`).
+  - Wire tokens into cards (`VaultItemCard`, `SliSpotlightCard`), surfaces (`SliGlassSurface`), and modal sheets.
+  - Interactive **Interface Style** picker in `SettingsScreen` under `Appearance` featuring live, genuine rendered miniature preview cards demonstrating actual geometry and corner radii differences.
 - **Device QA Bug Fixes & Network Restoration**:
   - Added `android.permission.INTERNET` to `AndroidManifest.xml` enabling outbound socket connections on Android 15 release builds.
   - Robust tokenized HTML attribute parser for `LinkMetadataService` extracting OpenGraph `<meta>` tags with reverse attribute orders, unencoded HTML entities (`&quot;`, `&#39;`, `&amp;`), and apostrophes.
@@ -23,8 +35,9 @@
   - Dynamic Screen Protection (`FLAG_SECURE`) toggle via Flutter MethodChannel (`"sli_vault/security"`) for temporary QA screenshot capture.
   - Soft-wrapping headings and compact controls eliminating RenderFlex overflows on narrow devices and high text scaling.
 - **Testing & Verification**:
-  - Expanded automated test suite to 115 tests (100% passing).
+  - Expanded automated test suite to 117 tests (100% passing).
   - Clean static analysis (`flutter analyze` with 0 issues).
+  - Single universal release APK built and verified with the official release key (`CN=Sahaya Savari F`).
 
 ## 1.0.2
 

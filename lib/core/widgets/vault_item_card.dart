@@ -103,13 +103,19 @@ class _VaultItemCardState extends State<VaultItemCard> {
     required double width,
     required double height,
   }) {
+    final thumbRadius = BorderRadius.circular(
+      context.sli.visualStyle == SliVisualStyle.minimal
+          ? 6
+          : (context.sli.visualStyle == SliVisualStyle.express ? 16 : 10),
+    );
+
     if (widget.item.type == VaultItemType.link) {
       return Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
           color: context.sli.charcoal,
-          borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+          borderRadius: thumbRadius,
           border: Border.all(color: context.sli.border),
         ),
         alignment: Alignment.center,
@@ -131,7 +137,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
         final file = snapshot.data;
         if (file != null) {
           return ClipRRect(
-            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderRadius: thumbRadius,
             child: Image.file(
               file,
               width: width,
@@ -153,12 +159,18 @@ class _VaultItemCardState extends State<VaultItemCard> {
     required double width,
     required double height,
   }) {
+    final thumbRadius = BorderRadius.circular(
+      context.sli.visualStyle == SliVisualStyle.minimal
+          ? 6
+          : (context.sli.visualStyle == SliVisualStyle.express ? 16 : 10),
+    );
+
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
         color: context.sli.charcoal,
-        borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+        borderRadius: thumbRadius,
         border: Border.all(color: context.sli.border),
       ),
       alignment: Alignment.center,
@@ -170,12 +182,34 @@ class _VaultItemCardState extends State<VaultItemCard> {
     );
   }
 
+  BorderRadius _badgeRadius(BuildContext context) {
+    switch (context.sli.visualStyle) {
+      case SliVisualStyle.minimal:
+        return BorderRadius.circular(4);
+      case SliVisualStyle.express:
+        return BorderRadius.circular(SliTokens.radiusPill);
+      case SliVisualStyle.classic:
+        return BorderRadius.circular(SliTokens.radiusSm + 2);
+    }
+  }
+
+  BorderRadius _tagRadius(BuildContext context) {
+    switch (context.sli.visualStyle) {
+      case SliVisualStyle.minimal:
+        return BorderRadius.circular(4);
+      case SliVisualStyle.express:
+        return BorderRadius.circular(SliTokens.radiusPill);
+      case SliVisualStyle.classic:
+        return BorderRadius.circular(SliTokens.radiusSm + 4);
+    }
+  }
+
   Widget _buildTypePill(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
       decoration: BoxDecoration(
         color: context.sli.charcoal,
-        borderRadius: BorderRadius.circular(SliTokens.radiusSm),
+        borderRadius: _badgeRadius(context),
         border: Border.all(color: context.sli.border),
       ),
       child: Row(
@@ -205,7 +239,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
         color: SliTokens.coral.withValues(alpha: 0.16),
-        borderRadius: BorderRadius.circular(SliTokens.radiusSm),
+        borderRadius: _badgeRadius(context),
         border: Border.all(color: SliTokens.coral.withValues(alpha: 0.45)),
       ),
       child: Row(
@@ -231,7 +265,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: context.sli.charcoal,
-        borderRadius: BorderRadius.circular(SliTokens.radiusSm),
+        borderRadius: _badgeRadius(context),
         border: Border.all(color: context.sli.border),
       ),
       child: Row(
@@ -387,9 +421,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
                         ),
                         decoration: BoxDecoration(
                           color: context.sli.charcoal,
-                          borderRadius: BorderRadius.circular(
-                            SliTokens.radiusPill,
-                          ),
+                          borderRadius: _tagRadius(context),
                           border: Border.all(color: context.sli.border),
                         ),
                         child: Text(

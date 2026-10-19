@@ -102,12 +102,14 @@ class _SliVaultAppState extends State<SliVaultApp> {
               accent: widget.controller.accentPreset,
               atmosphereEnabled: widget.controller.atmosphereEnabled,
               reduceMotion: widget.controller.reduceMotion,
+              visualStyle: widget.controller.visualStyle,
             ),
             darkTheme: SliTheme.buildTheme(
               mode: isAmoled ? 'amoled' : 'dark',
               accent: widget.controller.accentPreset,
               atmosphereEnabled: widget.controller.atmosphereEnabled,
               reduceMotion: widget.controller.reduceMotion,
+              visualStyle: widget.controller.visualStyle,
             ),
             themeMode: switch (widget.controller.themeModeName) {
               'light' => ThemeMode.light,

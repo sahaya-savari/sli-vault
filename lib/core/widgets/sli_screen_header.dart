@@ -33,18 +33,37 @@ class SliScreenHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.sli;
+    final isMinimal = palette.visualStyle == SliVisualStyle.minimal;
+    final isExpress = palette.visualStyle == SliVisualStyle.express;
+
+    final headerPadding = isMinimal
+        ? EdgeInsets.fromLTRB(
+            SliTokens.spaceMd,
+            SliTokens.spaceSm,
+            actions.isEmpty ? SliTokens.spaceMd : SliTokens.spaceXs,
+            SliTokens.spaceSm,
+          )
+        : (isExpress
+            ? EdgeInsets.fromLTRB(
+                SliTokens.spaceLg + 2,
+                SliTokens.spaceMd,
+                actions.isEmpty ? SliTokens.spaceLg + 2 : SliTokens.spaceSm,
+                SliTokens.spaceMd,
+              )
+            : EdgeInsets.fromLTRB(
+                SliTokens.spaceLg,
+                SliTokens.spaceSm + 2,
+                actions.isEmpty ? SliTokens.spaceLg : SliTokens.spaceXs,
+                SliTokens.spaceSm + 2,
+              ));
+
     return Padding(
       padding: margin,
       child: SliGlassSurface(
-        enableBlur: true,
+        enableBlur: !isMinimal,
         blurSigma: 6,
-        borderRadius: BorderRadius.circular(SliTokens.radiusLg),
-        padding: EdgeInsets.fromLTRB(
-          SliTokens.spaceLg,
-          SliTokens.spaceSm + 2,
-          actions.isEmpty ? SliTokens.spaceLg : SliTokens.spaceXs,
-          SliTokens.spaceSm + 2,
-        ),
+        borderRadius: BorderRadius.circular(palette.cardRadius),
+        padding: headerPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,

@@ -633,7 +633,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: SliTokens.spaceSm),
-                    Text(
+                    SelectableText(
                       item.description!,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),

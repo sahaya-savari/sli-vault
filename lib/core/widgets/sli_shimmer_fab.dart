@@ -74,31 +74,55 @@ class _SliShimmerFabState extends State<SliShimmerFab>
     final disableAnimations =
         (MediaQuery.maybeOf(context)?.disableAnimations ?? false) ||
         context.sli.reduceMotion;
+
+    final double pressedScale;
+    switch (context.sli.visualStyle) {
+      case SliVisualStyle.minimal:
+        pressedScale = 0.98;
+        break;
+      case SliVisualStyle.express:
+        pressedScale = 0.94;
+        break;
+      case SliVisualStyle.classic:
+        pressedScale = 0.96;
+        break;
+    }
+
+    final fabRadius = BorderRadius.circular(
+      context.sli.visualStyle == SliVisualStyle.express
+          ? SliTokens.radiusPill
+          : (context.sli.visualStyle == SliVisualStyle.minimal ? 12.0 : 16.0),
+    );
+
+    final isMinimal = context.sli.visualStyle == SliVisualStyle.minimal;
+
     return RepaintBoundary(
       child: Semantics(
         button: true,
         label: 'Add Item to Vault',
         child: AnimatedScale(
-          scale: _isPressed ? 0.94 : 1.0,
+          scale: _isPressed ? pressedScale : 1.0,
           duration: disableAnimations
               ? Duration.zero
               : const Duration(milliseconds: 120),
           curve: Curves.easeOutCubic,
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(SliTokens.radiusPill),
-              boxShadow: [
-                BoxShadow(
-                  color: context.sli.primaryAccent.withValues(alpha: 0.35),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-                BoxShadow(
-                  color: context.sli.secondaryAccent.withValues(alpha: 0.15),
-                  blurRadius: 28,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+              borderRadius: fabRadius,
+              boxShadow: isMinimal
+                  ? const []
+                  : [
+                      BoxShadow(
+                        color: context.sli.primaryAccent.withValues(alpha: 0.35),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
+                      ),
+                      BoxShadow(
+                        color: context.sli.secondaryAccent.withValues(alpha: 0.15),
+                        blurRadius: 28,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
             ),
             child: Material(
               color: Colors.transparent,
@@ -108,7 +132,7 @@ class _SliShimmerFabState extends State<SliShimmerFab>
                   if (mounted) setState(() => _isPressed = highlighted);
                 },
                 onTap: widget.onTap,
-                borderRadius: BorderRadius.circular(SliTokens.radiusPill),
+                borderRadius: fabRadius,
                 child: AnimatedBuilder(
                   animation: _animController,
                   builder: (context, child) {
@@ -124,9 +148,7 @@ class _SliShimmerFabState extends State<SliShimmerFab>
                             context.sli.secondaryAccent,
                           ],
                         ),
-                        borderRadius: BorderRadius.circular(
-                          SliTokens.radiusPill,
-                        ),
+                        borderRadius: fabRadius,
                         border: Border.all(
                           color: Colors.white.withValues(
                             alpha:

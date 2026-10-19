@@ -144,17 +144,44 @@ class SliAccentPreset {
   }
 }
 
+/// Three cohesive, independently crafted visual styles adapted from modern
+/// mobile design principles:
+/// * [classic] - The canonical SLI Vault experience: balanced 16dp radii,
+///   rich dark contrast, and Anthropic Serif typography.
+/// * [minimal] - Compact, content-first layout: crisp 8dp radii, tight padding,
+///   solid matte plates, and snappy 140ms transitions.
+/// * [express] - Sculpted squircle curves: 24dp cards, pill badges, layered
+///   surfaces, and smooth 320ms spring motion.
+enum SliVisualStyle {
+  classic,
+  minimal,
+  express;
+
+  String get key => name;
+
+  String get label => switch (this) {
+    classic => 'Classic',
+    minimal => 'Minimal',
+    express => 'Express',
+  };
+
+  String get description => switch (this) {
+    classic => 'Balanced 16dp surfaces, rich contrast, and signature Anthropic Serif typography.',
+    minimal => 'Crisp 8dp lines, tight padding, and content-first information density.',
+    express => 'Sculpted 24dp squircle curves, pill badges, and refined micro-motion.',
+  };
+
+  static SliVisualStyle fromKey(String? key) {
+    return switch (key) {
+      'minimal' => minimal,
+      'express' => express,
+      _ => classic,
+    };
+  }
+}
+
 /// Theme-aware surface and text tokens. Brand colors stay fixed; these values
 /// are the semantic tokens that differ between light and dark appearances.
-///
-/// Every colour that must keep a WCAG contrast ratio against a themed surface
-/// lives here so screens never hard-code a brand colour for text:
-/// * [onAccent] - label/icon colour on the orange/coral gradient (>=5.8:1).
-/// * [accentText] / [amberText] / [errorText] / [successText] - brand hues
-///   tuned to read as text/icons on this theme's surfaces (>=4.5:1).
-/// * [destructive] / [onDestructive] - filled danger buttons.
-/// * [surfaceFill] .. [plateStroke] - translucent card, glass and "empty-state
-///   plate" fills that stay legible over the full-bleed background art.
 @immutable
 class SliPalette extends ThemeExtension<SliPalette> {
   final Color obsidian;
@@ -180,6 +207,13 @@ class SliPalette extends ThemeExtension<SliPalette> {
   final LinearGradient primaryGradient;
   final bool atmosphereEnabled;
   final bool reduceMotion;
+  final SliVisualStyle visualStyle;
+  final double cardRadius;
+  final double buttonRadius;
+  final double sheetRadius;
+  final double cardPadding;
+  final Duration motionDuration;
+  final Curve motionCurve;
 
   const SliPalette({
     required this.obsidian,
@@ -205,6 +239,13 @@ class SliPalette extends ThemeExtension<SliPalette> {
     this.primaryGradient = SliTokens.primaryGradient,
     this.atmosphereEnabled = true,
     this.reduceMotion = false,
+    this.visualStyle = SliVisualStyle.classic,
+    this.cardRadius = SliTokens.radiusLg,
+    this.buttonRadius = SliTokens.radiusMd,
+    this.sheetRadius = SliTokens.radiusXl,
+    this.cardPadding = 16.0,
+    this.motionDuration = const Duration(milliseconds: 250),
+    this.motionCurve = Curves.easeInOutCubic,
   });
 
   @override
@@ -232,6 +273,13 @@ class SliPalette extends ThemeExtension<SliPalette> {
     LinearGradient? primaryGradient,
     bool? atmosphereEnabled,
     bool? reduceMotion,
+    SliVisualStyle? visualStyle,
+    double? cardRadius,
+    double? buttonRadius,
+    double? sheetRadius,
+    double? cardPadding,
+    Duration? motionDuration,
+    Curve? motionCurve,
   }) => SliPalette(
     obsidian: obsidian ?? this.obsidian,
     charcoal: charcoal ?? this.charcoal,
@@ -256,6 +304,13 @@ class SliPalette extends ThemeExtension<SliPalette> {
     primaryGradient: primaryGradient ?? this.primaryGradient,
     atmosphereEnabled: atmosphereEnabled ?? this.atmosphereEnabled,
     reduceMotion: reduceMotion ?? this.reduceMotion,
+    visualStyle: visualStyle ?? this.visualStyle,
+    cardRadius: cardRadius ?? this.cardRadius,
+    buttonRadius: buttonRadius ?? this.buttonRadius,
+    sheetRadius: sheetRadius ?? this.sheetRadius,
+    cardPadding: cardPadding ?? this.cardPadding,
+    motionDuration: motionDuration ?? this.motionDuration,
+    motionCurve: motionCurve ?? this.motionCurve,
   );
 
   @override
@@ -286,6 +341,13 @@ class SliPalette extends ThemeExtension<SliPalette> {
       primaryGradient: t < 0.5 ? primaryGradient : other.primaryGradient,
       atmosphereEnabled: other.atmosphereEnabled,
       reduceMotion: other.reduceMotion,
+      visualStyle: t < 0.5 ? visualStyle : other.visualStyle,
+      cardRadius: cardRadius + (other.cardRadius - cardRadius) * t,
+      buttonRadius: buttonRadius + (other.buttonRadius - buttonRadius) * t,
+      sheetRadius: sheetRadius + (other.sheetRadius - sheetRadius) * t,
+      cardPadding: cardPadding + (other.cardPadding - cardPadding) * t,
+      motionDuration: t < 0.5 ? motionDuration : other.motionDuration,
+      motionCurve: t < 0.5 ? motionCurve : other.motionCurve,
     );
   }
 }
@@ -302,10 +364,44 @@ class SliTheme {
     String accent = 'orange',
     bool atmosphereEnabled = true,
     bool reduceMotion = false,
+    SliVisualStyle visualStyle = SliVisualStyle.classic,
   }) {
     final preset = SliAccentPreset.find(accent);
     final isAmoled = mode == 'amoled';
     final isLight = mode == 'light';
+
+    final double cardRadius = switch (visualStyle) {
+      SliVisualStyle.minimal => SliTokens.radiusSm,
+      SliVisualStyle.express => SliTokens.radiusXl,
+      SliVisualStyle.classic => SliTokens.radiusLg,
+    };
+    final double buttonRadius = switch (visualStyle) {
+      SliVisualStyle.minimal => 6.0,
+      SliVisualStyle.express => SliTokens.radiusPill,
+      SliVisualStyle.classic => SliTokens.radiusMd,
+    };
+    final double sheetRadius = switch (visualStyle) {
+      SliVisualStyle.minimal => SliTokens.radiusMd,
+      SliVisualStyle.express => 32.0,
+      SliVisualStyle.classic => SliTokens.radiusXl,
+    };
+    final double cardPadding = switch (visualStyle) {
+      SliVisualStyle.minimal => 12.0,
+      SliVisualStyle.express => 18.0,
+      SliVisualStyle.classic => 16.0,
+    };
+    final Duration motionDuration = reduceMotion
+        ? Duration.zero
+        : switch (visualStyle) {
+            SliVisualStyle.minimal => const Duration(milliseconds: 140),
+            SliVisualStyle.express => const Duration(milliseconds: 320),
+            SliVisualStyle.classic => const Duration(milliseconds: 250),
+          };
+    final Curve motionCurve = switch (visualStyle) {
+      SliVisualStyle.minimal => Curves.easeOutQuad,
+      SliVisualStyle.express => const Cubic(0.34, 1.56, 0.64, 1.0),
+      SliVisualStyle.classic => Curves.easeInOutCubic,
+    };
 
     if (isLight) {
       final base = ThemeData.light(useMaterial3: true);
@@ -333,6 +429,13 @@ class SliTheme {
         primaryGradient: preset.gradient,
         atmosphereEnabled: atmosphereEnabled,
         reduceMotion: reduceMotion,
+        visualStyle: visualStyle,
+        cardRadius: cardRadius,
+        buttonRadius: buttonRadius,
+        sheetRadius: sheetRadius,
+        cardPadding: cardPadding,
+        motionDuration: motionDuration,
+        motionCurve: motionCurve,
       );
       final colorScheme = ColorScheme.light(
         primary: preset.primary,
@@ -372,7 +475,7 @@ class SliTheme {
           color: palette.surfaceFill,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(SliTokens.radiusLg)),
+            borderRadius: BorderRadius.all(Radius.circular(cardRadius)),
             side: BorderSide(color: palette.border),
           ),
         ),
@@ -393,19 +496,19 @@ class SliTheme {
             vertical: 14,
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderRadius: BorderRadius.circular(buttonRadius.clamp(6.0, 16.0)),
             borderSide: BorderSide(color: palette.border),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderRadius: BorderRadius.circular(buttonRadius.clamp(6.0, 16.0)),
             borderSide: BorderSide(color: palette.border),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderRadius: BorderRadius.circular(buttonRadius.clamp(6.0, 16.0)),
             borderSide: BorderSide(color: preset.primary, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderRadius: BorderRadius.circular(buttonRadius.clamp(6.0, 16.0)),
             borderSide: BorderSide(color: palette.errorText),
           ),
         ),
@@ -415,7 +518,7 @@ class SliTheme {
             foregroundColor: palette.onAccent,
             minimumSize: const Size(SliTokens.minTouchTarget, 52),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+              borderRadius: BorderRadius.circular(buttonRadius),
             ),
             textStyle: const TextStyle(
               fontFamily: SliTokens.fontFamily,
@@ -431,7 +534,7 @@ class SliTheme {
             minimumSize: const Size(SliTokens.minTouchTarget, 48),
             side: BorderSide(color: palette.border),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+              borderRadius: BorderRadius.circular(buttonRadius),
             ),
             textStyle: const TextStyle(
               fontFamily: SliTokens.fontFamily,
@@ -446,7 +549,7 @@ class SliTheme {
             color: palette.textPrimary,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderRadius: BorderRadius.circular(buttonRadius.clamp(8.0, 16.0)),
             side: BorderSide(color: palette.border),
           ),
           behavior: SnackBarBehavior.floating,
@@ -485,7 +588,7 @@ class SliTheme {
         dialogTheme: DialogThemeData(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(SliTokens.radiusLg),
+            borderRadius: BorderRadius.circular(cardRadius),
             side: BorderSide(color: palette.border.withValues(alpha: 0.8)),
           ),
           titleTextStyle: TextStyle(
@@ -537,6 +640,13 @@ class SliTheme {
             primaryGradient: preset.gradient,
             atmosphereEnabled: atmosphereEnabled,
             reduceMotion: reduceMotion,
+            visualStyle: visualStyle,
+            cardRadius: cardRadius,
+            buttonRadius: buttonRadius,
+            sheetRadius: sheetRadius,
+            cardPadding: cardPadding,
+            motionDuration: motionDuration,
+            motionCurve: motionCurve,
           )
         : SliPalette(
             obsidian: SliTokens.obsidian,
@@ -562,6 +672,13 @@ class SliTheme {
             primaryGradient: preset.gradient,
             atmosphereEnabled: atmosphereEnabled,
             reduceMotion: reduceMotion,
+            visualStyle: visualStyle,
+            cardRadius: cardRadius,
+            buttonRadius: buttonRadius,
+            sheetRadius: sheetRadius,
+            cardPadding: cardPadding,
+            motionDuration: motionDuration,
+            motionCurve: motionCurve,
           );
 
     final colorScheme = ColorScheme.dark(
@@ -608,7 +725,7 @@ class SliTheme {
         color: palette.surfaceFill,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusLg),
+          borderRadius: BorderRadius.circular(cardRadius),
           side: BorderSide(
             color: preset.primary.withValues(alpha: 0.22),
             width: 1,
@@ -628,19 +745,19 @@ class SliTheme {
           vertical: 14,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+          borderRadius: BorderRadius.circular(buttonRadius.clamp(6.0, 16.0)),
           borderSide: BorderSide(color: palette.border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+          borderRadius: BorderRadius.circular(buttonRadius.clamp(6.0, 16.0)),
           borderSide: BorderSide(color: palette.border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+          borderRadius: BorderRadius.circular(buttonRadius.clamp(6.0, 16.0)),
           borderSide: BorderSide(color: preset.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+          borderRadius: BorderRadius.circular(buttonRadius.clamp(6.0, 16.0)),
           borderSide: const BorderSide(color: SliTokens.error),
         ),
       ),
@@ -650,7 +767,7 @@ class SliTheme {
           foregroundColor: SliTokens.onPrimaryGradient,
           minimumSize: const Size(SliTokens.minTouchTarget, 52),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderRadius: BorderRadius.circular(buttonRadius),
           ),
           textStyle: const TextStyle(
             fontFamily: SliTokens.fontFamily,
@@ -666,7 +783,7 @@ class SliTheme {
           minimumSize: const Size(SliTokens.minTouchTarget, 48),
           side: BorderSide(color: palette.border),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+            borderRadius: BorderRadius.circular(buttonRadius),
           ),
           textStyle: const TextStyle(
             fontFamily: SliTokens.fontFamily,
@@ -681,7 +798,7 @@ class SliTheme {
           color: SliTokens.textPrimary,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+          borderRadius: BorderRadius.circular(buttonRadius.clamp(8.0, 16.0)),
           side: BorderSide(color: palette.border),
         ),
         behavior: SnackBarBehavior.floating,
@@ -689,7 +806,7 @@ class SliTheme {
       dialogTheme: DialogThemeData(
         backgroundColor: palette.elevated,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(SliTokens.radiusLg),
+          borderRadius: BorderRadius.circular(cardRadius),
           side: BorderSide(color: palette.border),
         ),
         titleTextStyle: const TextStyle(
@@ -817,35 +934,46 @@ class SliTheme {
   }
 
   static TextTheme _textTheme(SliPalette palette) {
+    final style = palette.visualStyle;
+    final isExpress = style == SliVisualStyle.express;
+    final isMinimal = style == SliVisualStyle.minimal;
+
+    final displayFamily = isMinimal ? SliTokens.fontFamily : SliTokens.fontFamilyDisplay;
+    final displayWeight = isExpress ? FontWeight.w800 : FontWeight.w700;
+    final headlineWeight = isExpress ? FontWeight.w800 : FontWeight.w700;
+    final titleWeight = isExpress ? FontWeight.w800 : (isMinimal ? FontWeight.w700 : FontWeight.w600);
+    final displayTracking = isExpress ? -0.7 : (isMinimal ? -0.2 : -0.5);
+    final headlineTracking = isExpress ? -0.4 : (isMinimal ? -0.1 : -0.2);
+
     return TextTheme(
       displayLarge: TextStyle(
-        fontFamily: SliTokens.fontFamilyDisplay,
-        fontSize: 30,
-        height: 1.2,
-        fontWeight: FontWeight.w700,
+        fontFamily: displayFamily,
+        fontSize: isExpress ? 32 : (isMinimal ? 28 : 30),
+        height: 1.15,
+        fontWeight: displayWeight,
         color: palette.textPrimary,
-        letterSpacing: -0.5,
+        letterSpacing: displayTracking,
       ),
       headlineMedium: TextStyle(
-        fontFamily: SliTokens.fontFamilyDisplay,
-        fontSize: 22,
-        height: 1.25,
-        fontWeight: FontWeight.w700,
+        fontFamily: displayFamily,
+        fontSize: isExpress ? 23 : (isMinimal ? 20 : 22),
+        height: 1.2,
+        fontWeight: headlineWeight,
         color: palette.textPrimary,
-        letterSpacing: -0.2,
+        letterSpacing: headlineTracking,
       ),
       titleLarge: TextStyle(
-        fontFamily: SliTokens.fontFamilyDisplay,
-        fontSize: 18,
-        height: 1.3,
-        fontWeight: FontWeight.w600,
+        fontFamily: displayFamily,
+        fontSize: isExpress ? 19 : 18,
+        height: 1.25,
+        fontWeight: titleWeight,
         color: palette.textPrimary,
       ),
       titleMedium: TextStyle(
         fontFamily: SliTokens.fontFamily,
         fontSize: 15,
         height: 1.35,
-        fontWeight: FontWeight.w600,
+        fontWeight: isExpress ? FontWeight.w700 : FontWeight.w600,
         color: palette.textPrimary,
       ),
       bodyLarge: TextStyle(
@@ -866,7 +994,7 @@ class SliTheme {
         fontFamily: SliTokens.fontFamily,
         fontSize: 14,
         height: 1.3,
-        fontWeight: FontWeight.w600,
+        fontWeight: isExpress ? FontWeight.w700 : FontWeight.w600,
         color: palette.textPrimary,
       ),
       labelMedium: TextStyle(
@@ -894,6 +1022,19 @@ class SliTheme {
       height: 1.35,
     );
   }
+}
+
+class SliMotion {
+  const SliMotion._();
+
+  static const Duration fast = Duration(milliseconds: 140);
+  static const Duration normal = Duration(milliseconds: 250);
+  static const Duration express = Duration(milliseconds: 320);
+
+  static const Curve bouncy = Cubic(0.34, 1.56, 0.64, 1.0);
+  static const Curve springy = Cubic(0.2, 1.3, 0.4, 1.0);
+  static const Curve emphasized = Cubic(0.2, 0.0, 0.0, 1.0);
+  static const Curve settle = Curves.easeOutCubic;
 }
 
 enum SliAtmosphereVariant { cinematic, abstractFlow, cosmicSubtle, surfaceOnly }

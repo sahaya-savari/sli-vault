@@ -28,7 +28,7 @@ class TypeFilterBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: SliTokens.spaceLg),
       child: SliGlassSurface(
         enableBlur: false,
-        borderRadius: BorderRadius.circular(SliTokens.radiusLg),
+        borderRadius: BorderRadius.circular(context.sli.cardRadius),
         padding: const EdgeInsets.all(4),
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -80,10 +80,18 @@ class _FilterSegment extends StatelessWidget {
         'Filter by $label'
         '${count != null ? ', $count items' : ''}';
 
-    final fg = selected ? context.sli.onAccent : context.sli.textPrimary;
+    final palette = context.sli;
+    final isExpress = palette.visualStyle == SliVisualStyle.express;
+    final isMinimal = palette.visualStyle == SliVisualStyle.minimal;
+    final reduceMotion = palette.reduceMotion;
+    final fg = selected ? palette.onAccent : palette.textPrimary;
     final iconColor = selected
-        ? context.sli.onAccent
-        : context.sli.textSecondary;
+        ? palette.onAccent
+        : palette.textSecondary;
+
+    final double segRadius = isExpress
+        ? SliTokens.radiusPill
+        : (isMinimal ? 6.0 : palette.buttonRadius);
 
     return Semantics(
       selected: selected,
@@ -93,25 +101,36 @@ class _FilterSegment extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-          child: Ink(
+          borderRadius: BorderRadius.circular(segRadius),
+          child: AnimatedContainer(
+            duration: reduceMotion ? Duration.zero : palette.motionDuration,
+            curve: palette.motionCurve,
             height: SliTokens.minTouchTarget,
             decoration: BoxDecoration(
-              gradient: selected ? context.sli.primaryGradient : null,
+              gradient: selected ? palette.primaryGradient : null,
               color: selected
                   ? null
                   : (isDark
                         ? Colors.transparent
                         : Colors.white.withValues(alpha: 0.0)),
-              borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-              border: selected ? null : Border.all(color: Colors.transparent),
+              borderRadius: BorderRadius.circular(segRadius),
+              border: selected
+                  ? null
+                  : (isMinimal && !isDark
+                        ? Border.all(color: palette.border.withValues(alpha: 0.5))
+                        : Border.all(color: Colors.transparent)),
             ),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: compact ? 2 : 4),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SliIcon(filter.iconAsset, size: 16, color: iconColor),
+                  AnimatedScale(
+                    scale: selected && isExpress ? 1.08 : 1.0,
+                    duration: reduceMotion ? Duration.zero : SliMotion.fast,
+                    curve: SliMotion.bouncy,
+                    child: SliIcon(filter.iconAsset, size: 16, color: iconColor),
+                  ),
                   const SizedBox(height: 2),
                   FittedBox(
                     fit: BoxFit.scaleDown,
@@ -121,10 +140,11 @@ class _FilterSegment extends StatelessWidget {
                       softWrap: false,
                       textAlign: TextAlign.center,
                       style: TextStyle(
+                        fontFamily: SliTokens.fontFamily,
                         color: fg,
-                        fontSize: compact ? 11.5 : 12.5,
+                        fontSize: compact ? 11.5 : (isExpress ? 12.0 : 12.5),
                         fontWeight: selected
-                            ? FontWeight.w700
+                            ? (isExpress ? FontWeight.w800 : FontWeight.w700)
                             : FontWeight.w500,
                         height: 1.1,
                       ),
