@@ -1,7 +1,7 @@
 name: sli_vault
 description: "SLI Vault — Privacy-first, local-first personal vault to save links, screenshots, and images."
 publish_to: 'none'
-version: 1.0.2+4
+version: 1.0.1+7
 
 environment:
   sdk: ^3.13.5
@@ -24,12 +24,12 @@ dependencies:
   crypto: ^3.0.7
   local_auth: ^2.3.0
   video_player: ^2.14.1
+  sqflite_common_ffi: ^2.3.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  sqflite_common_ffi: ^2.3.5
 
 flutter:
   uses-material-design: true

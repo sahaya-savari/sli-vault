@@ -156,7 +156,9 @@ class _SliGradientButtonState extends State<SliGradientButton> {
                 boxShadow: active
                     ? [
                         BoxShadow(
-                          color: context.sli.primaryAccent.withValues(alpha: 0.22),
+                          color: context.sli.primaryAccent.withValues(
+                            alpha: 0.22,
+                          ),
                           blurRadius: 10,
                           offset: const Offset(0, 3),
                         ),

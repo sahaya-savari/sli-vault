@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -8,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../core/assets/sli_assets.dart';
 import '../../core/theme/sli_theme.dart';
 import '../../core/widgets/sli_svg.dart';
+import '../../data/link_metadata_service.dart';
 import '../../data/local_image_storage.dart';
 import '../../data/vault_controller.dart';
 import '../../domain/vault_item.dart';
@@ -105,25 +107,121 @@ class _AddItemSheetState extends State<AddItemSheet> {
   String? _errorMessage;
   bool _isSaving = false;
   bool _isPicking = false;
+  bool _isFetchingMetadata = false;
+  LinkMetadata? _fetchedMetadata;
+  Timer? _metadataDebounceTimer;
+  String? _lastFetchedUrl;
+  String? _metadataFeedbackMessage;
 
   bool get _isLinkMode => _selectedType == VaultItemType.link;
 
   @override
   void initState() {
     super.initState();
-    // Screenshots are ordinary imported images now. Existing screenshot
-    // records retain their stored type for filters and backup compatibility.
     _selectedType = widget.initialType == VaultItemType.screenshot
         ? VaultItemType.image
         : widget.initialType;
     _selectedCollection = widget.controller.collections.contains('General')
         ? 'General'
         : (widget.controller.collections.firstOrNull ?? 'General');
+
+    _urlController.addListener(_onUrlChanged);
+
     if (widget.initialUrl != null) {
-      _urlController.text = widget.initialUrl!;
+      final extracted = VaultValidators.extractUrlFromText(widget.initialUrl!);
+      if (extracted.url != null) {
+        _urlController.text = extracted.url!;
+        if (extracted.remainingText != null &&
+            extracted.remainingText!.isNotEmpty) {
+          _descriptionController.text = extracted.remainingText!;
+        }
+      } else {
+        _urlController.text = widget.initialUrl!;
+      }
+      if (widget.controller.autoFetchMetadata &&
+          _urlController.text.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _tryFetchMetadata();
+        });
+      }
     }
     if (widget.initialImagePath != null) {
       _loadIncomingImage(widget.initialImagePath!);
+    }
+  }
+
+  void _onUrlChanged() {
+    if (_urlError != null) {
+      setState(() => _urlError = null);
+    }
+    if (!_isLinkMode || !widget.controller.autoFetchMetadata) return;
+
+    final text = _urlController.text.trim();
+    final check = VaultValidators.validateAndNormalizeUrl(text);
+    if (!check.isValid || check.normalizedUrl == null) return;
+    if (check.normalizedUrl == _lastFetchedUrl) return;
+
+    _metadataDebounceTimer?.cancel();
+    _metadataDebounceTimer = Timer(const Duration(milliseconds: 650), () {
+      if (mounted && _isLinkMode) {
+        _tryFetchMetadata();
+      }
+    });
+  }
+
+  Future<void> _tryFetchMetadata({bool isManual = false}) async {
+    final text = _urlController.text.trim();
+    final check = VaultValidators.validateAndNormalizeUrl(text);
+    if (!check.isValid || check.normalizedUrl == null) {
+      if (isManual && mounted) {
+        setState(() {
+          _urlError = check.errorMessage ?? 'Enter a valid URL first.';
+        });
+      }
+      return;
+    }
+    if (_isFetchingMetadata) return;
+
+    _metadataDebounceTimer?.cancel();
+    setState(() {
+      _isFetchingMetadata = true;
+      _metadataFeedbackMessage = null;
+    });
+
+    try {
+      final meta = await LinkMetadataService.fetchMetadata(
+        check.normalizedUrl!,
+      );
+      if (!mounted) return;
+      _lastFetchedUrl = check.normalizedUrl;
+      setState(() {
+        _fetchedMetadata = meta;
+        if (meta.hasContent) {
+          if (_titleController.text.trim().isEmpty &&
+              meta.title != null &&
+              meta.title!.isNotEmpty) {
+            _titleController.text = meta.title!;
+          }
+          if (_descriptionController.text.trim().isEmpty &&
+              meta.description != null &&
+              meta.description!.isNotEmpty) {
+            _descriptionController.text = meta.description!;
+          }
+          _metadataFeedbackMessage =
+              'Auto-filled details from ${meta.domain ?? 'link'}';
+        } else {
+          _metadataFeedbackMessage =
+              isManual ? 'No metadata found for this link' : null;
+        }
+      });
+    } catch (_) {
+      if (isManual && mounted) {
+        setState(() {
+          _metadataFeedbackMessage = 'Could not load preview metadata';
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _isFetchingMetadata = false);
     }
   }
 
@@ -141,6 +239,8 @@ class _AddItemSheetState extends State<AddItemSheet> {
 
   @override
   void dispose() {
+    _metadataDebounceTimer?.cancel();
+    _urlController.removeListener(_onUrlChanged);
     _urlController.dispose();
     _titleController.dispose();
     _descriptionController.dispose();
@@ -437,6 +537,24 @@ class _AddItemSheetState extends State<AddItemSheet> {
                       errorText: _urlError,
                       errorMaxLines: 2,
                       errorStyle: TextStyle(color: palette.errorText),
+                      suffixIcon: _isFetchingMetadata
+                          ? const Padding(
+                              padding: EdgeInsets.all(12),
+                              child: SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            )
+                          : IconButton(
+                              tooltip: 'Fetch preview metadata',
+                              icon: const Icon(Icons.auto_awesome, size: 18),
+                              onPressed: _isSaving
+                                  ? null
+                                  : () => _tryFetchMetadata(isManual: true),
+                            ),
                     ),
                   )
                 else
@@ -448,6 +566,48 @@ class _AddItemSheetState extends State<AddItemSheet> {
                     onPick: _pickImageFile,
                     onRemove: _removeImage,
                   ),
+                if (_isLinkMode &&
+                    _fetchedMetadata != null &&
+                    _fetchedMetadata!.hasContent) ...[
+                  const SizedBox(height: SliTokens.spaceSm),
+                  Container(
+                    padding: const EdgeInsets.all(SliTokens.spaceSm),
+                    decoration: BoxDecoration(
+                      color: palette.elevated,
+                      borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+                      border: Border.all(color: palette.border),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.link, size: 16, color: palette.accentText),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _metadataFeedbackMessage ??
+                                'Preview retrieved for ${_fetchedMetadata!.domain ?? 'link'}. You can customize title and notes below.',
+                            style: TextStyle(
+                              color: palette.textSecondary,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ] else if (_isLinkMode && _metadataFeedbackMessage != null) ...[
+                  const SizedBox(height: SliTokens.spaceSm),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Text(
+                      _metadataFeedbackMessage!,
+                      style: TextStyle(
+                        color: palette.textSecondary,
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: SliTokens.spaceMd),
                 TextField(
                   key: const Key('add_title_field'),

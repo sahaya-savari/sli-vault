@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../domain/vault_item.dart';
+import 'article_snapshot_service.dart';
 import 'backup_service.dart';
 import 'local_image_storage.dart';
 import 'vault_database.dart';
@@ -32,17 +34,26 @@ class VaultController extends ChangeNotifier {
   static const String _prefThemeMode = 'sli_vault_theme_mode_v1';
   static const String _prefLockEnabled = 'sli_vault_lock_enabled_v1';
   static const String _prefAccentPreset = 'sli_vault_accent_preset_v1';
-  static const String _prefAtmosphereEnabled = 'sli_vault_atmosphere_enabled_v1';
+  static const String _prefAtmosphereEnabled =
+      'sli_vault_atmosphere_enabled_v1';
   static const String _prefLockTimeout = 'sli_vault_lock_timeout_v1';
-  static const String _prefDefaultStartupTab = 'sli_vault_default_startup_tab_v1';
-  static const String _prefDefaultBrowseSort = 'sli_vault_default_browse_sort_v1';
+  static const String _prefDefaultStartupTab =
+      'sli_vault_default_startup_tab_v1';
+  static const String _prefDefaultBrowseSort =
+      'sli_vault_default_browse_sort_v1';
   static const String _prefInAppBrowser = 'sli_vault_in_app_browser_v1';
   static const String _prefHapticsEnabled = 'sli_vault_haptics_enabled_v1';
   static const String _prefReduceMotion = 'sli_vault_reduce_motion_v1';
+  static const String _prefAutoFetchMetadata =
+      'sli_vault_auto_fetch_metadata_v1';
+  static const String _prefBrowseDensity = 'sli_vault_browse_density_v1';
+  static const String _prefScreenProtection =
+      'sli_vault_screen_protection_v1';
 
   final VaultDatabase database;
   final LocalImageStorage imageStorage;
   late final VaultBackupService backupService;
+  late final ArticleSnapshotService snapshotService;
   final Uuid _uuid = const Uuid();
 
   List<VaultItem> _allItems = const [];
@@ -61,6 +72,11 @@ class VaultController extends ChangeNotifier {
   bool _inAppBrowser = false;
   bool _hapticsEnabled = true;
   bool _reduceMotion = false;
+  bool _autoFetchMetadata = true;
+  String _browseDensity = 'comfortable';
+  bool _screenProtectionEnabled = true;
+  final Map<String, (VaultItem item, Uint8List? imageBytes)> _undoCache = {};
+  final Map<String, List<(VaultItem item, Uint8List? imageBytes)>> _batchUndoCache = {};
 
   // UI Filter / Sort / Layout state
   VaultTypeFilter _homeFilter = VaultTypeFilter.all;
@@ -71,11 +87,16 @@ class VaultController extends ChangeNotifier {
   String _searchQuery = '';
   int _approxStorageBytes = 0;
 
-  VaultController({required this.database, required this.imageStorage}) {
+  VaultController({
+    required this.database,
+    required this.imageStorage,
+    ArticleSnapshotService? snapshotService,
+  }) {
     backupService = VaultBackupService(
       database: database,
       imageStorage: imageStorage,
     );
+    this.snapshotService = snapshotService ?? const ArticleSnapshotService();
   }
 
   bool get isInitialized => _isInitialized;
@@ -100,6 +121,9 @@ class VaultController extends ChangeNotifier {
   bool get inAppBrowser => _inAppBrowser;
   bool get hapticsEnabled => _hapticsEnabled;
   bool get reduceMotion => _reduceMotion;
+  bool get autoFetchMetadata => _autoFetchMetadata;
+  String get browseDensity => _browseDensity;
+  bool get screenProtectionEnabled => _screenProtectionEnabled;
 
   List<String> get collections {
     final names = <String>{'General', ..._customCollections};
@@ -133,8 +157,34 @@ class VaultController extends ChangeNotifier {
     _inAppBrowser = prefs.getBool(_prefInAppBrowser) ?? false;
     _hapticsEnabled = prefs.getBool(_prefHapticsEnabled) ?? true;
     _reduceMotion = prefs.getBool(_prefReduceMotion) ?? false;
+    _autoFetchMetadata = prefs.getBool(_prefAutoFetchMetadata) ?? true;
+    _browseDensity = prefs.getString(_prefBrowseDensity) ?? 'comfortable';
+    _screenProtectionEnabled = prefs.getBool(_prefScreenProtection) ?? true;
+    if (Platform.isAndroid) {
+      try {
+        const MethodChannel('sli_vault/security').invokeMethod(
+          'setScreenProtection',
+          {'enabled': _screenProtectionEnabled},
+        );
+      } catch (_) {}
+    }
     await reloadLibrary();
     _isInitialized = true;
+    notifyListeners();
+  }
+
+  Future<void> setScreenProtectionEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefScreenProtection, enabled);
+    _screenProtectionEnabled = enabled;
+    if (Platform.isAndroid) {
+      try {
+        const MethodChannel('sli_vault/security').invokeMethod(
+          'setScreenProtection',
+          {'enabled': enabled},
+        );
+      } catch (_) {}
+    }
     notifyListeners();
   }
 
@@ -158,8 +208,8 @@ class VaultController extends ChangeNotifier {
   Future<void> setAccentPreset(String preset) async {
     final normalized =
         {'orange', 'amber', 'teal', 'violet', 'coral'}.contains(preset)
-            ? preset
-            : 'orange';
+        ? preset
+        : 'orange';
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_prefAccentPreset, normalized);
     _accentPreset = normalized;
@@ -214,6 +264,21 @@ class VaultController extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_prefReduceMotion, reduce);
     _reduceMotion = reduce;
+    notifyListeners();
+  }
+
+  Future<void> setAutoFetchMetadata(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefAutoFetchMetadata, enabled);
+    _autoFetchMetadata = enabled;
+    notifyListeners();
+  }
+
+  Future<void> setBrowseDensity(String density) async {
+    final normalized = density == 'compact' ? 'compact' : 'comfortable';
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_prefBrowseDensity, normalized);
+    _browseDensity = normalized;
     notifyListeners();
   }
 
@@ -382,6 +447,11 @@ class VaultController extends ChangeNotifier {
           (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
         );
         break;
+      case VaultSortOption.titleZA:
+        filtered.sort(
+          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+        );
+        break;
     }
     return filtered;
   }
@@ -394,10 +464,48 @@ class VaultController extends ChangeNotifier {
     }).toList();
   }
 
-  List<VaultItem> searchAllItems(String query, VaultTypeFilter filter) {
-    return _allItems.where((item) {
-      return filter.matches(item.type) && item.matchesSearch(query);
+  List<VaultItem> searchAdvanced({
+    required String query,
+    VaultTypeFilter typeFilter = VaultTypeFilter.all,
+    String? collection,
+    bool onlyFavorites = false,
+    VaultSortOption sort = VaultSortOption.newestFirst,
+  }) {
+    final filtered = _allItems.where((item) {
+      if (!typeFilter.matches(item.type)) return false;
+      if (onlyFavorites && !item.isFavorite) return false;
+      if (collection != null &&
+          collection.trim().isNotEmpty &&
+          collection != 'All' &&
+          item.collection != collection) {
+        return false;
+      }
+      return item.matchesSearch(query);
     }).toList();
+
+    switch (sort) {
+      case VaultSortOption.newestFirst:
+        filtered.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        break;
+      case VaultSortOption.oldestFirst:
+        filtered.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        break;
+      case VaultSortOption.titleAZ:
+        filtered.sort(
+          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+        );
+        break;
+      case VaultSortOption.titleZA:
+        filtered.sort(
+          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+        );
+        break;
+    }
+    return filtered;
+  }
+
+  List<VaultItem> searchAllItems(String query, VaultTypeFilter filter) {
+    return searchAdvanced(query: query, typeFilter: filter);
   }
 
   VaultItem? findById(String id) {
@@ -601,6 +709,143 @@ class VaultController extends ChangeNotifier {
       await imageStorage.deleteImageIfUnused(imageId, activeRefs);
     }
     await reloadLibrary();
+  }
+
+  Future<VaultItem?> deleteItemWithUndo(String itemId) async {
+    final existing = findById(itemId);
+    if (existing == null) return null;
+
+    Uint8List? imageBytes;
+    final imageId = existing.localImageId;
+    if (imageId != null) {
+      final file = await imageStorage.resolveImageFile(imageId);
+      if (file != null && await file.exists()) {
+        try {
+          imageBytes = await file.readAsBytes();
+        } catch (_) {}
+      }
+    }
+    _undoCache[itemId] = (existing, imageBytes);
+
+    await deleteItem(itemId);
+    return existing;
+  }
+
+  Future<bool> undoDelete(String itemId) async {
+    final entry = _undoCache.remove(itemId);
+    if (entry == null) return false;
+
+    final item = entry.$1;
+    final bytes = entry.$2;
+
+    if (bytes != null && item.localImageId != null) {
+      await imageStorage.saveImageBytes(
+        bytes,
+        explicitImageId: item.localImageId,
+      );
+    }
+
+    if (findById(item.id) == null) {
+      await database.upsertItem(item);
+    }
+    await reloadLibrary();
+    return true;
+  }
+
+  Future<void> bulkSetFavorite(List<String> ids, bool isFavorite) async {
+    if (ids.isEmpty) return;
+    await database.updateFavorites(ids, isFavorite);
+    await reloadLibrary();
+  }
+
+  Future<void> bulkMoveToCollection(
+    List<String> ids,
+    String targetCollection,
+  ) async {
+    if (ids.isEmpty) return;
+    final normalized = targetCollection.trim().isEmpty
+        ? 'General'
+        : targetCollection.trim();
+    await database.updateCollections(ids, normalized);
+    await reloadLibrary();
+  }
+
+  Future<int> bulkDeleteItems(List<String> ids) async {
+    if (ids.isEmpty) return 0;
+    int count = 0;
+    for (final id in ids) {
+      final existing = findById(id);
+      if (existing != null) {
+        await deleteItem(id);
+        count++;
+      }
+    }
+    return count;
+  }
+
+  Future<String> bulkDeleteWithUndo(List<String> ids) async {
+    if (ids.isEmpty) return '';
+    final batchId = _uuid.v4();
+    final batchEntries = <(VaultItem, Uint8List?)>[];
+
+    for (final id in ids) {
+      final existing = findById(id);
+      if (existing == null) continue;
+
+      Uint8List? imageBytes;
+      final imageId = existing.localImageId;
+      if (imageId != null) {
+        final file = await imageStorage.resolveImageFile(imageId);
+        if (file != null && await file.exists()) {
+          try {
+            imageBytes = await file.readAsBytes();
+          } catch (_) {}
+        }
+      }
+      batchEntries.add((existing, imageBytes));
+    }
+
+    _batchUndoCache[batchId] = batchEntries;
+
+    for (final id in ids) {
+      await deleteItem(id);
+    }
+
+    return batchId;
+  }
+
+  Future<int> undoBulkDelete(String batchId) async {
+    final entries = _batchUndoCache.remove(batchId);
+    if (entries == null || entries.isEmpty) return 0;
+
+    int restoredCount = 0;
+    for (final entry in entries) {
+      final item = entry.$1;
+      final bytes = entry.$2;
+
+      if (bytes != null && item.localImageId != null) {
+        await imageStorage.saveImageBytes(
+          bytes,
+          explicitImageId: item.localImageId,
+        );
+      }
+
+      if (findById(item.id) == null) {
+        await database.upsertItem(item);
+        restoredCount++;
+      }
+    }
+
+    await reloadLibrary();
+    return restoredCount;
+  }
+
+  Future<Uint8List> exportSelectedItems(List<String> ids) async {
+    final selected = _allItems.where((item) => ids.contains(item.id)).toList();
+    if (selected.isEmpty) {
+      throw StateError('No items selected for export.');
+    }
+    return backupService.createBackupArchiveBytes(itemsOverride: selected);
   }
 
   /// Removes every item and stored image and also forgets user-created

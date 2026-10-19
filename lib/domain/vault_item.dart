@@ -70,7 +70,8 @@ enum VaultTypeFilter {
 enum VaultSortOption {
   newestFirst('Recently saved'),
   oldestFirst('Oldest first'),
-  titleAZ('Title A-Z');
+  titleAZ('Title A-Z'),
+  titleZA('Title Z-A');
 
   final String label;
   const VaultSortOption(this.label);
@@ -153,6 +154,38 @@ class VaultValidators {
   static List<String> parseTagInput(String input) {
     if (input.trim().isEmpty) return const [];
     return normalizeTags(input.split(','));
+  }
+
+  /// Extracts an HTTP/HTTPS URL from arbitrary shared text, returning
+  /// the extracted URL and any surrounding text that can serve as title or notes.
+  static ({String? url, String? remainingText}) extractUrlFromText(String raw) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty) {
+      return (url: null, remainingText: null);
+    }
+    // Check if the entire string is a valid URL first
+    final direct = validateAndNormalizeUrl(trimmed);
+    if (direct.isValid) {
+      return (url: direct.normalizedUrl, remainingText: null);
+    }
+    // Search for embedded http:// or https:// URL
+    final urlRegex = RegExp(r'https?://[^\s<>"]+');
+    final match = urlRegex.firstMatch(trimmed);
+    if (match != null) {
+      final candidate = match.group(0)!;
+      final check = validateAndNormalizeUrl(candidate);
+      if (check.isValid) {
+        final remaining = trimmed
+            .replaceFirst(candidate, '')
+            .replaceAll(RegExp(r'\s+'), ' ')
+            .trim();
+        return (
+          url: check.normalizedUrl,
+          remainingText: remaining.isEmpty ? null : remaining,
+        );
+      }
+    }
+    return (url: null, remainingText: trimmed);
   }
 }
 

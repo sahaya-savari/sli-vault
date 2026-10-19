@@ -139,9 +139,37 @@ class VaultDatabase {
     });
   }
 
+  Future<void> updateFavorites(List<String> itemIds, bool isFavorite) async {
+    if (itemIds.isEmpty) return;
+    final db = await database;
+    await db.transaction((txn) async {
+      for (final id in itemIds) {
+        await txn.update(
+          tableVaultItems,
+          {
+            'is_favorite': isFavorite ? 1 : 0,
+            'updated_at': DateTime.now().toUtc().toIso8601String(),
+          },
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+      }
+    });
+  }
+
   Future<void> deleteItemById(String id) async {
     final db = await database;
     await db.delete(tableVaultItems, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteItemsByIds(List<String> ids) async {
+    if (ids.isEmpty) return;
+    final db = await database;
+    await db.transaction((txn) async {
+      for (final id in ids) {
+        await txn.delete(tableVaultItems, where: 'id = ?', whereArgs: [id]);
+      }
+    });
   }
 
   Future<Set<String>> getActiveReferencedImageIds({

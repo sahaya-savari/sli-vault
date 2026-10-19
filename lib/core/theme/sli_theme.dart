@@ -91,10 +91,10 @@ class SliAccentPreset {
   });
 
   LinearGradient get gradient => LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [primary, secondary],
-      );
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [primary, secondary],
+  );
 
   static const List<SliAccentPreset> presets = [
     SliAccentPreset(
@@ -140,10 +140,7 @@ class SliAccentPreset {
   ];
 
   static SliAccentPreset find(String? key) {
-    return presets.firstWhere(
-      (p) => p.key == key,
-      orElse: () => presets.first,
-    );
+    return presets.firstWhere((p) => p.key == key, orElse: () => presets.first);
   }
 }
 
@@ -921,9 +918,13 @@ class SliAtmosphere extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final palette = context.sli;
     final hasArt =
-        palette.atmosphereEnabled && imageAsset != null && imageAsset!.isNotEmpty;
+        palette.atmosphereEnabled &&
+        imageAsset != null &&
+        imageAsset!.isNotEmpty;
 
-    if ((variant == SliAtmosphereVariant.surfaceOnly || !palette.atmosphereEnabled) && !hasArt) {
+    if ((variant == SliAtmosphereVariant.surfaceOnly ||
+            !palette.atmosphereEnabled) &&
+        !hasArt) {
       return ColoredBox(color: palette.obsidian, child: child);
     }
 
@@ -1064,7 +1065,8 @@ class SliAtmosphere extends StatelessWidget {
                 ),
               ),
             ),
-          if (palette.atmosphereEnabled && variant != SliAtmosphereVariant.surfaceOnly)
+          if (palette.atmosphereEnabled &&
+              variant != SliAtmosphereVariant.surfaceOnly)
             for (var i = 0; i < centers.length; i++)
               Positioned.fill(
                 child: DecoratedBox(

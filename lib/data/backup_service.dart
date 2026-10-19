@@ -57,8 +57,9 @@ class VaultBackupService {
   /// spreadsheet-compatible `links.csv`, and portable `README.txt` (FR-015).
   Future<Uint8List> createBackupArchiveBytes({
     List<String>? customCollections,
+    List<VaultItem>? itemsOverride,
   }) async {
-    final items = await database.getAllItems();
+    final items = itemsOverride ?? await database.getAllItems();
     final archive = Archive();
 
     final imageEntries = <Map<String, Object?>>[];
