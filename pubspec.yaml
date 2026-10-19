@@ -1,7 +1,7 @@
 name: sli_vault
-description: "SLI Vault — Privacy-first, local-first personal vault to save links, screenshots, and images."
+description: "SLI Vault - Privacy-first, local-first personal vault to save links, screenshots, and images."
 publish_to: 'none'
-version: 1.0.3+2007
+version: 1.0.1+2008
 
 environment:
   sdk: ^3.13.5
@@ -48,41 +48,28 @@ flutter:
     - assets/icons/status/
 
   fonts:
-    # Primary UI — Anthropic Serif (MB Claude Font pack, Text optical size)
-    - family: Claude
+    # Primary UI - Figtree (SIL Open Font License 1.1)
+    - family: Figtree
       fonts:
-        - asset: assets/fonts/claude/AnthropicSerif-Text-Regular-Static.otf
+        - asset: assets/fonts/figtree/Figtree-Light.ttf
+          weight: 300
+        - asset: assets/fonts/figtree/Figtree-Regular.ttf
           weight: 400
-        - asset: assets/fonts/claude/AnthropicSerif-Text-RegularItalic-Static.otf
-          weight: 400
-          style: italic
-        - asset: assets/fonts/claude/AnthropicSerif-Text-Medium-Static.otf
+        - asset: assets/fonts/figtree/Figtree-Medium.ttf
           weight: 500
-        - asset: assets/fonts/claude/AnthropicSerif-Text-MediumItalic-Static.otf
-          weight: 500
-          style: italic
-        - asset: assets/fonts/claude/AnthropicSerif-Text-Semibold-Static.otf
+        - asset: assets/fonts/figtree/Figtree-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/claude/AnthropicSerif-Text-SemiboldItalic-Static.otf
-          weight: 600
-          style: italic
-        - asset: assets/fonts/claude/AnthropicSerif-Text-Bold-Static.otf
+        - asset: assets/fonts/figtree/Figtree-Bold.ttf
           weight: 700
-        - asset: assets/fonts/claude/AnthropicSerif-Text-BoldItalic-Static.otf
-          weight: 700
-          style: italic
-    # Display optical size for large titles / hero headings
-    - family: ClaudeDisplay
+        - asset: assets/fonts/figtree/Figtree-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/figtree/Figtree-Black.ttf
+          weight: 900
+    # Expressive Display & Title - Google Sans Flex (SIL Open Font License 1.1)
+    - family: GoogleSansFlex
       fonts:
-        - asset: assets/fonts/claude/AnthropicSerif-Display-Regular-Static.otf
-          weight: 400
-        - asset: assets/fonts/claude/AnthropicSerif-Display-Medium-Static.otf
-          weight: 500
-        - asset: assets/fonts/claude/AnthropicSerif-Display-Semibold-Static.otf
-          weight: 600
-        - asset: assets/fonts/claude/AnthropicSerif-Display-Bold-Static.otf
-          weight: 700
-    # Secondary / technical mono (JetBrains Mono, OFL-1.1)
+        - asset: assets/fonts/google_sans_flex/GoogleSansFlex.ttf
+    # Secondary / technical mono - JetBrains Mono (SIL Open Font License 1.1)
     - family: JetBrainsMono
       fonts:
         - asset: assets/fonts/jetbrains_mono/JetBrainsMono-Regular.ttf

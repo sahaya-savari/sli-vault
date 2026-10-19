@@ -25,7 +25,7 @@ void main() async {
     imageStorage: LocalImageStorage(),
   );
 
-  // Do not await init before [runApp] — that made [SliLoadingScreen] unreachable.
+  // Do not await init before [runApp] - that made [SliLoadingScreen] unreachable.
   runApp(SliVaultApp(controller: controller));
   unawaited(controller.initialize());
 }

@@ -1,6 +1,31 @@
 # Changelog
 
-## 1.0.3
+## 1.0.1
+
+- Version `1.0.1+2008`. Application ID remains `com.sahayasavari.slivault`.
+- Monotonically increasing `versionCode: 2008` guarantees seamless upgrade path on Android devices over previous `2007` test builds.
+- **Three-Style Design System (Classic, Minimal, Express)**:
+  - Three genuinely distinct visual identities:
+    - **Classic:** Familiar, balanced hierarchy, 16dp rounded cards, standard elevation, Figtree sans-serif.
+    - **Minimal:** Compact 12dp cards, hairline outlines, muted monochromatic surfaces, JetBrains Mono metadata.
+    - **Express:** 24dp squircle cards, full-pill badges, gradient borders, ambient glow, tactile squish physics on buttons (`SliGradientButton`).
+- **Font Licensing Reconciliation**:
+  - Unverified proprietary Anthropic Serif fonts removed from app bundle to ensure complete redistribution compliance.
+  - Bundled verified SIL Open Font License 1.1 fonts: **Figtree** (7 weights) and **Google Sans Flex**, alongside **JetBrains Mono**.
+- **Screenshot Capture Enabled (`FLAG_SECURE` Removal)**:
+  - Removed window-level screenshot blocking (`FLAG_SECURE`) in `MainActivity.kt`.
+  - Screenshots and screen recordings now capture normally across all tabs and modal sheets.
+  - Device privacy maintained via biometric authentication and app-level idle locking.
+- **Redesigned About Screen**:
+  - Style-adaptive hero branding card with dynamic glow, centralized `SliVersion` metadata, developer attribution (`Sahaya Savari`, `@sahaya-savari`), and verified GitHub/Website links.
+- **Punctuation Clean-up**:
+  - Replaced all em/en dashes with standard hyphens across 25 source and documentation files.
+- **Automated Verification**:
+  - 116 unit, widget, and contract tests passing (100%).
+  - Clean static analysis (`dart analyze` reports 0 issues).
+  - 21 companion website tests passing.
+
+## 1.0.3 (Historical Local Revision)
 
 - Version `1.0.3+2007`. Application ID remains `com.sahayasavari.slivault`.
 - **Three-Style Design System (Classic, Minimal, Express)**:
@@ -67,7 +92,7 @@
 - Re-enabled `FLAG_SECURE` in `MainActivity` (`onCreate` / `onResume`) with a source contract test. Screenshot / screen-recording / recent-apps limitations are documented; physical-device confirmation remains **NOT TESTED**.
 - Added GitHub Actions workflow `.github/workflows/android-release.yml` for manual signed production APK/AAB builds (fails closed without repository signing secrets).
 - Merged divergent `main` history (local signing docs + remote README typography).
-- Android application ID set to `com.sahayasavari.slivault`; release builds signed with a local owner keystore via `android/key.properties` (never committed). GitHub Release `v1.0.0` APK is for sideload / open-source distribution — not Play Store.
+- Android application ID set to `com.sahayasavari.slivault`; release builds signed with a local owner keystore via `android/key.properties` (never committed). GitHub Release `v1.0.0` APK is for sideload / open-source distribution - not Play Store.
 - README hero replaced with the full-quality SLI Vault promotional banner; earlier debug-signed pre-release replaced by a signed owner-keystore release package.
 - Release prep: added MIT licensing for project-owned code and documentation, with an explicit third-party asset boundary.
 - Verified on 2026-10-16 with Flutter 3.47.7 for `v1.0.0`: `flutter pub get`, `flutter analyze` (no issues), `flutter test` (62 passed), `flutter build apk --release` signed with owner certificate (`CN=Sahaya Savari F`). Physical-device checks remain NOT TESTED.

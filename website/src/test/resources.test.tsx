@@ -55,7 +55,7 @@ describe("Resources page", () => {
 
     expect(head.meta).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ title: "Resources — SLI Vault" }),
+        expect.objectContaining({ title: "Resources - SLI Vault" }),
         expect.objectContaining({ name: "robots", content: "index, follow" }),
         expect.objectContaining({ property: "og:url", content: `${siteUrl}/resources` }),
       ]),

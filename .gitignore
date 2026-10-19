@@ -84,18 +84,13 @@ replay_pid*
 *.ap_
 *.idsig
 
+# Scratch workspace directory for audit and verification scripts
+/scratch/
+
 # Local UIAutomator dump parser from device QA (not part of the app)
 /tool_parse_ui.py
 
 # Companion website (website/) — Node/Bun artifacts only; source is tracked
-/website/node_modules/
-/website/dist/
-/website/.vite/
-/website/.env
-/website/.env.*
-!/website/.env.example
-
-# Companion website (Node/Bun workspace under website/)
 /website/node_modules/
 /website/dist/
 /website/.vite/

@@ -4,7 +4,7 @@ import '../theme/sli_theme.dart';
 
 /// Calm elevated card with restrained press feedback.
 ///
-/// Intentionally does **not** track pan/swipe with a moving spotlight — that
+/// Intentionally does **not** track pan/swipe with a moving spotlight - that
 /// produced an unwanted orange glow while scrolling lists in dark mode.
 class SliSpotlightCard extends StatefulWidget {
   final Widget child;

@@ -32,7 +32,7 @@ The shell exposes exactly five primary destinations: Home, Browse, Favorites, Co
 
 Optional relocking uses `local_auth` and device credentials. The shell locks when the activity is actually paused, then prompts on resume. It does not encrypt the database, and the app does not receive biometric templates.
 
-`FLAG_SECURE` is enabled in `MainActivity.kt` via `applySecureFlag()` from `onCreate` and `onResume`. Screenshots, screen recording of the app window, and recent-apps previews should be blocked on supporting devices; physical-device confirmation is **NOT TESTED**.
+`FLAG_SECURE` has been removed in `MainActivity.kt` (`onCreate` and `onResume`) so users can capture screenshots and record screens normally. Biometrics and app-level idle locking protect personal records.
 
 The production Android manifest requests biometric authentication only. The app does not include a networking, analytics, advertising, notification, or cloud SDK. URL opening and explicit sharing are delegated to user-selected external apps. Copy URL is the only clipboard write.
 

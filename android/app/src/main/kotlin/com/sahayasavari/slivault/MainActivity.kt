@@ -17,26 +17,17 @@ class MainActivity : FlutterFragmentActivity() {
 	private var shareChannel: MethodChannel? = null
 	private var pendingShare: Map<String, String?>? = null
 
-	private var isScreenProtectionEnabled = true
-
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		applySecureFlag()
+		// Screenshot blocking (FLAG_SECURE) removed so users can take screenshots normally
+		window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
 		captureShareIntent(intent)
 	}
 
 	override fun onResume() {
 		super.onResume()
-		// Re-assert after recreation / return from background so the protected UI stays covered.
-		applySecureFlag()
-	}
-
-	private fun applySecureFlag() {
-		if (isScreenProtectionEnabled) {
-			window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-		} else {
-			window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-		}
+		// Ensure window permits screen capture when resumed
+		window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
 	}
 
 	override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -45,13 +36,12 @@ class MainActivity : FlutterFragmentActivity() {
 		securityChannel.setMethodCallHandler { call, result ->
 			when (call.method) {
 				"setScreenProtection" -> {
-					val enabled = call.argument<Boolean>("enabled") ?: true
-					isScreenProtectionEnabled = enabled
-					applySecureFlag()
+					// Screenshot blocking disabled in accordance with v1.0.1 requirements
+					window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
 					result.success(null)
 				}
 				"isScreenProtectionEnabled" -> {
-					result.success(isScreenProtectionEnabled)
+					result.success(false)
 				}
 				else -> result.notImplemented()
 			}

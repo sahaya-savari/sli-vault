@@ -7,11 +7,11 @@ class SliAssets {
   static const String symbol = 'assets/branding/sli_vault_logo_official.png';
   static const String symbolSvg = 'assets/branding/sli-vault-symbol.svg';
 
-  /// Light plate + dark mark — readable on dark canvases.
+  /// Light plate + dark mark - readable on dark canvases.
   static const String symbolForDark =
       'assets/branding/sli-vault-symbol-monochrome-dark.svg';
 
-  /// Dark plate + light mark — readable on light canvases.
+  /// Dark plate + light mark - readable on light canvases.
   static const String symbolForLight =
       'assets/branding/sli-vault-symbol-monochrome-light.svg';
   static const String markCompact =
@@ -25,7 +25,7 @@ class SliAssets {
   static String symbolForBrightness(Brightness brightness) =>
       brightness == Brightness.dark ? symbolForDark : symbolForLight;
 
-  /// Official orange gradient mark — works on both themes.
+  /// Official orange gradient mark - works on both themes.
   static const String brandMark = symbolSvg;
 
   // Navigation Icons

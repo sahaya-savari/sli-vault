@@ -128,14 +128,15 @@ class _SliGradientButtonState extends State<SliGradientButton> {
     // While loading the button keeps its brand gradient (so the ink spinner
     // stays visible); only a truly disabled button turns neutral.
     final active = widget.onPressed != null;
+    final isExpress = context.sli.visualStyle == SliVisualStyle.express;
     final button = Semantics(
       button: true,
       enabled: enabled,
       label: widget.label,
       child: AnimatedScale(
-        scale: _isPressed && enabled ? 0.97 : 1.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOutCubic,
+        scale: _isPressed && enabled ? (isExpress ? 0.94 : 0.97) : 1.0,
+        duration: isExpress ? const Duration(milliseconds: 140) : const Duration(milliseconds: 100),
+        curve: isExpress ? Curves.easeOutBack : Curves.easeOutCubic,
         child: Material(
           color: Colors.transparent,
           child: InkWell(

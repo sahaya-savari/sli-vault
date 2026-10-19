@@ -554,7 +554,7 @@ void main() {
         ]) {
           expect(find.text(label), findsOneWidget);
         }
-        // Bottom nav must be a fixed equal-width row — never a swipe strip.
+        // Bottom nav must be a fixed equal-width row - never a swipe strip.
         final nav = find.byKey(const ValueKey('sli-bottom-nav'));
         expect(nav, findsOneWidget);
         expect(
@@ -680,7 +680,7 @@ void main() {
             overrideBaseDir: Directory(p.join(tempDir.path, 'images')),
           ),
         );
-        // Intentionally do not initialize — boot gate must show loading art.
+        // Intentionally do not initialize - boot gate must show loading art.
       });
 
       await tester.pumpWidget(SliVaultApp(controller: controller));
