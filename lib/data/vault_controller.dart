@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -9,11 +10,35 @@ import 'backup_service.dart';
 import 'local_image_storage.dart';
 import 'vault_database.dart';
 
+class VaultIntegrityReport {
+  final int totalDatabaseItems;
+  final int validImageFiles;
+  final int missingImageFiles;
+  final int orphanedImageFiles;
+
+  const VaultIntegrityReport({
+    required this.totalDatabaseItems,
+    required this.validImageFiles,
+    required this.missingImageFiles,
+    required this.orphanedImageFiles,
+  });
+
+  bool get isHealthy => missingImageFiles == 0 && orphanedImageFiles == 0;
+}
+
 class VaultController extends ChangeNotifier {
   static const String _prefOnboardingDone = 'sli_vault_onboarding_completed_v1';
   static const String _prefCollections = 'sli_vault_custom_collections_v1';
   static const String _prefThemeMode = 'sli_vault_theme_mode_v1';
   static const String _prefLockEnabled = 'sli_vault_lock_enabled_v1';
+  static const String _prefAccentPreset = 'sli_vault_accent_preset_v1';
+  static const String _prefAtmosphereEnabled = 'sli_vault_atmosphere_enabled_v1';
+  static const String _prefLockTimeout = 'sli_vault_lock_timeout_v1';
+  static const String _prefDefaultStartupTab = 'sli_vault_default_startup_tab_v1';
+  static const String _prefDefaultBrowseSort = 'sli_vault_default_browse_sort_v1';
+  static const String _prefInAppBrowser = 'sli_vault_in_app_browser_v1';
+  static const String _prefHapticsEnabled = 'sli_vault_haptics_enabled_v1';
+  static const String _prefReduceMotion = 'sli_vault_reduce_motion_v1';
 
   final VaultDatabase database;
   final LocalImageStorage imageStorage;
@@ -28,6 +53,14 @@ class VaultController extends ChangeNotifier {
   String _themeModeName = 'dark';
   bool _lockEnabled = false;
   bool _isLocked = false;
+  String _accentPreset = 'orange';
+  bool _atmosphereEnabled = true;
+  int _lockTimeoutSeconds = 0;
+  int _defaultStartupTab = 0;
+  VaultSortOption _defaultBrowseSort = VaultSortOption.newestFirst;
+  bool _inAppBrowser = false;
+  bool _hapticsEnabled = true;
+  bool _reduceMotion = false;
 
   // UI Filter / Sort / Layout state
   VaultTypeFilter _homeFilter = VaultTypeFilter.all;
@@ -59,6 +92,15 @@ class VaultController extends ChangeNotifier {
   String get themeModeName => _themeModeName;
   bool get lockEnabled => _lockEnabled;
   bool get isLocked => _isLocked;
+  String get accentPreset => _accentPreset;
+  bool get atmosphereEnabled => _atmosphereEnabled;
+  int get lockTimeoutSeconds => _lockTimeoutSeconds;
+  int get defaultStartupTab => _defaultStartupTab;
+  VaultSortOption get defaultBrowseSort => _defaultBrowseSort;
+  bool get inAppBrowser => _inAppBrowser;
+  bool get hapticsEnabled => _hapticsEnabled;
+  bool get reduceMotion => _reduceMotion;
+
   List<String> get collections {
     final names = <String>{'General', ..._customCollections};
     names.addAll(_allItems.map((item) => item.collection));
@@ -78,6 +120,19 @@ class VaultController extends ChangeNotifier {
     };
     _themeModeName = prefs.getString(_prefThemeMode) ?? 'dark';
     _lockEnabled = prefs.getBool(_prefLockEnabled) ?? false;
+    _accentPreset = prefs.getString(_prefAccentPreset) ?? 'orange';
+    _atmosphereEnabled = prefs.getBool(_prefAtmosphereEnabled) ?? true;
+    _lockTimeoutSeconds = prefs.getInt(_prefLockTimeout) ?? 0;
+    _defaultStartupTab = prefs.getInt(_prefDefaultStartupTab) ?? 0;
+    final sortName = prefs.getString(_prefDefaultBrowseSort);
+    _defaultBrowseSort = VaultSortOption.values.firstWhere(
+      (s) => s.name == sortName,
+      orElse: () => VaultSortOption.newestFirst,
+    );
+    _browseSort = _defaultBrowseSort;
+    _inAppBrowser = prefs.getBool(_prefInAppBrowser) ?? false;
+    _hapticsEnabled = prefs.getBool(_prefHapticsEnabled) ?? true;
+    _reduceMotion = prefs.getBool(_prefReduceMotion) ?? false;
     await reloadLibrary();
     _isInitialized = true;
     notifyListeners();
@@ -91,12 +146,74 @@ class VaultController extends ChangeNotifier {
   }
 
   Future<void> setThemeModeName(String name) async {
-    final normalized = {'dark', 'light', 'system'}.contains(name)
+    final normalized = {'dark', 'light', 'system', 'amoled'}.contains(name)
         ? name
         : 'dark';
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_prefThemeMode, normalized);
     _themeModeName = normalized;
+    notifyListeners();
+  }
+
+  Future<void> setAccentPreset(String preset) async {
+    final normalized =
+        {'orange', 'amber', 'teal', 'violet', 'coral'}.contains(preset)
+            ? preset
+            : 'orange';
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_prefAccentPreset, normalized);
+    _accentPreset = normalized;
+    notifyListeners();
+  }
+
+  Future<void> setAtmosphereEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefAtmosphereEnabled, enabled);
+    _atmosphereEnabled = enabled;
+    notifyListeners();
+  }
+
+  Future<void> setLockTimeoutSeconds(int seconds) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_prefLockTimeout, seconds);
+    _lockTimeoutSeconds = seconds;
+    notifyListeners();
+  }
+
+  Future<void> setDefaultStartupTab(int tabIndex) async {
+    final normalized = tabIndex.clamp(0, 3);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_prefDefaultStartupTab, normalized);
+    _defaultStartupTab = normalized;
+    notifyListeners();
+  }
+
+  Future<void> setDefaultBrowseSort(VaultSortOption sort) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_prefDefaultBrowseSort, sort.name);
+    _defaultBrowseSort = sort;
+    _browseSort = sort;
+    notifyListeners();
+  }
+
+  Future<void> setInAppBrowser(bool inApp) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefInAppBrowser, inApp);
+    _inAppBrowser = inApp;
+    notifyListeners();
+  }
+
+  Future<void> setHapticsEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefHapticsEnabled, enabled);
+    _hapticsEnabled = enabled;
+    notifyListeners();
+  }
+
+  Future<void> setReduceMotion(bool reduce) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefReduceMotion, reduce);
+    _reduceMotion = reduce;
     notifyListeners();
   }
 
@@ -132,6 +249,66 @@ class VaultController extends ChangeNotifier {
     final dbBytes = await database.getDatabaseFileSizeBytes();
     _approxStorageBytes = imgBytes + dbBytes;
     notifyListeners();
+  }
+
+  Future<void> vacuumDatabase() async {
+    await database.vacuum();
+    await reloadLibrary();
+  }
+
+  Future<int> clearTemporaryCache() async {
+    try {
+      final tempDir = await getTemporaryDirectory();
+      if (!await tempDir.exists()) return 0;
+      int bytesFreed = 0;
+      await for (final entity in tempDir.list(followLinks: false)) {
+        if (entity is File) {
+          try {
+            final len = await entity.length();
+            await entity.delete();
+            bytesFreed += len;
+          } catch (_) {}
+        }
+      }
+      await reloadLibrary();
+      return bytesFreed;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  Future<VaultIntegrityReport> checkIntegrity() async {
+    final activeIds = await database.getActiveReferencedImageIds();
+    int missing = 0;
+    int valid = 0;
+    for (final id in activeIds) {
+      final f = await imageStorage.resolveImageFile(id);
+      if (f != null && await f.exists()) {
+        valid++;
+      } else {
+        missing++;
+      }
+    }
+    final allStored = await imageStorage.listAllStoredImageIds();
+    int orphaned = 0;
+    for (final id in allStored) {
+      if (!activeIds.contains(id)) {
+        orphaned++;
+      }
+    }
+    return VaultIntegrityReport(
+      totalDatabaseItems: _allItems.length,
+      validImageFiles: valid,
+      missingImageFiles: missing,
+      orphanedImageFiles: orphaned,
+    );
+  }
+
+  Future<int> cleanOrphanedImages() async {
+    final activeIds = await database.getActiveReferencedImageIds();
+    final count = await imageStorage.cleanOrphanedImages(activeIds);
+    await reloadLibrary();
+    return count;
   }
 
   void setHomeFilter(VaultTypeFilter filter) {

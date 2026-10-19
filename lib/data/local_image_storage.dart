@@ -153,6 +153,36 @@ class LocalImageStorage {
     return total;
   }
 
+  Future<List<String>> listAllStoredImageIds() async {
+    final dir = await getImagesDir();
+    if (!await dir.exists()) return [];
+    final ids = <String>[];
+    await for (final entity in dir.list(followLinks: false)) {
+      if (entity is File) {
+        ids.add(p.basename(entity.path));
+      }
+    }
+    return ids;
+  }
+
+  Future<int> cleanOrphanedImages(Set<String> activeReferencedIds) async {
+    final dir = await getImagesDir();
+    if (!await dir.exists()) return 0;
+    int cleaned = 0;
+    await for (final entity in dir.list(followLinks: false)) {
+      if (entity is File) {
+        final id = p.basename(entity.path);
+        if (!activeReferencedIds.contains(id)) {
+          try {
+            await entity.delete();
+            cleaned++;
+          } catch (_) {}
+        }
+      }
+    }
+    return cleaned;
+  }
+
   Future<void> clearAllImages() async {
     final dir = await getImagesDir();
     if (await dir.exists()) {

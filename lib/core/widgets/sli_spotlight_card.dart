@@ -31,7 +31,7 @@ class SliSpotlightCard extends StatelessWidget {
     // background art) while dark cards keep their subtle 6% sheen.
     final cardBg = context.sli.surfaceFill;
     final borderColor = isDark
-        ? SliTokens.orange.withValues(alpha: 0.22)
+        ? context.sli.primaryAccent.withValues(alpha: 0.22)
         : context.sli.border;
 
     return DecoratedBox(
@@ -54,9 +54,9 @@ class SliSpotlightCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: effectiveRadius,
-          // Useful tap feedback — kept low so dark lists do not bloom orange.
-          splashColor: SliTokens.orange.withValues(alpha: isDark ? 0.10 : 0.08),
-          highlightColor: SliTokens.orange.withValues(
+          // Useful tap feedback — kept low so dark lists do not bloom.
+          splashColor: context.sli.primaryAccent.withValues(alpha: isDark ? 0.10 : 0.08),
+          highlightColor: context.sli.primaryAccent.withValues(
             alpha: isDark ? 0.05 : 0.04,
           ),
           child: Padding(

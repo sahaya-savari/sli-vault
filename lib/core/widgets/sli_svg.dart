@@ -150,13 +150,13 @@ class _SliGradientButtonState extends State<SliGradientButton> {
                 horizontal: SliTokens.spaceLg,
               ),
               decoration: BoxDecoration(
-                gradient: active ? SliTokens.primaryGradient : null,
+                gradient: active ? context.sli.primaryGradient : null,
                 color: active ? null : context.sli.border,
                 borderRadius: BorderRadius.circular(SliTokens.radiusMd),
                 boxShadow: active
                     ? [
                         BoxShadow(
-                          color: SliTokens.orange.withValues(alpha: 0.22),
+                          color: context.sli.primaryAccent.withValues(alpha: 0.22),
                           blurRadius: 10,
                           offset: const Offset(0, 3),
                         ),

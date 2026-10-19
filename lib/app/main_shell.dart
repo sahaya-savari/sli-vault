@@ -33,9 +33,12 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   String? _lockMessage;
   bool _isAuthenticating = false;
 
+  DateTime? _pausedAt;
+
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.controller.defaultStartupTab.clamp(0, 4);
     WidgetsBinding.instance.addObserver(this);
     PlatformShareService.listen(_presentIncomingShare);
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadInitialShare());
@@ -53,11 +56,23 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     // once the app is actually backgrounded and never start a second prompt
     // while the first prompt owns the activity.
     if (state == AppLifecycleState.paused && !_isAuthenticating) {
-      widget.controller.lockVault();
-    } else if (state == AppLifecycleState.resumed &&
-        widget.controller.isLocked &&
-        !_isAuthenticating) {
-      _authenticate();
+      _pausedAt = DateTime.now();
+      if (widget.controller.lockTimeoutSeconds == 0) {
+        widget.controller.lockVault();
+      }
+    } else if (state == AppLifecycleState.resumed && !_isAuthenticating) {
+      if (widget.controller.lockEnabled &&
+          !widget.controller.isLocked &&
+          _pausedAt != null) {
+        final elapsed = DateTime.now().difference(_pausedAt!).inSeconds;
+        if (elapsed >= widget.controller.lockTimeoutSeconds) {
+          widget.controller.lockVault();
+        }
+      }
+      _pausedAt = null;
+      if (widget.controller.isLocked) {
+        _authenticate();
+      }
     }
   }
 
@@ -254,7 +269,12 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
                 : SliShimmerFab(onTap: _showAddSheet),
             bottomNavigationBar: _BottomNavBar(
               selectedIndex: _selectedIndex,
-              onSelect: (index) => setState(() => _selectedIndex = index),
+              onSelect: (index) {
+                if (widget.controller.hapticsEnabled) {
+                  HapticFeedback.selectionClick();
+                }
+                setState(() => _selectedIndex = index);
+              },
             ),
           ),
         );
@@ -290,7 +310,7 @@ class _BottomNavBar extends StatelessWidget {
           border: Border(
             top: BorderSide(
               color: isDark
-                  ? SliTokens.orange.withValues(alpha: 0.22)
+                  ? context.sli.primaryAccent.withValues(alpha: 0.22)
                   : context.sli.border.withValues(alpha: 0.9),
             ),
           ),

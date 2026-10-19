@@ -40,7 +40,8 @@ class _SliShimmerFabState extends State<SliShimmerFab>
   void didChangeDependencies() {
     super.didChangeDependencies();
     final disableAnimations =
-        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+        (MediaQuery.maybeOf(context)?.disableAnimations ?? false) ||
+        context.sli.reduceMotion;
     if (_isTestBinding || disableAnimations) {
       _animController.stop();
       _animController.value = 0;
@@ -71,7 +72,8 @@ class _SliShimmerFabState extends State<SliShimmerFab>
   @override
   Widget build(BuildContext context) {
     final disableAnimations =
-        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+        (MediaQuery.maybeOf(context)?.disableAnimations ?? false) ||
+        context.sli.reduceMotion;
     return RepaintBoundary(
       child: Semantics(
         button: true,
@@ -87,12 +89,12 @@ class _SliShimmerFabState extends State<SliShimmerFab>
               borderRadius: BorderRadius.circular(SliTokens.radiusPill),
               boxShadow: [
                 BoxShadow(
-                  color: SliTokens.orange.withValues(alpha: 0.35),
+                  color: context.sli.primaryAccent.withValues(alpha: 0.35),
                   blurRadius: 16,
                   offset: const Offset(0, 4),
                 ),
                 BoxShadow(
-                  color: SliTokens.coral.withValues(alpha: 0.15),
+                  color: context.sli.secondaryAccent.withValues(alpha: 0.15),
                   blurRadius: 28,
                   offset: const Offset(0, 8),
                 ),
@@ -117,7 +119,10 @@ class _SliShimmerFabState extends State<SliShimmerFab>
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: const [SliTokens.orange, SliTokens.coral],
+                          colors: [
+                            context.sli.primaryAccent,
+                            context.sli.secondaryAccent,
+                          ],
                         ),
                         borderRadius: BorderRadius.circular(
                           SliTokens.radiusPill,
