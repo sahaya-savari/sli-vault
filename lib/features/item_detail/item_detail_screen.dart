@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/assets/sli_assets.dart';
 import '../../core/theme/sli_theme.dart';
 import '../../core/widgets/sli_svg.dart';
+import '../../data/article_snapshot_service.dart';
 import '../../data/vault_controller.dart';
 import '../../domain/vault_item.dart';
 
@@ -26,6 +27,187 @@ class ItemDetailScreen extends StatefulWidget {
 }
 
 class _ItemDetailScreenState extends State<ItemDetailScreen> {
+  bool _hasSnapshot = false;
+  bool _loadingSnapshot = false;
+  ArticleSnapshot? _cachedSnapshot;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkSnapshot();
+  }
+
+  Future<void> _checkSnapshot() async {
+    final has = await widget.controller.snapshotService.hasSnapshot(
+      widget.itemId,
+    );
+    if (!mounted) return;
+    setState(() => _hasSnapshot = has);
+    if (has) {
+      final snap = await widget.controller.snapshotService.loadSnapshot(
+        widget.itemId,
+      );
+      if (mounted) setState(() => _cachedSnapshot = snap);
+    }
+  }
+
+  Future<void> _saveOfflineSnapshot(VaultItem item) async {
+    if (item.url == null || _loadingSnapshot) return;
+    setState(() => _loadingSnapshot = true);
+    try {
+      final snap = await widget.controller.snapshotService.createSnapshot(
+        itemId: item.id,
+        sourceUrl: item.url!,
+        titleHint: item.title,
+      );
+      if (!mounted) return;
+      setState(() {
+        _hasSnapshot = true;
+        _cachedSnapshot = snap;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Offline article copy saved successfully.'),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not save offline copy: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _loadingSnapshot = false);
+    }
+  }
+
+  Future<void> _showReaderSheet(ArticleSnapshot snapshot) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.sli.elevated,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(SliTokens.radiusXl),
+        ),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.85,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: SliTokens.spaceLg,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.symmetric(
+                        vertical: SliTokens.spaceSm,
+                      ),
+                      decoration: BoxDecoration(
+                        color: context.sli.border,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          snapshot.title,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Delete offline copy',
+                        icon: const Icon(Icons.delete_outline, size: 20),
+                        onPressed: () async {
+                          final messenger = ScaffoldMessenger.of(context);
+                          Navigator.of(context).pop();
+                          await widget.controller.snapshotService
+                              .deleteSnapshot(snapshot.itemId);
+                          if (mounted) {
+                            setState(() {
+                              _hasSnapshot = false;
+                              _cachedSnapshot = null;
+                            });
+                            messenger.showSnackBar(
+                              const SnackBar(
+                                content: Text('Offline snapshot removed.'),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: SliTokens.spaceSm,
+                    ),
+                    padding: const EdgeInsets.all(SliTokens.spaceSm),
+                    decoration: BoxDecoration(
+                      color: context.sli.elevated,
+                      borderRadius: BorderRadius.circular(SliTokens.radiusSm),
+                      border: Border.all(color: context.sli.border),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.offline_pin,
+                          size: 16,
+                          color: context.sli.amberText,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Offline reader copy • ${(snapshot.fileSizeBytes / 1024).toStringAsFixed(1)} KB • Saved ${snapshot.createdAt.toLocal().toString().substring(0, 16)}',
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              color: context.sli.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: SliTokens.spaceSm,
+                      ),
+                      child: SelectableText(
+                        snapshot.readableContent,
+                        style: TextStyle(
+                          color: context.sli.textPrimary,
+                          fontSize: 15,
+                          height: 1.6,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _openUrl(String url) async {
     final uri = Uri.tryParse(url);
     if (uri == null) return;
@@ -92,11 +274,26 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     );
 
     if (confirmed == true) {
-      await widget.controller.deleteItem(item.id);
+      await widget.controller.deleteItemWithUndo(item.id);
       if (!mounted) return;
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Item deleted.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: context.sli.elevated,
+          content: Text(
+            'Item deleted.',
+            style: TextStyle(color: context.sli.textPrimary),
+          ),
+          action: SnackBarAction(
+            label: 'Undo',
+            textColor: context.sli.accentText,
+            onPressed: () async {
+              await widget.controller.undoDelete(item.id);
+            },
+          ),
+          duration: const Duration(seconds: 5),
+        ),
+      );
     }
   }
 
@@ -354,18 +551,88 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: SliTokens.spaceSm),
+                          if (_hasSnapshot)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton.icon(
+                                    onPressed: () {
+                                      if (_cachedSnapshot != null) {
+                                        _showReaderSheet(_cachedSnapshot!);
+                                      } else {
+                                        _checkSnapshot();
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.chrome_reader_mode_outlined,
+                                      size: 16,
+                                      color: context.sli.accentText,
+                                    ),
+                                    label: Text(
+                                      'Read Offline Copy',
+                                      style: TextStyle(
+                                        color: context.sli.accentText,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: SliTokens.spaceSm),
+                                IconButton(
+                                  tooltip: 'Update offline copy',
+                                  onPressed: _loadingSnapshot
+                                      ? null
+                                      : () => _saveOfflineSnapshot(item),
+                                  icon: _loadingSnapshot
+                                      ? const SizedBox(
+                                          width: 16,
+                                          height: 16,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : const Icon(Icons.refresh, size: 18),
+                                ),
+                              ],
+                            )
+                          else
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton.icon(
+                                onPressed: _loadingSnapshot
+                                    ? null
+                                    : () => _saveOfflineSnapshot(item),
+                                icon: _loadingSnapshot
+                                    ? const SizedBox(
+                                        width: 14,
+                                        height: 14,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Icon(
+                                        Icons.download_for_offline_outlined,
+                                        size: 16,
+                                      ),
+                                label: Text(
+                                  _loadingSnapshot
+                                      ? 'Saving offline copy...'
+                                      : 'Save Offline Copy',
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
                   ],
                   if (item.description != null &&
                       item.description!.isNotEmpty) ...[
-                    SizedBox(height: SliTokens.spaceLg),
+                    const SizedBox(height: SliTokens.spaceLg),
                     Text(
                       'Description',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
-                    SizedBox(height: SliTokens.spaceSm),
+                    const SizedBox(height: SliTokens.spaceSm),
                     Text(
                       item.description!,
                       style: Theme.of(context).textTheme.bodyLarge,

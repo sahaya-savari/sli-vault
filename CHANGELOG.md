@@ -1,5 +1,31 @@
 # Changelog
 
+## Unreleased
+
+- **Device QA Bug Fixes & Network Restoration**:
+  - Added `android.permission.INTERNET` to `AndroidManifest.xml` enabling outbound socket connections on Android 15 release builds.
+  - Robust tokenized HTML attribute parser for `LinkMetadataService` extracting OpenGraph `<meta>` tags with reverse attribute orders, unencoded HTML entities (`&quot;`, `&#39;`, `&amp;`), and apostrophes.
+  - Debounced auto-fetch listener (650ms) in Add Item sheet with loading spinner and manual retry/wand button.
+- **Delete, Multi-Selection & Undo Consistency**:
+  - Added prominent, red-tinted Delete button to multi-selection toolbar with horizontal scrolling on narrow screens and compact density.
+  - Implemented `bulkDeleteWithUndo` and `undoBulkDelete` caching item models and raw image binaries to disk/memory, preventing permanent data loss on bulk delete.
+  - Added duplicate restoration prevention checking ID existence before database re-insert.
+  - High-contrast, theme-aware Undo SnackBars in Browse and Item Detail screens.
+  - Guarded bulk action methods against empty selections.
+- **Browse Layout Density & Item Indicators**:
+  - Connected `browseDensity` to `VaultItemCard` (`isCompact` shrinks thumbnails from 72x72 to 56x56).
+  - Quick density toggle in Browse app bar header with instant persistence.
+  - Card status indicators: Pin badge, Collection indicator, and Note indicator.
+- **Offline Snapshot Management**:
+  - Distinct state-based interface in Item Detail: `Save Offline Copy`, `Read Offline Copy`, and `Update offline copy` refresh action.
+- **Settings UX Redesign**:
+  - Consolidated into 7 clean, theme-aware groups: Storage & Backup, Appearance, Privacy & Security, Browsing, Interaction, Maintenance, and About SLI Vault.
+  - Dynamic Screen Protection (`FLAG_SECURE`) toggle via Flutter MethodChannel (`"sli_vault/security"`) for temporary QA screenshot capture.
+  - Soft-wrapping headings and compact controls eliminating RenderFlex overflows on narrow devices and high text scaling.
+- **Testing & Verification**:
+  - Expanded automated test suite to 115 tests (100% passing).
+  - Clean static analysis (`flutter analyze` with 0 issues).
+
 ## 1.0.2
 
 - Version `1.0.2+4`. Application ID remains `com.sahayasavari.slivault`.

@@ -21,6 +21,9 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _queryController = TextEditingController();
   VaultTypeFilter _filter = VaultTypeFilter.all;
+  bool _favoritesOnly = false;
+  String? _selectedCollection;
+  VaultSortOption _sortOption = VaultSortOption.newestFirst;
 
   @override
   void initState() {
@@ -40,7 +43,15 @@ class _SearchScreenState extends State<SearchScreen> {
       listenable: widget.controller,
       builder: (context, _) {
         final query = _queryController.text;
-        final results = widget.controller.searchAllItems(query, _filter);
+        final results = widget.controller.searchAdvanced(
+          query: query,
+          typeFilter: _filter,
+          onlyFavorites: _favoritesOnly,
+          collection: _selectedCollection,
+          sort: _sortOption,
+        );
+
+        final collections = widget.controller.collections;
 
         return Scaffold(
           appBar: AppBar(
@@ -50,12 +61,12 @@ class _SearchScreenState extends State<SearchScreen> {
               icon: SliIcon(SliAssets.navBack, semanticLabel: 'Back'),
             ),
             title: TextField(
-              key: Key('search_input_field'),
+              key: const Key('search_input_field'),
               controller: _queryController,
               autofocus: true,
               style: TextStyle(color: context.sli.textPrimary),
               decoration: InputDecoration(
-                hintText: 'Search titles, domains, URLs, or #tags...',
+                hintText: 'Search titles, domains, URLs, #tags, or notes...',
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -84,30 +95,133 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           body: Column(
             children: [
-              SizedBox(height: SliTokens.spaceSm),
+              const SizedBox(height: SliTokens.spaceSm),
               TypeFilterBar(
                 selected: _filter,
                 onChanged: (next) => setState(() => _filter = next),
                 countForFilter: (f) =>
                     widget.controller.countByFilter(f, query: query),
               ),
-              SizedBox(height: SliTokens.spaceSm),
+              const SizedBox(height: SliTokens.spaceXs),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: SliTokens.spaceLg,
+                  vertical: SliTokens.spaceXs,
+                ),
+                child: Row(
+                  children: [
+                    FilterChip(
+                      selected: _favoritesOnly,
+                      showCheckmark: false,
+                      avatar: Icon(
+                        _favoritesOnly
+                            ? Icons.star_rounded
+                            : Icons.star_outline_rounded,
+                        size: 16,
+                        color: _favoritesOnly
+                            ? Colors.amber
+                            : context.sli.textSecondary,
+                      ),
+                      label: const Text('Favorites'),
+                      onSelected: (val) => setState(() => _favoritesOnly = val),
+                    ),
+                    const SizedBox(width: SliTokens.spaceSm),
+                    PopupMenuButton<String?>(
+                      tooltip: 'Filter by collection',
+                      initialValue: _selectedCollection,
+                      onSelected: (col) =>
+                          setState(() => _selectedCollection = col),
+                      itemBuilder: (context) => [
+                        const PopupMenuItem<String?>(
+                          value: null,
+                          child: Text('All Collections'),
+                        ),
+                        ...collections.map(
+                          (col) => PopupMenuItem<String?>(
+                            value: col,
+                            child: Text(col),
+                          ),
+                        ),
+                      ],
+                      child: Chip(
+                        avatar: Icon(
+                          Icons.folder_outlined,
+                          size: 16,
+                          color: _selectedCollection != null
+                              ? context.sli.accentText
+                              : context.sli.textSecondary,
+                        ),
+                        label: Text(
+                          _selectedCollection ?? 'Collection',
+                          style: TextStyle(
+                            color: _selectedCollection != null
+                                ? context.sli.accentText
+                                : context.sli.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: SliTokens.spaceSm),
+                    PopupMenuButton<VaultSortOption>(
+                      tooltip: 'Sort items',
+                      initialValue: _sortOption,
+                      onSelected: (sort) => setState(() => _sortOption = sort),
+                      itemBuilder: (context) => [
+                        for (final s in VaultSortOption.values)
+                          PopupMenuItem<VaultSortOption>(
+                            value: s,
+                            child: Row(
+                              children: [
+                                if (s == _sortOption)
+                                  Icon(
+                                    Icons.check,
+                                    size: 16,
+                                    color: context.sli.accentText,
+                                  )
+                                else
+                                  const SizedBox(width: 16),
+                                const SizedBox(width: 8),
+                                Text(s.label),
+                              ],
+                            ),
+                          ),
+                      ],
+                      child: Chip(
+                        avatar: Icon(
+                          Icons.sort_rounded,
+                          size: 16,
+                          color: context.sli.textSecondary,
+                        ),
+                        label: Text(_sortOption.label),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: SliTokens.spaceSm),
               Expanded(
                 child: results.isEmpty
                     ? SliEmptyState(
                         illustrationAsset: SliAssets.illEmptySearch,
-                        title: query.trim().isEmpty
+                        title:
+                            query.trim().isEmpty &&
+                                !_favoritesOnly &&
+                                _selectedCollection == null
                             ? 'No items in this category'
                             : 'No matching items found',
-                        subtitle: query.trim().isEmpty
+                        subtitle:
+                            query.trim().isEmpty &&
+                                !_favoritesOnly &&
+                                _selectedCollection == null
                             ? 'Save links or images to search your vault offline.'
-                            : 'Try another keyword, domain, or tag filter.',
+                            : 'Try adjusting your search terms, collection filter, or category.',
                       )
                     : ListView.separated(
-                        padding: EdgeInsets.all(SliTokens.spaceLg),
+                        padding: const EdgeInsets.all(SliTokens.spaceLg),
                         itemCount: results.length,
                         separatorBuilder: (_, _) =>
-                            SizedBox(height: SliTokens.spaceMd),
+                            const SizedBox(height: SliTokens.spaceMd),
                         itemBuilder: (context, index) {
                           final item = results[index];
                           return VaultItemCard(

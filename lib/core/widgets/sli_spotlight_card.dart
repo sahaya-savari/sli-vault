@@ -9,6 +9,7 @@ import '../theme/sli_theme.dart';
 class SliSpotlightCard extends StatelessWidget {
   final Widget child;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final BorderRadius? borderRadius;
   final EdgeInsetsGeometry? padding;
   final Color? glowColor;
@@ -17,6 +18,7 @@ class SliSpotlightCard extends StatelessWidget {
     super.key,
     required this.child,
     this.onTap,
+    this.onLongPress,
     this.borderRadius,
     this.padding,
     this.glowColor,
@@ -53,9 +55,12 @@ class SliSpotlightCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
+          onLongPress: onLongPress,
           borderRadius: effectiveRadius,
           // Useful tap feedback — kept low so dark lists do not bloom.
-          splashColor: context.sli.primaryAccent.withValues(alpha: isDark ? 0.10 : 0.08),
+          splashColor: context.sli.primaryAccent.withValues(
+            alpha: isDark ? 0.10 : 0.08,
+          ),
           highlightColor: context.sli.primaryAccent.withValues(
             alpha: isDark ? 0.05 : 0.04,
           ),

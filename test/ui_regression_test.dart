@@ -692,6 +692,11 @@ void main() {
           matching: find.byType(Scrollable),
         ),
       );
+      await tester.drag(
+        find.byKey(const ValueKey('settings-scroll')),
+        const Offset(0, -100),
+      );
+      await _settle(tester);
       expect(env.controller.lockEnabled, isFalse);
       await tester.tap(switchFinder);
       await _settle(tester);

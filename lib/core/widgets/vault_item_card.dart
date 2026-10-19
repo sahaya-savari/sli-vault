@@ -14,7 +14,12 @@ class VaultItemCard extends StatefulWidget {
   final VaultController controller;
   final VoidCallback onTap;
   final VoidCallback onToggleFavorite;
+  final VoidCallback? onLongPress;
+  final VoidCallback? onDelete;
   final bool isGrid;
+  final bool isSelected;
+  final bool isSelectionMode;
+  final bool? isCompact;
 
   const VaultItemCard({
     super.key,
@@ -22,7 +27,12 @@ class VaultItemCard extends StatefulWidget {
     required this.controller,
     required this.onTap,
     required this.onToggleFavorite,
+    this.onLongPress,
+    this.onDelete,
     this.isGrid = false,
+    this.isSelected = false,
+    this.isSelectionMode = false,
+    this.isCompact,
   });
 
   @override
@@ -76,6 +86,9 @@ class _VaultItemCardState extends State<VaultItemCard> {
     ];
     return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
   }
+
+  bool get _isCompact =>
+      widget.isCompact ?? (widget.controller.browseDensity == 'compact');
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +172,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
 
   Widget _buildTypePill(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
       decoration: BoxDecoration(
         color: context.sli.charcoal,
         borderRadius: BorderRadius.circular(SliTokens.radiusSm),
@@ -170,16 +183,73 @@ class _VaultItemCardState extends State<VaultItemCard> {
         children: [
           SliIcon(
             widget.item.type.iconAsset,
-            size: 12,
+            size: 11,
             color: context.sli.amberText,
           ),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           Text(
             widget.item.type.label,
             style: TextStyle(
               color: context.sli.textSecondary,
-              fontSize: 11,
+              fontSize: 10.5,
               fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPinBadge(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      decoration: BoxDecoration(
+        color: SliTokens.coral.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(SliTokens.radiusSm),
+        border: Border.all(color: SliTokens.coral.withValues(alpha: 0.45)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.push_pin, size: 10.5, color: SliTokens.coral),
+          const SizedBox(width: 2.5),
+          Text(
+            'Pinned',
+            style: TextStyle(
+              color: SliTokens.coral,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCollectionBadge(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: context.sli.charcoal,
+        borderRadius: BorderRadius.circular(SliTokens.radiusSm),
+        border: Border.all(color: context.sli.border),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.folder_outlined, size: 11, color: context.sli.amberText),
+          const SizedBox(width: 3),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 85),
+            child: Text(
+              widget.item.collection,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: context.sli.textSecondary,
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -223,58 +293,96 @@ class _VaultItemCardState extends State<VaultItemCard> {
         ? (widget.item.domain ?? widget.item.url ?? 'Saved link')
         : _formatDate(widget.item.createdAt);
 
+    final thumbSize = _isCompact ? 56.0 : 72.0;
+    final cardPadding = _isCompact
+        ? const EdgeInsets.all(SliTokens.spaceSm + 2)
+        : const EdgeInsets.all(SliTokens.spaceMd);
+
     return SliSpotlightCard(
       onTap: widget.onTap,
-      padding: EdgeInsets.all(SliTokens.spaceMd),
+      onLongPress: widget.onLongPress,
+      padding: cardPadding,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildThumbnail(context, width: 72, height: 72),
-          SizedBox(width: SliTokens.spaceMd),
+          if (widget.isSelectionMode) ...[
+            Padding(
+              padding: EdgeInsets.only(top: _isCompact ? 16 : 22, right: 10),
+              child: Icon(
+                widget.isSelected
+                    ? Icons.check_circle
+                    : Icons.radio_button_unchecked,
+                color: widget.isSelected
+                    ? context.sli.primaryAccent
+                    : context.sli.textSecondary,
+                size: 22,
+              ),
+            ),
+          ],
+          _buildThumbnail(context, width: thumbSize, height: thumbSize),
+          const SizedBox(width: SliTokens.spaceMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     _buildTypePill(context),
-                    SizedBox(width: SliTokens.spaceSm),
-                    Expanded(
-                      child: Text(
-                        _formatDate(widget.item.createdAt),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                    if (widget.item.isFavorite) _buildPinBadge(context),
+                    if (widget.item.collection.isNotEmpty &&
+                        widget.item.collection != 'General')
+                      _buildCollectionBadge(context),
+                    if (widget.item.description != null &&
+                        widget.item.description!.isNotEmpty)
+                      Tooltip(
+                        message: 'Has note or description',
+                        child: Icon(
+                          Icons.description_outlined,
+                          size: 13,
                           color: context.sli.textSecondary,
-                          fontSize: 11,
                         ),
+                      ),
+                    Text(
+                      _formatDate(widget.item.createdAt),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: context.sli.textSecondary,
+                        fontSize: 10.5,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 5),
                 Text(
                   widget.item.title,
-                  maxLines: 2,
+                  maxLines: _isCompact ? 1 : 2,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontSize: _isCompact ? 14 : 15,
+                      ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 3),
                 Text(
                   subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: _isCompact ? 12 : 13,
+                      ),
                 ),
-                if (widget.item.tags.isNotEmpty) ...[
-                  SizedBox(height: 8),
+                if (!_isCompact && widget.item.tags.isNotEmpty) ...[
+                  const SizedBox(height: 6),
                   Wrap(
                     spacing: 6,
                     runSpacing: 4,
                     children: widget.item.tags.take(3).map((t) {
                       return Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
@@ -288,7 +396,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
                           '#$t',
                           style: TextStyle(
                             color: context.sli.amberText,
-                            fontSize: 11,
+                            fontSize: 10.5,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -299,7 +407,59 @@ class _VaultItemCardState extends State<VaultItemCard> {
               ],
             ),
           ),
-          _buildFavoriteButton(context),
+          if (!widget.isSelectionMode && widget.onDelete != null)
+            PopupMenuButton<String>(
+              tooltip: 'Item options',
+              icon: Icon(
+                Icons.more_vert,
+                size: 18,
+                color: context.sli.textSecondary,
+              ),
+              color: context.sli.elevated,
+              padding: EdgeInsets.zero,
+              onSelected: (val) {
+                if (val == 'favorite') {
+                  widget.onToggleFavorite();
+                } else if (val == 'delete') {
+                  widget.onDelete!();
+                }
+              },
+              itemBuilder: (ctx) => [
+                PopupMenuItem(
+                  value: 'favorite',
+                  child: Row(
+                    children: [
+                      Icon(
+                        widget.item.isFavorite
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        size: 16,
+                        color: widget.item.isFavorite
+                            ? SliTokens.coral
+                            : ctx.sli.textPrimary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(widget.item.isFavorite ? 'Unfavorite' : 'Favorite'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete_outline, size: 16, color: ctx.sli.errorText),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Delete with Undo',
+                        style: TextStyle(color: ctx.sli.errorText),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          else
+            _buildFavoriteButton(context),
         ],
       ),
     );
@@ -312,7 +472,8 @@ class _VaultItemCardState extends State<VaultItemCard> {
 
     return SliSpotlightCard(
       onTap: widget.onTap,
-      padding: EdgeInsets.all(SliTokens.spaceMd),
+      onLongPress: widget.onLongPress,
+      padding: EdgeInsets.all(_isCompact ? SliTokens.spaceSm : SliTokens.spaceMd),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -322,28 +483,80 @@ class _VaultItemCardState extends State<VaultItemCard> {
                 Positioned.fill(
                   child: _buildThumbnail(context, width: 160, height: 110),
                 ),
-                Positioned(top: 6, left: 6, child: _buildTypePill(context)),
                 Positioned(
-                  top: 0,
-                  right: 0,
-                  child: _buildFavoriteButton(context),
+                  top: 6,
+                  left: 6,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildTypePill(context),
+                      if (widget.item.isFavorite) ...[
+                        const SizedBox(width: 4),
+                        _buildPinBadge(context),
+                      ],
+                    ],
+                  ),
                 ),
+                if (widget.item.collection.isNotEmpty &&
+                    widget.item.collection != 'General')
+                  Positioned(
+                    bottom: 6,
+                    left: 6,
+                    child: _buildCollectionBadge(context),
+                  ),
+                if (widget.isSelectionMode)
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Icon(
+                      widget.isSelected
+                          ? Icons.check_circle
+                          : Icons.radio_button_unchecked,
+                      color: widget.isSelected
+                          ? context.sli.primaryAccent
+                          : Colors.white,
+                      size: 24,
+                    ),
+                  )
+                else
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: _buildFavoriteButton(context),
+                  ),
               ],
             ),
           ),
-          SizedBox(height: SliTokens.spaceSm),
+          const SizedBox(height: SliTokens.spaceSm),
           Text(
             widget.item.title,
-            maxLines: 2,
+            maxLines: _isCompact ? 1 : 2,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontSize: _isCompact ? 13.5 : 14.5,
+                ),
           ),
-          SizedBox(height: 4),
-          Text(
-            subtitle,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodyMedium,
+          const SizedBox(height: 2),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: _isCompact ? 11.5 : 12,
+                      ),
+                ),
+              ),
+              if (widget.item.description != null &&
+                  widget.item.description!.isNotEmpty)
+                Icon(
+                  Icons.description_outlined,
+                  size: 13,
+                  color: context.sli.textSecondary,
+                ),
+            ],
           ),
         ],
       ),

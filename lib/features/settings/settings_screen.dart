@@ -283,9 +283,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Cache clean failed: $e')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Cache clean failed: $e')));
     } finally {
       if (mounted) setState(() => _isWorking = false);
     }
@@ -345,7 +344,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 report.isHealthy
                     ? 'Your vault storage is healthy and properly synchronized.'
                     : 'Some files require attention or cleanup.',
-                style: TextStyle(color: context.sli.textSecondary, fontSize: 13),
+                style: TextStyle(
+                  color: context.sli.textSecondary,
+                  fontSize: 13,
+                ),
               ),
             ],
           ),
@@ -375,9 +377,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Integrity check failed: $e')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Integrity check failed: $e')));
     } finally {
       if (mounted) setState(() => _isWorking = false);
     }
@@ -420,6 +421,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   'Approximate local storage used: ${_formatBytes(widget.controller.approxStorageBytes)}',
                   style: SliTheme.mono(context, fontSize: 12.5),
                 ),
+                const SizedBox(height: 8),
+                _StorageBar(approxBytes: widget.controller.approxStorageBytes),
                 const SizedBox(height: SliTokens.spaceSm),
                 Text(
                   'Backups produce a portable ZIP containing manifest.json, links.csv, and full-resolution image binaries for offline preservation.',
@@ -459,7 +462,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Text(
                   'Theme',
                   style: TextStyle(
-                    color: context.sli.textPrimary,
+                    color: palette.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -467,122 +470,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Text(
                   'Choose the appearance used by SLI Vault.',
                   style: TextStyle(
-                    color: context.sli.textSecondary,
+                    color: palette.textSecondary,
                     fontSize: 13,
                   ),
                 ),
                 const SizedBox(height: SliTokens.spaceSm),
                 _ThemeChoiceRow(controller: widget.controller),
-              ],
-            ),
-            const SizedBox(height: SliTokens.spaceMd),
-            _SectionCard(
-              title: 'Privacy & Security',
-              iconAsset: SliAssets.utilPrivacy,
-              children: [
-                Material(
-                  color: Colors.transparent,
-                  child: SwitchListTile(
-                    key: const ValueKey('lock-vault-switch'),
-                    contentPadding: EdgeInsets.zero,
-                    value: widget.controller.lockEnabled,
-                    onChanged: widget.controller.setLockEnabled,
-                    title: Text(
-                      'Lock vault when backgrounded',
-                      style: TextStyle(
-                        color: palette.textPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    subtitle: Text(
-                      'Uses biometrics or device credentials. Biometric lock guards app access; SQLite database on disk is not hardware-encrypted.',
-                      style: TextStyle(
-                        color: palette.textSecondary,
-                        fontSize: 13,
-                        height: 1.35,
-                      ),
-                    ),
-                  ),
-                ),
-                if (widget.controller.lockEnabled) ...[
-                  const SizedBox(height: SliTokens.spaceSm),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Lock timeout',
-                          style: TextStyle(
-                            color: palette.textPrimary,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: SliTokens.spaceSm),
-                      DropdownButton<int>(
-                        value: widget.controller.lockTimeoutSeconds,
-                        dropdownColor: palette.elevated,
-                        underline: const SizedBox.shrink(),
-                        icon: Icon(
-                          Icons.arrow_drop_down,
-                          color: palette.textSecondary,
-                        ),
-                        items: const [
-                          DropdownMenuItem(
-                            value: 0,
-                            child: Text('Immediately'),
-                          ),
-                          DropdownMenuItem(
-                            value: 60,
-                            child: Text('After 1 minute'),
-                          ),
-                          DropdownMenuItem(
-                            value: 300,
-                            child: Text('After 5 minutes'),
-                          ),
-                          DropdownMenuItem(
-                            value: 900,
-                            child: Text('After 15 minutes'),
-                          ),
-                        ],
-                        onChanged: (val) {
-                          if (val != null) {
-                            widget.controller.setLockTimeoutSeconds(val);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: SliTokens.spaceSm),
-                  OutlinedButton.icon(
-                    onPressed: () => widget.controller.lockVault(),
-                    icon: const Icon(Icons.lock_clock, size: 16),
-                    label: const _ButtonLabel('Lock Vault Now'),
-                  ),
-                ],
+                const SizedBox(height: SliTokens.spaceMd),
+                Divider(color: palette.border),
                 const SizedBox(height: SliTokens.spaceSm),
-                Text(
-                  '• 100% Local-First: Saved links, tags, and imported images are stored in app-private storage on this device.\n'
-                  '• Zero Telemetry: No accounts, cloud sync, analytics, or advertising SDKs.\n'
-                  '• Screen Protection: FLAG_SECURE is active to guard app previews and prevent accidental screen capture.',
-                  style: TextStyle(
-                    color: context.sli.textSecondary,
-                    fontSize: 13,
-                    height: 1.45,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: SliTokens.spaceMd),
-            _SectionCard(
-              title: 'Accent Palette & Atmosphere',
-              iconAsset: SliAssets.utilTheme,
-              children: [
                 Text(
                   'Accent Palette Highlight',
                   style: TextStyle(
-                    color: context.sli.textPrimary,
+                    color: palette.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -590,13 +490,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Text(
                   'Select a WCAG AA/AAA-verified brand color tone.',
                   style: TextStyle(
-                    color: context.sli.textSecondary,
+                    color: palette.textSecondary,
                     fontSize: 13,
                   ),
                 ),
                 const SizedBox(height: SliTokens.spaceSm),
                 _AccentChoiceRow(controller: widget.controller),
                 const SizedBox(height: SliTokens.spaceMd),
+                Divider(color: palette.border),
+                const SizedBox(height: SliTokens.spaceXs),
                 Material(
                   color: Colors.transparent,
                   child: SwitchListTile(
@@ -647,15 +549,158 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             const SizedBox(height: SliTokens.spaceMd),
             _SectionCard(
-              title: 'Library & Behavior Preferences',
+              title: 'Privacy & Security',
+              iconAsset: SliAssets.utilPrivacy,
+              children: [
+                Material(
+                  color: Colors.transparent,
+                  child: SwitchListTile(
+                    key: const ValueKey('lock-vault-switch'),
+                    contentPadding: EdgeInsets.zero,
+                    value: widget.controller.lockEnabled,
+                    onChanged: widget.controller.setLockEnabled,
+                    title: Text(
+                      'Lock vault when backgrounded',
+                      style: TextStyle(
+                        color: palette.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Uses biometrics or device credentials. Biometric lock guards app access; SQLite database on disk is not hardware-encrypted.',
+                      style: TextStyle(
+                        color: palette.textSecondary,
+                        fontSize: 13,
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                ),
+                if (widget.controller.lockEnabled) ...[
+                  const SizedBox(height: SliTokens.spaceSm),
+                  Text(
+                    'Lock timeout',
+                    style: TextStyle(
+                      color: palette.textPrimary,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: SliTokens.spaceXs),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: palette.elevated,
+                      borderRadius: BorderRadius.circular(
+                        SliTokens.radiusSm,
+                      ),
+                      border: Border.all(color: palette.border),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: widget.controller.lockTimeoutSeconds,
+                        dropdownColor: palette.elevated,
+                        isExpanded: true,
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: palette.textSecondary,
+                        ),
+                        items: const [
+                          DropdownMenuItem(
+                            value: 0,
+                            child: Text('Immediately'),
+                          ),
+                          DropdownMenuItem(
+                            value: 60,
+                            child: Text('After 1 minute'),
+                          ),
+                          DropdownMenuItem(
+                            value: 300,
+                            child: Text('After 5 minutes'),
+                          ),
+                          DropdownMenuItem(
+                            value: 900,
+                            child: Text('After 15 minutes'),
+                          ),
+                        ],
+                        onChanged: (val) {
+                          if (val != null) {
+                            widget.controller.setLockTimeoutSeconds(val);
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: SliTokens.spaceSm),
+                  OutlinedButton.icon(
+                    onPressed: () => widget.controller.lockVault(),
+                    icon: const Icon(Icons.lock_clock, size: 16),
+                    label: const _ButtonLabel('Lock Vault Now'),
+                  ),
+                ],
+                const SizedBox(height: SliTokens.spaceMd),
+                Divider(color: palette.border),
+                const SizedBox(height: SliTokens.spaceXs),
+                Material(
+                  color: Colors.transparent,
+                  child: SwitchListTile(
+                    key: const ValueKey('screen-protection-switch'),
+                    contentPadding: EdgeInsets.zero,
+                    value: widget.controller.screenProtectionEnabled,
+                    onChanged: widget.controller.setScreenProtectionEnabled,
+                    title: Text(
+                      'Screen protection (FLAG_SECURE)',
+                      style: TextStyle(
+                        color: palette.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Blocks screenshots and masks app content in recent apps preview. Can be temporarily disabled for QA feedback.',
+                      style: TextStyle(
+                        color: palette.textSecondary,
+                        fontSize: 13,
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: SliTokens.spaceSm),
+                Text(
+                  '• 100% Local-First: Saved links, tags, and imported images are stored in app-private storage on this device.\n'
+                  '• Zero Telemetry: No accounts, cloud sync, analytics, or advertising SDKs.\n'
+                  '• Direct Metadata: Link metadata previews connect directly to target sites without intermediate servers.',
+                  style: TextStyle(
+                    color: context.sli.textSecondary,
+                    fontSize: 13,
+                    height: 1.45,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: SliTokens.spaceMd),
+            _SectionCard(
+              title: 'Browsing',
               iconAsset: SliAssets.navBrowse,
               children: [
                 Text(
-                  'Default Startup Tab',
+                  'Thumbnail Density',
                   style: TextStyle(
                     color: palette.textPrimary,
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Choose between spacious media previews or a denser layout.',
+                  style: TextStyle(
+                    color: palette.textSecondary,
+                    fontSize: 13,
                   ),
                 ),
                 const SizedBox(height: SliTokens.spaceSm),
@@ -663,42 +708,61 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   spacing: SliTokens.spaceSm,
                   runSpacing: SliTokens.spaceSm,
                   children: [
-                    for (final tab in const [
-                      (0, 'Home'),
-                      (1, 'Browse'),
-                      (2, 'Favorites'),
-                      (3, 'Collections'),
-                    ])
-                      ChoiceChip(
-                        key: ValueKey('startup-tab-${tab.$1}'),
-                        label: Text(tab.$2),
-                        selected:
-                            widget.controller.defaultStartupTab == tab.$1,
-                        showCheckmark: false,
-                        onSelected: (_) =>
-                            widget.controller.setDefaultStartupTab(tab.$1),
-                      ),
+                    ChoiceChip(
+                      avatar: const Icon(Icons.view_agenda_outlined, size: 16),
+                      label: const Text('Comfortable'),
+                      selected:
+                          widget.controller.browseDensity == 'comfortable',
+                      showCheckmark: false,
+                      onSelected: (_) =>
+                          widget.controller.setBrowseDensity('comfortable'),
+                    ),
+                    ChoiceChip(
+                      avatar: const Icon(Icons.density_small_outlined, size: 16),
+                      label: const Text('Compact'),
+                      selected: widget.controller.browseDensity == 'compact',
+                      showCheckmark: false,
+                      onSelected: (_) =>
+                          widget.controller.setBrowseDensity('compact'),
+                    ),
                   ],
                 ),
                 const SizedBox(height: SliTokens.spaceMd),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Default Browse Sort',
-                        style: TextStyle(
-                          color: palette.textPrimary,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: SliTokens.spaceSm),
-                    DropdownButton<VaultSortOption>(
+                Divider(color: palette.border),
+                const SizedBox(height: SliTokens.spaceSm),
+                Text(
+                  'Default Browse Sort',
+                  style: TextStyle(
+                    color: palette.textPrimary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Order applied when loading Browse',
+                  style: TextStyle(
+                    color: palette.textSecondary,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: SliTokens.spaceSm),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: palette.elevated,
+                    borderRadius: BorderRadius.circular(SliTokens.radiusSm),
+                    border: Border.all(color: palette.border),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<VaultSortOption>(
                       value: widget.controller.defaultBrowseSort,
                       dropdownColor: palette.elevated,
-                      underline: const SizedBox.shrink(),
+                      isExpanded: true,
                       icon: Icon(
                         Icons.arrow_drop_down,
                         color: palette.textSecondary,
@@ -715,9 +779,81 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         }
                       },
                     ),
-                  ],
+                  ),
+                ),
+                const SizedBox(height: SliTokens.spaceMd),
+                Divider(color: palette.border),
+                const SizedBox(height: SliTokens.spaceSm),
+                Text(
+                  'Default Startup Tab',
+                  style: TextStyle(
+                    color: palette.textPrimary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Initial tab selected when SLI Vault opens.',
+                  style: TextStyle(
+                    color: palette.textSecondary,
+                    fontSize: 13,
+                  ),
                 ),
                 const SizedBox(height: SliTokens.spaceSm),
+                Wrap(
+                  spacing: SliTokens.spaceSm,
+                  runSpacing: SliTokens.spaceSm,
+                  children: [
+                    for (final tab in const [
+                      (0, 'Home'),
+                      (1, 'Browse'),
+                      (2, 'Favorites'),
+                      (3, 'Collections'),
+                    ])
+                      ChoiceChip(
+                        key: ValueKey('startup-tab-${tab.$1}'),
+                        label: Text(tab.$2),
+                        selected: widget.controller.defaultStartupTab == tab.$1,
+                        showCheckmark: false,
+                        onSelected: (_) =>
+                            widget.controller.setDefaultStartupTab(tab.$1),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: SliTokens.spaceMd),
+                Divider(color: palette.border),
+                const SizedBox(height: SliTokens.spaceXs),
+                Material(
+                  color: Colors.transparent,
+                  child: SwitchListTile(
+                    key: const ValueKey('auto-fetch-metadata-switch'),
+                    contentPadding: EdgeInsets.zero,
+                    value: widget.controller.autoFetchMetadata,
+                    onChanged: widget.controller.setAutoFetchMetadata,
+                    title: Text(
+                      'Automatic link previews',
+                      style: TextStyle(
+                        color: palette.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Directly requests page title, description, and icon from target websites with zero intermediary servers.',
+                      style: TextStyle(
+                        color: palette.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: SliTokens.spaceMd),
+            _SectionCard(
+              title: 'Interaction',
+              iconAsset: SliAssets.navHome,
+              children: [
                 Material(
                   color: Colors.transparent,
                   child: SwitchListTile(
@@ -766,20 +902,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             const SizedBox(height: SliTokens.spaceMd),
             _SectionCard(
-              title: 'Storage Optimization & Diagnostics',
+              title: 'Maintenance',
               iconAsset: SliAssets.utilStorage,
               children: [
                 Text(
-                  'Approximate local storage used: ${_formatBytes(widget.controller.approxStorageBytes)}',
-                  style: SliTheme.mono(context, fontSize: 12.5),
-                ),
-                const SizedBox(height: 8),
-                _StorageBar(
-                  approxBytes: widget.controller.approxStorageBytes,
-                ),
-                const SizedBox(height: SliTokens.spaceSm),
-                Text(
-                  'Optimize database pages, clean temporary cached files, or verify SQLite table integrity.',
+                  'Optimize database pages, clean temporary cache files, or verify SQLite table integrity.',
                   style: TextStyle(
                     color: palette.textSecondary,
                     fontSize: 13,
@@ -817,14 +944,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ],
                 ),
-              ],
-            ),
-
-            const SizedBox(height: SliTokens.spaceMd),
-            _SectionCard(
-              title: 'Library & Data',
-              iconAsset: SliAssets.contentCollection,
-              children: [
+                const SizedBox(height: SliTokens.spaceMd),
+                Divider(color: palette.border),
+                const SizedBox(height: SliTokens.spaceSm),
                 OutlinedButton.icon(
                   onPressed: widget.controller.reopenOnboarding,
                   icon: SliIcon(
@@ -844,7 +966,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     fontSize: 13,
                   ),
                 ),
-                const SizedBox(height: SliTokens.spaceMd),
+                const SizedBox(height: SliTokens.spaceSm),
                 OutlinedButton.icon(
                   key: const ValueKey('clear-all-button'),
                   style: OutlinedButton.styleFrom(
@@ -872,7 +994,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               iconAsset: SliAssets.utilInfo,
               children: [
                 Text(
-                  'SLI Vault v1.0.2 (Flutter + Dart Canonical Build)',
+                  'SLI Vault v1.0.1 (Manual Test Build • Code 2007)',
                   style: SliTheme.mono(
                     context,
                     fontSize: 12.5,
@@ -882,7 +1004,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Save links and images',
+                  'Save links and images locally with total privacy',
                   style: TextStyle(color: palette.amberText, fontSize: 13),
                 ),
                 const SizedBox(height: SliTokens.spaceMd),
@@ -1138,8 +1260,7 @@ class _SectionCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),

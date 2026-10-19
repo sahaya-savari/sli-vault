@@ -31,4 +31,8 @@ Backups are created in the temporary directory and shared explicitly; they are n
 
 Export fails rather than silently omitting a referenced private image that is missing. Empty and large synthetic libraries are covered by automated tests. Keep exported ZIP/JSON files private: they are portable copies and are not encrypted by SLI Vault.
 
+## Selective Export
+
+Users can select specific items from the Browse screen (via long-press multi-select) and export only those items into a valid ZIP archive containing `manifest.json`, `links.csv`, `README.txt`, and the corresponding full-resolution media files.
+
 A physical device-to-device transfer test remains labeled as not tested on physical hardware. Automated host and round-trip fixtures are verified.
