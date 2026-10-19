@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
+import '../core/theme/sli_theme.dart';
 import '../domain/vault_item.dart';
 import 'article_snapshot_service.dart';
 import 'backup_service.dart';
@@ -32,6 +33,7 @@ class VaultController extends ChangeNotifier {
   static const String _prefOnboardingDone = 'sli_vault_onboarding_completed_v1';
   static const String _prefCollections = 'sli_vault_custom_collections_v1';
   static const String _prefThemeMode = 'sli_vault_theme_mode_v1';
+  static const String _prefVisualStyle = 'sli_vault_visual_style_v1';
   static const String _prefLockEnabled = 'sli_vault_lock_enabled_v1';
   static const String _prefAccentPreset = 'sli_vault_accent_preset_v1';
   static const String _prefAtmosphereEnabled =
@@ -62,6 +64,7 @@ class VaultController extends ChangeNotifier {
   bool _isBusy = false;
   Set<String> _customCollections = {'General'};
   String _themeModeName = 'dark';
+  SliVisualStyle _visualStyle = SliVisualStyle.classic;
   bool _lockEnabled = false;
   bool _isLocked = false;
   String _accentPreset = 'orange';
@@ -111,6 +114,7 @@ class VaultController extends ChangeNotifier {
   String get searchQuery => _searchQuery;
   int get approxStorageBytes => _approxStorageBytes;
   String get themeModeName => _themeModeName;
+  SliVisualStyle get visualStyle => _visualStyle;
   bool get lockEnabled => _lockEnabled;
   bool get isLocked => _isLocked;
   String get accentPreset => _accentPreset;
@@ -143,6 +147,11 @@ class VaultController extends ChangeNotifier {
       ...(prefs.getStringList(_prefCollections) ?? const <String>[]),
     };
     _themeModeName = prefs.getString(_prefThemeMode) ?? 'dark';
+    final styleName = prefs.getString(_prefVisualStyle);
+    _visualStyle = SliVisualStyle.values.firstWhere(
+      (s) => s.name == styleName,
+      orElse: () => SliVisualStyle.classic,
+    );
     _lockEnabled = prefs.getBool(_prefLockEnabled) ?? false;
     _accentPreset = prefs.getString(_prefAccentPreset) ?? 'orange';
     _atmosphereEnabled = prefs.getBool(_prefAtmosphereEnabled) ?? true;
@@ -202,6 +211,13 @@ class VaultController extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_prefThemeMode, normalized);
     _themeModeName = normalized;
+    notifyListeners();
+  }
+
+  Future<void> setVisualStyle(SliVisualStyle style) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_prefVisualStyle, style.name);
+    _visualStyle = style;
     notifyListeners();
   }
 

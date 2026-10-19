@@ -42,41 +42,61 @@ class SliGlassSurface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final palette = context.sli;
+    final isMinimal = palette.visualStyle == SliVisualStyle.minimal;
+    final isExpress = palette.visualStyle == SliVisualStyle.express;
     final reduceMotion =
         MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    final radius = borderRadius ?? BorderRadius.circular(SliTokens.radiusLg);
-    final useBlur = enableBlur && !reduceMotion && blurSigma > 0;
+    final radius = borderRadius ?? BorderRadius.circular(palette.cardRadius);
+    final useBlur = !isMinimal && enableBlur && !reduceMotion && blurSigma > 0;
 
-    final palette = context.sli;
     final Color dangerTint = SliTokens.error.withValues(
       alpha: isDark ? 0.10 : 0.07,
     );
-    // Theme tokens own the fill/stroke so light cards stay clearly separated
-    // from the background art (95% white) and dark cards keep the 6% sheen.
+    // In express mode, blend subtle warm accent into surface fill; in minimal, use pure flat surface.
+    final Color baseFill = isExpress
+        ? Color.alphaBlend(
+            palette.primaryAccent.withValues(alpha: isDark ? 0.08 : 0.05),
+            palette.surfaceFill,
+          )
+        : palette.surfaceFill;
+    final Color baseFillDeep = isExpress
+        ? Color.alphaBlend(
+            palette.primaryAccent.withValues(alpha: isDark ? 0.12 : 0.08),
+            palette.surfaceFillDeep,
+          )
+        : palette.surfaceFillDeep;
+
     final Color fill =
         fillColor ??
         (danger
-            ? Color.alphaBlend(dangerTint, palette.surfaceFill)
-            : palette.surfaceFill);
+            ? Color.alphaBlend(dangerTint, baseFill)
+            : baseFill);
     final Color fillDeep =
         fillDeepColor ??
         (danger
-            ? Color.alphaBlend(dangerTint, palette.surfaceFillDeep)
-            : palette.surfaceFillDeep);
+            ? Color.alphaBlend(dangerTint, baseFillDeep)
+            : baseFillDeep);
     final Color stroke =
         borderColor ??
         (danger
             ? (isDark
                   ? SliTokens.error.withValues(alpha: 0.45)
                   : palette.errorText.withValues(alpha: 0.55))
-            : palette.surfaceStroke);
+            : (isMinimal
+                  ? (isDark
+                        ? palette.border.withValues(alpha: 0.5)
+                        : palette.border.withValues(alpha: 0.7))
+                  : palette.surfaceStroke));
 
     final shadow = BoxShadow(
       color: isDark
-          ? SliTokens.orange.withValues(alpha: danger ? 0.06 : 0.08)
-          : const Color(0xFF6B7280).withValues(alpha: 0.07),
-      blurRadius: isDark ? 18 : 14,
-      offset: const Offset(0, 4),
+          ? (isExpress
+                ? palette.primaryAccent.withValues(alpha: danger ? 0.08 : 0.12)
+                : SliTokens.orange.withValues(alpha: danger ? 0.06 : 0.08))
+          : const Color(0xFF6B7280).withValues(alpha: isMinimal ? 0.03 : 0.07),
+      blurRadius: isMinimal ? 6 : (isExpress ? 22 : (isDark ? 18 : 14)),
+      offset: Offset(0, isMinimal ? 2 : (isExpress ? 6 : 4)),
     );
 
     // Performance Optimization 1: When blur is disabled or motion is reduced,

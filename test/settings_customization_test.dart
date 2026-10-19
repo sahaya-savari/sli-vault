@@ -249,11 +249,16 @@ void main() {
         await tester.pumpAndSettle();
         expect(controller.themeModeName, 'amoled');
 
+        final settingsScrollable = find.descendant(
+          of: find.byKey(const ValueKey('settings-scroll')),
+          matching: find.byType(Scrollable),
+        );
+
         // Scroll to reveal Privacy & Security
         await tester.scrollUntilVisible(
           find.text('Privacy & Security'),
           50,
-          scrollable: find.byType(Scrollable),
+          scrollable: settingsScrollable,
         );
         expect(find.text('Privacy & Security'), findsOneWidget);
 
@@ -261,7 +266,7 @@ void main() {
         await tester.scrollUntilVisible(
           find.byKey(const ValueKey('accent-chip-teal')),
           50,
-          scrollable: find.byType(Scrollable),
+          scrollable: settingsScrollable,
         );
         await tester.pumpAndSettle();
 
@@ -274,8 +279,8 @@ void main() {
         // Scroll to reveal Storage Diagnostics
         await tester.scrollUntilVisible(
           find.byKey(const ValueKey('vacuum-db-button')),
-          50,
-          scrollable: find.byType(Scrollable),
+          200,
+          scrollable: settingsScrollable,
         );
         await tester.pumpAndSettle();
 

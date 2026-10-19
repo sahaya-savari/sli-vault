@@ -51,10 +51,10 @@ class HomeScreen extends StatelessWidget {
                     ),
                   );
                 },
-                borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+                borderRadius: BorderRadius.circular(context.sli.cardRadius),
                 child: SliGlassSurface(
                   enableBlur: false,
-                  borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+                  borderRadius: BorderRadius.circular(context.sli.cardRadius),
                   padding: const EdgeInsets.symmetric(
                     horizontal: SliTokens.spaceLg,
                   ),
