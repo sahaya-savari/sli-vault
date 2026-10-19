@@ -600,4 +600,65 @@ void main() {
       expect(meta2.title, isNull);
     });
   });
+
+  group('Feature 7: Duplicate Link Detection in VaultController', () {
+    late Directory tempDir;
+    late VaultDatabase database;
+    late LocalImageStorage imageStorage;
+    late VaultController controller;
+
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      tempDir = await Directory.systemTemp.createTemp('sli_dup_test_');
+      database = VaultDatabase(overrideDbPath: p.join(tempDir.path, 'test_dup.db'));
+      imageStorage = LocalImageStorage(
+        overrideBaseDir: Directory(p.join(tempDir.path, 'images')),
+      );
+      controller = VaultController(
+        database: database,
+        imageStorage: imageStorage,
+        snapshotService: ArticleSnapshotService(overrideDir: tempDir),
+      );
+      await controller.initialize();
+    });
+
+    tearDown(() async {
+      await controller.database.close();
+      if (await tempDir.exists()) {
+        await tempDir.delete(recursive: true);
+      }
+    });
+
+    test('findExistingLink returns existing VaultItem on exact and normalized matches', () async {
+      expect(controller.findExistingLink('https://flutter.dev'), isNull);
+
+      final saved = await controller.addLinkItem(
+        rawUrl: 'https://flutter.dev/docs/',
+        customTitle: 'Flutter Documentation',
+      );
+
+      // Exact match
+      final match1 = controller.findExistingLink('https://flutter.dev/docs/');
+      expect(match1, isNotNull);
+      expect(match1!.id, saved.id);
+
+      // Trailing slash normalized
+      final match2 = controller.findExistingLink('https://flutter.dev/docs');
+      expect(match2, isNotNull);
+      expect(match2!.id, saved.id);
+
+      // Uppercase / mixed case
+      final match3 = controller.findExistingLink('HTTPS://FLUTTER.DEV/DOCS/');
+      expect(match3, isNotNull);
+      expect(match3!.id, saved.id);
+
+      // Non-matching URL
+      expect(controller.findExistingLink('https://dart.dev'), isNull);
+
+      // Empty or whitespace
+      expect(controller.findExistingLink('   '), isNull);
+      expect(controller.findExistingLink(''), isNull);
+    });
+  });
 }
+

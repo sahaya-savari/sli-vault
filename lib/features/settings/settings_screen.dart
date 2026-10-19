@@ -77,7 +77,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Text(
                 'Settings',
                 style: TextStyle(
-                  fontFamily: SliTokens.fontFamilyDisplay,
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
                   color: palette.textPrimary,
@@ -290,7 +289,7 @@ class _ProfileHeader extends StatelessWidget {
                     height: 26,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: const Color(0xFF8B5CF6), // Purple edit badge as in Streak
+                      color: palette.primaryAccent, // Uses active brand accent, not default violet
                       border: Border.all(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         width: 2,
@@ -303,10 +302,10 @@ class _ProfileHeader extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.edit,
                       size: 13,
-                      color: Colors.white,
+                      color: palette.onAccent,
                     ),
                   ),
                 ),
@@ -328,7 +327,6 @@ class _ProfileHeader extends StatelessWidget {
                 Text(
                   controller.profileName,
                   style: TextStyle(
-                    fontFamily: SliTokens.fontFamily,
                     fontSize: 19,
                     fontWeight: FontWeight.w800,
                     color: palette.textPrimary,
@@ -339,7 +337,7 @@ class _ProfileHeader extends StatelessWidget {
                 Icon(
                   Icons.edit_outlined,
                   size: 16,
-                  color: palette.textSecondary.withValues(alpha: 0.8),
+                  color: palette.primaryAccent,
                 ),
               ],
             ),
@@ -404,8 +402,8 @@ Widget _settingsDivider(BuildContext context) {
     indent: 62,
     endIndent: 16,
     color: dark
-        ? Colors.white.withValues(alpha: 0.06)
-        : Colors.black.withValues(alpha: 0.06),
+        ? const Color(0xFF28282C)
+        : const Color(0xFFE5E5EA),
   );
 }
 
@@ -423,7 +421,7 @@ class _IconBadge extends StatelessWidget {
       width: 32,
       height: 32,
       decoration: BoxDecoration(
-        color: dark ? const Color(0xFF26262A) : const Color(0xFFEAEAEE),
+        color: dark ? const Color(0xFF242428) : const Color(0xFFEAEAEE),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Icon(icon, color: palette.textPrimary, size: 17),
@@ -470,7 +468,6 @@ class _NavRow extends StatelessWidget {
                     Text(
                       title,
                       style: TextStyle(
-                        fontFamily: SliTokens.fontFamily,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: palette.textPrimary,
@@ -482,7 +479,6 @@ class _NavRow extends StatelessWidget {
                       Text(
                         value!,
                         style: TextStyle(
-                          fontFamily: SliTokens.fontFamily,
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                           color: palette.primaryAccent,
@@ -490,11 +486,10 @@ class _NavRow extends StatelessWidget {
                       ),
                     ],
                     if (subtitle != null) ...[
-                      const SizedBox(height: 3),
+                      const SizedBox(height: 2),
                       Text(
                         subtitle!,
                         style: TextStyle(
-                          fontFamily: SliTokens.fontFamily,
                           fontSize: 13,
                           color: palette.textSecondary,
                         ),
@@ -507,7 +502,6 @@ class _NavRow extends StatelessWidget {
                 Text(
                   value!,
                   style: TextStyle(
-                    fontFamily: SliTokens.fontFamily,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: palette.textSecondary,
@@ -561,17 +555,16 @@ class _AppStyleSubpage extends StatelessWidget {
                     Text(
                       'Choose Your Style',
                       style: TextStyle(
-                        fontFamily: SliTokens.fontFamilyDisplay,
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: palette.textPrimary,
+                        letterSpacing: -0.3,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Select the visual geometry and navigation personality.',
                       style: TextStyle(
-                        fontFamily: SliTokens.fontFamily,
                         fontSize: 14,
                         color: palette.textSecondary,
                       ),
@@ -720,7 +713,6 @@ class _StyleSkeletonCard extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontFamily: SliTokens.fontFamily,
                 fontSize: selected ? 15 : 14,
                 fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
                 color: selected ? accent : palette.textSecondary,
@@ -933,17 +925,17 @@ class _AppStyleLegend extends StatelessWidget {
       (
         SliVisualStyle.classic,
         'Classic Style',
-        'Refined glass surfaces, luminous borders, balanced 16dp radii, and standard transitions.',
+        'Balanced glass surfaces, luminous borders, and standard 16dp radius.',
       ),
       (
         SliVisualStyle.minimal,
         'Minimal Style',
-        'Compact high-density layouts, flat monochrome borders, crisp 8dp/6dp geometry, and ultra-fast 140ms motion.',
+        'High-density layouts, crisp 8dp borders, and ultra-fast 140ms motion.',
       ),
       (
         SliVisualStyle.express,
         'Express Style',
-        'Generous 24dp curves, organic squish feedback, floating pill navigation, and expressive micro-animations.',
+        'Generous 24dp curves, organic squish feedback, and floating pill tabs.',
       ),
     ];
 
@@ -993,6 +985,7 @@ class _LegendTile extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeOutCubic,
+          constraints: const BoxConstraints(minHeight: 84),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
             color: selected
@@ -1012,8 +1005,8 @@ class _LegendTile extends StatelessWidget {
             children: [
               AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
-                width: 20,
-                height: 20,
+                width: 22,
+                height: 22,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: selected ? accent : Colors.transparent,
@@ -1023,32 +1016,34 @@ class _LegendTile extends StatelessWidget {
                   ),
                 ),
                 child: selected
-                    ? const Icon(Icons.check, size: 12, color: Colors.white)
+                    ? const Icon(Icons.check, size: 14, color: Colors.white)
                     : null,
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       title,
                       style: TextStyle(
-                        fontFamily: SliTokens.fontFamily,
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: selected ? accent : palette.textPrimary,
+                        letterSpacing: -0.2,
                       ),
                     ),
                     const SizedBox(height: 3),
                     Text(
                       description,
                       style: TextStyle(
-                        fontFamily: SliTokens.fontFamily,
                         fontSize: 13,
                         color: palette.textSecondary,
                         height: 1.3,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -1173,30 +1168,88 @@ class _PreferencesSubpage extends StatelessWidget {
           _SettingsSectionCard(
             title: 'Default Startup Screen',
             subtitle: 'Choose which destination opens when launching SLI Vault.',
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final tab in [
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final itemWidth = (constraints.maxWidth - 10) / 2;
+                final tabs = [
                   (0, 'Home', Icons.home_rounded),
                   (1, 'Browse', Icons.explore_rounded),
                   (2, 'Favorites', Icons.favorite_rounded),
                   (3, 'Collections', Icons.folder_rounded),
-                ])
-                  ChoiceChip(
-                    avatar: Icon(
-                      tab.$3,
-                      size: 16,
-                      color: controller.defaultStartupTab == tab.$1
-                          ? palette.onAccent
-                          : palette.textSecondary,
-                    ),
-                    label: Text(tab.$2),
-                    selected: controller.defaultStartupTab == tab.$1,
-                    showCheckmark: false,
-                    onSelected: (_) => controller.setDefaultStartupTab(tab.$1),
-                  ),
-              ],
+                ];
+                return Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: tabs.map((tab) {
+                    final isSelected = controller.defaultStartupTab == tab.$1;
+                    return SizedBox(
+                      width: itemWidth,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => controller.setDefaultStartupTab(tab.$1),
+                          borderRadius: BorderRadius.circular(12),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            height: 46,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? palette.primaryAccent.withValues(alpha: 0.16)
+                                  : (_isDark(context)
+                                      ? const Color(0xFF222226)
+                                      : const Color(0xFFF0F0F4)),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isSelected
+                                    ? palette.primaryAccent
+                                    : (_isDark(context)
+                                        ? Colors.white.withValues(alpha: 0.08)
+                                        : Colors.black.withValues(alpha: 0.08)),
+                                width: isSelected ? 1.8 : 1.0,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  tab.$3,
+                                  size: 18,
+                                  color: isSelected
+                                      ? palette.primaryAccent
+                                      : palette.textSecondary,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    tab.$2,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w700
+                                          : FontWeight.w600,
+                                      color: isSelected
+                                          ? palette.primaryAccent
+                                          : palette.textPrimary,
+                                    ),
+                                  ),
+                                ),
+                                if (isSelected)
+                                  Icon(
+                                    Icons.check_rounded,
+                                    size: 16,
+                                    color: palette.primaryAccent,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
             ),
           ),
           const SizedBox(height: 16),
@@ -1205,17 +1258,63 @@ class _PreferencesSubpage extends StatelessWidget {
           _SettingsSectionCard(
             title: 'Default Browse Sorting',
             subtitle: 'Preferred order for library items.',
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
+            child: Row(
               children: [
-                for (final sort in VaultSortOption.values)
-                  ChoiceChip(
-                    label: Text(sort.label),
-                    selected: controller.defaultBrowseSort == sort,
-                    showCheckmark: false,
-                    onSelected: (_) => controller.setDefaultBrowseSort(sort),
+                for (var i = 0; i < VaultSortOption.values.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 8),
+                  Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        final sort = VaultSortOption.values[i];
+                        final isSelected = controller.defaultBrowseSort == sort;
+                        return Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => controller.setDefaultBrowseSort(sort),
+                            borderRadius: BorderRadius.circular(12),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              height: 46,
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? palette.primaryAccent.withValues(alpha: 0.16)
+                                    : (_isDark(context)
+                                        ? const Color(0xFF222226)
+                                        : const Color(0xFFF0F0F4)),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? palette.primaryAccent
+                                      : (_isDark(context)
+                                          ? Colors.white.withValues(alpha: 0.08)
+                                          : Colors.black.withValues(alpha: 0.08)),
+                                  width: isSelected ? 1.8 : 1.0,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  sort.label,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: isSelected
+                                        ? FontWeight.w700
+                                        : FontWeight.w600,
+                                    color: isSelected
+                                        ? palette.primaryAccent
+                                        : palette.textPrimary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
+                ],
               ],
             ),
           ),
@@ -1858,10 +1957,10 @@ class _AboutSubpage extends StatelessWidget {
                 Text(
                   'SLI Vault',
                   style: TextStyle(
-                    fontFamily: SliTokens.fontFamilyDisplay,
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                     color: palette.textPrimary,
+                    letterSpacing: -0.3,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -1970,17 +2069,16 @@ class _SettingsSectionCard extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontFamily: SliTokens.fontFamily,
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: palette.textPrimary,
+              letterSpacing: -0.2,
             ),
           ),
           const SizedBox(height: 3),
           Text(
             subtitle,
             style: TextStyle(
-              fontFamily: SliTokens.fontFamily,
               fontSize: 13,
               color: palette.textSecondary,
             ),
@@ -2019,7 +2117,7 @@ class _StorageBar extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Theme Choice Chips
+// Theme Choice Row (3 Equal-Width Columns)
 // ---------------------------------------------------------------------------
 class _ThemeChoiceRow extends StatelessWidget {
   final VaultController controller;
@@ -2028,49 +2126,103 @@ class _ThemeChoiceRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.sli;
-
     final modes = [
       ('dark', 'Dark', Icons.dark_mode_outlined),
       ('amoled', 'OLED Black', Icons.brightness_1_rounded),
       ('light', 'Light', Icons.light_mode_outlined),
     ];
 
-    return Wrap(
-      spacing: SliTokens.spaceSm,
-      runSpacing: SliTokens.spaceSm,
+    return Row(
       children: [
-        for (final mode in modes)
-          ChoiceChip(
-            key: ValueKey('theme-chip-${mode.$1}'),
-            avatar: Icon(
-              mode.$3,
-              size: 15,
-              color: controller.themeModeName == mode.$1
-                  ? palette.onAccent
-                  : palette.textSecondary,
+        for (var i = 0; i < modes.length; i++) ...[
+          if (i > 0) const SizedBox(width: 8),
+          Expanded(
+            child: _ThemeButton(
+              key: ValueKey('theme-chip-${modes[i].$1}'),
+              icon: modes[i].$3,
+              label: modes[i].$2,
+              selected: controller.themeModeName == modes[i].$1,
+              onTap: () => controller.setThemeModeName(modes[i].$1),
             ),
-            label: Text(mode.$2),
-            selected: controller.themeModeName == mode.$1,
-            showCheckmark: false,
-            labelStyle: TextStyle(
-              fontFamily: SliTokens.fontFamily,
-              fontWeight: FontWeight.w700,
-              color: controller.themeModeName == mode.$1
-                  ? palette.onAccent
-                  : palette.textPrimary,
-            ),
-            materialTapTargetSize: MaterialTapTargetSize.padded,
-            visualDensity: VisualDensity.standard,
-            onSelected: (_) => controller.setThemeModeName(mode.$1),
           ),
+        ],
       ],
     );
   }
 }
 
+class _ThemeButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _ThemeButton({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.sli;
+    final dark = _isDark(context);
+    final accent = palette.primaryAccent;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          height: 48,
+          decoration: BoxDecoration(
+            color: selected
+                ? accent.withValues(alpha: 0.16)
+                : (dark ? const Color(0xFF222226) : const Color(0xFFF0F0F4)),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: selected
+                  ? accent
+                  : (dark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.08)),
+              width: selected ? 1.8 : 1.0,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 16,
+                color: selected ? accent : palette.textSecondary,
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                    color: selected ? accent : palette.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // ---------------------------------------------------------------------------
-// Accent Choice Chips
+// Accent Choice Row (Uniform 2-Column Equal Grid)
 // ---------------------------------------------------------------------------
 class _AccentChoiceRow extends StatelessWidget {
   final VaultController controller;
@@ -2080,36 +2232,86 @@ class _AccentChoiceRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final active = controller.accentPreset;
-    return Wrap(
-      spacing: SliTokens.spaceSm,
-      runSpacing: SliTokens.spaceSm,
-      children: SliAccentPreset.presets.map((preset) {
-        final isSelected = active == preset.key;
-        return ChoiceChip(
-          key: ValueKey('accent-chip-${preset.key}'),
-          avatar: Container(
-            width: 14,
-            height: 14,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: preset.primary,
-              border: Border.all(
-                color: isSelected ? Colors.white : Colors.transparent,
-                width: 1.5,
+    final presets = SliAccentPreset.presets;
+    final dark = _isDark(context);
+    final palette = context.sli;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final itemWidth = (constraints.maxWidth - 10) / 2;
+        return Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: presets.map((preset) {
+            final isSelected = active == preset.key;
+            return SizedBox(
+              width: itemWidth,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  key: ValueKey('accent-chip-${preset.key}'),
+                  onTap: () => controller.setAccentPreset(preset.key),
+                  borderRadius: BorderRadius.circular(12),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    height: 46,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? preset.primary.withValues(alpha: 0.16)
+                          : (dark ? const Color(0xFF222226) : const Color(0xFFF0F0F4)),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? preset.primary
+                            : (dark
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : Colors.black.withValues(alpha: 0.08)),
+                        width: isSelected ? 1.8 : 1.0,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: preset.primary,
+                            border: Border.all(
+                              color: isSelected ? Colors.white : Colors.transparent,
+                              width: 1.5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            preset.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                              color: isSelected ? preset.primary : palette.textPrimary,
+                            ),
+                          ),
+                        ),
+                        if (isSelected)
+                          Icon(
+                            Icons.check_rounded,
+                            size: 16,
+                            color: preset.primary,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-          label: Text(preset.name),
-          selected: isSelected,
-          showCheckmark: false,
-          labelStyle: TextStyle(
-            color: isSelected ? context.sli.onAccent : context.sli.textPrimary,
-            fontWeight: FontWeight.w600,
-          ),
-          selectedColor: preset.primary,
-          onSelected: (_) => controller.setAccentPreset(preset.key),
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
     );
   }
 }

@@ -554,6 +554,23 @@ class VaultController extends ChangeNotifier {
     return null;
   }
 
+  /// Checks whether a link with a matching normalized URL already exists in the vault.
+  VaultItem? findExistingLink(String rawUrl) {
+    final clean = rawUrl.trim().toLowerCase();
+    if (clean.isEmpty) return null;
+    final normalized = clean.endsWith('/') ? clean.substring(0, clean.length - 1) : clean;
+    for (final item in _allItems) {
+      if (item.type == VaultItemType.link && item.url != null) {
+        final itemUrl = item.url!.trim().toLowerCase();
+        final normItem = itemUrl.endsWith('/') ? itemUrl.substring(0, itemUrl.length - 1) : itemUrl;
+        if (normItem == normalized) {
+          return item;
+        }
+      }
+    }
+    return null;
+  }
+
   Future<File?> resolveImageFile(String? localImageId) {
     return imageStorage.resolveImageFile(localImageId);
   }
