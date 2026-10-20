@@ -49,8 +49,7 @@ class VaultController extends ChangeNotifier {
   static const String _prefAutoFetchMetadata =
       'sli_vault_auto_fetch_metadata_v1';
   static const String _prefBrowseDensity = 'sli_vault_browse_density_v1';
-  static const String _prefScreenProtection =
-      'sli_vault_screen_protection_v1';
+  static const String _prefScreenProtection = 'sli_vault_screen_protection_v1';
   static const String _prefProfileName = 'sli_vault_profile_name_v1';
   static const String _prefProfilePhoto = 'sli_vault_profile_photo_v1';
   static const String _prefPinnedItems = 'sli_vault_pinned_items_v1';
@@ -84,8 +83,13 @@ class VaultController extends ChangeNotifier {
   bool _screenProtectionEnabled = true;
   String _profileName = 'Inlitx';
   String _profilePhotoPath = '';
-  final Map<String, (VaultItem item, Uint8List? imageBytes, bool wasPinned)> _undoCache = {};
-  final Map<String, List<(VaultItem item, Uint8List? imageBytes, bool wasPinned)>> _batchUndoCache = {};
+  final Map<String, (VaultItem item, Uint8List? imageBytes, bool wasPinned)>
+  _undoCache = {};
+  final Map<
+    String,
+    List<(VaultItem item, Uint8List? imageBytes, bool wasPinned)>
+  >
+  _batchUndoCache = {};
 
   // UI Filter / Sort / Layout state
   VaultTypeFilter _homeFilter = VaultTypeFilter.all;
@@ -156,7 +160,8 @@ class VaultController extends ChangeNotifier {
       'General',
       ...(prefs.getStringList(_prefCollections) ?? const <String>[]),
     };
-    _pinnedItemIds = (prefs.getStringList(_prefPinnedItems) ?? const <String>[]).toSet();
+    _pinnedItemIds = (prefs.getStringList(_prefPinnedItems) ?? const <String>[])
+        .toSet();
     _themeModeName = prefs.getString(_prefThemeMode) ?? 'dark';
     final styleName = prefs.getString(_prefVisualStyle);
     _visualStyle = SliVisualStyle.values.firstWhere(
@@ -238,10 +243,8 @@ class VaultController extends ChangeNotifier {
     _screenProtectionEnabled = enabled;
     if (Platform.isAndroid) {
       try {
-        const MethodChannel('sli_vault/security').invokeMethod(
-          'setScreenProtection',
-          {'enabled': enabled},
-        );
+        const MethodChannel('sli_vault/security')
+            .invokeMethod('setScreenProtection', {'enabled': enabled});
       } catch (_) {}
     }
     notifyListeners();
@@ -492,8 +495,9 @@ class VaultController extends ChangeNotifier {
   }
 
   List<VaultItem> get homeFilteredItems {
-    final list =
-        _allItems.where((item) => _homeFilter.matches(item.type)).toList();
+    final list = _allItems
+        .where((item) => _homeFilter.matches(item.type))
+        .toList();
     list.sort((a, b) {
       final aPin = isItemPinned(a.id);
       final bPin = isItemPinned(b.id);
@@ -516,10 +520,12 @@ class VaultController extends ChangeNotifier {
       return switch (_browseSort) {
         VaultSortOption.newestFirst => b.createdAt.compareTo(a.createdAt),
         VaultSortOption.oldestFirst => a.createdAt.compareTo(b.createdAt),
-        VaultSortOption.titleAZ =>
-          a.title.toLowerCase().compareTo(b.title.toLowerCase()),
-        VaultSortOption.titleZA =>
-          b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+        VaultSortOption.titleAZ => a.title.toLowerCase().compareTo(
+          b.title.toLowerCase(),
+        ),
+        VaultSortOption.titleZA => b.title.toLowerCase().compareTo(
+          a.title.toLowerCase(),
+        ),
       };
     });
     return filtered;
@@ -588,11 +594,15 @@ class VaultController extends ChangeNotifier {
   VaultItem? findExistingLink(String rawUrl) {
     final clean = rawUrl.trim().toLowerCase();
     if (clean.isEmpty) return null;
-    final normalized = clean.endsWith('/') ? clean.substring(0, clean.length - 1) : clean;
+    final normalized = clean.endsWith('/')
+        ? clean.substring(0, clean.length - 1)
+        : clean;
     for (final item in _allItems) {
       if (item.type == VaultItemType.link && item.url != null) {
         final itemUrl = item.url!.trim().toLowerCase();
-        final normItem = itemUrl.endsWith('/') ? itemUrl.substring(0, itemUrl.length - 1) : itemUrl;
+        final normItem = itemUrl.endsWith('/')
+            ? itemUrl.substring(0, itemUrl.length - 1)
+            : itemUrl;
         if (normItem == normalized) {
           return item;
         }

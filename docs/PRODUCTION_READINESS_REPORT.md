@@ -3,7 +3,7 @@
 **Date:** October 20, 2026  
 **Application:** SLI Vault  
 **Package ID:** `com.sahayasavari.slivault`  
-**Target Release:** `1.0.1` (`versionCode: 2009`, arm64 `4009`)  
+**Target Release:** `1.0.1` (`versionCode: 2010`, arm64 `4010`)  
 **Developer:** Sahaya Savari (`@sahaya-savari`)  
 **Repository:** https://github.com/sahaya-savari/sli-vault  
 **Active Branch:** `main`  
@@ -16,7 +16,7 @@
 This report concludes the comprehensive productionisation of **SLI Vault**, consolidating the Streak-inspired visual redesign, SIL Open Font License 1.1 font clearance, removal of `FLAG_SECURE`, version standardization, release artifact generation, website deployment, and authoritative documentation.
 
 All automated quality gates have passed:
-- **`flutter test`:** 116 of 116 tests passing (100%) plus newly added Pin/Unpin prioritization tests.
+- **`flutter test`:** 117 of 117 tests passing (100%).
 - **`dart analyze`:** 0 issues found across all Dart source files.
 - **`bun run test` (Website):** 21 of 21 vitest tests passing.
 - **`bun run build` (Website):** Production client, SSR, and prerendered routes built cleanly.
@@ -30,11 +30,11 @@ All artifacts were freshly compiled from the production codebase and verified:
 
 | Artifact Filename | Target Architecture | File Size (Bytes) | Size (MiB) | SHA-256 Checksum | Verification Status |
 | :--- | :--- | :---: | :---: | :--- | :---: |
-| **`app-arm64-v8a-release.apk`** | ARM64-v8a (Modern Android) | 29,107,111 | 27.76 MiB | `F94844E0083C0ADBD50189707FA8B1959760FB808EF72D7CBBEF882C513B68B7` | **PASS (Host & Physical Device OPPO CPH2569 / Android 15)** |
-| **`app-release.apk`** | Universal (All Devices) | 70,897,014 | 67.61 MiB | `B20CB8BE1D2175D779A1D83BD83C37F8ED497A32827519BDEC05895FC23D9F2E` | **PASS (Host / Gradle)** |
-| **`app-armeabi-v7a-release.apk`** | ARM32-v7a (Older Devices) | 26,811,121 | 25.57 MiB | `C11D3E7744694B838DFC33E971F6B7789BE856DA356212414163C45EAD368D8B` | **PASS (Host / Gradle)** |
-| **`app-x86_64-release.apk`** | x86_64 (Emulators/ChromeOS) | 30,624,372 | 29.21 MiB | `6BF5F512B23A3D70E9016931D9469843962D9CA7EDDD198D0BFE89F027A59B94` | **PASS (Host / Gradle)** |
-| **`app-release.aab`** | App Bundle (Play Store) | 70,896,579 | 67.61 MiB | `046A78810AFCCC33A2707109BABFC6AE893ABB78BC1F20DD32E56E9B782E876E` | **PASS (Host / Gradle)** |
+| **`app-arm64-v8a-release.apk`** | ARM64-v8a (Modern Android) | 29,107,111 | 27.76 MiB | `60BC552EA6AD2F04FB3D3F3843997A9F1A16CDAEC01DC8B824BF46E3A8D510A3` | **PASS (Host / Gradle / apksigner)** |
+| **`app-release.apk`** | Universal (All Devices) | 70,897,014 | 67.61 MiB | `752784DC1BCBC20E493CB99B111F867103FD90E18A00AE61E583963C3DE60EC4` | **PASS (Host / Gradle / apksigner)** |
+| **`app-armeabi-v7a-release.apk`** | ARM32-v7a (Older Devices) | 26,811,121 | 25.57 MiB | `85A294077C9EF833E35F6913CF4BC1A541218C9006BE35C6E826C645A01CA6C3` | **PASS (Host / Gradle / apksigner)** |
+| **`app-x86_64-release.apk`** | x86_64 (Emulators/ChromeOS) | 30,624,372 | 29.21 MiB | `6AC1C2AFEB16CA0C6696E986476FF651AB4BB7DE5F27897949F3CBF4693DB9A4` | **PASS (Host / Gradle / apksigner)** |
+| **`app-release.aab`** | App Bundle (Play Store) | 70,896,631 | 67.61 MiB | `CA3EB40C76C16D6518DC0879958C7551FA2779B10D1505DB1B4F1669C14AE1F1` | **PASS (Host / Gradle)** |
 
 ---
 

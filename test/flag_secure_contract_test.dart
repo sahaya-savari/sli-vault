@@ -13,12 +13,16 @@ void main() {
     final source = file.readAsStringSync();
     expect(source.contains('WindowManager.LayoutParams.FLAG_SECURE'), isTrue);
     expect(
-      source.contains('window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)'),
+      source.contains(
+        'window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)',
+      ),
       isTrue,
     );
     // Must NOT add FLAG_SECURE
     expect(
-      source.contains('window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)'),
+      source.contains(
+        'window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)',
+      ),
       isFalse,
     );
   });

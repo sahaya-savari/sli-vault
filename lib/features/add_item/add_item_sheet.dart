@@ -220,8 +220,9 @@ class _AddItemSheetState extends State<AddItemSheet> {
           _metadataFeedbackMessage =
               'Auto-filled details from ${meta.domain ?? 'link'}';
         } else {
-          _metadataFeedbackMessage =
-              isManual ? 'No metadata found for this link' : null;
+          _metadataFeedbackMessage = isManual
+              ? 'No metadata found for this link'
+              : null;
         }
       });
     } catch (_) {
@@ -616,7 +617,10 @@ class _AddItemSheetState extends State<AddItemSheet> {
                   const SizedBox(height: 8),
                   Container(
                     key: const Key('duplicate_link_warning'),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),

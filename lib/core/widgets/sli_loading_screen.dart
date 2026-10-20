@@ -138,9 +138,8 @@ class SliLoadingScreen extends StatelessWidget {
                           child: CircularProgressIndicator(
                             strokeWidth: 2.4,
                             color: context.sli.primaryAccent,
-                            backgroundColor: context.sli.primaryAccent.withValues(
-                              alpha: 0.18,
-                            ),
+                            backgroundColor: context.sli.primaryAccent
+                                .withValues(alpha: 0.18),
                           ),
                         ),
                         const SizedBox(height: SliTokens.spaceMd),

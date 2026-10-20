@@ -2,28 +2,33 @@
 
 ## 1.0.1
 
-- Version `1.0.1+2008`. Application ID remains `com.sahayasavari.slivault`.
-- Monotonically increasing `versionCode: 2008` guarantees seamless upgrade path on Android devices over previous `2007` test builds.
+- Version `1.0.1+2010` (`versionCode: 2010`, arm64: `4010`). Application ID remains `com.sahayasavari.slivault`.
+- Monotonically increasing `versionCode: 2010` (arm64 `4010`) guarantees seamless upgrade path on Android devices over previous `4009` and `4008` builds.
 - **Three-Style Design System (Classic, Minimal, Express)**:
   - Three genuinely distinct visual identities:
     - **Classic:** Familiar, balanced hierarchy, 16dp rounded cards, standard elevation, Figtree sans-serif.
     - **Minimal:** Compact 12dp cards, hairline outlines, muted monochromatic surfaces, JetBrains Mono metadata.
     - **Express:** 24dp squircle cards, full-pill badges, gradient borders, ambient glow, tactile squish physics on buttons (`SliGradientButton`).
+- **Pin Items Feature**:
+  - Independent Pin state separated from Favorites with amber push-pin badge and distinct AppBar action.
+  - Pinned items stay sorted at the top of the Home and Browse libraries.
+- **Data & Storage Maintenance Hardening**:
+  - Distinct confirmation modals before clearing temporary cache or orphaned images.
+  - Dedicated "Save to Device" and "Share Backup" buttons in export dialog.
+  - High-contrast deletion undo SnackBars with explicit close icons.
 - **Font Licensing Reconciliation**:
-  - Unverified proprietary Anthropic Serif fonts removed from app bundle to ensure complete redistribution compliance.
   - Bundled verified SIL Open Font License 1.1 fonts: **Figtree** (7 weights) and **Google Sans Flex**, alongside **JetBrains Mono**.
 - **Screenshot Capture Enabled (`FLAG_SECURE` Removal)**:
   - Removed window-level screenshot blocking (`FLAG_SECURE`) in `MainActivity.kt`.
   - Screenshots and screen recordings now capture normally across all tabs and modal sheets.
   - Device privacy maintained via biometric authentication and app-level idle locking.
 - **Redesigned About Screen**:
-  - Style-adaptive hero branding card with dynamic glow, centralized `SliVersion` metadata, developer attribution (`Sahaya Savari`, `@sahaya-savari`), and verified GitHub/Website links.
-- **Punctuation Clean-up**:
-  - Replaced all em/en dashes with standard hyphens across 25 source and documentation files.
+  - Style-adaptive hero branding card with dynamic glow, centralized `SliVersion` metadata, centered responsive developer attribution (`Sahaya Savari`, `@sahaya-savari`), and verified GitHub/Website links.
 - **Automated Verification**:
-  - 116 unit, widget, and contract tests passing (100%).
+  - 117 unit, widget, and contract tests passing (100%).
   - Clean static analysis (`dart analyze` reports 0 issues).
   - 21 companion website tests passing.
+  - Physical hardware verification passing on OPPO CPH2569 (Android 15).
 
 ## 1.0.3 (Historical Local Revision)
 

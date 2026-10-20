@@ -85,9 +85,7 @@ class _FilterSegment extends StatelessWidget {
     final isMinimal = palette.visualStyle == SliVisualStyle.minimal;
     final reduceMotion = palette.reduceMotion;
     final fg = selected ? palette.onAccent : palette.textPrimary;
-    final iconColor = selected
-        ? palette.onAccent
-        : palette.textSecondary;
+    final iconColor = selected ? palette.onAccent : palette.textSecondary;
 
     final double segRadius = isExpress
         ? SliTokens.radiusPill
@@ -117,7 +115,9 @@ class _FilterSegment extends StatelessWidget {
               border: selected
                   ? null
                   : (isMinimal && !isDark
-                        ? Border.all(color: palette.border.withValues(alpha: 0.5))
+                        ? Border.all(
+                            color: palette.border.withValues(alpha: 0.5),
+                          )
                         : Border.all(color: Colors.transparent)),
             ),
             child: Padding(
@@ -129,7 +129,11 @@ class _FilterSegment extends StatelessWidget {
                     scale: selected && isExpress ? 1.08 : 1.0,
                     duration: reduceMotion ? Duration.zero : SliMotion.fast,
                     curve: SliMotion.bouncy,
-                    child: SliIcon(filter.iconAsset, size: 16, color: iconColor),
+                    child: SliIcon(
+                      filter.iconAsset,
+                      size: 16,
+                      color: iconColor,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   FittedBox(

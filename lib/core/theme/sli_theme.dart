@@ -167,8 +167,10 @@ enum SliVisualStyle {
 
   String get description => switch (this) {
     classic => 'Balanced 16dp surfaces, rich contrast, and signature Anthropic Serif typography.',
-    minimal => 'Crisp 8dp lines, tight padding, and content-first information density.',
-    express => 'Sculpted 24dp squircle curves, pill badges, and refined micro-motion.',
+    minimal =>
+      'Crisp 8dp lines, tight padding, and content-first information density.',
+    express =>
+      'Sculpted 24dp squircle curves, pill badges, and refined micro-motion.',
   };
 
   static SliVisualStyle fromKey(String? key) {
@@ -938,10 +940,14 @@ class SliTheme {
     final isExpress = style == SliVisualStyle.express;
     final isMinimal = style == SliVisualStyle.minimal;
 
-    final displayFamily = isMinimal ? SliTokens.fontFamily : SliTokens.fontFamilyDisplay;
+    final displayFamily = isMinimal
+        ? SliTokens.fontFamily
+        : SliTokens.fontFamilyDisplay;
     final displayWeight = isExpress ? FontWeight.w800 : FontWeight.w700;
     final headlineWeight = isExpress ? FontWeight.w800 : FontWeight.w700;
-    final titleWeight = isExpress ? FontWeight.w800 : (isMinimal ? FontWeight.w700 : FontWeight.w600);
+    final titleWeight = isExpress
+        ? FontWeight.w800
+        : (isMinimal ? FontWeight.w700 : FontWeight.w600);
     final displayTracking = isExpress ? -0.7 : (isMinimal ? -0.2 : -0.5);
     final headlineTracking = isExpress ? -0.4 : (isMinimal ? -0.1 : -0.2);
 

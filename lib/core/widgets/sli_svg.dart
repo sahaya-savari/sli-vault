@@ -135,7 +135,9 @@ class _SliGradientButtonState extends State<SliGradientButton> {
       label: widget.label,
       child: AnimatedScale(
         scale: _isPressed && enabled ? (isExpress ? 0.94 : 0.97) : 1.0,
-        duration: isExpress ? const Duration(milliseconds: 140) : const Duration(milliseconds: 100),
+        duration: isExpress
+            ? const Duration(milliseconds: 140)
+            : const Duration(milliseconds: 100),
         curve: isExpress ? Curves.easeOutBack : Curves.easeOutCubic,
         child: Material(
           color: Colors.transparent,
