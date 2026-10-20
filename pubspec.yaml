@@ -1,7 +1,7 @@
 name: sli_vault
 description: "SLI Vault - Privacy-first, local-first personal vault to save links, screenshots, and images."
 publish_to: 'none'
-version: 1.0.1+2008
+version: 1.0.1+2009
 
 environment:
   sdk: ^3.13.5

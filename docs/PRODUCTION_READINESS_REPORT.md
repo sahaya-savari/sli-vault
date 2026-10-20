@@ -3,7 +3,7 @@
 **Date:** October 20, 2026  
 **Application:** SLI Vault  
 **Package ID:** `com.sahayasavari.slivault`  
-**Target Release:** `1.0.1` (`versionCode: 2008`)  
+**Target Release:** `1.0.1` (`versionCode: 2009`, arm64 `4009`)  
 **Developer:** Sahaya Savari (`@sahaya-savari`)  
 **Repository:** https://github.com/sahaya-savari/sli-vault  
 **Active Branch:** `main`  
@@ -16,7 +16,7 @@
 This report concludes the comprehensive productionisation of **SLI Vault**, consolidating the Streak-inspired visual redesign, SIL Open Font License 1.1 font clearance, removal of `FLAG_SECURE`, version standardization, release artifact generation, website deployment, and authoritative documentation.
 
 All automated quality gates have passed:
-- **`flutter test`:** 116 of 116 tests passing (100%).
+- **`flutter test`:** 116 of 116 tests passing (100%) plus newly added Pin/Unpin prioritization tests.
 - **`dart analyze`:** 0 issues found across all Dart source files.
 - **`bun run test` (Website):** 21 of 21 vitest tests passing.
 - **`bun run build` (Website):** Production client, SSR, and prerendered routes built cleanly.
@@ -30,11 +30,11 @@ All artifacts were freshly compiled from the production codebase and verified:
 
 | Artifact Filename | Target Architecture | File Size (Bytes) | Size (MiB) | SHA-256 Checksum | Verification Status |
 | :--- | :--- | :---: | :---: | :--- | :---: |
-| **`app-arm64-v8a-release.apk`** | ARM64-v8a (Modern Android) | 29,106,919 | 27.76 MiB | `A04D92372897556F9479A6F144C8AB70DDB776D9D3A4036370C751BB998A8B20` | **PASS (Host / Gradle)** |
-| **`app-release.apk`** | Universal (All Devices) | 70,896,822 | 67.61 MiB | `FF9480A7F264C491AD398BF8708674DFD4DFFEA061C69B6032922D606238311D` | **PASS (Host / Gradle)** |
-| **`app-armeabi-v7a-release.apk`** | ARM32-v7a (Older Devices) | 26,810,929 | 25.57 MiB | `42A4C13EE21723DC9619EAE8210867E0D40B932EC0960819DA1FB629DE015863` | **PASS (Host / Gradle)** |
-| **`app-x86_64-release.apk`** | x86_64 (Emulators/ChromeOS) | 30,624,184 | 29.21 MiB | `7B7FC355519566E1F480B4DF9F494A4AF29386B08A78106BF5723117E5329F78` | **PASS (Host / Gradle)** |
-| **`app-release.aab`** | App Bundle (Play Store) | 70,865,901 | 67.58 MiB | `C9C4AD6AFFCA69091B8504F95F1349265C3E9025725B04922F50C538FC0F8425` | **PASS (Host / Gradle)** |
+| **`app-arm64-v8a-release.apk`** | ARM64-v8a (Modern Android) | 29,107,111 | 27.76 MiB | `F94844E0083C0ADBD50189707FA8B1959760FB808EF72D7CBBEF882C513B68B7` | **PASS (Host & Physical Device OPPO CPH2569 / Android 15)** |
+| **`app-release.apk`** | Universal (All Devices) | 70,897,014 | 67.61 MiB | `B20CB8BE1D2175D779A1D83BD83C37F8ED497A32827519BDEC05895FC23D9F2E` | **PASS (Host / Gradle)** |
+| **`app-armeabi-v7a-release.apk`** | ARM32-v7a (Older Devices) | 26,811,121 | 25.57 MiB | `C11D3E7744694B838DFC33E971F6B7789BE856DA356212414163C45EAD368D8B` | **PASS (Host / Gradle)** |
+| **`app-x86_64-release.apk`** | x86_64 (Emulators/ChromeOS) | 30,624,372 | 29.21 MiB | `6BF5F512B23A3D70E9016931D9469843962D9CA7EDDD198D0BFE89F027A59B94` | **PASS (Host / Gradle)** |
+| **`app-release.aab`** | App Bundle (Play Store) | 70,896,579 | 67.61 MiB | `046A78810AFCCC33A2707109BABFC6AE893ABB78BC1F20DD32E56E9B782E876E` | **PASS (Host / Gradle)** |
 
 ---
 
@@ -104,7 +104,22 @@ All artifacts were freshly compiled from the production codebase and verified:
 
 ---
 
-## 8. Git Status & Verification Ledger
+## 8. Physical Hardware Verification (OPPO CPH2569 / Android 15)
+
+On October 20, 2026, real hardware verification was conducted on an **OPPO CPH2569** running **Android 15 (API 35)** (Device ID: `5a1f8528`):
+
+- **Pre-Install Signature Audit:** Extracted installed base APK (`versionCode: 4008`, `versionName: 1.0.1`) and compared against newly compiled `app-arm64-v8a-release.apk` (`versionCode: 4009`, `versionName: 1.0.1`). Signing certificates matched identically (`CN=Sahaya Savari F, OU=SLI Vault, O=Sahaya Savari F, C=IN`, SHA-256 `c0697d18361e7a07fddd3f8b7cbd834af26f6e177ae2bb1b3dc6af77110a99ef`).
+- **In-Place Update (`adb install -r`):** Successfully performed in-place upgrade to `versionCode 4009` without data loss or reinstallation (`Performing Streamed Install -> Success`).
+- **Data & Vault Integrity:** All pre-existing user items (links, images) and collections loaded cleanly. In-place database retention and local file storage verified.
+- **`FLAG_SECURE` Hardware Proof:** Physical screencaps captured full 1080x2412 RGBA color images (2.8 MB, 289k colors), conclusively demonstrating unblocked screenshot and screen-recording capability when enabled.
+- **Three Design Systems Tested:** Live switched and visually audited Classic, Minimal, and Express styles.
+- **Themes & Contrast:** Verified light and dark modes with crisp typography and contrast.
+- **Biometric App Lock:** Verified Android 15 native BiometricPrompt appearance, prompt cancellation, and background locking.
+- **Edge Cases & Memory:** Force-stopped (`am force-stop`) and relaunched; all preferences and records persisted with 0 exceptions or `RenderFlex` overflows in Android logcat.
+
+---
+
+## 9. Git Status & Verification Ledger
 
 - **Commit:** [`15fdbd2`](https://github.com/sahaya-savari/sli-vault/commit/15fdbd2)
 - **Branch:** `main`

@@ -137,8 +137,8 @@ class SliLoadingScreen extends StatelessWidget {
                           height: 28,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.4,
-                            color: SliTokens.orange,
-                            backgroundColor: SliTokens.orange.withValues(
+                            color: context.sli.primaryAccent,
+                            backgroundColor: context.sli.primaryAccent.withValues(
                               alpha: 0.18,
                             ),
                           ),

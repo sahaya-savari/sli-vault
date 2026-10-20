@@ -53,6 +53,7 @@ class VaultController extends ChangeNotifier {
       'sli_vault_screen_protection_v1';
   static const String _prefProfileName = 'sli_vault_profile_name_v1';
   static const String _prefProfilePhoto = 'sli_vault_profile_photo_v1';
+  static const String _prefPinnedItems = 'sli_vault_pinned_items_v1';
 
   final VaultDatabase database;
   final LocalImageStorage imageStorage;
@@ -65,6 +66,7 @@ class VaultController extends ChangeNotifier {
   bool _onboardingCompleted = false;
   bool _isBusy = false;
   Set<String> _customCollections = {'General'};
+  Set<String> _pinnedItemIds = {};
   String _themeModeName = 'dark';
   SliVisualStyle _visualStyle = SliVisualStyle.classic;
   bool _lockEnabled = false;
@@ -82,8 +84,8 @@ class VaultController extends ChangeNotifier {
   bool _screenProtectionEnabled = true;
   String _profileName = 'Inlitx';
   String _profilePhotoPath = '';
-  final Map<String, (VaultItem item, Uint8List? imageBytes)> _undoCache = {};
-  final Map<String, List<(VaultItem item, Uint8List? imageBytes)>> _batchUndoCache = {};
+  final Map<String, (VaultItem item, Uint8List? imageBytes, bool wasPinned)> _undoCache = {};
+  final Map<String, List<(VaultItem item, Uint8List? imageBytes, bool wasPinned)>> _batchUndoCache = {};
 
   // UI Filter / Sort / Layout state
   VaultTypeFilter _homeFilter = VaultTypeFilter.all;
@@ -134,6 +136,8 @@ class VaultController extends ChangeNotifier {
   bool get screenProtectionEnabled => _screenProtectionEnabled;
   String get profileName => _profileName;
   String get profilePhotoPath => _profilePhotoPath;
+  Set<String> get pinnedItemIds => Set.unmodifiable(_pinnedItemIds);
+  bool isItemPinned(String id) => _pinnedItemIds.contains(id);
 
   List<String> get collections {
     final names = <String>{'General', ..._customCollections};
@@ -152,6 +156,7 @@ class VaultController extends ChangeNotifier {
       'General',
       ...(prefs.getStringList(_prefCollections) ?? const <String>[]),
     };
+    _pinnedItemIds = (prefs.getStringList(_prefPinnedItems) ?? const <String>[]).toSet();
     _themeModeName = prefs.getString(_prefThemeMode) ?? 'dark';
     final styleName = prefs.getString(_prefVisualStyle);
     _visualStyle = SliVisualStyle.values.firstWhere(
@@ -202,6 +207,28 @@ class VaultController extends ChangeNotifier {
     _profilePhotoPath = path.trim();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_prefProfilePhoto, _profilePhotoPath);
+    notifyListeners();
+  }
+
+  Future<void> togglePin(String id) async {
+    if (_pinnedItemIds.contains(id)) {
+      _pinnedItemIds.remove(id);
+    } else {
+      _pinnedItemIds.add(id);
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_prefPinnedItems, _pinnedItemIds.toList());
+    notifyListeners();
+  }
+
+  Future<void> setPinned(String id, bool pinned) async {
+    if (pinned) {
+      _pinnedItemIds.add(id);
+    } else {
+      _pinnedItemIds.remove(id);
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_prefPinnedItems, _pinnedItemIds.toList());
     notifyListeners();
   }
 
@@ -465,7 +492,15 @@ class VaultController extends ChangeNotifier {
   }
 
   List<VaultItem> get homeFilteredItems {
-    return _allItems.where((item) => _homeFilter.matches(item.type)).toList();
+    final list =
+        _allItems.where((item) => _homeFilter.matches(item.type)).toList();
+    list.sort((a, b) {
+      final aPin = isItemPinned(a.id);
+      final bPin = isItemPinned(b.id);
+      if (aPin != bPin) return aPin ? -1 : 1;
+      return b.createdAt.compareTo(a.createdAt);
+    });
+    return list;
   }
 
   List<VaultItem> getBrowseItems({String? queryOverride}) {
@@ -474,24 +509,19 @@ class VaultController extends ChangeNotifier {
       return _browseFilter.matches(item.type) && item.matchesSearch(q);
     }).toList();
 
-    switch (_browseSort) {
-      case VaultSortOption.newestFirst:
-        filtered.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-        break;
-      case VaultSortOption.oldestFirst:
-        filtered.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-        break;
-      case VaultSortOption.titleAZ:
-        filtered.sort(
-          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
-        );
-        break;
-      case VaultSortOption.titleZA:
-        filtered.sort(
-          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
-        );
-        break;
-    }
+    filtered.sort((a, b) {
+      final aPin = isItemPinned(a.id);
+      final bPin = isItemPinned(b.id);
+      if (aPin != bPin) return aPin ? -1 : 1;
+      return switch (_browseSort) {
+        VaultSortOption.newestFirst => b.createdAt.compareTo(a.createdAt),
+        VaultSortOption.oldestFirst => a.createdAt.compareTo(b.createdAt),
+        VaultSortOption.titleAZ =>
+          a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+        VaultSortOption.titleZA =>
+          b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+      };
+    });
     return filtered;
   }
 
@@ -781,7 +811,13 @@ class VaultController extends ChangeNotifier {
         } catch (_) {}
       }
     }
-    _undoCache[itemId] = (existing, imageBytes);
+    final wasPinned = isItemPinned(itemId);
+    _undoCache[itemId] = (existing, imageBytes, wasPinned);
+    if (wasPinned) {
+      _pinnedItemIds.remove(itemId);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(_prefPinnedItems, _pinnedItemIds.toList());
+    }
 
     await deleteItem(itemId);
     return existing;
@@ -793,6 +829,7 @@ class VaultController extends ChangeNotifier {
 
     final item = entry.$1;
     final bytes = entry.$2;
+    final wasPinned = entry.$3;
 
     if (bytes != null && item.localImageId != null) {
       await imageStorage.saveImageBytes(
@@ -803,6 +840,11 @@ class VaultController extends ChangeNotifier {
 
     if (findById(item.id) == null) {
       await database.upsertItem(item);
+    }
+    if (wasPinned) {
+      _pinnedItemIds.add(item.id);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(_prefPinnedItems, _pinnedItemIds.toList());
     }
     await reloadLibrary();
     return true;
@@ -842,7 +884,7 @@ class VaultController extends ChangeNotifier {
   Future<String> bulkDeleteWithUndo(List<String> ids) async {
     if (ids.isEmpty) return '';
     final batchId = _uuid.v4();
-    final batchEntries = <(VaultItem, Uint8List?)>[];
+    final batchEntries = <(VaultItem, Uint8List?, bool)>[];
 
     for (final id in ids) {
       final existing = findById(id);
@@ -858,14 +900,18 @@ class VaultController extends ChangeNotifier {
           } catch (_) {}
         }
       }
-      batchEntries.add((existing, imageBytes));
+      final wasPinned = isItemPinned(id);
+      batchEntries.add((existing, imageBytes, wasPinned));
     }
 
     _batchUndoCache[batchId] = batchEntries;
 
     for (final id in ids) {
+      _pinnedItemIds.remove(id);
       await deleteItem(id);
     }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_prefPinnedItems, _pinnedItemIds.toList());
 
     return batchId;
   }
@@ -878,6 +924,7 @@ class VaultController extends ChangeNotifier {
     for (final entry in entries) {
       final item = entry.$1;
       final bytes = entry.$2;
+      final wasPinned = entry.$3;
 
       if (bytes != null && item.localImageId != null) {
         await imageStorage.saveImageBytes(
@@ -888,10 +935,15 @@ class VaultController extends ChangeNotifier {
 
       if (findById(item.id) == null) {
         await database.upsertItem(item);
+        if (wasPinned) {
+          _pinnedItemIds.add(item.id);
+        }
         restoredCount++;
       }
     }
 
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_prefPinnedItems, _pinnedItemIds.toList());
     await reloadLibrary();
     return restoredCount;
   }

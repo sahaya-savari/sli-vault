@@ -164,6 +164,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
               await widget.controller.undoDelete(item.id);
             },
           ),
+          showCloseIcon: true,
+          closeIconColor: context.sli.textSecondary,
           duration: const Duration(seconds: 5),
         ),
       );
@@ -216,6 +218,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
               await widget.controller.undoBulkDelete(batchId);
             },
           ),
+          showCloseIcon: true,
+          closeIconColor: context.sli.textSecondary,
           duration: const Duration(seconds: 5),
         ),
       );

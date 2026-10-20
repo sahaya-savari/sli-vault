@@ -1419,9 +1419,10 @@ class _DataSubpageState extends State<_DataSubpage> {
       await tempFile.writeAsBytes(zipBytes, flush: true);
 
       if (!mounted) return;
+      final messenger = ScaffoldMessenger.of(context);
       await showDialog<void>(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (dialogContext) => AlertDialog(
           scrollable: true,
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1434,7 +1435,7 @@ class _DataSubpageState extends State<_DataSubpage> {
               const SizedBox(height: 16),
               Text(
                 'Backup Archive Ready',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(dialogContext).textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
               Text(
@@ -1446,17 +1447,49 @@ class _DataSubpageState extends State<_DataSubpage> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(dialogContext).pop(),
               child: const Text('Close'),
             ),
-            ElevatedButton(
+            OutlinedButton.icon(
+              icon: const Icon(Icons.share_outlined, size: 16),
+              label: const Text('Share Backup'),
               onPressed: () async {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
                 await Share.shareXFiles([
                   XFile(tempFile.path),
                 ], text: 'SLI Vault Backup Archive');
               },
-              child: const Text('Share / Save Archive'),
+            ),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.save_alt_rounded, size: 16),
+              label: const Text('Save to Device'),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                try {
+                  final outputPath = await FilePicker.platform.saveFile(
+                    dialogTitle: 'Save SLI Vault Backup',
+                    fileName: fileName,
+                    bytes: zipBytes,
+                    type: FileType.custom,
+                    allowedExtensions: ['zip'],
+                  );
+                  if (outputPath != null && mounted) {
+                    final outputFile = File(outputPath);
+                    if (!await outputFile.exists() || await outputFile.length() == 0) {
+                      await outputFile.writeAsBytes(zipBytes, flush: true);
+                    }
+                    messenger.showSnackBar(
+                      const SnackBar(content: Text('Backup archive saved successfully.')),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    messenger.showSnackBar(
+                      SnackBar(content: Text('Save failed: $e')),
+                    );
+                  }
+                }
+              },
             ),
           ],
         ),
@@ -1563,6 +1596,27 @@ class _DataSubpageState extends State<_DataSubpage> {
 
   Future<void> _cleanTempCache() async {
     if (_isWorking) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Clear Temporary Cache?'),
+        content: const Text(
+          'This will remove temporary export archives and pending share buffers. Your saved vault items and images will not be affected.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Clear Cache'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
     setState(() => _isWorking = true);
     try {
       final freed = await widget.controller.clearTemporaryCache();
@@ -1585,6 +1639,31 @@ class _DataSubpageState extends State<_DataSubpage> {
 
   Future<void> _cleanOrphanedImages() async {
     if (_isWorking) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Clean Orphaned Images?'),
+        content: const Text(
+          'This will permanently delete unindexed image files in private storage that are no longer linked to any item in your vault database.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: ctx.sli.destructive,
+              foregroundColor: ctx.sli.onDestructive,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Clean Images'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
     setState(() => _isWorking = true);
     try {
       final count = await widget.controller.cleanOrphanedImages();
@@ -2039,27 +2118,27 @@ class _AboutSubpage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Created with care by ',
-                          style: TextStyle(
-                            fontFamily: SliTokens.fontFamily,
-                            fontSize: 13,
-                            color: palette.textSecondary,
-                          ),
+                    child: Text.rich(
+                      TextSpan(
+                        text: 'Created with care by ',
+                        style: TextStyle(
+                          fontFamily: SliTokens.fontFamily,
+                          fontSize: 13,
+                          color: palette.textSecondary,
                         ),
-                        Text(
-                          '${SliVersion.authorName} (${SliVersion.authorHandle})',
-                          style: TextStyle(
-                            fontFamily: SliTokens.fontFamily,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: palette.primaryAccent,
+                        children: [
+                          TextSpan(
+                            text: '${SliVersion.authorName} (${SliVersion.authorHandle})',
+                            style: TextStyle(
+                              fontFamily: SliTokens.fontFamily,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: palette.primaryAccent,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),

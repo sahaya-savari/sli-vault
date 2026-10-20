@@ -642,16 +642,16 @@ class _WelcomeMedia extends StatelessWidget {
               ),
             ),
           if (isVideoPage && !videoReady && !videoFailed && !reduceMotion)
-            const Align(
+            Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: EdgeInsets.all(SliTokens.spaceMd),
+                padding: const EdgeInsets.all(SliTokens.spaceMd),
                 child: SizedBox(
                   width: 22,
                   height: 22,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: SliTokens.orange,
+                    color: context.sli.primaryAccent,
                   ),
                 ),
               ),
