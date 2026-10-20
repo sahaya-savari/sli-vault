@@ -46,7 +46,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     return const SliEmptyState(
       illustrationAsset: SliAssets.illEmptyFavorites,
       title: 'No favorites yet',
-      subtitle: 'Tap the heart icon on any saved link or image to pin it here for quick access.',
+      subtitle: 'Tap the heart icon on any saved link or image to keep it here for quick access.',
     );
   }
 

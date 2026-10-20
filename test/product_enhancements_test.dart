@@ -659,6 +659,29 @@ void main() {
       expect(controller.findExistingLink('   '), isNull);
       expect(controller.findExistingLink(''), isNull);
     });
+
+    test('pin and unpin items prioritizes them in homeFilteredItems and persists', () async {
+      final item1 = await controller.addLinkItem(
+        rawUrl: 'https://site1.example.com',
+        customTitle: 'Site 1',
+      );
+      final item2 = await controller.addLinkItem(
+        rawUrl: 'https://site2.example.com',
+        customTitle: 'Site 2',
+      );
+
+      expect(controller.isItemPinned(item1.id), isFalse);
+      expect(controller.isItemPinned(item2.id), isFalse);
+
+      await controller.togglePin(item1.id);
+      expect(controller.isItemPinned(item1.id), isTrue);
+
+      final filtered = controller.homeFilteredItems;
+      expect(filtered.first.id, item1.id);
+
+      await controller.togglePin(item1.id);
+      expect(controller.isItemPinned(item1.id), isFalse);
+    });
   });
 }
 

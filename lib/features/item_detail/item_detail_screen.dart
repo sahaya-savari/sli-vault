@@ -291,6 +291,8 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
               await widget.controller.undoDelete(item.id);
             },
           ),
+          showCloseIcon: true,
+          closeIconColor: context.sli.textSecondary,
           duration: const Duration(seconds: 5),
         ),
       );
@@ -319,6 +321,21 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
             ),
             title: Text(item.type.label),
             actions: [
+              IconButton(
+                tooltip: widget.controller.isItemPinned(item.id)
+                    ? 'Unpin from top'
+                    : 'Pin to top',
+                onPressed: () => widget.controller.togglePin(item.id),
+                icon: Icon(
+                  widget.controller.isItemPinned(item.id)
+                      ? Icons.push_pin
+                      : Icons.push_pin_outlined,
+                  size: 20,
+                  color: widget.controller.isItemPinned(item.id)
+                      ? SliTokens.amber
+                      : context.sli.textPrimary,
+                ),
+              ),
               IconButton(
                 tooltip: item.isFavorite ? 'Unfavorite' : 'Favorite',
                 onPressed: () => widget.controller.toggleFavorite(item.id),

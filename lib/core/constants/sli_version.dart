@@ -6,7 +6,7 @@ class SliVersion {
   static const String versionName = '1.0.1';
 
   /// Monotonically increasing Android build code for upgrades.
-  static const int versionCode = 2008;
+  static const int versionCode = 2009;
 
   /// Combined version and build representation.
   static const String fullVersion = '$versionName+$versionCode';

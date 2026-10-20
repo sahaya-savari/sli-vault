@@ -234,7 +234,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
     );
   }
 
-  Widget _buildPinBadge(BuildContext context) {
+  Widget _buildFavoriteBadge(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
@@ -245,12 +245,38 @@ class _VaultItemCardState extends State<VaultItemCard> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.push_pin, size: 10.5, color: SliTokens.coral),
+          Icon(Icons.favorite, size: 10.5, color: SliTokens.coral),
+          const SizedBox(width: 2.5),
+          Text(
+            'Favorite',
+            style: TextStyle(
+              color: SliTokens.coral,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPinBadge(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      decoration: BoxDecoration(
+        color: SliTokens.amber.withValues(alpha: 0.16),
+        borderRadius: _badgeRadius(context),
+        border: Border.all(color: SliTokens.amber.withValues(alpha: 0.45)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.push_pin, size: 10.5, color: SliTokens.amber),
           const SizedBox(width: 2.5),
           Text(
             'Pinned',
             style: TextStyle(
-              color: SliTokens.coral,
+              color: SliTokens.amber,
               fontSize: 10,
               fontWeight: FontWeight.w600,
             ),
@@ -365,7 +391,9 @@ class _VaultItemCardState extends State<VaultItemCard> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     _buildTypePill(context),
-                    if (widget.item.isFavorite) _buildPinBadge(context),
+                    if (widget.controller.isItemPinned(widget.item.id))
+                      _buildPinBadge(context),
+                    if (widget.item.isFavorite) _buildFavoriteBadge(context),
                     if (widget.item.collection.isNotEmpty &&
                         widget.item.collection != 'General')
                       _buildCollectionBadge(context),
@@ -452,11 +480,35 @@ class _VaultItemCardState extends State<VaultItemCard> {
               onSelected: (val) {
                 if (val == 'favorite') {
                   widget.onToggleFavorite();
+                } else if (val == 'pin') {
+                  widget.controller.togglePin(widget.item.id);
                 } else if (val == 'delete') {
                   widget.onDelete!();
                 }
               },
               itemBuilder: (ctx) => [
+                PopupMenuItem(
+                  value: 'pin',
+                  child: Row(
+                    children: [
+                      Icon(
+                        widget.controller.isItemPinned(widget.item.id)
+                            ? Icons.push_pin
+                            : Icons.push_pin_outlined,
+                        size: 16,
+                        color: widget.controller.isItemPinned(widget.item.id)
+                            ? SliTokens.amber
+                            : ctx.sli.textPrimary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        widget.controller.isItemPinned(widget.item.id)
+                            ? 'Unpin from top'
+                            : 'Pin to top',
+                      ),
+                    ],
+                  ),
+                ),
                 PopupMenuItem(
                   value: 'favorite',
                   child: Row(
@@ -518,16 +570,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
                 Positioned(
                   top: 6,
                   left: 6,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildTypePill(context),
-                      if (widget.item.isFavorite) ...[
-                        const SizedBox(width: 4),
-                        _buildPinBadge(context),
-                      ],
-                    ],
-                  ),
+                  child: _buildTypePill(context),
                 ),
                 if (widget.item.collection.isNotEmpty &&
                     widget.item.collection != 'General')
