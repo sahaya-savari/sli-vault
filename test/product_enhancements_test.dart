@@ -443,52 +443,112 @@ void main() {
       },
     );
 
-    test(
-      'bulkDeleteWithUndo caches items and media, and restores them accurately on undo',
-      () async {
-        final dummyPng = Uint8List.fromList([
-          0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D,
-          0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
-          0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, 0x89, 0x00, 0x00, 0x00,
-          0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
-          0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49,
-          0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
-        ]);
+    test('bulkDeleteWithUndo caches items and media, and restores them accurately on undo', () async {
+      final dummyPng = Uint8List.fromList([
+        0x89,
+        0x50,
+        0x4E,
+        0x47,
+        0x0D,
+        0x0A,
+        0x1A,
+        0x0A,
+        0x00,
+        0x00,
+        0x00,
+        0x0D,
+        0x49,
+        0x48,
+        0x44,
+        0x52,
+        0x00,
+        0x00,
+        0x00,
+        0x01,
+        0x00,
+        0x00,
+        0x00,
+        0x01,
+        0x08,
+        0x06,
+        0x00,
+        0x00,
+        0x00,
+        0x1F,
+        0x15,
+        0xC4,
+        0x89,
+        0x00,
+        0x00,
+        0x00,
+        0x0A,
+        0x49,
+        0x44,
+        0x41,
+        0x54,
+        0x78,
+        0x9C,
+        0x63,
+        0x00,
+        0x01,
+        0x00,
+        0x00,
+        0x05,
+        0x00,
+        0x01,
+        0x0D,
+        0x0A,
+        0x2D,
+        0xB4,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x49,
+        0x45,
+        0x4E,
+        0x44,
+        0xAE,
+        0x42,
+        0x60,
+        0x82,
+      ]);
 
-        final link = await controller.addLinkItem(
-          rawUrl: 'https://flutter.dev',
-          customTitle: 'Flutter Dev',
-        );
-        final image = await controller.addMediaItem(
-          type: VaultItemType.image,
-          imageBytes: dummyPng,
-          customTitle: 'Sample Image',
-        );
+      final link = await controller.addLinkItem(
+        rawUrl: 'https://flutter.dev',
+        customTitle: 'Flutter Dev',
+      );
+      final image = await controller.addMediaItem(
+        type: VaultItemType.image,
+        imageBytes: dummyPng,
+        customTitle: 'Sample Image',
+      );
 
-        expect(controller.allItems.length, 2);
-        final imgFile = await controller.imageStorage.resolveImageFile(image.localImageId);
-        expect(imgFile, isNotNull);
-        expect(await imgFile!.exists(), isTrue);
+      expect(controller.allItems.length, 2);
+      final imgFile = await controller.imageStorage.resolveImageFile(
+        image.localImageId,
+      );
+      expect(imgFile, isNotNull);
+      expect(await imgFile!.exists(), isTrue);
 
-        // Perform bulk deletion with undo
-        final batchId = await controller.bulkDeleteWithUndo([link.id, image.id]);
-        expect(controller.allItems.isEmpty, isTrue);
+      // Perform bulk deletion with undo
+      final batchId = await controller.bulkDeleteWithUndo([link.id, image.id]);
+      expect(controller.allItems.isEmpty, isTrue);
 
-        // Undo bulk deletion
-        final restored = await controller.undoBulkDelete(batchId);
-        expect(restored, 2);
-        expect(controller.allItems.length, 2);
+      // Undo bulk deletion
+      final restored = await controller.undoBulkDelete(batchId);
+      expect(restored, 2);
+      expect(controller.allItems.length, 2);
 
-        // Verify image binary was restored to disk
-        expect(await imgFile.exists(), isTrue);
-        final restoredBytes = await imgFile.readAsBytes();
-        expect(restoredBytes, equals(dummyPng));
+      // Verify image binary was restored to disk
+      expect(await imgFile.exists(), isTrue);
+      final restoredBytes = await imgFile.readAsBytes();
+      expect(restoredBytes, equals(dummyPng));
 
-        // Duplicate restoration prevention: calling undo again returns 0
-        final reUndo = await controller.undoBulkDelete(batchId);
-        expect(reUndo, 0);
-      },
-    );
+      // Duplicate restoration prevention: calling undo again returns 0
+      final reUndo = await controller.undoBulkDelete(batchId);
+      expect(reUndo, 0);
+    });
 
     test('screenProtection preference persists across controller re-initialization', () async {
       expect(controller.screenProtectionEnabled, isTrue);
@@ -510,12 +570,73 @@ void main() {
 
     test('single image deletion caches bytes and undoDelete faithfully restores it to disk', () async {
       final dummyPng = Uint8List.fromList([
-        0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D,
-        0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
-        0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, 0x89, 0x00, 0x00, 0x00,
-        0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
-        0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49,
-        0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
+        0x89,
+        0x50,
+        0x4E,
+        0x47,
+        0x0D,
+        0x0A,
+        0x1A,
+        0x0A,
+        0x00,
+        0x00,
+        0x00,
+        0x0D,
+        0x49,
+        0x48,
+        0x44,
+        0x52,
+        0x00,
+        0x00,
+        0x00,
+        0x01,
+        0x00,
+        0x00,
+        0x00,
+        0x01,
+        0x08,
+        0x06,
+        0x00,
+        0x00,
+        0x00,
+        0x1F,
+        0x15,
+        0xC4,
+        0x89,
+        0x00,
+        0x00,
+        0x00,
+        0x0A,
+        0x49,
+        0x44,
+        0x41,
+        0x54,
+        0x78,
+        0x9C,
+        0x63,
+        0x00,
+        0x01,
+        0x00,
+        0x00,
+        0x05,
+        0x00,
+        0x01,
+        0x0D,
+        0x0A,
+        0x2D,
+        0xB4,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x49,
+        0x45,
+        0x4E,
+        0x44,
+        0xAE,
+        0x42,
+        0x60,
+        0x82,
       ]);
 
       final image = await controller.addMediaItem(
@@ -524,7 +645,9 @@ void main() {
         customTitle: 'Single Image',
       );
 
-      final file = await controller.imageStorage.resolveImageFile(image.localImageId);
+      final file = await controller.imageStorage.resolveImageFile(
+        image.localImageId,
+      );
       expect(file, isNotNull);
       expect(await file!.exists(), isTrue);
 
@@ -532,13 +655,19 @@ void main() {
       final removed = await controller.deleteItemWithUndo(image.id);
       expect(removed, isNotNull);
       expect(controller.allItems.isEmpty, isTrue);
-      expect(await file.exists(), isFalse); // disk file cleaned up because unreferenced
+      expect(
+        await file.exists(),
+        isFalse,
+      ); // disk file cleaned up because unreferenced
 
       // Undo deletion
       final restored = await controller.undoDelete(image.id);
       expect(restored, isTrue);
       expect(controller.allItems.length, 1);
-      expect(await file.exists(), isTrue); // disk file restored with original bytes
+      expect(
+        await file.exists(),
+        isTrue,
+      ); // disk file restored with original bytes
       expect(await file.readAsBytes(), equals(dummyPng));
     });
 
@@ -547,13 +676,22 @@ void main() {
       expect(await controller.undoBulkDelete('non-existent-batch'), equals(0));
     });
 
-    test('empty bulk operations handle gracefully with zero side-effects', () async {
-      expect(await controller.bulkDeleteItems([]), equals(0));
-      expect(await controller.bulkDeleteWithUndo([]), isEmpty);
-      await expectLater(controller.bulkSetFavorite([], true), completes);
-      await expectLater(controller.bulkMoveToCollection([], 'Test'), completes);
-      await expectLater(() => controller.exportSelectedItems([]), throwsStateError);
-    });
+    test(
+      'empty bulk operations handle gracefully with zero side-effects',
+      () async {
+        expect(await controller.bulkDeleteItems([]), equals(0));
+        expect(await controller.bulkDeleteWithUndo([]), isEmpty);
+        await expectLater(controller.bulkSetFavorite([], true), completes);
+        await expectLater(
+          controller.bulkMoveToCollection([], 'Test'),
+          completes,
+        );
+        await expectLater(
+          () => controller.exportSelectedItems([]),
+          throwsStateError,
+        );
+      },
+    );
   });
 
   group('Device QA Regression: HTML Metadata Parser Robustness', () {
@@ -579,7 +717,10 @@ void main() {
       );
 
       expect(meta.title, "Google's Official Dart Framework");
-      expect(meta.description, "It's the world's fastest UI toolkit & multiplatform engine.");
+      expect(
+        meta.description,
+        "It's the world's fastest UI toolkit & multiplatform engine.",
+      );
       expect(meta.previewImageUrl, 'https://dart.dev/brand/logo.png');
       expect(meta.faviconUrl, 'https://dart.dev/favicons/favicon.png');
     });
@@ -591,11 +732,15 @@ void main() {
       final safe2 = await LinkMetadataService.isPublicHostSafe('192.168.1.100');
       expect(safe2, isFalse);
 
-      final meta = await LinkMetadataService.fetchMetadata('http://127.0.0.1:8080/admin');
+      final meta = await LinkMetadataService.fetchMetadata(
+        'http://127.0.0.1:8080/admin',
+      );
       expect(meta.hasContent, isFalse);
       expect(meta.title, isNull);
 
-      final meta2 = await LinkMetadataService.fetchMetadata('ftp://private.corp');
+      final meta2 = await LinkMetadataService.fetchMetadata(
+        'ftp://private.corp',
+      );
       expect(meta2.hasContent, isFalse);
       expect(meta2.title, isNull);
     });
@@ -610,7 +755,9 @@ void main() {
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       tempDir = await Directory.systemTemp.createTemp('sli_dup_test_');
-      database = VaultDatabase(overrideDbPath: p.join(tempDir.path, 'test_dup.db'));
+      database = VaultDatabase(
+        overrideDbPath: p.join(tempDir.path, 'test_dup.db'),
+      );
       imageStorage = LocalImageStorage(
         overrideBaseDir: Directory(p.join(tempDir.path, 'images')),
       );
@@ -660,28 +807,30 @@ void main() {
       expect(controller.findExistingLink(''), isNull);
     });
 
-    test('pin and unpin items prioritizes them in homeFilteredItems and persists', () async {
-      final item1 = await controller.addLinkItem(
-        rawUrl: 'https://site1.example.com',
-        customTitle: 'Site 1',
-      );
-      final item2 = await controller.addLinkItem(
-        rawUrl: 'https://site2.example.com',
-        customTitle: 'Site 2',
-      );
+    test(
+      'pin and unpin items prioritizes them in homeFilteredItems and persists',
+      () async {
+        final item1 = await controller.addLinkItem(
+          rawUrl: 'https://site1.example.com',
+          customTitle: 'Site 1',
+        );
+        final item2 = await controller.addLinkItem(
+          rawUrl: 'https://site2.example.com',
+          customTitle: 'Site 2',
+        );
 
-      expect(controller.isItemPinned(item1.id), isFalse);
-      expect(controller.isItemPinned(item2.id), isFalse);
+        expect(controller.isItemPinned(item1.id), isFalse);
+        expect(controller.isItemPinned(item2.id), isFalse);
 
-      await controller.togglePin(item1.id);
-      expect(controller.isItemPinned(item1.id), isTrue);
+        await controller.togglePin(item1.id);
+        expect(controller.isItemPinned(item1.id), isTrue);
 
-      final filtered = controller.homeFilteredItems;
-      expect(filtered.first.id, item1.id);
+        final filtered = controller.homeFilteredItems;
+        expect(filtered.first.id, item1.id);
 
-      await controller.togglePin(item1.id);
-      expect(controller.isItemPinned(item1.id), isFalse);
-    });
+        await controller.togglePin(item1.id);
+        expect(controller.isItemPinned(item1.id), isFalse);
+      },
+    );
   });
 }
-

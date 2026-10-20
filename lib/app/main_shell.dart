@@ -312,19 +312,28 @@ class _BottomNavBar extends StatelessWidget {
                 constraints: const BoxConstraints(maxWidth: 500),
                 child: Container(
                   key: const ValueKey('sli-bottom-nav'),
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: Color.alphaBlend(
-                      palette.primaryAccent.withValues(alpha: isDark ? 0.18 : 0.12),
+                      palette.primaryAccent.withValues(
+                        alpha: isDark ? 0.18 : 0.12,
+                      ),
                       isDark ? palette.surfaceFillDeep : Colors.white,
                     ),
                     borderRadius: BorderRadius.circular(28),
                     border: Border.all(
-                      color: palette.primaryAccent.withValues(alpha: isDark ? 0.28 : 0.22),
+                      color: palette.primaryAccent.withValues(
+                        alpha: isDark ? 0.28 : 0.22,
+                      ),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: isDark ? 0.40 : 0.12),
+                        color: Colors.black.withValues(
+                          alpha: isDark ? 0.40 : 0.12,
+                        ),
                         blurRadius: 20,
                         offset: const Offset(0, 6),
                       ),
@@ -483,7 +492,9 @@ class _ExpressNavBarItem extends StatelessWidget {
                       boxShadow: selected
                           ? [
                               BoxShadow(
-                                color: palette.primaryAccent.withValues(alpha: 0.35),
+                                color: palette.primaryAccent.withValues(
+                                  alpha: 0.35,
+                                ),
                                 blurRadius: 10,
                                 offset: const Offset(0, 2),
                               ),
@@ -509,9 +520,13 @@ class _ExpressNavBarItem extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: SliTokens.fontFamily,
-                        color: selected ? palette.accentText : palette.textSecondary,
+                        color: selected
+                            ? palette.accentText
+                            : palette.textSecondary,
                         fontSize: fontSize,
-                        fontWeight: selected ? FontWeight.w800 : FontWeight.w500,
+                        fontWeight: selected
+                            ? FontWeight.w800
+                            : FontWeight.w500,
                         height: 1.1,
                         letterSpacing: -0.2,
                       ),
@@ -589,9 +604,13 @@ class _MinimalNavBarItem extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: SliTokens.fontFamily,
-                        color: selected ? palette.textPrimary : palette.textSecondary,
+                        color: selected
+                            ? palette.textPrimary
+                            : palette.textSecondary,
                         fontSize: fontSize,
-                        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                        fontWeight: selected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
                         height: 1.05,
                         letterSpacing: -0.1,
                       ),
@@ -692,4 +711,3 @@ class _NavBarItem extends StatelessWidget {
     );
   }
 }
-

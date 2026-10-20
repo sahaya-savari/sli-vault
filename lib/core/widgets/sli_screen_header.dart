@@ -44,18 +44,18 @@ class SliScreenHeader extends StatelessWidget {
             SliTokens.spaceSm,
           )
         : (isExpress
-            ? EdgeInsets.fromLTRB(
-                SliTokens.spaceLg + 2,
-                SliTokens.spaceMd,
-                actions.isEmpty ? SliTokens.spaceLg + 2 : SliTokens.spaceSm,
-                SliTokens.spaceMd,
-              )
-            : EdgeInsets.fromLTRB(
-                SliTokens.spaceLg,
-                SliTokens.spaceSm + 2,
-                actions.isEmpty ? SliTokens.spaceLg : SliTokens.spaceXs,
-                SliTokens.spaceSm + 2,
-              ));
+              ? EdgeInsets.fromLTRB(
+                  SliTokens.spaceLg + 2,
+                  SliTokens.spaceMd,
+                  actions.isEmpty ? SliTokens.spaceLg + 2 : SliTokens.spaceSm,
+                  SliTokens.spaceMd,
+                )
+              : EdgeInsets.fromLTRB(
+                  SliTokens.spaceLg,
+                  SliTokens.spaceSm + 2,
+                  actions.isEmpty ? SliTokens.spaceLg : SliTokens.spaceXs,
+                  SliTokens.spaceSm + 2,
+                ));
 
     return Padding(
       padding: margin,

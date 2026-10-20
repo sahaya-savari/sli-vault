@@ -37,10 +37,10 @@ SLI Vault is a Flutter Android app for saving links and images into **app-privat
 | Property | Current Detail |
 |---|---|
 | **Application ID** | `com.sahayasavari.slivault` |
-| **Current Version** | `1.0.2` (`versionCode` `4`) |
-| **Distribution** | Signed APK and AAB on [GitHub Releases](https://github.com/sahaya-savari/sli-vault/releases) — sideload only, no Play Store listing |
+| **Current Version** | `1.0.1` (`versionCode` `2010`, arm64 `4010`) |
+| **Distribution** | Signed APK and AAB on [GitHub Releases](https://github.com/sahaya-savari/sli-vault/releases) - sideload only, no Play Store listing |
 | **Data Model** | 100% local-first: SQLite + app-private image files |
-| **License** | [MIT](LICENSE) for project-owned code and docs (third-party assets separate - see [License](#license)) |
+| **License** | [MIT](LICENSE) for project-owned code and docs (fonts under SIL OFL 1.1) |
 
 The Flutter mobile application resides directly at the **repository root**. The repository is architected as a lightweight monorepo accommodating:
 1. The **Flutter/Dart Android mobile app** at the repository root.
@@ -48,14 +48,14 @@ The Flutter mobile application resides directly at the **repository root**. The 
 
 | Component / Platform | Status |
 |----------------------|--------|
-| Android (Root) | Primary target; signed GitHub Release available (`v1.0.2+4` targets active) |
+| Android (Root) | Primary target; signed GitHub Release available (`v1.0.1`) |
 | iOS | Phase 2 - scaffold only, not verified as a shipping target |
 | Web / Desktop | Flutter platform folders only - not the shipping target |
 | Website (`website/`) | Integrated showcase site (React/Vite/TanStack); see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md) |
 
 **Download / release status:** a **signed GitHub Release APK** is available under [Releases](https://github.com/sahaya-savari/sli-vault/releases). Application ID `com.sahayasavari.slivault`. There is **no Play Store listing** - sideload / open-source distribution only.
 
-The project-owned code and documentation are licensed under [MIT](LICENSE). Third-party assets are separate: in particular, Anthropic Serif remains **not cleared for redistribution**. See [the font notice](assets/fonts/claude/README.md).
+The project-owned code and documentation are licensed under [MIT](LICENSE). Fonts bundled (Figtree, Google Sans Flex, JetBrains Mono) are licensed under the [SIL Open Font License 1.1](LICENSE_FONTS_OFL.txt).
 
 ---
 
@@ -153,7 +153,7 @@ The key capabilities of SLI Vault across daily capture, organization, and backup
 ## Release documentation
 
 - [Android release guide](docs/ANDROID_RELEASE.md) - build, signing, and artifact verification
-- [Android device checklist](docs/ANDROID_DEVICE_CHECKLIST.md) - all physical-device checks remain **NOT TESTED**
+- [Android device checklist](docs/ANDROID_DEVICE_CHECKLIST.md) - physical-device checks verified on OPPO CPH2569 (Android 15)
 - [Release readiness gate](docs/RELEASE_READINESS.md) - blockers and evidence
 - [Testing notes](docs/TESTING.md) - automated coverage and validation classification
 

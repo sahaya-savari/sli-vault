@@ -49,15 +49,15 @@ class _SliSpotlightCardState extends State<SliSpotlightCard> {
 
     final borderColor = isDark
         ? (isExpress
-            ? palette.primaryAccent.withValues(alpha: 0.32)
-            : (isMinimal
-                ? palette.border.withValues(alpha: 0.45)
-                : palette.primaryAccent.withValues(alpha: 0.22)))
+              ? palette.primaryAccent.withValues(alpha: 0.32)
+              : (isMinimal
+                    ? palette.border.withValues(alpha: 0.45)
+                    : palette.primaryAccent.withValues(alpha: 0.22)))
         : (isExpress
-            ? palette.primaryAccent.withValues(alpha: 0.25)
-            : (isMinimal
-                ? palette.border.withValues(alpha: 0.6)
-                : palette.border));
+              ? palette.primaryAccent.withValues(alpha: 0.25)
+              : (isMinimal
+                    ? palette.border.withValues(alpha: 0.6)
+                    : palette.border));
 
     final shadow = isMinimal
         ? BoxShadow(
@@ -66,17 +66,17 @@ class _SliSpotlightCardState extends State<SliSpotlightCard> {
             offset: const Offset(0, 1),
           )
         : (isExpress
-            ? BoxShadow(
-                color: (isDark ? palette.primaryAccent : Colors.black)
-                    .withValues(alpha: isDark ? 0.12 : 0.08),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              )
-            : BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.22 : 0.08),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ));
+              ? BoxShadow(
+                  color: (isDark ? palette.primaryAccent : Colors.black)
+                      .withValues(alpha: isDark ? 0.12 : 0.08),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                )
+              : BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.22 : 0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ));
 
     final hasTap = widget.onTap != null || widget.onLongPress != null;
     final targetScale = (!palette.reduceMotion && hasTap && _isPressed)

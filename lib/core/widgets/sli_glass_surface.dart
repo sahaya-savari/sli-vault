@@ -69,14 +69,10 @@ class SliGlassSurface extends StatelessWidget {
 
     final Color fill =
         fillColor ??
-        (danger
-            ? Color.alphaBlend(dangerTint, baseFill)
-            : baseFill);
+        (danger ? Color.alphaBlend(dangerTint, baseFill) : baseFill);
     final Color fillDeep =
         fillDeepColor ??
-        (danger
-            ? Color.alphaBlend(dangerTint, baseFillDeep)
-            : baseFillDeep);
+        (danger ? Color.alphaBlend(dangerTint, baseFillDeep) : baseFillDeep);
     final Color stroke =
         borderColor ??
         (danger

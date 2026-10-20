@@ -40,9 +40,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _pushPage(Widget page) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => page),
-    );
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
   }
 
   @override
@@ -60,103 +58,109 @@ class _SettingsScreenState extends State<SettingsScreen> {
         };
 
         return SliAtmosphere(
-      variant: SliAtmosphereVariant.abstractFlow,
-      imageAsset: SliAssets.bgSettings,
-      child: SafeArea(
-        child: ListView(
-          key: const ValueKey('settings-scroll'),
-          padding: EdgeInsets.fromLTRB(
-            SliTokens.spaceLg,
-            SliTokens.spaceMd,
-            SliTokens.spaceLg,
-            96,
-          ),
-          children: [
-            // Screen Title
-            Padding(
-              padding: const EdgeInsets.only(left: 4, bottom: 20),
-              child: Text(
-                'Settings',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: palette.textPrimary,
-                  letterSpacing: -0.5,
-                ),
+          variant: SliAtmosphereVariant.abstractFlow,
+          imageAsset: SliAssets.bgSettings,
+          child: SafeArea(
+            child: ListView(
+              key: const ValueKey('settings-scroll'),
+              padding: EdgeInsets.fromLTRB(
+                SliTokens.spaceLg,
+                SliTokens.spaceMd,
+                SliTokens.spaceLg,
+                96,
               ),
-            ),
-
-            // Profile / User Avatar Header
-            _ProfileHeader(controller: controller),
-            const SizedBox(height: 24),
-
-            // Card 1: App Style (Stand-alone grouped pill/card)
-            _SettingsCard(
               children: [
-                _NavRow(
-                  icon: Icons.smartphone_rounded,
-                  title: 'App style',
-                  value: appStyleLabel,
-                  onTap: () => _pushPage(_AppStyleSubpage(controller: controller)),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Card 2: Main Menu (Appearance, Preferences, Data, Support)
-            _SettingsCard(
-              children: [
-                _NavRow(
-                  icon: Icons.palette_outlined,
-                  title: 'Appearance',
-                  subtitle: 'Theme, accent and background',
-                  onTap: () => _pushPage(_AppearanceSubpage(controller: controller)),
-                ),
-                _settingsDivider(context),
-                _NavRow(
-                  icon: Icons.tune_rounded,
-                  title: 'Preferences',
-                  subtitle: 'Startup, browser and sorting',
-                  onTap: () => _pushPage(_PreferencesSubpage(controller: controller)),
-                ),
-                _settingsDivider(context),
-                _NavRow(
-                  icon: Icons.storage_rounded,
-                  title: 'Data',
-                  subtitle: 'Backups, archive and import',
-                  onTap: () => _pushPage(
-                    _DataSubpage(
-                      controller: controller,
-                      formatBytes: _formatBytes,
+                // Screen Title
+                Padding(
+                  padding: const EdgeInsets.only(left: 4, bottom: 20),
+                  child: Text(
+                    'Settings',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                      color: palette.textPrimary,
+                      letterSpacing: -0.5,
                     ),
                   ),
                 ),
-                _settingsDivider(context),
-                _NavRow(
-                  icon: Icons.volunteer_activism_outlined,
-                  title: 'Support',
-                  subtitle: 'Report a bug or ask for a feature',
-                  onTap: () => _pushPage(_SupportSubpage(controller: controller)),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
 
-            // Card 3: About this app (Stand-alone grouped card)
-            _SettingsCard(
-              children: [
-                _NavRow(
-                  icon: Icons.info_outline_rounded,
-                  title: 'About this app',
-                  subtitle: 'Version, credits and source code',
-                  onTap: () => _pushPage(_AboutSubpage(controller: controller)),
+                // Profile / User Avatar Header
+                _ProfileHeader(controller: controller),
+                const SizedBox(height: 24),
+
+                // Card 1: App Style (Stand-alone grouped pill/card)
+                _SettingsCard(
+                  children: [
+                    _NavRow(
+                      icon: Icons.smartphone_rounded,
+                      title: 'App style',
+                      value: appStyleLabel,
+                      onTap: () =>
+                          _pushPage(_AppStyleSubpage(controller: controller)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Card 2: Main Menu (Appearance, Preferences, Data, Support)
+                _SettingsCard(
+                  children: [
+                    _NavRow(
+                      icon: Icons.palette_outlined,
+                      title: 'Appearance',
+                      subtitle: 'Theme, accent and background',
+                      onTap: () =>
+                          _pushPage(_AppearanceSubpage(controller: controller)),
+                    ),
+                    _settingsDivider(context),
+                    _NavRow(
+                      icon: Icons.tune_rounded,
+                      title: 'Preferences',
+                      subtitle: 'Startup, browser and sorting',
+                      onTap: () => _pushPage(
+                        _PreferencesSubpage(controller: controller),
+                      ),
+                    ),
+                    _settingsDivider(context),
+                    _NavRow(
+                      icon: Icons.storage_rounded,
+                      title: 'Data',
+                      subtitle: 'Backups, archive and import',
+                      onTap: () => _pushPage(
+                        _DataSubpage(
+                          controller: controller,
+                          formatBytes: _formatBytes,
+                        ),
+                      ),
+                    ),
+                    _settingsDivider(context),
+                    _NavRow(
+                      icon: Icons.volunteer_activism_outlined,
+                      title: 'Support',
+                      subtitle: 'Report a bug or ask for a feature',
+                      onTap: () =>
+                          _pushPage(_SupportSubpage(controller: controller)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Card 3: About this app (Stand-alone grouped card)
+                _SettingsCard(
+                  children: [
+                    _NavRow(
+                      icon: Icons.info_outline_rounded,
+                      title: 'About this app',
+                      subtitle: 'Version, credits and source code',
+                      onTap: () =>
+                          _pushPage(_AboutSubpage(controller: controller)),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        );
       },
     );
   }
@@ -184,9 +188,8 @@ class _ProfileHeader extends StatelessWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to pick photo: $e')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to pick photo: $e')));
       }
     }
   }
@@ -303,11 +306,7 @@ class _ProfileHeader extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Icon(
-                      Icons.edit,
-                      size: 13,
-                      color: palette.onAccent,
-                    ),
+                    child: Icon(Icons.edit, size: 13, color: palette.onAccent),
                   ),
                 ),
               ],
@@ -402,9 +401,7 @@ Widget _settingsDivider(BuildContext context) {
     thickness: 1,
     indent: 62,
     endIndent: 16,
-    color: dark
-        ? const Color(0xFF28282C)
-        : const Color(0xFFE5E5EA),
+    color: dark ? const Color(0xFF28282C) : const Color(0xFFE5E5EA),
   );
 }
 
@@ -542,8 +539,10 @@ class _AppStyleSubpage extends StatelessWidget {
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final width =
-              ((constraints.maxWidth - 44 - 32) / 3).clamp(80.0, 140.0);
+          final width = ((constraints.maxWidth - 44 - 32) / 3).clamp(
+            80.0,
+            140.0,
+          );
 
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
@@ -592,31 +591,16 @@ class _StreakStylePicker extends StatelessWidget {
   final VaultController controller;
   final double width;
 
-  const _StreakStylePicker({
-    required this.controller,
-    required this.width,
-  });
+  const _StreakStylePicker({required this.controller, required this.width});
 
   @override
   Widget build(BuildContext context) {
     final currentStyle = controller.visualStyle;
 
     final styles = [
-      (
-        SliVisualStyle.classic,
-        'Classic',
-        const _ClassicPreviewSkeleton(),
-      ),
-      (
-        SliVisualStyle.minimal,
-        'Minimal',
-        const _MinimalPreviewSkeleton(),
-      ),
-      (
-        SliVisualStyle.express,
-        'Express',
-        const _ExpressPreviewSkeleton(),
-      ),
+      (SliVisualStyle.classic, 'Classic', const _ClassicPreviewSkeleton()),
+      (SliVisualStyle.minimal, 'Minimal', const _MinimalPreviewSkeleton()),
+      (SliVisualStyle.express, 'Express', const _ExpressPreviewSkeleton()),
     ];
 
     return Row(
@@ -997,8 +981,8 @@ class _LegendTile extends StatelessWidget {
               color: selected
                   ? accent
                   : (dark
-                      ? Colors.white.withValues(alpha: 0.08)
-                      : Colors.black.withValues(alpha: 0.07)),
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.07)),
               width: selected ? 1.8 : 1.0,
             ),
           ),
@@ -1088,7 +1072,8 @@ class _AppearanceSubpage extends StatelessWidget {
           // Accent Presets Card
           _SettingsSectionCard(
             title: 'Accent Palette Highlight',
-            subtitle: 'Select your preferred WCAG AA/AAA-verified brand color tone.',
+            subtitle:
+                'Select your preferred WCAG AA/AAA-verified brand color tone.',
             child: _AccentChoiceRow(controller: controller),
           ),
           const SizedBox(height: 16),
@@ -1111,7 +1096,10 @@ class _AppearanceSubpage extends StatelessWidget {
               ),
               _settingsDivider(context),
               SwitchListTile(
-                secondary: const Icon(Icons.motion_photos_off_rounded, size: 22),
+                secondary: const Icon(
+                  Icons.motion_photos_off_rounded,
+                  size: 22,
+                ),
                 title: const Text(
                   'Reduced motion',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
@@ -1168,7 +1156,8 @@ class _PreferencesSubpage extends StatelessWidget {
           // Startup Destination
           _SettingsSectionCard(
             title: 'Default Startup Screen',
-            subtitle: 'Choose which destination opens when launching SLI Vault.',
+            subtitle:
+                'Choose which destination opens when launching SLI Vault.',
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final itemWidth = (constraints.maxWidth - 10) / 2;
@@ -1196,17 +1185,21 @@ class _PreferencesSubpage extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? palette.primaryAccent.withValues(alpha: 0.16)
+                                  ? palette.primaryAccent.withValues(
+                                      alpha: 0.16,
+                                    )
                                   : (_isDark(context)
-                                      ? const Color(0xFF222226)
-                                      : const Color(0xFFF0F0F4)),
+                                        ? const Color(0xFF222226)
+                                        : const Color(0xFFF0F0F4)),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: isSelected
                                     ? palette.primaryAccent
                                     : (_isDark(context)
-                                        ? Colors.white.withValues(alpha: 0.08)
-                                        : Colors.black.withValues(alpha: 0.08)),
+                                          ? Colors.white.withValues(alpha: 0.08)
+                                          : Colors.black.withValues(
+                                              alpha: 0.08,
+                                            )),
                                 width: isSelected ? 1.8 : 1.0,
                               ),
                             ),
@@ -1278,17 +1271,23 @@ class _PreferencesSubpage extends StatelessWidget {
                               height: 46,
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? palette.primaryAccent.withValues(alpha: 0.16)
+                                    ? palette.primaryAccent.withValues(
+                                        alpha: 0.16,
+                                      )
                                     : (_isDark(context)
-                                        ? const Color(0xFF222226)
-                                        : const Color(0xFFF0F0F4)),
+                                          ? const Color(0xFF222226)
+                                          : const Color(0xFFF0F0F4)),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: isSelected
                                       ? palette.primaryAccent
                                       : (_isDark(context)
-                                          ? Colors.white.withValues(alpha: 0.08)
-                                          : Colors.black.withValues(alpha: 0.08)),
+                                            ? Colors.white.withValues(
+                                                alpha: 0.08,
+                                              )
+                                            : Colors.black.withValues(
+                                                alpha: 0.08,
+                                              )),
                                   width: isSelected ? 1.8 : 1.0,
                                 ),
                               ),
@@ -1395,10 +1394,7 @@ class _DataSubpage extends StatefulWidget {
   final VaultController controller;
   final String Function(int) formatBytes;
 
-  const _DataSubpage({
-    required this.controller,
-    required this.formatBytes,
-  });
+  const _DataSubpage({required this.controller, required this.formatBytes});
 
   @override
   State<_DataSubpage> createState() => _DataSubpageState();
@@ -1475,11 +1471,14 @@ class _DataSubpageState extends State<_DataSubpage> {
                   );
                   if (outputPath != null && mounted) {
                     final outputFile = File(outputPath);
-                    if (!await outputFile.exists() || await outputFile.length() == 0) {
+                    if (!await outputFile.exists() ||
+                        await outputFile.length() == 0) {
                       await outputFile.writeAsBytes(zipBytes, flush: true);
                     }
                     messenger.showSnackBar(
-                      const SnackBar(content: Text('Backup archive saved successfully.')),
+                      const SnackBar(
+                        content: Text('Backup archive saved successfully.'),
+                      ),
                     );
                   }
                 } catch (e) {
@@ -1766,10 +1765,7 @@ class _DataSubpageState extends State<_DataSubpage> {
     final images = widget.controller.countByFilter(VaultTypeFilter.images);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Data'),
-        leading: const BackButton(),
-      ),
+      appBar: AppBar(title: const Text('Data'), leading: const BackButton()),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
@@ -1843,7 +1839,9 @@ class _DataSubpageState extends State<_DataSubpage> {
               _settingsDivider(context),
               ListTile(
                 key: const ValueKey('check-integrity-button'),
-                leading: const _IconBadge(icon: Icons.health_and_safety_outlined),
+                leading: const _IconBadge(
+                  icon: Icons.health_and_safety_outlined,
+                ),
                 title: const Text(
                   'Check Vault Storage Integrity',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
@@ -1856,7 +1854,9 @@ class _DataSubpageState extends State<_DataSubpage> {
               ),
               _settingsDivider(context),
               ListTile(
-                leading: const _IconBadge(icon: Icons.cleaning_services_outlined),
+                leading: const _IconBadge(
+                  icon: Icons.cleaning_services_outlined,
+                ),
                 title: const Text(
                   'Clean Orphaned Images',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
@@ -1902,9 +1902,8 @@ class _SupportSubpage extends StatelessWidget {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open: $url')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Could not open: $url')));
       }
     }
   }
@@ -1925,7 +1924,10 @@ class _SupportSubpage extends StatelessWidget {
     try {
       if (!await launchUrl(uri)) {
         if (context.mounted) {
-          await _openUrl(context, 'https://github.com/sahaya-savari/sli-vault/issues');
+          await _openUrl(
+            context,
+            'https://github.com/sahaya-savari/sli-vault/issues',
+          );
         }
       }
     } catch (_) {
@@ -1945,10 +1947,7 @@ class _SupportSubpage extends StatelessWidget {
     final palette = context.sli;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Support'),
-        leading: const BackButton(),
-      ),
+      appBar: AppBar(title: const Text('Support'), leading: const BackButton()),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
@@ -1956,39 +1955,80 @@ class _SupportSubpage extends StatelessWidget {
             children: [
               ListTile(
                 leading: const _IconBadge(icon: Icons.bug_report_outlined),
-                title: const Text('Report an Issue on GitHub', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                subtitle: Text('File bugs or technical issues in our repository issue tracker.', style: TextStyle(color: palette.textSecondary, fontSize: 13)),
+                title: const Text(
+                  'Report an Issue on GitHub',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                ),
+                subtitle: Text(
+                  'File bugs or technical issues in our repository issue tracker.',
+                  style: TextStyle(color: palette.textSecondary, fontSize: 13),
+                ),
                 trailing: const Icon(Icons.open_in_new_rounded, size: 18),
-                onTap: () => _openUrl(context, 'https://github.com/sahaya-savari/sli-vault/issues'),
+                onTap: () => _openUrl(
+                  context,
+                  'https://github.com/sahaya-savari/sli-vault/issues',
+                ),
               ),
               _settingsDivider(context),
               ListTile(
-                leading: const _IconBadge(icon: Icons.lightbulb_outline_rounded),
-                title: const Text('Request a Feature', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                subtitle: Text('Suggest ideas or enhancements for future releases.', style: TextStyle(color: palette.textSecondary, fontSize: 13)),
+                leading: const _IconBadge(
+                  icon: Icons.lightbulb_outline_rounded,
+                ),
+                title: const Text(
+                  'Request a Feature',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                ),
+                subtitle: Text(
+                  'Suggest ideas or enhancements for future releases.',
+                  style: TextStyle(color: palette.textSecondary, fontSize: 13),
+                ),
                 trailing: const Icon(Icons.open_in_new_rounded, size: 18),
-                onTap: () => _openUrl(context, 'https://github.com/sahaya-savari/sli-vault/discussions'),
+                onTap: () => _openUrl(
+                  context,
+                  'https://github.com/sahaya-savari/sli-vault/discussions',
+                ),
               ),
               _settingsDivider(context),
               ListTile(
                 leading: const _IconBadge(icon: Icons.mail_outline_rounded),
-                title: const Text('Contact Developer', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                subtitle: Text('Direct email to sahayasavari@gmail.com', style: TextStyle(color: palette.textSecondary, fontSize: 13)),
+                title: const Text(
+                  'Contact Developer',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                ),
+                subtitle: Text(
+                  'Direct email to sahayasavari@gmail.com',
+                  style: TextStyle(color: palette.textSecondary, fontSize: 13),
+                ),
                 onTap: () => _contactDev(context),
               ),
               _settingsDivider(context),
               ListTile(
                 leading: const _IconBadge(icon: Icons.star_outline_rounded),
-                title: const Text('Star on GitHub', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                subtitle: Text('Support open source development and track upcoming milestones.', style: TextStyle(color: palette.textSecondary, fontSize: 13)),
+                title: const Text(
+                  'Star on GitHub',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                ),
+                subtitle: Text(
+                  'Support open source development and track upcoming milestones.',
+                  style: TextStyle(color: palette.textSecondary, fontSize: 13),
+                ),
                 trailing: const Icon(Icons.open_in_new_rounded, size: 18),
-                onTap: () => _openUrl(context, 'https://github.com/sahaya-savari/sli-vault'),
+                onTap: () => _openUrl(
+                  context,
+                  'https://github.com/sahaya-savari/sli-vault',
+                ),
               ),
               _settingsDivider(context),
               ListTile(
                 leading: const _IconBadge(icon: Icons.share_rounded),
-                title: const Text('Share SLI Vault', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                subtitle: Text('Tell friends about this private, offline-first personal vault.', style: TextStyle(color: palette.textSecondary, fontSize: 13)),
+                title: const Text(
+                  'Share SLI Vault',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                ),
+                subtitle: Text(
+                  'Tell friends about this private, offline-first personal vault.',
+                  style: TextStyle(color: palette.textSecondary, fontSize: 13),
+                ),
                 onTap: _shareApp,
               ),
             ],
@@ -2013,9 +2053,8 @@ class _AboutSubpage extends StatelessWidget {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open: $url')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Could not open: $url')));
       }
     }
   }
@@ -2049,7 +2088,9 @@ class _AboutSubpage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(iconRadius),
                     boxShadow: [
                       BoxShadow(
-                        color: palette.primaryAccent.withValues(alpha: isExpress ? 0.32 : 0.18),
+                        color: palette.primaryAccent.withValues(
+                          alpha: isExpress ? 0.32 : 0.18,
+                        ),
                         blurRadius: isExpress ? 28 : 20,
                         offset: const Offset(0, 8),
                       ),
@@ -2069,7 +2110,9 @@ class _AboutSubpage extends StatelessWidget {
                 Text(
                   'SLI Vault',
                   style: TextStyle(
-                    fontFamily: isExpress ? SliTokens.fontFamilyDisplay : SliTokens.fontFamily,
+                    fontFamily: isExpress
+                        ? SliTokens.fontFamilyDisplay
+                        : SliTokens.fontFamily,
                     fontSize: isExpress ? 26 : (isMinimal ? 22 : 24),
                     fontWeight: isExpress ? FontWeight.w900 : FontWeight.w800,
                     color: palette.textPrimary,
@@ -2078,7 +2121,10 @@ class _AboutSubpage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: palette.primaryAccent.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(isExpress ? 9999 : 6),
@@ -2114,10 +2160,16 @@ class _AboutSubpage extends StatelessWidget {
                 const SizedBox(height: 14),
                 // Developer Attribution
                 InkWell(
-                  onTap: () => _openExternal(context, 'https://github.com/sahaya-savari'),
+                  onTap: () => _openExternal(
+                    context,
+                    'https://github.com/sahaya-savari',
+                  ),
                   borderRadius: BorderRadius.circular(8),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     child: Text.rich(
                       TextSpan(
                         text: 'Created with care by ',
@@ -2128,7 +2180,8 @@ class _AboutSubpage extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                            text: '${SliVersion.authorName} (${SliVersion.authorHandle})',
+                            text:
+                                '${SliVersion.authorName} (${SliVersion.authorHandle})',
                             style: TextStyle(
                               fontFamily: SliTokens.fontFamily,
                               fontSize: 13,
@@ -2183,29 +2236,49 @@ class _AboutSubpage extends StatelessWidget {
               ListTile(
                 key: const ValueKey('Privacy Policy'),
                 leading: const _IconBadge(icon: Icons.verified_user_outlined),
-                title: const Text('Privacy & Security Manifesto', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                subtitle: Text('100% on-device SQLite database and private storage.', style: TextStyle(color: palette.textSecondary, fontSize: 13)),
+                title: const Text(
+                  'Privacy & Security Manifesto',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                ),
+                subtitle: Text(
+                  '100% on-device SQLite database and private storage.',
+                  style: TextStyle(color: palette.textSecondary, fontSize: 13),
+                ),
                 trailing: const Icon(Icons.chevron_right_rounded, size: 20),
                 onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => const PrivacyPolicyScreen(),
+                  ),
                 ),
               ),
               _settingsDivider(context),
               ListTile(
                 key: const ValueKey('Terms of Use'),
                 leading: const _IconBadge(icon: Icons.description_outlined),
-                title: const Text('Terms of Use', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                subtitle: Text('Local storage, backups, and your personal data rights.', style: TextStyle(color: palette.textSecondary, fontSize: 13)),
-                trailing: const Icon(Icons.chevron_right_rounded, size: 20),
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const TermsScreen()),
+                title: const Text(
+                  'Terms of Use',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                 ),
+                subtitle: Text(
+                  'Local storage, backups, and your personal data rights.',
+                  style: TextStyle(color: palette.textSecondary, fontSize: 13),
+                ),
+                trailing: const Icon(Icons.chevron_right_rounded, size: 20),
+                onTap: () => Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => const TermsScreen())),
               ),
               _settingsDivider(context),
               ListTile(
                 leading: const _IconBadge(icon: Icons.code_rounded),
-                title: const Text('Open Source Licenses', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                subtitle: Text('Third-party software libraries, Figtree & JetBrains Mono.', style: TextStyle(color: palette.textSecondary, fontSize: 13)),
+                title: const Text(
+                  'Open Source Licenses',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                ),
+                subtitle: Text(
+                  'Third-party software libraries, Figtree & JetBrains Mono.',
+                  style: TextStyle(color: palette.textSecondary, fontSize: 13),
+                ),
                 trailing: const Icon(Icons.chevron_right_rounded, size: 20),
                 onTap: () => showLicensePage(
                   context: context,
@@ -2216,8 +2289,14 @@ class _AboutSubpage extends StatelessWidget {
               _settingsDivider(context),
               ListTile(
                 leading: const _IconBadge(icon: Icons.policy_outlined),
-                title: const Text('MIT License', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                subtitle: Text('Project-owned code and documentation license terms.', style: TextStyle(color: palette.textSecondary, fontSize: 13)),
+                title: const Text(
+                  'MIT License',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                ),
+                subtitle: Text(
+                  'Project-owned code and documentation license terms.',
+                  style: TextStyle(color: palette.textSecondary, fontSize: 13),
+                ),
                 trailing: const Icon(Icons.open_in_new_rounded, size: 18),
                 onTap: () => _openExternal(context, SliVersion.licenseUrl),
               ),
@@ -2275,7 +2354,9 @@ class _ActionTileButton extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontFamily: isMinimal ? SliTokens.fontFamilyMono : SliTokens.fontFamily,
+                  fontFamily: isMinimal
+                      ? SliTokens.fontFamilyMono
+                      : SliTokens.fontFamily,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: palette.textPrimary,
@@ -2323,32 +2404,29 @@ class _SettingsSectionCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: palette.textPrimary,
-              letterSpacing: -0.2,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: palette.textPrimary,
+                letterSpacing: -0.2,
+              ),
             ),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            subtitle,
-            style: TextStyle(
-              fontSize: 13,
-              color: palette.textSecondary,
+            const SizedBox(height: 3),
+            Text(
+              subtitle,
+              style: TextStyle(fontSize: 13, color: palette.textSecondary),
             ),
-          ),
-          const SizedBox(height: 14),
-          child,
-        ],
+            const SizedBox(height: 14),
+            child,
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -2446,8 +2524,8 @@ class _ThemeButton extends StatelessWidget {
               color: selected
                   ? accent
                   : (dark
-                      ? Colors.white.withValues(alpha: 0.08)
-                      : Colors.black.withValues(alpha: 0.08)),
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.08)),
               width: selected ? 1.8 : 1.0,
             ),
           ),
@@ -2518,14 +2596,16 @@ class _AccentChoiceRow extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? preset.primary.withValues(alpha: 0.16)
-                          : (dark ? const Color(0xFF222226) : const Color(0xFFF0F0F4)),
+                          : (dark
+                                ? const Color(0xFF222226)
+                                : const Color(0xFFF0F0F4)),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected
                             ? preset.primary
                             : (dark
-                                ? Colors.white.withValues(alpha: 0.08)
-                                : Colors.black.withValues(alpha: 0.08)),
+                                  ? Colors.white.withValues(alpha: 0.08)
+                                  : Colors.black.withValues(alpha: 0.08)),
                         width: isSelected ? 1.8 : 1.0,
                       ),
                     ),
@@ -2538,7 +2618,9 @@ class _AccentChoiceRow extends StatelessWidget {
                             shape: BoxShape.circle,
                             color: preset.primary,
                             border: Border.all(
-                              color: isSelected ? Colors.white : Colors.transparent,
+                              color: isSelected
+                                  ? Colors.white
+                                  : Colors.transparent,
                               width: 1.5,
                             ),
                           ),
@@ -2551,8 +2633,12 @@ class _AccentChoiceRow extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 13,
-                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                              color: isSelected ? preset.primary : palette.textPrimary,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
+                              color: isSelected
+                                  ? preset.primary
+                                  : palette.textPrimary,
                             ),
                           ),
                         ),

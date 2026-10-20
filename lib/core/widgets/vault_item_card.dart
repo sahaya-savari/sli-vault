@@ -423,18 +423,16 @@ class _VaultItemCardState extends State<VaultItemCard> {
                   widget.item.title,
                   maxLines: _isCompact ? 1 : 2,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: _isCompact ? 14 : 15,
-                      ),
+                  style: Theme.of(context).textTheme.titleMedium
+                      ?.copyWith(fontSize: _isCompact ? 14 : 15),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: _isCompact ? 12 : 13,
-                      ),
+                  style: Theme.of(context).textTheme.bodyMedium
+                      ?.copyWith(fontSize: _isCompact ? 12 : 13),
                 ),
                 if (!_isCompact && widget.item.tags.isNotEmpty) ...[
                   const SizedBox(height: 6),
@@ -531,7 +529,11 @@ class _VaultItemCardState extends State<VaultItemCard> {
                   value: 'delete',
                   child: Row(
                     children: [
-                      Icon(Icons.delete_outline, size: 16, color: ctx.sli.errorText),
+                      Icon(
+                        Icons.delete_outline,
+                        size: 16,
+                        color: ctx.sli.errorText,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'Delete with Undo',
@@ -557,7 +559,9 @@ class _VaultItemCardState extends State<VaultItemCard> {
     return SliSpotlightCard(
       onTap: widget.onTap,
       onLongPress: widget.onLongPress,
-      padding: EdgeInsets.all(_isCompact ? SliTokens.spaceSm : SliTokens.spaceMd),
+      padding: EdgeInsets.all(
+        _isCompact ? SliTokens.spaceSm : SliTokens.spaceMd,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -567,11 +571,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
                 Positioned.fill(
                   child: _buildThumbnail(context, width: 160, height: 110),
                 ),
-                Positioned(
-                  top: 6,
-                  left: 6,
-                  child: _buildTypePill(context),
-                ),
+                Positioned(top: 6, left: 6, child: _buildTypePill(context)),
                 if (widget.item.collection.isNotEmpty &&
                     widget.item.collection != 'General')
                   Positioned(
@@ -607,9 +607,8 @@ class _VaultItemCardState extends State<VaultItemCard> {
             widget.item.title,
             maxLines: _isCompact ? 1 : 2,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: _isCompact ? 13.5 : 14.5,
-                ),
+            style: Theme.of(context).textTheme.titleMedium
+                ?.copyWith(fontSize: _isCompact ? 13.5 : 14.5),
           ),
           const SizedBox(height: 2),
           Row(
@@ -619,9 +618,8 @@ class _VaultItemCardState extends State<VaultItemCard> {
                   subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: _isCompact ? 11.5 : 12,
-                      ),
+                  style: Theme.of(context).textTheme.bodyMedium
+                      ?.copyWith(fontSize: _isCompact ? 11.5 : 12),
                 ),
               ),
               if (widget.item.description != null &&

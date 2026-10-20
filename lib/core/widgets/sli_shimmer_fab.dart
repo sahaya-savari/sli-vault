@@ -113,12 +113,16 @@ class _SliShimmerFabState extends State<SliShimmerFab>
                   ? const []
                   : [
                       BoxShadow(
-                        color: context.sli.primaryAccent.withValues(alpha: 0.35),
+                        color: context.sli.primaryAccent.withValues(
+                          alpha: 0.35,
+                        ),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
                       BoxShadow(
-                        color: context.sli.secondaryAccent.withValues(alpha: 0.15),
+                        color: context.sli.secondaryAccent.withValues(
+                          alpha: 0.15,
+                        ),
                         blurRadius: 28,
                         offset: const Offset(0, 8),
                       ),

@@ -331,10 +331,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                   horizontal: SliTokens.spaceLg,
                   vertical: SliTokens.spaceXs,
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: context.sli.primaryAccent.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(SliTokens.radiusLg),
@@ -383,27 +380,42 @@ class _BrowseScreenState extends State<BrowseScreen> {
                               visualDensity: VisualDensity.compact,
                               tooltip: 'Favorite',
                               icon: const Icon(Icons.favorite_border, size: 20),
-                              onPressed: _selectedIds.isEmpty ? null : _bulkFavorite,
+                              onPressed: _selectedIds.isEmpty
+                                  ? null
+                                  : _bulkFavorite,
                             ),
                             IconButton(
                               visualDensity: VisualDensity.compact,
                               tooltip: 'Move to Collection',
                               icon: const Icon(Icons.folder_outlined, size: 20),
-                              onPressed: _selectedIds.isEmpty ? null : _bulkMove,
+                              onPressed: _selectedIds.isEmpty
+                                  ? null
+                                  : _bulkMove,
                             ),
                             IconButton(
                               visualDensity: VisualDensity.compact,
                               tooltip: 'Export Selected',
-                              icon: const Icon(Icons.download_outlined, size: 20),
-                              onPressed: _selectedIds.isEmpty ? null : _bulkExport,
+                              icon: const Icon(
+                                Icons.download_outlined,
+                                size: 20,
+                              ),
+                              onPressed: _selectedIds.isEmpty
+                                  ? null
+                                  : _bulkExport,
                             ),
                             Container(
                               margin: const EdgeInsets.only(left: 4),
                               decoration: BoxDecoration(
-                                color: context.sli.destructive.withValues(alpha: 0.18),
-                                borderRadius: BorderRadius.circular(SliTokens.radiusSm),
+                                color: context.sli.destructive.withValues(
+                                  alpha: 0.18,
+                                ),
+                                borderRadius: BorderRadius.circular(
+                                  SliTokens.radiusSm,
+                                ),
                                 border: Border.all(
-                                  color: context.sli.destructive.withValues(alpha: 0.4),
+                                  color: context.sli.destructive.withValues(
+                                    alpha: 0.4,
+                                  ),
                                 ),
                               ),
                               child: IconButton(
@@ -414,7 +426,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
                                   size: 20,
                                   color: context.sli.destructive,
                                 ),
-                                onPressed: _selectedIds.isEmpty ? null : _bulkDelete,
+                                onPressed: _selectedIds.isEmpty
+                                    ? null
+                                    : _bulkDelete,
                               ),
                             ),
                           ],

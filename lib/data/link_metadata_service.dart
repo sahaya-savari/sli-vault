@@ -112,7 +112,9 @@ class LinkMetadataService {
     if (!isSafe) {
       // Abort without network egress to internal/private targets
       if (kDebugMode) {
-        debugPrint('LinkMetadataService: blocked host $domain (not public safe)');
+        debugPrint(
+          'LinkMetadataService: blocked host $domain (not public safe)',
+        );
       }
       return LinkMetadata(url: rawUrl, domain: domain);
     }
@@ -136,10 +138,7 @@ class LinkMetadataService {
           HttpHeaders.acceptHeader,
           'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         );
-        request.headers.set(
-          HttpHeaders.acceptLanguageHeader,
-          'en-US,en;q=0.9',
-        );
+        request.headers.set(HttpHeaders.acceptLanguageHeader, 'en-US,en;q=0.9');
 
         response = await request.close().timeout(_timeout);
         if (response.isRedirect &&
@@ -166,7 +165,9 @@ class LinkMetadataService {
           response.statusCode < 200 ||
           response.statusCode >= 400) {
         if (kDebugMode) {
-          debugPrint('LinkMetadataService: HTTP status ${response?.statusCode} for $domain');
+          debugPrint(
+            'LinkMetadataService: HTTP status ${response?.statusCode} for $domain',
+          );
         }
         return LinkMetadata(url: rawUrl, domain: domain);
       }
@@ -258,18 +259,32 @@ class LinkMetadataService {
       final attrs = match.group(1) ?? '';
 
       final propMatch = RegExp(
-        r'(?:name|property|itemprop)\s*=\s*(?:"([^"]*)"|' "'" r"([^']*)'|([^\s>]+))",
+        r'(?:name|property|itemprop)\s*=\s*(?:"([^"]*)"|'
+        "'"
+        r"([^']*)'|([^\s>]+))",
         caseSensitive: false,
       ).firstMatch(attrs);
 
       final contentMatch = RegExp(
-        r'content\s*=\s*(?:"([^"]*)"|' "'" r"([^']*)'|([^\s>]+))",
+        r'content\s*=\s*(?:"([^"]*)"|'
+        "'"
+        r"([^']*)'|([^\s>]+))",
         caseSensitive: false,
       ).firstMatch(attrs);
 
       if (propMatch != null && contentMatch != null) {
-        final key = (propMatch.group(1) ?? propMatch.group(2) ?? propMatch.group(3) ?? '').toLowerCase().trim();
-        final content = contentMatch.group(1) ?? contentMatch.group(2) ?? contentMatch.group(3) ?? '';
+        final key =
+            (propMatch.group(1) ??
+                    propMatch.group(2) ??
+                    propMatch.group(3) ??
+                    '')
+                .toLowerCase()
+                .trim();
+        final content =
+            contentMatch.group(1) ??
+            contentMatch.group(2) ??
+            contentMatch.group(3) ??
+            '';
 
         if (content.isNotEmpty) {
           if (key == 'og:title') {
@@ -298,19 +313,33 @@ class LinkMetadataService {
     for (final match in linkTagRegex.allMatches(html)) {
       final attrs = match.group(1) ?? '';
       final relMatch = RegExp(
-        r'rel\s*=\s*(?:"([^"]*)"|' "'" r"([^']*)'|([^\s>]+))",
+        r'rel\s*=\s*(?:"([^"]*)"|'
+        "'"
+        r"([^']*)'|([^\s>]+))",
         caseSensitive: false,
       ).firstMatch(attrs);
       final hrefMatch = RegExp(
-        r'href\s*=\s*(?:"([^"]*)"|' "'" r"([^']*)'|([^\s>]+))",
+        r'href\s*=\s*(?:"([^"]*)"|'
+        "'"
+        r"([^']*)'|([^\s>]+))",
         caseSensitive: false,
       ).firstMatch(attrs);
 
       if (relMatch != null && hrefMatch != null) {
-        final rel = (relMatch.group(1) ?? relMatch.group(2) ?? relMatch.group(3) ?? '').toLowerCase().trim();
-        final href = hrefMatch.group(1) ?? hrefMatch.group(2) ?? hrefMatch.group(3) ?? '';
+        final rel =
+            (relMatch.group(1) ?? relMatch.group(2) ?? relMatch.group(3) ?? '')
+                .toLowerCase()
+                .trim();
+        final href =
+            hrefMatch.group(1) ??
+            hrefMatch.group(2) ??
+            hrefMatch.group(3) ??
+            '';
 
-        if (href.isNotEmpty && (rel == 'icon' || rel == 'shortcut icon' || rel == 'apple-touch-icon')) {
+        if (href.isNotEmpty &&
+            (rel == 'icon' ||
+                rel == 'shortcut icon' ||
+                rel == 'apple-touch-icon')) {
           favicon ??= href;
         }
       }
@@ -321,12 +350,16 @@ class LinkMetadataService {
     var previewImg = ogImage ?? twitterImage;
 
     // Resolve relative URLs
-    if (previewImg != null && !previewImg.startsWith('http://') && !previewImg.startsWith('https://')) {
+    if (previewImg != null &&
+        !previewImg.startsWith('http://') &&
+        !previewImg.startsWith('https://')) {
       try {
         previewImg = baseUri.resolve(previewImg).toString();
       } catch (_) {}
     }
-    if (favicon != null && !favicon.startsWith('http://') && !favicon.startsWith('https://')) {
+    if (favicon != null &&
+        !favicon.startsWith('http://') &&
+        !favicon.startsWith('https://')) {
       try {
         favicon = baseUri.resolve(favicon).toString();
       } catch (_) {}
