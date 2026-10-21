@@ -62,7 +62,7 @@ export default function (config) {
 
   return {
     dir: { input: "src", includes: "_includes", data: "_data" },
-    pathPrefix: "/streak/",
+    pathPrefix: "/sli-vault/",
     markdownTemplateEngine: "njk",
     htmlTemplateEngine: "njk",
   };

@@ -13,7 +13,7 @@ const store = (key, value) => {
 
 document.getElementById('lang').addEventListener('click', () => {
   const next = root.dataset.lang === 'es' ? 'en' : 'es';
-  store('streak-lang', next);
+  store('sli-vault-lang', next);
   const alt = document.querySelector('a[data-alt]');
   if (alt && root.dataset.fixed) {
     location.href = alt.href;
@@ -53,7 +53,7 @@ function whenSeen(node, run) {
 
 function counter(name) {
   const nodes = [...document.querySelectorAll(`[data-count="${name}"]`)];
-  const saved = Number(store(`streak-${name}`)) || 0;
+  const saved = Number(store(`sli-vault-${name}`)) || 0;
   let value = saved;
   const shown = new Set();
   const show = (node) => {
@@ -67,7 +67,7 @@ function counter(name) {
   });
   return (fresh) => {
     if (typeof fresh !== 'number' || !nodes.length) return;
-    store(`streak-${name}`, fresh);
+    store(`sli-vault-${name}`, fresh);
     value = fresh;
     nodes.forEach((node) => {
       if (!node.dataset.seen) return;
