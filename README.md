@@ -44,14 +44,14 @@ SLI Vault is a Flutter Android app for saving links and images into **app-privat
 
 The Flutter mobile application resides directly at the **repository root**. The repository is architected as a lightweight monorepo accommodating:
 1. The **Flutter/Dart Android mobile app** at the repository root.
-2. The **companion website** (React + TypeScript + Vite + TanStack Start) under `website/`, integrated from the verified Lovable export.
+2. The **companion website** (Eleventy + vanilla CSS & JS) under `website/`.
 
 | Component / Platform | Status |
 |----------------------|--------|
 | Android (Root) | Primary target; signed GitHub Release available (`v1.0.1`) |
 | iOS | Phase 2 - scaffold only, not verified as a shipping target |
 | Web / Desktop | Flutter platform folders only - not the shipping target |
-| Website (`website/`) | Integrated showcase site (React/Vite/TanStack); see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md) |
+| Website (`website/`) | Companion website (Eleventy/11ty); see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md) |
 
 **Download / release status:** a **signed GitHub Release APK** is available under [Releases](https://github.com/sahaya-savari/sli-vault/releases). Application ID `com.sahayasavari.slivault`. There is **no Play Store listing** - sideload / open-source distribution only.
 

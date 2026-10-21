@@ -1,8 +1,6 @@
-# Streak web
+# SLI Vault web
 
-The website for Streak, built with [Eleventy](https://www.11ty.dev). It lives on
-the `web` branch only, so `main` stays clean. GitHub Actions builds it and
-publishes it to GitHub Pages on every push to `web`.
+The website for SLI Vault, built with [Eleventy](https://www.11ty.dev).
 
 ```
 src/

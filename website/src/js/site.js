@@ -327,7 +327,7 @@ document.querySelectorAll('[data-share]').forEach((button) => {
     const url = button.dataset.share;
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'Streak', text: document.title, url });
+        await navigator.share({ title: 'SLI Vault', text: document.title, url });
         return;
       } catch (error) {
         if (error && error.name === 'AbortError') return;
