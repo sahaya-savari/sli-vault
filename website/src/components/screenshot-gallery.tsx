@@ -1,7 +1,13 @@
+
 import { useState, useRef } from "react";
 import { ArrowLeft, ArrowRight, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { IPhone } from "@/components/ui/iphone";
 import { screenshots, type VaultScreen } from "@/lib/screenshots";
 
@@ -11,6 +17,7 @@ export function ScreenshotGallery() {
 
   const scroll = (direction: "left" | "right") => {
     if (!scrollContainerRef.current) return;
+
     const scrollAmount = 170;
     scrollContainerRef.current.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
@@ -20,9 +27,13 @@ export function ScreenshotGallery() {
 
   const move = (direction: number) => {
     if (!selected) return;
+
     const next =
-      (screenshots.findIndex((s) => s.id === selected.id) + direction + screenshots.length) %
+      (screenshots.findIndex((s) => s.id === selected.id) +
+        direction +
+        screenshots.length) %
       screenshots.length;
+
     const screen = screenshots[next];
     if (screen) setSelected(screen);
   };
@@ -38,11 +49,12 @@ export function ScreenshotGallery() {
             A calm home for your digital life.
           </h2>
           <p className="mt-2 text-base text-muted-foreground max-w-xl">
-            Six screens from the running app. Scroll sideways, then tap one to enlarge.
+            Six screens from the running app. Scroll sideways, then tap one to
+            enlarge.
           </p>
         </div>
 
-        {/* Gallery Navigation Controls - placed cleanly OUTSIDE screenshot frames */}
+        {/* Gallery navigation controls */}
         <div className="flex items-center gap-2" aria-label="Gallery controls">
           <Button
             variant="outline"
@@ -65,7 +77,7 @@ export function ScreenshotGallery() {
         </div>
       </div>
 
-      {/* Fix 2: Display all six screenshots in ONE continuous horizontal row, never wrapping */}
+      {/* Display all six screenshots in one continuous horizontal row */}
       <div
         ref={scrollContainerRef}
         role="group"
@@ -81,7 +93,7 @@ export function ScreenshotGallery() {
             key={screen.id}
             className="screen-figure flex-shrink-0 snap-start"
           >
-            {/* Clickable Phone Frame without any obstructing overlays */}
+            {/* Clickable phone frame */}
             <button
               type="button"
               className="screen-trigger group block w-full text-left cursor-pointer transition-transform duration-300 hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-primary rounded-[1.65rem]"
@@ -95,10 +107,12 @@ export function ScreenshotGallery() {
               />
             </button>
 
-            {/* Figcaption with clean metadata and expand trigger outside the screenshot */}
+            {/* Screenshot caption and expand control */}
             <figcaption className="mt-2 px-0.5">
               <div className="flex items-center justify-between gap-1">
-                <span className="font-mono text-[11px] font-semibold text-primary">0{i + 1} / 06</span>
+                <span className="font-mono text-[11px] font-semibold text-primary">
+                  0{i + 1} / 06
+                </span>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -110,7 +124,9 @@ export function ScreenshotGallery() {
                   Enlarge
                 </Button>
               </div>
-              <h3 className="mt-1 text-base font-semibold text-foreground">{screen.title}</h3>
+              <h3 className="mt-1 text-base font-semibold text-foreground">
+                {screen.title}
+              </h3>
               <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
                 {screen.subtitle}
               </p>
@@ -119,7 +135,7 @@ export function ScreenshotGallery() {
         ))}
       </div>
 
-      {/* Enlarged Screenshot Modal with Controls OUTSIDE the image */}
+      {/* Enlarged screenshot modal */}
       <Dialog
         open={selected !== null}
         onOpenChange={(open) => {
@@ -143,12 +159,14 @@ export function ScreenshotGallery() {
               </DialogDescription>
             </div>
             <span className="font-mono text-xs text-primary font-semibold">
-              {selected ? screenshots.findIndex((s) => s.id === selected.id) + 1 : 0} of{" "}
-              {screenshots.length}
+              {selected
+                ? screenshots.findIndex((s) => s.id === selected.id) + 1
+                : 0}{" "}
+              of {screenshots.length}
             </span>
           </div>
 
-          {/* Clean screenshot display - no overlapping icons */}
+          {/* Enlarged screenshot display */}
           <div className="relative my-4 flex justify-center overflow-hidden rounded-2xl bg-black/40 p-2">
             {selected && (
               <img
@@ -159,7 +177,7 @@ export function ScreenshotGallery() {
             )}
           </div>
 
-          {/* Modal controls strictly OUTSIDE screenshot image */}
+          {/* Modal navigation controls */}
           <div className="flex items-center justify-between border-t border-border pt-3">
             <Button
               variant="outline"
