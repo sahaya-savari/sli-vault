@@ -1,0 +1,92 @@
+---
+layout: base.njk
+page_kind: resources
+title: Resources & Credits
+description: Focus scenes, wallpapers and sounds credited to the open-source Streak project.
+---
+{% from "t.njk" import t %}
+{% set scenes = resources | ofKind('scene') %}
+{% set images = resources | ofKind('image') %}
+{% set sounds = resources | ofKind('sound') %}
+<section class="head">
+  <h1>{{ t('Resources & Credits', 'Recursos y Créditos') }}</h1>
+  <p>{{ t('Focus scenes, wallpapers and atmospheric sounds shaped by the open-source Streak project. Free to explore and download.', 'Escenas de concentración, fondos y sonidos atmosféricos del proyecto libre Streak. Gratis para descargar.') }}</p>
+</section>
+
+<section class="sec sec--shop">
+  <div class="filters" role="tablist">
+    <button type="button" class="is-on" data-filter="all">{{ t('All', 'Todo') }} <small>{{ resources.length }}</small></button>
+    <button type="button" data-filter="scene">{{ t('Video scenes', 'Escenas de vídeo') }} <small>{{ scenes.length }}</small></button>
+    <button type="button" data-filter="image">{{ t('Wallpapers', 'Fondos') }} <small>{{ images.length }}</small></button>
+    <button type="button" data-filter="sound">{{ t('Sounds', 'Sonidos') }} <small>{{ sounds.length }}</small></button>
+  </div>
+
+  <div class="shop">
+    {% for item in scenes %}
+    <article class="item item--scene" data-kind="scene">
+      <button class="item__media zoom" type="button" data-group="res" data-type="video" data-src="{{ ('/files/' + item.file) | htmlBaseUrl }}" aria-label="Preview {{ item.en }}">
+        <video src="/files/{{ item.file }}" poster="/assets/res/{{ item.poster }}" muted loop playsinline preload="none"></video>
+        <span class="item__badge">{{ item.seconds | clock }}</span>
+        <span class="item__peek" aria-hidden="true">⤢</span>
+      </button>
+      <div class="item__body">
+        <h3>{{ t(item.en, item.es) }}</h3>
+        <p class="item__meta">MP4 · {{ item.size }} · {{ item.file | bytes }}{% if item.author %} · {{ item.author }}{% endif %}</p>
+        <a class="get" href="/files/{{ item.file }}" download="{{ item.file }}"><i class="get__bar" aria-hidden="true"></i><span class="get__idle">{{ t('Download', 'Descargar') }}</span><span class="get__done">{{ t('Downloaded', 'Descargado') }}</span></a>
+      </div>
+    </article>
+    {% endfor %}
+
+    {% for item in images %}
+    <article class="item item--image" data-kind="image">
+      <button class="item__media zoom" type="button" data-group="res" data-type="image" data-src="{{ ('/files/' + item.file) | htmlBaseUrl }}" aria-label="Preview {{ item.en }}">
+        <img src="/assets/res/{{ item.poster }}" alt="{{ item.en }}" loading="lazy" />
+        <span class="item__peek" aria-hidden="true">⤢</span>
+      </button>
+      <div class="item__body">
+        <h3>{{ t(item.en, item.es) }}</h3>
+        <p class="item__meta">JPG · {{ item.size }} · {{ item.file | bytes }}{% if item.author %} · {{ item.author }}{% endif %}</p>
+        <a class="get" href="/files/{{ item.file }}" download="{{ item.file }}"><i class="get__bar" aria-hidden="true"></i><span class="get__idle">{{ t('Download', 'Descargar') }}</span><span class="get__done">{{ t('Downloaded', 'Descargado') }}</span></a>
+      </div>
+    </article>
+    {% endfor %}
+
+    {% for item in sounds %}
+    <article class="item item--sound" data-kind="sound">
+      <div class="item__media tone-{{ item.tone }}">
+        <button class="play" type="button" data-src="{{ ("/files/" + item.file) | htmlBaseUrl }}" aria-label="Play {{ item.en }}">
+          <svg class="i-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M7.2 5.8v12.4a1 1 0 0 0 1.53.85l9.9-6.2a1 1 0 0 0 0-1.7l-9.9-6.2A1 1 0 0 0 7.2 5.8Z"/></svg>
+          <svg class="i-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="3.8" height="14" rx="1.3"/><rect x="13.7" y="5" width="3.8" height="14" rx="1.3"/></svg>
+        </button>
+        <div class="wave" aria-hidden="true">{% for n in range(0, 28) %}<i></i>{% endfor %}</div>
+        <span class="item__badge">{{ item.seconds | clock }}</span>
+      </div>
+      <div class="item__body">
+        <h3>{{ t(item.en, item.es) }}</h3>
+        <p class="item__meta">MP3 · {{ item.file | bytes }}{% if item.author %} · {{ item.author }}{% endif %}</p>
+        <a class="get" href="/files/{{ item.file }}" download="{{ item.file }}"><i class="get__bar" aria-hidden="true"></i><span class="get__idle">{{ t('Download', 'Descargar') }}</span><span class="get__done">{{ t('Downloaded', 'Descargado') }}</span></a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+
+  <aside class="share">
+    <div>
+      <h2>{{ t('Original Design Reference', 'Referencia de diseño original') }}</h2>
+      <p>{{ t(
+        'These calm focus media files are published under open license by the Streak project. SLI Vault credits the original author InlitX for the design direction and atmospheric wallpapers.',
+        'Estos medios relajantes fueron publicados bajo licencia libre por el proyecto Streak. SLI Vault acredita al autor original InlitX por la inspiración de diseño.'
+      ) }}</p>
+    </div>
+    <a class="btn btn--go" href="https://github.com/InlitX/streak" target="_blank" rel="noopener">{{ t('Visit Streak Repository', 'Visitar repositorio Streak') }}</a>
+  </aside>
+
+  <aside class="howto">
+    <h2>{{ t('Focus & Atmosphere', 'Enfoque y ambiente') }}</h2>
+    <ol>
+      <li>{{ t('Browse video scenes, wallpapers and sounds directly in your browser.', 'Explora escenas de vídeo, fondos y sonidos directamente en el navegador.') }}</li>
+      <li>{{ t('Click any item to preview in full screen or listen to audio.', 'Haz clic en cualquier elemento para previsualizarlo o escuchar el audio.') }}</li>
+      <li>{{ t('Download any file with one click to use anywhere.', 'Descarga cualquier archivo con un solo clic para usarlo donde quieras.') }}</li>
+    </ol>
+  </aside>
+</section>

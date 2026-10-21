@@ -93,7 +93,10 @@ replay_pid*
 # Companion website (website/) — Node/Bun artifacts only; source is tracked
 /website/node_modules/
 /website/dist/
+/website/_site/
 /website/.vite/
+/website/.output/
+/website_backup_tanstack/
 /website/.env
 /website/.env.*
 !/website/.env.example

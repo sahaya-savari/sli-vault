@@ -55,7 +55,7 @@ The Flutter mobile application resides directly at the **repository root**. The 
 
 **Download / release status:** a **signed GitHub Release APK** is available under [Releases](https://github.com/sahaya-savari/sli-vault/releases). Application ID `com.sahayasavari.slivault`. There is **no Play Store listing** - sideload / open-source distribution only.
 
-The project-owned code and documentation are licensed under [MIT](LICENSE). Fonts bundled (Figtree, Google Sans Flex, JetBrains Mono) are licensed under the [SIL Open Font License 1.1](LICENSE_FONTS_OFL.txt).
+The project-owned code and documentation are licensed under [MIT](LICENSE). Bundled fonts (Figtree, Google Sans Flex, JetBrains Mono) are licensed under the SIL Open Font License 1.1 (see `assets/fonts/figtree/OFL.txt`, `assets/fonts/google_sans_flex/OFL.txt`, and `assets/fonts/jetbrains_mono/OFL.txt`).
 
 ---
 
@@ -329,6 +329,8 @@ Project-owned code and documentation are licensed under the [MIT License](LICENS
 
 Third-party notices that do exist:
 
+- **Figtree** - SIL Open Font License 1.1 (`assets/fonts/figtree/OFL.txt`)
+- **Google Sans Flex** - SIL Open Font License 1.1 (`assets/fonts/google_sans_flex/OFL.txt`)
 - **JetBrains Mono** - SIL Open Font License 1.1 (`assets/fonts/jetbrains_mono/OFL.txt`)
 - Dart / Flutter package licenses - available in-app via the open-source licenses screen
 
