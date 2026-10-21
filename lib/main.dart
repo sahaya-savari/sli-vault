@@ -89,6 +89,9 @@ class _SliVaultAppState extends State<SliVaultApp> {
             statusBarIconBrightness: isLight
                 ? Brightness.dark
                 : Brightness.light,
+            statusBarBrightness: isLight
+                ? Brightness.light
+                : Brightness.dark,
             systemNavigationBarColor: navBarColor,
             systemNavigationBarIconBrightness: isLight
                 ? Brightness.dark
