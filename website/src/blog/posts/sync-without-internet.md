@@ -1,21 +1,21 @@
 ---
 title: Sync your phone and PC without the internet
-description: Streak never touches the network, but your habits can still live on two devices. Here is how to do it over your own Wi-Fi with Syncthing.
+description: SLI Vault never touches the network, but your library can still live on two devices. Here is how to do it over your own Wi-Fi with Syncthing.
 date: 2026-10-09
 lang: en
 thread: sync-without-internet
 translation: /es/blog/sync-without-internet/
 ---
 
-Streak has no account and no internet permission. That is on purpose: if the app cannot reach the network, your habits cannot leak. The catch is obvious. How do you use it on your phone and on your computer at the same time?
+SLI Vault has no account and no internet permission. That is on purpose: if the app cannot reach the network, your saved items and screenshots cannot leak. The catch is obvious. How do you access backups on your phone and on your computer at the same time?
 
-The answer is a folder. Streak can save its backups to a folder you choose, and it reads that same folder every time it opens. If something keeps that folder identical on both devices, Streak takes care of the rest. That something is [Syncthing](https://syncthing.net), a free, open-source tool that copies files directly between your own devices over your own network.
+The answer is a folder. SLI Vault can save its export archives to a folder you choose, and it reads that same folder when importing. If something keeps that folder identical on both devices, your library stays synchronized. That something is [Syncthing](https://syncthing.net), a free, open-source tool that copies files directly between your own devices over your own network.
 
 I tested every step below with an Android phone and a Windows PC. Linux works the same way.
 
 ## What you need
 
-- Streak 2.3.0 or newer on your phone and on your PC.
+- SLI Vault on your phone.
 - Syncthing on both:
   - **Android:** [Syncthing-Fork](https://f-droid.org/packages/com.github.catfriend1.syncthingfork/) from F-Droid.
   - **Windows:** [SyncTrayzor](https://github.com/GermanCoding/SyncTrayzor/releases). The portable x64 zip is enough; unzip it and open it.

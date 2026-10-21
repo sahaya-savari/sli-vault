@@ -30,16 +30,16 @@ page_kind: home
       <span>Android · Open Source · Offline</span>
     </a>
     <h1 class="rise">
-      {{ t('Everything worth keeping,', 'Todo lo que vale la pena guardar,') }}
-      <em>{{ t('In one local vault.', 'En una sola bóveda local.') }}</em>
+      {{ t('Everything worth keeping,', 'பாதுகாக்க வேண்டிய அனைத்தும்,') }}
+      <em>{{ t('In one local vault.', 'உங்கள் தனிப்பட்ட பெட்டகத்தில்.') }}</em>
     </h1>
     <p class="lede rise">{{ t(
       'A serene space for useful links, inspiring images, and the screenshots you return to. Saved together on your device. Found when it matters.',
-      'Un espacio sereno para enlaces útiles, imágenes inspiradoras y capturas que consultas. Guardado en tu dispositivo. Localizable cuando importa.'
+      'பயனுள்ள இணைய இணைப்புகள், புகைப்படங்கள் மற்றும் ஸ்கிரீன்ஷாட்களுக்கான தனிப்பட்ட பெட்டகம். அனைத்தும் உங்கள் சாதனத்திலேயே பாதுகாப்பாக.'
     ) }}</p>
     <div class="cta rise">
-      <a class="btn btn--go" href="{{ site.apkUrl }}" download>{{ t('Download APK', 'Descargar APK') }}</a>
-      <a class="btn" href="{{ site.repo }}" target="_blank" rel="noopener">{{ t('Source code', 'Código fuente') }}</a>
+      <a class="btn btn--go" href="{{ site.apkUrl }}" download>{{ t('Download APK', 'APK பதிவிறக்கு') }}</a>
+      <a class="btn" href="{{ site.repo }}" target="_blank" rel="noopener">{{ t('Source code', 'மூலக் குறியீடு') }}</a>
     </div>
     <div class="stats rise">
       <span style="display:inline-flex;align-items:center;gap:7px;font-size:14px;color:var(--muted)">
@@ -48,11 +48,11 @@ page_kind: home
       </span>
       <a href="{{ site.repo }}" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 2.4l2.95 5.98 6.6.96-4.78 4.65 1.13 6.57L12 17.46l-5.9 3.1 1.13-6.57L2.45 9.34l6.6-.96L12 2.4Z"/></svg>
-        <b data-count="stars">—</b> {{ t('stars', 'estrellas') }}
+        <b data-count="stars">—</b> {{ t('stars', 'நட்சத்திரங்கள்') }}
       </a>
       <span style="display:inline-flex;align-items:center;gap:7px;font-size:14px;color:var(--muted)">
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--violet)"><path d="M20 6 9 17l-5-5"/></svg>
-        <span>{{ t('Zero Accounts', 'Sin cuentas') }}</span>
+        <span>{{ t('Zero Accounts', 'கணக்குகள் தேவையில்லை') }}</span>
       </span>
     </div>
   </div>
@@ -66,50 +66,50 @@ page_kind: home
 </section>
 
 <section class="sec" id="features">
-  <h2 class="h2">{{ t('Everything you need. Nothing you don’t.', 'Todo lo que necesitas. Nada que no.') }}</h2>
+  <h2 class="h2">{{ t('Everything you need. Nothing you don’t.', 'உங்களுக்கு தேவையான அனைத்தும். தேவையற்றது எதுவும் இல்லை.') }}</h2>
   <ol class="feats">
     <li>
-      <b>{{ t('OpenGraph Auto-Fill', 'Auto-relleno OpenGraph') }}</b>
-      <p>{{ t('Save links with instant OpenGraph title, image, and description auto-fill, plus offline article snapshot extraction.', 'Guarda enlaces con título, imagen y descripción OpenGraph automáticos, más extracción sin conexión.') }}</p>
+      <b>{{ t('OpenGraph Auto-Fill', 'தானியங்கி OpenGraph தகவல்') }}</b>
+      <p>{{ t('Save links with instant OpenGraph title, image, and description auto-fill, plus offline article snapshot extraction.', 'இணைப்புகளின் தலைப்பு, படம் மற்றும் விளக்கங்களை உடனடியாக தானாக நிரப்பி, ஆஃப்லைன் வாசிப்பிற்காக பாதுகாக்கிறது.') }}</p>
     </li>
     <li>
-      <b>{{ t('Instant Offline Search', 'Búsqueda sin conexión') }}</b>
-      <p>{{ t('Find any item instantly across titles, web domains, and notes with fast SQLite indexing on your device.', 'Encuentra cualquier elemento al instante por título, dominio o notas con SQLite en tu dispositivo.') }}</p>
+      <b>{{ t('Instant Offline Search', 'உடனடி ஆஃப்லைன் தேடல்') }}</b>
+      <p>{{ t('Find any item instantly across titles, web domains, and notes with fast SQLite indexing on your device.', 'தலைப்புகள், டொமைன்கள் மற்றும் குறிப்புகளில் உங்கள் சாதனத்தின் வேகமான SQLite அட்டவணையுடன் உடனடியாகத் தேடுங்கள்.') }}</p>
     </li>
     <li>
-      <b>{{ t('Curated Collections', 'Colecciones organizadas') }}</b>
-      <p>{{ t('Organize items with color-accented collections, maintain a quick favorites shortlist, and tag items.', 'Organiza con colecciones de colores, mantén una lista de favoritos y asigna etiquetas.') }}</p>
+      <b>{{ t('Curated Collections', 'வண்ணத் தொகுப்புகள்') }}</b>
+      <p>{{ t('Organize items with color-accented collections, maintain a quick favorites shortlist, and tag items.', 'வண்ணக் குறிச்சொற்கள் கொண்ட தொகுப்புகளில் ஒழுங்கமைத்து, விருப்பமானவற்றை உடனடியாக அணுகுங்கள்.') }}</p>
     </li>
     <li>
-      <b>{{ t('100% On-Device SQLite', '100% SQLite local') }}</b>
-      <p>{{ t('Zero cloud accounts, zero telemetry, and zero servers. All data stays strictly inside private app storage.', 'Cero cuentas en la nube, cero telemetría y cero servidores. Todos tus datos se quedan en tu móvil.') }}</p>
+      <b>{{ t('100% On-Device SQLite', '100% சாதன SQLite சேமிப்பகம்') }}</b>
+      <p>{{ t('Zero cloud accounts, zero telemetry, and zero servers. All data stays strictly inside private app storage.', 'மேகக்கணி கணக்குகள் இல்லை, கண்காணிப்பு இல்லை, சேவையகங்கள் இல்லை. உங்கள் தரவு அனைத்தும் உங்கள் சாதனத்திலேயே பாதுகாப்பாக இருக்கும்.') }}</p>
     </li>
     <li>
-      <b>{{ t('Portable Backups', 'Copias de seguridad portátiles') }}</b>
-      <p>{{ t('Export portable v3 ZIP backups preserving all original raw images and metadata. Restore anytime.', 'Exporta copias ZIP v3 portátiles con imágenes originales y metadatos intactos. Restaura cuando quieras.') }}</p>
+      <b>{{ t('Portable Backups', 'எளிதான காப்புப்பிரதி (Backup)') }}</b>
+      <p>{{ t('Export portable v3 ZIP backups preserving all original raw images and metadata. Restore anytime.', 'அசல் படங்கள் மற்றும் மெட்டாடேட்டாவைப் பாதுகாக்கும் போர்ட்டபிள் ZIP v3 காப்புப்பிரதிகளை ஏற்றுமதி செய்யுங்கள். எப்போது வேண்டுமானாலும் மீட்டெடுக்கலாம்.') }}</p>
     </li>
     <li>
-      <b>{{ t('Dark, Light & System', 'Oscuro, Claro y Sistema') }}</b>
-      <p>{{ t('Thoughtfully designed with warm OLED dark mode, system theme support, and distraction-free layouts.', 'Diseñado con modo oscuro OLED cálido, soporte de tema del sistema y diseño sin distracciones.') }}</p>
+      <b>{{ t('Dark, Light & System', 'இருண்ட, வெளிச்ச மற்றும் கணினி தீம்கள்') }}</b>
+      <p>{{ t('Thoughtfully designed with warm OLED dark mode, system theme support, and distraction-free layouts.', 'OLED இருண்ட முறை, கணினி தீம் ஆதரவு மற்றும் கவனச்சிதறல் இல்லாத நேர்த்தியான வடிவமைப்புடன் உருவாக்கப்பட்டது.') }}</p>
     </li>
   </ol>
 </section>
 
 <section class="sec sec--wide" id="screens">
   <div class="shelf-head">
-    <h2 class="h2">{{ t('A look inside', 'Por dentro') }}</h2>
-    <p class="shelf-hint">{{ t('Scroll sideways, tap to zoom', 'Desliza de lado, toca para ampliar') }}</p>
+    <h2 class="h2">{{ t('A look inside', 'பயன்பாட்டின் தோற்றம்') }}</h2>
+    <p class="shelf-hint">{{ t('Scroll sideways, tap to zoom', 'பக்கவாட்டில் உருட்டவும், பெரிதாக்க தட்டவும்') }}</p>
   </div>
   <div class="shelf-wrap">
     <button class="nudge nudge--prev" type="button" data-shelf="-1" aria-label="Previous"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
     <div class="shelf" id="shelf" tabindex="0" aria-label="Screens">
       {% set shots = [
-        ['welcome', 'Welcome screen', 'Pantalla de bienvenida'],
-        ['home', 'Vault home', 'Bóveda principal'],
-        ['browse', 'Browse gallery', 'Galería de enlaces e imágenes'],
-        ['favourites', 'Favourites', 'Favoritos'],
-        ['collections', 'Collections', 'Colecciones'],
-        ['settings', 'Settings and backup', 'Ajustes y copia de seguridad']
+        ['welcome', 'Welcome screen', 'வரவேற்புத் திரை'],
+        ['home', 'Vault home', 'முகப்பு பெட்டகம்'],
+        ['browse', 'Browse gallery', 'தொகுப்புத் தொகுப்பு'],
+        ['favourites', 'Favourites', 'விருப்பமானவை'],
+        ['collections', 'Collections', 'தொகுப்புகள்'],
+        ['settings', 'Settings and backup', 'அமைப்புகள் மற்றும் காப்புப்பிரதி']
       ] %}
       {% for shot in shots %}
       <figure class="shot">
@@ -124,16 +124,16 @@ page_kind: home
 
 <section class="sec">
   <div class="quiet">
-    <h2 class="h2">{{ t('No accounts. No trackers. 100% on-device.', 'Sin cuentas. Sin rastreadores. 100% en tu dispositivo.') }}</h2>
+    <h2 class="h2">{{ t('No accounts. No trackers. 100% on-device.', 'கணக்குகள் இல்லை. கண்காணிப்பாளர்கள் இல்லை. 100% சாதனத்திலேயே.') }}</h2>
     <p>{{ t(
       'SLI Vault does not require external accounts or send your bookmarks to remote servers. All your saved links, notes, images and tags stay safely in private SQLite storage on your Android device.',
-      'SLI Vault no requiere cuentas externas ni envía tus marcadores a servidores remotos. Todos tus enlaces, notas, imágenes y etiquetas guardados se quedan de forma segura en SQLite privado en tu dispositivo Android.'
+      'SLI Vault வெளிப்புறக் கணக்குகளைக் கோருவதில்லை அல்லது உங்கள் புக்மார்க்குகளை தொலை சேவையகங்களுக்கு அனுப்புவதில்லை. நீங்கள் சேமிக்கும் அனைத்து இணைப்புகள், குறிப்புகள், படங்கள் மற்றும் குறிச்சொற்கள் உங்கள் Android சாதனத்தில் உள்ள தனிப்பட்ட SQLite சேமிப்பகத்தில் மட்டுமே பாதுகாப்பாக இருக்கும்.'
     ) }}</p>
   </div>
 </section>
 
 <section class="sec" id="download">
-  <h2 class="h2">{{ t('Download SLI Vault', 'Descargar SLI Vault') }}</h2>
+  <h2 class="h2">{{ t('Download SLI Vault', 'SLI Vault பதிவிறக்குங்கள்') }}</h2>
   <div class="dl">
     <div class="dl__col">
       <h3>{{ brand('android', 22) }}Android Release</h3>
@@ -142,11 +142,11 @@ page_kind: home
     </div>
     <div class="dl__col">
       <h3>{{ brand('github', 20) }}Source Code</h3>
-      <a href="{{ site.repo }}" target="_blank" rel="noopener"><span class="dl__gh">{{ brand('github', 18) }}</span>{{ t('GitHub Repository', 'Repositorio GitHub') }} <small>Flutter</small></a>
-      <a href="{{ site.repo }}/blob/main/LICENSE" target="_blank" rel="noopener"><span class="dl__gh">{{ brand('github', 18) }}</span>{{ t('License', 'Licencia') }} <small>Open Source</small></a>
+      <a href="{{ site.repo }}" target="_blank" rel="noopener"><span class="dl__gh">{{ brand('github', 18) }}</span>{{ t('GitHub Repository', 'GitHub களஞ்சியம்') }} <small>Flutter</small></a>
+      <a href="{{ site.repo }}/blob/main/LICENSE" target="_blank" rel="noopener"><span class="dl__gh">{{ brand('github', 18) }}</span>{{ t('License', 'உரிமம்') }} <small>Open Source</small></a>
     </div>
   </div>
-  <p class="dl__all"><a href="{{ site.repo }}/releases/latest" target="_blank" rel="noopener">{{ t('All releases and changelog', 'Todas las versiones y notas') }} ↗</a></p>
+  <p class="dl__all"><a href="{{ site.repo }}/releases/latest" target="_blank" rel="noopener">{{ t('All releases and changelog', 'அனைத்து வெளியீடுகள் மற்றும் குறிப்புகள்') }} ↗</a></p>
 </section>
 
 <section class="sec" id="support">
@@ -154,31 +154,31 @@ page_kind: home
     <div class="back-it__copy">
       <span class="back-it__tag">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 21.3 3.9 13.4a5 5 0 0 1 7-7.1l1.1 1.1 1.1-1.1a5 5 0 0 1 7 7.1Z"/></svg>
-        {{ t('Support the Project', 'Apoya el proyecto') }}
+        {{ t('Support the Project', 'திட்டத்தை ஆதரியுங்கள்') }}
       </span>
-      <h2>{{ t('Crafted with focus.<br />Free and open source.', 'Creado con dedicación.<br />Gratis y de código abierto.') }}</h2>
+      <h2>{{ t('Crafted with focus.<br />Free and open source.', 'முழு கவனத்துடன் உருவாக்கப்பட்டது.<br />இலவசம் மற்றும் திறந்த மூலக் குறியீடு.') }}</h2>
       <p>{{ t(
         'SLI Vault is an independent, local-first personal library project for Android. Zero ads, zero tracking, and zero subscriptions.',
-        'SLI Vault es un proyecto independiente de biblioteca personal local-first para Android. Cero anuncios, cero rastreo y cero suscripciones.'
+        'SLI Vault என்பது Android-க்கான ஒரு சுயாதீனமான, உள்ளூர்-முதல் (local-first) தனிப்பட்ட நூலகத் திட்டமாகும். பூஜ்ஜிய விளம்பரங்கள், பூஜ்ஜிய கண்காணிப்பு மற்றும் சந்தாக்கள் இல்லை.'
       ) }}</p>
       <a class="back-it__sig" href="{{ site.authorUrl }}" target="_blank" rel="noopener">
         <img src="https://github.com/sahaya-savari.png?size=80" width="30" height="30" alt="" loading="lazy" style="border-radius:50%" />
-        <span><b>{{ site.author }}</b> · {{ t('creator of SLI Vault', 'creador de SLI Vault') }}</span>
+        <span><b>{{ site.author }}</b> · {{ t('creator of SLI Vault', 'SLI Vault உருவாக்கியவர்') }}</span>
       </a>
     </div>
     <div class="back-it__ways">
       <a href="{{ site.repo }}" target="_blank" rel="noopener">
         <span class="way-ic way-ic--star"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2.4l2.95 5.98 6.6.96-4.78 4.65 1.13 6.57L12 17.46l-5.9 3.1 1.13-6.57L2.45 9.34l6.6-.96L12 2.4Z"/></svg></span>
-        <span><b>{{ t('Star on GitHub', 'Dale una estrella en GitHub') }}</b><small>{{ t('Help others discover SLI Vault.', 'Ayuda a otros a descubrir SLI Vault.') }}</small></span>
+        <span><b>{{ t('Star on GitHub', 'GitHub-இல் நட்சத்திரமிடுங்கள்') }}</b><small>{{ t('Help others discover SLI Vault.', 'பிறர் SLI Vault-ஐக் கண்டறிய உதவுங்கள்.') }}</small></span>
         <em data-count="stars">—</em>
       </a>
       <a href="{{ site.repo }}/issues" target="_blank" rel="noopener">
         <span class="way-ic">{{ brand('github', 20) }}</span>
-        <span><b>{{ t('Report an issue or suggest a feature', 'Reporta un problema o sugiere una función') }}</b><small>{{ t('Contributions and feedback are always welcome.', 'Comentarios y sugerencias son siempre bienvenidos.') }}</small></span>
+        <span><b>{{ t('Report an issue or suggest a feature', 'சிக்கலைப் புகாரளிக்கவும் அல்லது புதிய அம்சத்தைப் பரிந்துரைக்கவும்') }}</b><small>{{ t('Contributions and feedback are always welcome.', 'பங்களிப்புகளும் கருத்துகளும் எப்போதும் வரவேற்கப்படுகின்றன.') }}</small></span>
       </a>
       <button type="button" class="way--share" data-share="{{ site.url }}/">
         <span class="way-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg></span>
-        <span><b>{{ t('Share SLI Vault', 'Comparte SLI Vault') }}</b><small class="share-idle">{{ t('Share the link with friends.', 'Comparte el enlace con amigos.') }}</small><small class="share-done">{{ t('Link copied to clipboard.', 'Enlace copiado al portapapeles.') }}</small></span>
+        <span><b>{{ t('Share SLI Vault', 'SLI Vault-ஐப் பகிரவும்') }}</b><small class="share-idle">{{ t('Share the link with friends.', 'நண்பர்களுடன் இணைப்பைப் பகிருங்கள்.') }}</small><small class="share-done">{{ t('Link copied to clipboard.', 'இணைப்பு நகலெடுக்கப்பட்டது.') }}</small></span>
       </button>
     </div>
   </div>

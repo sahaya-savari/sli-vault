@@ -12,7 +12,7 @@ const store = (key, value) => {
 };
 
 document.getElementById('lang').addEventListener('click', () => {
-  const next = root.dataset.lang === 'es' ? 'en' : 'es';
+  const next = root.dataset.lang === 'ta' ? 'en' : 'ta';
   store('sli-vault-lang', next);
   const alt = document.querySelector('a[data-alt]');
   if (alt && root.dataset.fixed) {
@@ -150,7 +150,7 @@ const captionOf = (el) => {
   if (!item) return '';
   const label = item.querySelector('h3, figcaption');
   if (!label) return '';
-  const shown = [...label.querySelectorAll('.en, .es')].find((span) => span.offsetParent !== null);
+  const shown = [...label.querySelectorAll('.en, .ta')].find((span) => span.offsetParent !== null);
   return (shown || label).textContent.trim();
 };
 

@@ -2,23 +2,23 @@
 layout: base.njk
 page_kind: resources
 title: Resources & Credits
-description: Focus scenes, wallpapers and sounds credited to the open-source Streak project.
+description: Focus scenes, wallpapers and sounds for SLI Vault and credited open-source projects.
 ---
 {% from "t.njk" import t %}
 {% set scenes = resources | ofKind('scene') %}
 {% set images = resources | ofKind('image') %}
 {% set sounds = resources | ofKind('sound') %}
 <section class="head">
-  <h1>{{ t('Resources & Credits', 'Recursos y Créditos') }}</h1>
-  <p>{{ t('Focus scenes, wallpapers and atmospheric sounds shaped by the open-source Streak project. Free to explore and download.', 'Escenas de concentración, fondos y sonidos atmosféricos del proyecto libre Streak. Gratis para descargar.') }}</p>
+  <h1>{{ t('Resources & Credits', 'வளங்கள் & பங்களிப்புகள்') }}</h1>
+  <p>{{ t('Focus scenes, wallpapers and atmospheric sounds for SLI Vault, inspired by open-source craft. Free to explore and download.', 'SLI வால்ட்டிற்கான காட்சிக் கோப்புகள், வால்பேப்பர்கள் மற்றும் சூழல் ஒலிகள். இலவசமாகப் பதிவிறக்கலாம்.') }}</p>
 </section>
 
 <section class="sec sec--shop">
   <div class="filters" role="tablist">
-    <button type="button" class="is-on" data-filter="all">{{ t('All', 'Todo') }} <small>{{ resources.length }}</small></button>
-    <button type="button" data-filter="scene">{{ t('Video scenes', 'Escenas de vídeo') }} <small>{{ scenes.length }}</small></button>
-    <button type="button" data-filter="image">{{ t('Wallpapers', 'Fondos') }} <small>{{ images.length }}</small></button>
-    <button type="button" data-filter="sound">{{ t('Sounds', 'Sonidos') }} <small>{{ sounds.length }}</small></button>
+    <button type="button" class="is-on" data-filter="all">{{ t('All', 'அனைத்தும்') }} <small>{{ resources.length }}</small></button>
+    <button type="button" data-filter="scene">{{ t('Video scenes', 'காட்சிகள்') }} <small>{{ scenes.length }}</small></button>
+    <button type="button" data-filter="image">{{ t('Wallpapers', 'வால்பேப்பர்கள்') }} <small>{{ images.length }}</small></button>
+    <button type="button" data-filter="sound">{{ t('Sounds', 'ஒலிகள்') }} <small>{{ sounds.length }}</small></button>
   </div>
 
   <div class="shop">
@@ -30,9 +30,9 @@ description: Focus scenes, wallpapers and sounds credited to the open-source Str
         <span class="item__peek" aria-hidden="true">⤢</span>
       </button>
       <div class="item__body">
-        <h3>{{ t(item.en, item.es) }}</h3>
+        <h3>{{ t(item.en, item.ta) }}</h3>
         <p class="item__meta">MP4 · {{ item.size }} · {{ item.file | bytes }}{% if item.author %} · {{ item.author }}{% endif %}</p>
-        <a class="get" href="/files/{{ item.file }}" download="{{ item.file }}"><i class="get__bar" aria-hidden="true"></i><span class="get__idle">{{ t('Download', 'Descargar') }}</span><span class="get__done">{{ t('Downloaded', 'Descargado') }}</span></a>
+        <a class="get" href="/files/{{ item.file }}" download="{{ item.file }}"><i class="get__bar" aria-hidden="true"></i><span class="get__idle">{{ t('Download', 'பதிவிறக்கு') }}</span><span class="get__done">{{ t('Downloaded', 'பதிவிறக்கப்பட்டது') }}</span></a>
       </div>
     </article>
     {% endfor %}
@@ -44,9 +44,9 @@ description: Focus scenes, wallpapers and sounds credited to the open-source Str
         <span class="item__peek" aria-hidden="true">⤢</span>
       </button>
       <div class="item__body">
-        <h3>{{ t(item.en, item.es) }}</h3>
+        <h3>{{ t(item.en, item.ta) }}</h3>
         <p class="item__meta">JPG · {{ item.size }} · {{ item.file | bytes }}{% if item.author %} · {{ item.author }}{% endif %}</p>
-        <a class="get" href="/files/{{ item.file }}" download="{{ item.file }}"><i class="get__bar" aria-hidden="true"></i><span class="get__idle">{{ t('Download', 'Descargar') }}</span><span class="get__done">{{ t('Downloaded', 'Descargado') }}</span></a>
+        <a class="get" href="/files/{{ item.file }}" download="{{ item.file }}"><i class="get__bar" aria-hidden="true"></i><span class="get__idle">{{ t('Download', 'பதிவிறக்கு') }}</span><span class="get__done">{{ t('Downloaded', 'பதிவிறக்கப்பட்டது') }}</span></a>
       </div>
     </article>
     {% endfor %}
@@ -62,9 +62,9 @@ description: Focus scenes, wallpapers and sounds credited to the open-source Str
         <span class="item__badge">{{ item.seconds | clock }}</span>
       </div>
       <div class="item__body">
-        <h3>{{ t(item.en, item.es) }}</h3>
+        <h3>{{ t(item.en, item.ta) }}</h3>
         <p class="item__meta">MP3 · {{ item.file | bytes }}{% if item.author %} · {{ item.author }}{% endif %}</p>
-        <a class="get" href="/files/{{ item.file }}" download="{{ item.file }}"><i class="get__bar" aria-hidden="true"></i><span class="get__idle">{{ t('Download', 'Descargar') }}</span><span class="get__done">{{ t('Downloaded', 'Descargado') }}</span></a>
+        <a class="get" href="/files/{{ item.file }}" download="{{ item.file }}"><i class="get__bar" aria-hidden="true"></i><span class="get__idle">{{ t('Download', 'பதிவிறக்கு') }}</span><span class="get__done">{{ t('Downloaded', 'பதிவிறக்கப்பட்டது') }}</span></a>
       </div>
     </article>
     {% endfor %}
@@ -72,21 +72,21 @@ description: Focus scenes, wallpapers and sounds credited to the open-source Str
 
   <aside class="share">
     <div>
-      <h2>{{ t('Original Design Reference', 'Referencia de diseño original') }}</h2>
+      <h2>{{ t('Original Design Reference', 'வடிவமைப்பு பங்களிப்புகள்') }}</h2>
       <p>{{ t(
         'These calm focus media files are published under open license by the Streak project. SLI Vault credits the original author InlitX for the design direction and atmospheric wallpapers.',
-        'Estos medios relajantes fueron publicados bajo licencia libre por el proyecto Streak. SLI Vault acredita al autor original InlitX por la inspiración de diseño.'
+        'இவை திறந்த மூல உரிமத்தின் கீழ் பகிரப்பட்ட அமைதியான உள்ளடக்கங்கள் ஆகும். வடிவமைப்பு உத்வேகம் மற்றும் அழகிய வால்பேப்பர்களுக்காக அசல் வடிவமைப்பாளர் InlitX அவர்களுக்கு SLI வால்ட் நன்றி தெரிவிக்கிறது.'
       ) }}</p>
     </div>
-    <a class="btn btn--go" href="https://github.com/InlitX/streak" target="_blank" rel="noopener">{{ t('Visit Streak Repository', 'Visitar repositorio Streak') }}</a>
+    <a class="btn btn--go" href="https://github.com/InlitX/streak" target="_blank" rel="noopener">{{ t('Visit Streak Repository', 'Streak களஞ்சியத்தைப் பார்வையிடவும்') }}</a>
   </aside>
 
   <aside class="howto">
-    <h2>{{ t('Focus & Atmosphere', 'Enfoque y ambiente') }}</h2>
+    <h2>{{ t('Focus & Atmosphere', 'கவனம் & சூழல்') }}</h2>
     <ol>
-      <li>{{ t('Browse video scenes, wallpapers and sounds directly in your browser.', 'Explora escenas de vídeo, fondos y sonidos directamente en el navegador.') }}</li>
-      <li>{{ t('Click any item to preview in full screen or listen to audio.', 'Haz clic en cualquier elemento para previsualizarlo o escuchar el audio.') }}</li>
-      <li>{{ t('Download any file with one click to use anywhere.', 'Descarga cualquier archivo con un solo clic para usarlo donde quieras.') }}</li>
+      <li>{{ t('Browse video scenes, wallpapers and sounds directly in your browser.', 'உலாவியிலேயே நேரடியாகக் காட்சிகள், வால்பேப்பர்கள் மற்றும் ஒலிகளை உலாவவும்.') }}</li>
+      <li>{{ t('Click any item to preview in full screen or listen to audio.', 'முழுத்திரையில் காண அல்லது ஒலியைக் கேட்க எதையும் கிளிக் செய்யவும்.') }}</li>
+      <li>{{ t('Download any file with one click to use anywhere.', 'ஒரே கிளிக்கில் எங்கு வேண்டுமானாலும் பயன்படுத்தப் பதிவிறக்கவும்.') }}</li>
     </ol>
   </aside>
 </section>

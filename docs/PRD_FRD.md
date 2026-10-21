@@ -4,7 +4,7 @@
 **Status:** Approved & Implemented  
 **Application ID:** `com.sahayasavari.slivault`  
 **Platform:** Android (Primary), Flutter Cross-Platform Engine  
-**Release Target:** `1.0.1` (`versionCode: 2008`)  
+**Release Target:** `1.0.1` (`versionCode: 2010`, arm64: `4010`, armeabi-v7a: `3010`, x86_64: `6010`)
 **Developer:** Sahaya Savari (`@sahaya-savari`)  
 **Repository:** https://github.com/sahaya-savari/sli-vault  
 **Published Website:** https://sahaya-savari.github.io/sli-vault/  
@@ -151,13 +151,12 @@ d:\sli-vault\
 
 ## 6. Release Verification & Artifact Matrix
 
-| Artifact Filename | Target Architecture | File Size (Bytes) | Size (MiB) | SHA-256 Checksum |
-| :--- | :--- | :---: | :---: | :--- |
-| **`app-arm64-v8a-release.apk`** | ARM64-v8a (Modern Android) | 29,106,919 | 27.76 MiB | `A04D92372897556F9479A6F144C8AB70DDB776D9D3A4036370C751BB998A8B20` |
-| **`app-release.apk`** | Universal (All Devices) | 70,896,822 | 67.61 MiB | `FF9480A7F264C491AD398BF8708674DFD4DFFEA061C69B6032922D606238311D` |
-| **`app-armeabi-v7a-release.apk`** | ARM32-v7a (Older Devices) | 26,810,929 | 25.57 MiB | `42A4C13EE21723DC9619EAE8210867E0D40B932EC0960819DA1FB629DE015863` |
-| **`app-x86_64-release.apk`** | x86_64 (Emulators/ChromeOS) | 30,624,184 | 29.21 MiB | `7B7FC355519566E1F480B4DF9F494A4AF29386B08A78106BF5723117E5329F78` |
-| **`app-release.aab`** | App Bundle (Play / Sideload) | 70,865,901 | 67.58 MiB | `C9C4AD6AFFCA69091B8504F95F1349265C3E9025725B04922F50C538FC0F8425` |
+| Artifact Filename | Target Architecture | File Size (Bytes) | Size (MiB) | VersionCode | SHA-256 Checksum |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| **`sli-vault-1.0.1-arm64-v8a-release.apk`** | ARM64-v8a (Modern Android) | 29,107,111 | 27.76 MiB | 4010 | `58EC58612695CFC3CB3D108CE8F03C6C666EC0F4E1FE421F4515C947A6D10C32` |
+| **`sli-vault-1.0.1-armeabi-v7a-release.apk`** | ARM32-v7a (Older Devices) | 26,811,121 | 25.57 MiB | 3010 | `37BE516F5567960455E624DC451C18993A2B6783C015D4D5B2308EC4FD652D0B` |
+| **`sli-vault-1.0.1-x86_64-release.apk`** | x86_64 (Emulators/ChromeOS) | 30,624,372 | 29.21 MiB | 6010 | `022A99274BDE229D4D3E83A4FC1BD62E358CA8BB38F5B5AE99A2E0A45972F601` |
+| **`sli-vault-1.0.1-release.aab`** | App Bundle (Universal Multi-ABI) | 70,899,730 | 67.62 MiB | 2010 | `AA87DD931B5280B6C6693BD2B863F0152AE603CA085321FEBCE8BEB550553F8C` |
 
 ---
 

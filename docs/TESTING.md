@@ -23,16 +23,16 @@ Release APK/AAB commands compile a release-mode binary that is still signed with
 |---|---|---|---|---|
 | Earlier docs in this folder | 21, later written as 25 | Reported clean at the time | Several historical sizes (about 59-60.5 MB) | Superseded counts. Kept so older notes stay traceable. |
 | QA baseline stated before this release-prep pass | **62 passing** | Clean | Release APK and AAB about **60.6 MB**, debug-signed | Superseded by the current build evidence below. |
-| This release-prep pass | **62 passing** | **No issues found** | APK 63,521,428 bytes; AAB 63,540,169 bytes; debug-signed | Completed 2026-10-16 with Flutter 3.47.7. |
+| This release-prep pass (2026-10-22) | **121 passing** | **No issues found** | Split-per-ABI APKs: arm64 (27.8 MB), armeabi-v7a (25.6 MB), x86_64 (29.2 MB); AAB (67.6 MB) | Clean pass on Flutter 3.47.7, signed with owner keystore. |
 
-## This release-prep pass
+## Current release-prep pass
 
-Run on 2026-10-16 with Flutter 3.47.7 (Dart 3.13.5). No Dart source was edited in this pass.
+Run on 2026-10-22 with Flutter 3.47.7 (Dart 3.13.5):
 
-- `flutter analyze`: **No issues found** (exit 0, about 9.2s). Pub reported 23 packages with newer versions incompatible with current constraints. That notice is not an analyzer failure.
-- `flutter test`: **62 tests passed** (exit 0).
-- `flutter build apk --release`: succeeded; APK is **DEVELOPMENT/DEBUG-SIGNED - NOT FOR PLAY STORE UPLOAD**.
-- `flutter build appbundle --release`: succeeded; AAB is **DEVELOPMENT/DEBUG-SIGNED - NOT FOR PLAY STORE UPLOAD**.
+- `flutter analyze`: **No issues found** (exit 0, ran in 23.3s).
+- `flutter test`: **121 tests passed** (exit 0, ran in 1m 6s).
+- `flutter build apk --release --split-per-abi`: succeeded; signed with owner release keystore (`CN=Sahaya Savari F, OU=SLI Vault, O=Sahaya Savari F, C=IN`).
+- `flutter build appbundle --release`: succeeded; signed with owner release keystore.
 
 ## Current automated coverage
 

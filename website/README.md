@@ -23,7 +23,7 @@ npm install
 npm run dev
 ```
 
-Then open http://localhost:8080/streak/. It reloads on every change.
+Then open http://localhost:8080/sli-vault/. It reloads on every change.
 
 ## Write a post
 
@@ -51,13 +51,13 @@ translation just leaves `translation` out.
 ## Comments and likes
 
 Posts use [giscus](https://giscus.app): readers sign in with GitHub to comment
-and react, and everything is stored as a discussion in `InlitX/streak`. To
+and react, and everything is stored as a discussion in `sahaya-savari/sli-vault`. To
 switch it on:
 
 1. Enable Discussions in the repository settings and add a category named `Blog`
    (type Announcement, so only giscus creates threads).
 2. Install the giscus app on the repository.
-3. On giscus.app, enter `InlitX/streak`, pick the `Blog` category and copy the
+3. On giscus.app, enter `sahaya-savari/sli-vault`, pick the `Blog` category and copy the
    `data-category-id` into `giscus.categoryId` in `src/_data/site.json`.
 
 Until then, posts show a short note where the comments go.

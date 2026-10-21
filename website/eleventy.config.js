@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import { HtmlBasePlugin } from "@11ty/eleventy";
 
-const locales = { en: "en-GB", es: "es-ES" };
+const locales = { en: "en-GB", ta: "ta-IN" };
 
 export default function (config) {
   config.addPlugin(HtmlBasePlugin);
@@ -13,6 +13,8 @@ export default function (config) {
     "src/css": "css",
     "src/js": "js",
     "src/blog/img": "blog/img",
+    "src/robots.txt": "robots.txt",
+    "src/sitemap.xml": "sitemap.xml",
   });
 
   config.addTransform("lazy-images", (content, path) => {
