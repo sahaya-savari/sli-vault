@@ -347,9 +347,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             ),
                           ] else
                             const Spacer(flex: 3),
-                          if (showFeatureCards) const Spacer(flex: 1),
-                          // Reserve space for indicator & button
-                          const SizedBox(height: 100),
+                          // Reserve space for the persistent indicator + CTA.
+                          // Keep this tall enough that feature cards are not
+                          // visually clipped behind the bottom controls.
+                          SizedBox(height: showFeatureCards ? 132 : 100),
                         ],
                       ),
                     ),

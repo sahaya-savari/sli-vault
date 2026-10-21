@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/assets/sli_assets.dart';
+import '../../core/platform/document_path.dart';
 import '../../core/theme/sli_theme.dart';
 import '../../core/widgets/sli_svg.dart';
 import '../../data/backup_service.dart';
@@ -1462,6 +1463,10 @@ class _DataSubpageState extends State<_DataSubpage> {
               onPressed: () async {
                 Navigator.of(dialogContext).pop();
                 try {
+                  // Pass `bytes` so Android writes via the Storage Access
+                  // Framework / document provider. The returned path may be a
+                  // virtual document path (e.g. `/document/1770`) — never treat
+                  // that as a dart:io filesystem path.
                   final outputPath = await FilePicker.platform.saveFile(
                     dialogTitle: 'Save SLI Vault Backup',
                     fileName: fileName,
@@ -1470,10 +1475,12 @@ class _DataSubpageState extends State<_DataSubpage> {
                     allowedExtensions: ['zip'],
                   );
                   if (outputPath != null && mounted) {
-                    final outputFile = File(outputPath);
-                    if (!await outputFile.exists() ||
-                        await outputFile.length() == 0) {
-                      await outputFile.writeAsBytes(zipBytes, flush: true);
+                    if (isFilesystemPathSafeForDartIo(outputPath)) {
+                      final outputFile = File(outputPath);
+                      if (!await outputFile.exists() ||
+                          await outputFile.length() == 0) {
+                        await outputFile.writeAsBytes(zipBytes, flush: true);
+                      }
                     }
                     messenger.showSnackBar(
                       const SnackBar(
@@ -1515,11 +1522,16 @@ class _DataSubpageState extends State<_DataSubpage> {
       setState(() => _isWorking = true);
       final file = picked.files.first;
       Uint8List? bytes = file.bytes;
-      if (bytes == null && file.path != null) {
+      if (bytes == null &&
+          file.path != null &&
+          isFilesystemPathSafeForDartIo(file.path!)) {
         bytes = await File(file.path!).readAsBytes();
       }
       if (bytes == null) {
-        throw const FormatException('Could not read selected backup archive.');
+        throw const FormatException(
+          'Could not read selected backup archive. '
+          'If the file was chosen from cloud or Downloads, try again or use Share.',
+        );
       }
 
       final isJson = file.name.toLowerCase().endsWith('.json');

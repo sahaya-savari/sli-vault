@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/assets/sli_assets.dart';
+import '../../core/platform/document_path.dart';
 import '../../core/theme/sli_theme.dart';
 import '../../core/widgets/sli_svg.dart';
 import '../../data/link_metadata_service.dart';
@@ -316,7 +317,9 @@ class _AddItemSheetState extends State<AddItemSheet> {
       if (result == null || result.files.isEmpty) return;
       final file = result.files.first;
       Uint8List? bytes = file.bytes;
-      if (bytes == null && file.path != null) {
+      if (bytes == null &&
+          file.path != null &&
+          isFilesystemPathSafeForDartIo(file.path!)) {
         bytes = await File(file.path!).readAsBytes();
       }
       if (bytes == null || !mounted) return;

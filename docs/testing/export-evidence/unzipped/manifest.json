@@ -1,0 +1,105 @@
+{
+  "product": "sli_vault",
+  "backupFormatVersion": 3,
+  "schemaVersion": 2,
+  "exportedAt": "2026-10-21T00:55:30.510053Z",
+  "itemCount": 5,
+  "images": [
+    {
+      "imageId": "demo-orange.png",
+      "sizeBytes": 2591,
+      "sha256": "d4b144e1fb49f02a4fc15cca403193feb09718fc943830d0f42e57ba2b766e2b"
+    }
+  ],
+  "items": [
+    {
+      "id": "demo-shot-1",
+      "type": "screenshot",
+      "title": "Library layout idea",
+      "url": null,
+      "domain": null,
+      "description": "Demo screenshot reference for product shots.",
+      "localImageId": "demo-orange.png",
+      "thumbnailId": null,
+      "tags": [
+        "product"
+      ],
+      "isFavorite": false,
+      "collection": "Inspiration",
+      "fileSizeBytes": 69,
+      "createdAt": "2026-10-20T15:42:42.129Z",
+      "updatedAt": "2026-10-20T15:42:42.129Z"
+    },
+    {
+      "id": "demo-img-1",
+      "type": "image",
+      "title": "Warm evening sketch",
+      "url": null,
+      "domain": null,
+      "description": "A calm demo image for gallery screenshots.",
+      "localImageId": "demo-orange.png",
+      "thumbnailId": null,
+      "tags": [
+        "art"
+      ],
+      "isFavorite": true,
+      "collection": "Inspiration",
+      "fileSizeBytes": 69,
+      "createdAt": "2026-10-20T10:42:42.129Z",
+      "updatedAt": "2026-10-20T10:42:42.129Z"
+    },
+    {
+      "id": "demo-link-3",
+      "type": "link",
+      "title": "Dart language tour",
+      "url": "https://dart.dev/language",
+      "domain": "dart.dev",
+      "description": "Core language concepts for Dart developers.",
+      "localImageId": null,
+      "thumbnailId": null,
+      "tags": [
+        "dart"
+      ],
+      "isFavorite": false,
+      "collection": "General",
+      "fileSizeBytes": 0,
+      "createdAt": "2026-10-19T22:42:42.129Z",
+      "updatedAt": "2026-10-19T22:42:42.129Z"
+    },
+    {
+      "id": "demo-link-2",
+      "type": "link",
+      "title": "Material Design 3",
+      "url": "https://m3.material.io",
+      "domain": "m3.material.io",
+      "description": "Design system guidelines and components.",
+      "localImageId": null,
+      "thumbnailId": null,
+      "tags": [
+        "design",
+        "ui"
+      ],
+      "isFavorite": true,
+      "collection": "Reading",
+      "fileSizeBytes": 0,
+      "createdAt": "2026-10-19T18:42:42.129Z",
+      "updatedAt": "2026-10-20T13:42:42.129Z"
+    },
+    {
+      "id": "demo-link-1",
+      "type": "link",
+      "title": "Flutter documentation",
+      "url": "https://docs.flutter.dev",
+      "domain": "docs.flutter.dev",
+      "description": "Official Flutter docs for building beautiful apps.",
+      "localImageId": null,
+      "thumbnailId": null,
+      "tags": [],
+      "isFavorite": true,
+      "collection": "Reading",
+      "fileSizeBytes": 0,
+      "createdAt": "2026-10-18T18:42:42.129Z",
+      "updatedAt": "2026-10-18T18:42:42.129Z"
+    }
+  ]
+}

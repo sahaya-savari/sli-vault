@@ -19,40 +19,40 @@ export function IPhone({
   return (
     <div
       className={cn(
-        "relative mx-auto w-full max-w-[320px] select-none rounded-[44px] bg-[#1a1b1e] p-[8px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.08)] ring-1 ring-white/10 transition-transform duration-300",
+        "relative mx-auto w-full max-w-full select-none overflow-hidden rounded-[1.65rem] bg-[#1a1b1e] p-[4px] shadow-[0_18px_40px_-18px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.08)] ring-1 ring-white/10 transition-transform duration-300",
         className,
       )}
       {...props}
     >
       {/* Outer bezel highlights */}
-      <div className="pointer-events-none absolute inset-[1px] rounded-[42px] ring-1 ring-inset ring-white/10" />
+      <div className="pointer-events-none absolute inset-[1px] rounded-[1.5rem] ring-1 ring-inset ring-white/10" />
 
       {/* Side buttons */}
       <span
-        className="pointer-events-none absolute -left-[3px] top-[95px] h-[32px] w-[3px] rounded-l-sm bg-neutral-700/80"
+        className="pointer-events-none absolute left-0 top-[18%] h-[7%] w-[3px] rounded-r-sm bg-neutral-600"
         aria-hidden="true"
       />
       <span
-        className="pointer-events-none absolute -left-[3px] top-[140px] h-[48px] w-[3px] rounded-l-sm bg-neutral-700/80"
+        className="pointer-events-none absolute left-0 top-[28%] h-[11%] w-[3px] rounded-r-sm bg-neutral-600"
         aria-hidden="true"
       />
       <span
-        className="pointer-events-none absolute -left-[3px] top-[198px] h-[48px] w-[3px] rounded-l-sm bg-neutral-700/80"
+        className="pointer-events-none absolute left-0 top-[41%] h-[11%] w-[3px] rounded-r-sm bg-neutral-600"
         aria-hidden="true"
       />
       <span
-        className="pointer-events-none absolute -right-[3px] top-[130px] h-[64px] w-[3px] rounded-r-sm bg-neutral-700/80"
+        className="pointer-events-none absolute right-0 top-[26%] h-[14%] w-[3px] rounded-l-sm bg-neutral-600"
         aria-hidden="true"
       />
 
       {/* Screen container */}
-      <div className="relative aspect-[860/1920] w-full overflow-hidden rounded-[36px] bg-[#0A0B0D]">
+      <div className="relative aspect-[860/1920] w-full overflow-hidden rounded-[1.3rem] bg-[#0A0B0D]">
         {src ? (
           <img
             src={src}
             alt={alt}
             loading={eager ? "eager" : "lazy"}
-            className="block h-full w-full object-cover"
+            className="block h-full w-full object-contain object-top"
             width="860"
             height="1920"
           />

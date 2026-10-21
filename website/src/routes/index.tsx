@@ -16,7 +16,6 @@ import {
   X,
   Smartphone,
   FolderHeart,
-  Sparkles,
   Download,
   Laptop,
   Terminal,
@@ -32,7 +31,6 @@ import { ScreenshotGallery } from "@/components/screenshot-gallery";
 import { IPhone } from "@/components/ui/iphone";
 import { Highlighter } from "@/components/ui/highlighter";
 import { MagicCard } from "@/components/ui/magic-card";
-import { PixelCard } from "@/components/ui/pixel-card";
 import { DotPattern } from "@/components/ui/dot-pattern";
 import {
   apkDownloadUrl,
@@ -493,7 +491,8 @@ function Index() {
                   <IPhone
                     src={heroLeft}
                     alt="SLI Vault Browse screen"
-                    className="w-full shadow-xl pointer-events-none"
+                    eager
+                    className="w-full max-w-none shadow-xl pointer-events-none"
                   />
                 </div>
 
@@ -503,7 +502,7 @@ function Index() {
                     src={heroCenter}
                     alt="SLI Vault Home screen showing genuine local personal library"
                     eager
-                    className="w-full shadow-2xl"
+                    className="w-full max-w-none shadow-2xl"
                   />
                 </div>
 
@@ -512,7 +511,8 @@ function Index() {
                   <IPhone
                     src={heroRight}
                     alt="SLI Vault Favorites screen"
-                    className="w-full shadow-xl pointer-events-none"
+                    eager
+                    className="w-full max-w-none shadow-xl pointer-events-none"
                   />
                 </div>
               </div>
@@ -599,36 +599,22 @@ function Index() {
               ))}
             </div>
 
-            {/* PixelCard Spotlight Effect */}
-            <div className="mt-8">
-              <PixelCard
-                colors={["#FF6A24", "#FFAA64", "#FF8C42"]}
-                glowColor="#FF6A24"
-                radius={20}
-                className="p-6 sm:p-8"
+            <div className="mt-8 flex flex-col gap-4 rounded-2xl border border-border/80 bg-card/50 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+              <div className="min-w-0">
+                <h3 className="font-serif text-xl font-bold text-foreground sm:text-2xl">
+                  Nothing leaves the device unless you export it.
+                </h3>
+                <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                  Links, images, and tags stay in app-private storage. A backup is a portable ZIP
+                  you save yourself. The library database is not encrypted.
+                </p>
+              </div>
+              <Button
+                asChild
+                className="w-full shrink-0 bg-primary font-semibold text-primary-foreground hover:bg-primary/90 sm:w-auto"
               >
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div>
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-3 py-1 text-xs font-mono text-primary font-semibold">
-                      <Sparkles className="size-3.5" />
-                      INTERACTIVE SPOTLIGHT
-                    </span>
-                    <h4 className="mt-2 font-serif text-xl sm:text-2xl font-bold text-foreground">
-                      Zero Cloud Telemetry. Instant On-Device Retrieval.
-                    </h4>
-                    <p className="mt-1 text-sm text-muted-foreground max-w-xl">
-                      SLI Vault stores all links, screenshot files, and tags locally inside an
-                      encrypted-ready device sandbox.
-                    </p>
-                  </div>
-                  <Button
-                    asChild
-                    className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shrink-0"
-                  >
-                    <a href="#download">Get SLI Vault</a>
-                  </Button>
-                </div>
-              </PixelCard>
+                <a href="#download">Get SLI Vault</a>
+              </Button>
             </div>
           </div>
         </section>
@@ -756,7 +742,7 @@ function Index() {
                     <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1">
                       <span className="text-muted-foreground shrink-0">Version:</span>
                       <span className="text-foreground font-semibold break-words">
-                        {latestVersion} (code 3)
+                        {latestVersion} (build 2010)
                       </span>
                     </div>
                     <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1">
@@ -869,22 +855,11 @@ function Index() {
 
                   <h3 className="text-xl font-bold text-foreground">Windows</h3>
                   <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
-                    Native desktop client for Windows 10 &amp; 11 with offline local database sync.
+                    No Windows build is published. Android is the shipping app.
                   </p>
 
-                  <div className="mt-5 space-y-2.5 rounded-xl border border-border/50 bg-black/20 p-3 sm:p-3.5 text-xs font-mono text-muted-foreground min-w-0">
-                    <div className="flex justify-between gap-2">
-                      <span>Status:</span>
-                      <span className="text-foreground">In Planning</span>
-                    </div>
-                    <div className="flex justify-between gap-2">
-                      <span>Platform:</span>
-                      <span>Windows x64 / ARM</span>
-                    </div>
-                    <div className="flex justify-between gap-2">
-                      <span>Distribution:</span>
-                      <span>MSIX / ZIP</span>
-                    </div>
+                  <div className="mt-5 rounded-xl border border-border/50 bg-black/20 p-3 sm:p-3.5 text-xs text-muted-foreground">
+                    Status: not published. There is no verified Windows package in this repository.
                   </div>
                 </div>
 
@@ -916,22 +891,11 @@ function Index() {
 
                   <h3 className="text-xl font-bold text-foreground">Linux</h3>
                   <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
-                    Native Linux packaging for desktop distributions with system keyring support.
+                    No Linux build is published. Android is the shipping app.
                   </p>
 
-                  <div className="mt-5 space-y-2.5 rounded-xl border border-border/50 bg-black/20 p-3 sm:p-3.5 text-xs font-mono text-muted-foreground min-w-0">
-                    <div className="flex justify-between gap-2">
-                      <span>Status:</span>
-                      <span className="text-foreground">In Planning</span>
-                    </div>
-                    <div className="flex justify-between gap-2">
-                      <span>Platform:</span>
-                      <span>x86_64 / aarch64</span>
-                    </div>
-                    <div className="flex justify-between gap-2">
-                      <span>Distribution:</span>
-                      <span>Flatpak / AppImage</span>
-                    </div>
+                  <div className="mt-5 rounded-xl border border-border/50 bg-black/20 p-3 sm:p-3.5 text-xs text-muted-foreground">
+                    Status: not published. There is no verified Linux package in this repository.
                   </div>
                 </div>
 

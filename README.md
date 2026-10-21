@@ -137,7 +137,7 @@ The key capabilities of SLI Vault across daily capture, organization, and backup
       <img src="docs/images/promo/05-backup.webp" alt="Safe Local Backups" width="100%" />
       <br>
       <b>05 · Backup & Export</b><br>
-      <sub>Portable ZIP v2 archives with SHA-256 verification and zero lock-in.</sub>
+      <sub>Portable ZIP v3 archives with SHA-256 verification and zero lock-in.</sub>
     </td>
     <td align="center" valign="top" width="33%">
       <img src="docs/images/promo/06-private.webp" alt="100% Private By Design" width="100%" />
@@ -147,6 +147,30 @@ The key capabilities of SLI Vault across daily capture, organization, and backup
     </td>
   </tr>
 </table>
+
+---
+
+## Website screenshots & showcase refresh
+
+Hero and gallery images are **genuine captures from the running Android app** (not mockups). The current local refresh used the `Medium_Phone_API_37.0` emulator with debug build `1.0.1+2010` and synthetic demo library content. Full inventory: [`docs/screenshots/manifest.md`](docs/screenshots/manifest.md). Audit notes: [`docs/audit/`](docs/audit/).
+
+### Screenshot inventory
+
+| Screen | Raw Capture | Prepared Web Asset (`website/src/assets/`) | Hero | Gallery |
+|---|---|---|:---:|:---:|
+| Welcome | `docs/screenshots/raw/welcome.png` | `look-inside/welcome.webp` | — | Yes |
+| Home | `docs/screenshots/raw/home.png` | `hero-center.webp` & `look-inside/home.webp` | Center | Yes |
+| Browse | `docs/screenshots/raw/browse.png` | `hero-left.webp` & `look-inside/browse.webp` | Left | Yes |
+| Favorites | `docs/screenshots/raw/favorites.png` | `hero-right.webp` & `look-inside/favourites.webp` | Right | Yes |
+| Collections | `docs/screenshots/raw/collections.png` | `look-inside/collections.webp` | — | Yes |
+| Settings | `docs/screenshots/raw/settings.png` | `look-inside/settings.webp` | — | Yes |
+
+### Directory structure & refresh workflow
+
+- **Raw:** `docs/screenshots/raw/` and `website/src/assets/screenshots/raw/` — original ADB PNGs (binary-safe `adb pull`; do not use PowerShell `>` redirection).
+- **Optimized:** `website/src/assets/screenshots/current/` — resized PNG/WebP for review.
+- **Production imports:** `website/src/assets/look-inside/` + hero `hero-*.webp` used by the TanStack Start site.
+- After replacement: `bun run test` and `bun run build` in `website/`, then check viewports 320–1280px.
 
 ---
 

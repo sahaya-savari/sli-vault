@@ -11,7 +11,7 @@ export function ScreenshotGallery() {
 
   const scroll = (direction: "left" | "right") => {
     if (!scrollContainerRef.current) return;
-    const scrollAmount = 320;
+    const scrollAmount = 170;
     scrollContainerRef.current.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
@@ -38,7 +38,7 @@ export function ScreenshotGallery() {
             A calm home for your digital life.
           </h2>
           <p className="mt-2 text-base text-muted-foreground max-w-xl">
-            Thoughtfully simple. Six genuine application screens in one continuous flow.
+            Six screens from the running app. Scroll sideways, then tap one to enlarge.
           </p>
         </div>
 
@@ -79,12 +79,12 @@ export function ScreenshotGallery() {
         {screenshots.map((screen, i) => (
           <figure
             key={screen.id}
-            className="screen-figure flex-shrink-0 w-[240px] xs:w-[260px] sm:w-[290px] md:w-[310px] snap-start"
+            className="screen-figure flex-shrink-0 snap-start"
           >
             {/* Clickable Phone Frame without any obstructing overlays */}
             <button
               type="button"
-              className="screen-trigger group block w-full text-left cursor-pointer transition-transform duration-300 hover:-translate-y-2 focus-visible:outline-2 focus-visible:outline-primary rounded-[44px]"
+              className="screen-trigger group block w-full text-left cursor-pointer transition-transform duration-300 hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-primary rounded-[1.65rem]"
               aria-label={`Enlarge ${screen.title} screenshot (screen 0${i + 1} of 06)`}
               onClick={() => setSelected(screen)}
             >
@@ -96,9 +96,9 @@ export function ScreenshotGallery() {
             </button>
 
             {/* Figcaption with clean metadata and expand trigger outside the screenshot */}
-            <figcaption className="mt-4 px-1">
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-xs font-semibold text-primary">0{i + 1} / 06</span>
+            <figcaption className="mt-2 px-0.5">
+              <div className="flex items-center justify-between gap-1">
+                <span className="font-mono text-[11px] font-semibold text-primary">0{i + 1} / 06</span>
                 <Button
                   variant="ghost"
                   size="sm"
