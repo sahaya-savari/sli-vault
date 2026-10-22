@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -99,7 +100,7 @@ class _SliVaultAppState extends State<SliVaultApp> {
           ),
           child: MaterialApp(
             title: 'SLI Vault',
-            debugShowCheckedModeBanner: false,
+            debugShowCheckedModeBanner: kDebugMode,
             theme: SliTheme.buildTheme(
               mode: 'light',
               accent: widget.controller.accentPreset,
