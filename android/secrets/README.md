@@ -18,8 +18,8 @@ Not tracked (local only):
 
 Typical local files (not in Git):
 
-- `android/secrets/.env` — env-style keys (`STORE_FILE`, `KEY_ALIAS`, `STORE_PASSWORD`, `KEY_PASSWORD`)
-- `android/secrets/keystore.env` — same values using `key.properties` field names (easy copy/restore)
+- `android/secrets/.env` - env-style keys (`STORE_FILE`, `KEY_ALIAS`, `STORE_PASSWORD`, `KEY_PASSWORD`)
+- `android/secrets/keystore.env` - same values using `key.properties` field names (easy copy/restore)
 
 The keystore binary itself stays outside the repo (example: `%USERPROFILE%\keystores\sli-vault-release.jks`).
 
@@ -42,13 +42,13 @@ Copy-Item android\key.properties android\secrets\keystore.env
 
 ## Restore → `android/key.properties`
 
-**Option A — from `keystore.env` (same field names):**
+**Option A - from `keystore.env` (same field names):**
 
 ```powershell
 Copy-Item android\secrets\keystore.env android\key.properties
 ```
 
-**Option B — from `.env` (map env keys):**
+**Option B - from `.env` (map env keys):**
 
 ```powershell
 # Load android/secrets/.env then write key.properties

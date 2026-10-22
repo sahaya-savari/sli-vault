@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en" data-lang="en" data-fixed="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>First post · SLI Vault</title>
+    <meta
+      name="description"
+      content="What this blog is for, and what you can expect to find here."
+    />
+    <meta name="theme-color" content="#09090B" />
+    <meta property="og:title" content="First post" />
+    <meta
+      property="og:description"
+      content="What this blog is for, and what you can expect to find here."
+    />
+    <meta property="og:type" content="article" />
+    <meta property="og:image" content="https://sahaya-savari.github.io/sli-vault/assets/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="../../../favicon.png?v=3" />
+    <link
+      rel="alternate"
+      type="application/atom+xml"
+      title="Streak blog"
+      href="../../blog/feed.xml"
+    />
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var lang = root.dataset.fixed;
+        if (!lang) {
+          try {
+            lang = localStorage.getItem("streak-lang");
+          } catch (e) {}
+          if (!lang) lang = (navigator.language || "").slice(0, 2).toLowerCase();
+        }
+        root.dataset.lang = lang === "es" ? "es" : "en";
+        root.lang = root.dataset.lang;
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../css/styles.css?v=cbd0c582" />
+  </head>
+  <body class="page-blog">
+    <header class="bar">
+      <div class="bar__in">
+        <a class="brand" href="../../index.html">
+          <img
+            loading="lazy"
+            decoding="async"
+            src="../../assets/sli-logo.png"
+            width="24"
+            height="24"
+            alt=""
+          />
+          <span>Streak</span>
+        </a>
+        <nav class="nav">
+          <a href="../../index.html#download"
+            ><span class="en">Download</span><span class="es">Descargar</span></a
+          >
+          <a href="../../blog/index.html" aria-current="page">Blog</a>
+          <a href="../../resources/index.html"
+            ><span class="en">Resources</span><span class="es">Recursos</span></a
+          >
+          <a class="nav__love" href="../../index.html#support"
+            ><svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 20.3 4.3 12.8a4.6 4.6 0 0 1 6.5-6.5l1.2 1.2 1.2-1.2a4.6 4.6 0 0 1 6.5 6.5Z"
+              ></path></svg
+            ><span class="en">Support</span><span class="es">Apoyar</span></a
+          >
+        </nav>
+        <div class="bar__end">
+          <button class="lang" id="lang" type="button" aria-label="Switch language">
+            <span data-l="en">EN</span><span data-l="es">ES</span>
+          </button>
+          <a
+            class="stars"
+            href="https://github.com/InlitX/streak"
+            target="_blank"
+            rel="noopener"
+            aria-label="Streak on GitHub"
+          >
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
+              <path
+                d="M12 .5C5.73.5.5 5.73.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.2-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.75.81 1.2 1.84 1.2 3.1 0 4.43-2.7 5.4-5.28 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"
+              ></path>
+            </svg>
+            <svg
+              class="stars__star"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 2.4l2.95 5.98 6.6.96-4.78 4.65 1.13 6.57L12 17.46l-5.9 3.1 1.13-6.57L2.45 9.34l6.6-.96L12 2.4Z"
+              ></path>
+            </svg>
+            <span data-count="stars">-</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <article class="post">
+        <header class="post__head">
+          <a class="back" href="../../blog/index.html">← Blog</a>
+          <h1>First post</h1>
+          <p class="post__meta">
+            <time datetime="2026-10-04">4 October 2026</time>
+            · 1 min <span class="en">read</span><span class="es">de lectura</span> ·
+            <a href="../../es/blog/first-post/index.html" data-alt=""
+              ><span class="en">Leer en español</span><span class="es">Read in English</span></a
+            >
+          </p>
+        </header>
+
+        <div class="prose">
+          <p>
+            Hi, and welcome. This is the first post on the Streak blog, so it seemed right to start
+            by explaining what this space is for.
+          </p>
+          <h2>What you will find here</h2>
+          <p>Most posts will be about things you might need while using Streak. Some examples:</p>
+          <ul>
+            <li>
+              <strong>Setting it up your way.</strong> Installing it, moving your data, or keeping
+              your habits on your phone and your PC at the same time without using the internet.
+            </li>
+            <li>
+              <strong>Getting more out of it.</strong> Features that are easy to miss and small
+              tricks that make the app fit your day better.
+            </li>
+          </ul>
+          <p>
+            Every now and then I will also write about building better habits, studying, or
+            improving yourself a little. This is not a course and I am not an expert. It is just
+            open, personal advice: things that have worked for me and that might be useful to you
+            too.
+          </p>
+          <h2>What this blog is not</h2>
+          <p>
+            It will not fill up with posts just for the sake of it. I will only write when there is
+            something worth saying, and anything that explains a step by step will be tested first,
+            with real screenshots, before it goes up.
+          </p>
+          <h2>That is all for now</h2>
+          <p>
+            This was just a first post to show how the blog will work. Over time I will add more,
+            always with some link to Streak. If there is something you would like me to write about,
+            leave a comment below.
+          </p>
+          <p>Thanks for reading.</p>
+        </div>
+
+        <section class="talk" id="comments">
+          <h2><span class="en">Comments</span><span class="es">Comentarios</span></h2>
+          <p class="talk__hint">
+            <span class="en"
+              >Sign in with GitHub to comment or react. Everything is stored as a GitHub
+              discussion.</span
+            ><span class="es"
+              >Entra con GitHub para comentar o reaccionar. Todo se guarda como una discusión de
+              GitHub.</span
+            >
+          </p>
+
+          <meta name="giscus:backlink" content="https://sahaya-savari.github.io/sli-vault/blog/first-post/" />
+          <script
+            src="https://giscus.app/client.js"
+            data-repo="InlitX/streak"
+            data-repo-id="R_kgDOS0cf4Q"
+            data-category="Blog"
+            data-category-id="DIC_kwDOS0cf4c4DHCef"
+            data-mapping="specific"
+            data-term="first-post"
+            data-strict="1"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="top"
+            data-theme="transparent_dark"
+            data-lang="en"
+            data-loading="lazy"
+            crossorigin="anonymous"
+            async=""
+          ></script>
+        </section>
+      </article>
+    </main>
+
+    <footer class="foot">
+      <div class="foot__in">
+        <a class="brand" href="../../index.html">
+          <img
+            loading="lazy"
+            decoding="async"
+            src="../../assets/sli-logo.png"
+            width="20"
+            height="20"
+            alt=""
+          />
+          <span>Streak</span>
+        </a>
+        <nav class="foot__nav">
+          <a href="https://github.com/InlitX/streak" target="_blank" rel="noopener">GitHub</a>
+          <a href="../../blog/index.html">Blog</a>
+          <a href="../../resources/index.html"
+            ><span class="en">Resources</span><span class="es">Recursos</span></a
+          >
+          <a href="https://hosted.weblate.org/engage/streak/" target="_blank" rel="noopener"
+            ><span class="en">Translate</span><span class="es">Traducir</span></a
+          >
+          <a href="https://github.com/InlitX/streak/issues" target="_blank" rel="noopener"
+            ><span class="en">Report a bug</span><span class="es">Reportar un fallo</span></a
+          >
+          <a href="https://ko-fi.com/inlitx" target="_blank" rel="noopener">Ko-fi</a>
+        </nav>
+        <p class="foot__c">
+          <a
+            href="https://github.com/InlitX/streak/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener"
+            >GPLv3</a
+          >
+          · <span class="en">Made by</span><span class="es">Hecha por</span>
+          <a href="https://github.com/InlitX" target="_blank" rel="noopener">InlitX</a>
+        </p>
+      </div>
+    </footer>
+
+    <dialog class="lb" id="lb" aria-label="Preview">
+      <button class="lb__x" type="button" data-lb="close" aria-label="Close">
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M6 6l12 12M18 6 6 18"></path>
+        </svg>
+      </button>
+      <button class="lb__nav lb__nav--prev" type="button" data-lb="-1" aria-label="Previous">
+        <svg
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m15 5-7 7 7 7"></path>
+        </svg>
+      </button>
+      <div class="lb__stage"></div>
+      <button class="lb__nav lb__nav--next" type="button" data-lb="1" aria-label="Next">
+        <svg
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m9 5 7 7-7 7"></path>
+        </svg>
+      </button>
+      <p class="lb__cap"></p>
+    </dialog>
+
+    <script src="../../js/site.js?v=110b56b7"></script>
+  </body>
+</html>

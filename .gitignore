@@ -90,7 +90,7 @@ replay_pid*
 # Local UIAutomator dump parser from device QA (not part of the app)
 /tool_parse_ui.py
 
-# Companion website (website/) — Node/Bun artifacts only; source is tracked
+# Companion website (website/) - Node/Bun artifacts only; source is tracked
 /website/node_modules/
 /website/dist/
 /website/_site/
@@ -100,3 +100,16 @@ replay_pid*
 /website/.env
 /website/.env.*
 !/website/.env.example
+
+# Android Gradle build outputs
+/android/build/
+
+# Packaged release archives & binary repositories
+/release_artifacts/
+
+# Local test databases and raw SQLite sidecars
+/docs/screenshots/*.db
+/docs/screenshots/*.db.raw
+
+# Local root QA verification screenshot dumps
+/device_sli_*.png

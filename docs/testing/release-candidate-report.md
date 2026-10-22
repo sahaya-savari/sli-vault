@@ -1,4 +1,4 @@
-# SLI Vault — Local Release-Candidate Report
+# SLI Vault - Local Release-Candidate Report
 
 **Date:** 2026-10-21  
 **Branch:** `main`  
@@ -19,11 +19,11 @@ The website hero and gallery were refreshed from genuine emulator captures of a 
 
 ## 2. Confirmed causes and fixes
 
-| ID | Cause | Fix |
-|---|---|---|
+| ID    | Cause                                                                                                               | Fix                                                                                                                                        |
+| ----- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | D-001 | `settings_screen.dart` opened `File(outputPath)` after SAF `saveFile`. Import and image pick had the same fallback. | `lib/core/platform/document_path.dart` rejects `content://`, `file://`, and `/document/...`. Dart I/O runs only for real filesystem paths. |
-| D-005 | Onboarding feature cards competed with a spacer and a short bottom reserve, clipping the second card. | Removed the competing spacer; reserved 132px when feature cards are shown. |
-| D-008 | Website copy overstated encryption and unpublished desktop packages, and showed version code `3`. | Honest local-storage statement, unpublished desktop cards, build `2010`. |
+| D-005 | Onboarding feature cards competed with a spacer and a short bottom reserve, clipping the second card.               | Removed the competing spacer; reserved 132px when feature cards are shown.                                                                 |
+| D-008 | Website copy overstated encryption and unpublished desktop packages, and showed version code `3`.                   | Honest local-storage statement, unpublished desktop cards, build `2010`.                                                                   |
 
 Leads that existing tests already disproved: ZIP omitting image bytes, collections not persisting, duplicate saves, and `FLAG_SECURE` still blocking screenshots.
 
@@ -37,30 +37,30 @@ Gallery frames use container queries: `min(150px, 50cqi - 12px)`, `176px` from 7
 
 Verified on local preview `http://127.0.0.1:4178/` (browser emulation, not the live site):
 
-| Width | Page overflow | Hero cluster | Gallery row | Figure width | Two phones fit |
-|---|---|---|---|---|---|
-| 320 | 0 | 268×220 | 288×411 | 132 | yes |
-| 360 | 0 | — | 328×444 | 150 | yes |
-| 390 | 0 | 268×220 | 358×444 | 150 | yes |
-| 430 | 0 | — | 398×444 | 150 | yes |
-| 768 | 0 | 300×248 | 705×455 | 150 | yes |
-| 1024 | 0 | — | 961×513 | 176 | yes |
-| 1280 | 0 | 300×248, center 115×248, each side overlaps the center by 33px | 1104×541 | 196 | yes |
+| Width | Page overflow | Hero cluster                                                   | Gallery row | Figure width | Two phones fit |
+| ----- | ------------- | -------------------------------------------------------------- | ----------- | ------------ | -------------- |
+| 320   | 0             | 268×220                                                        | 288×411     | 132          | yes            |
+| 360   | 0             | -                                                              | 328×444     | 150          | yes            |
+| 390   | 0             | 268×220                                                        | 358×444     | 150          | yes            |
+| 430   | 0             | -                                                              | 398×444     | 150          | yes            |
+| 768   | 0             | 300×248                                                        | 705×455     | 150          | yes            |
+| 1024  | 0             | -                                                              | 961×513     | 176          | yes            |
+| 1280  | 0             | 300×248, center 115×248, each side overlaps the center by 33px | 1104×541    | 196          | yes            |
 
 At 1280 the Welcome caption read “Welcome” at 69px tall, not stacked per letter. At 390 the rendered hero showed a compact centered trio: larger center phone, smaller phones behind it, bottoms aligned, dark space around the group.
 
 ## 4. Commands and results
 
-| Check | Command | Result |
-|---|---|---|
-| Static analysis | `dart analyze` | **No issues found** (exit 0), 2026-10-21 final pass |
-| App tests | `flutter test` | **121/121 passed** (exit 0), final pass |
-| Website tests | `bun run test` in `website/` | **21/21 passed** (exit 0), final pass |
-| Website build | `bun run build` in `website/` | **Succeeded** (exit 0). Prerendered `/` and `/resources`. Welcome asset `welcome-ChD9yeZa.webp` (83.15 kB) |
-| Debug APK | `flutter build apk --debug` then `adb install -r` | Installed on `emulator-5554` for the earlier picker pass and the welcome recapture (`versionCode` 2010) |
-| Release APK | `flutter build apk --release` | **Succeeded** (exit 0, Gradle 100.7s). `android/key.properties` was not changed |
-| Document picker | emulator `Medium_Phone_API_37.0` | **Completed earlier in this working tree.** Not repeated in the final visual pass. See section 6 |
-| Viewports | Browser emulation of `http://127.0.0.1:4178/` | Overflow 0 at 320, 360, 390, 430, 768, 1024, and 1280. Sizes in section 3 |
+| Check           | Command                                           | Result                                                                                                     |
+| --------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Static analysis | `dart analyze`                                    | **No issues found** (exit 0), 2026-10-21 final pass                                                        |
+| App tests       | `flutter test`                                    | **121/121 passed** (exit 0), final pass                                                                    |
+| Website tests   | `bun run test` in `website/`                      | **21/21 passed** (exit 0), final pass                                                                      |
+| Website build   | `bun run build` in `website/`                     | **Succeeded** (exit 0). Prerendered `/` and `/resources`. Welcome asset `welcome-ChD9yeZa.webp` (83.15 kB) |
+| Debug APK       | `flutter build apk --debug` then `adb install -r` | Installed on `emulator-5554` for the earlier picker pass and the welcome recapture (`versionCode` 2010)    |
+| Release APK     | `flutter build apk --release`                     | **Succeeded** (exit 0, Gradle 100.7s). `android/key.properties` was not changed                            |
+| Document picker | emulator `Medium_Phone_API_37.0`                  | **Completed earlier in this working tree.** Not repeated in the final visual pass. See section 6           |
+| Viewports       | Browser emulation of `http://127.0.0.1:4178/`     | Overflow 0 at 320, 360, 390, 430, 768, 1024, and 1280. Sizes in section 3                                  |
 
 ## 5. Device and browser
 

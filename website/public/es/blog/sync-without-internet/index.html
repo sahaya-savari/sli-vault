@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="es" data-lang="es" data-fixed="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sincroniza el móvil y el PC sin internet · SLI Vault</title>
+    <meta
+      name="description"
+      content="SLI Vault nunca toca la red, pero tus hábitos pueden estar en dos dispositivos. Así se hace con Syncthing y tu propio Wi-Fi."
+    />
+    <meta name="theme-color" content="#09090B" />
+    <meta property="og:title" content="Sincroniza el móvil y el PC sin internet" />
+    <meta
+      property="og:description"
+      content="SLI Vault nunca toca la red, pero tus hábitos pueden estar en dos dispositivos. Así se hace con Syncthing y tu propio Wi-Fi."
+    />
+    <meta property="og:type" content="article" />
+    <meta property="og:image" content="https://sahaya-savari.github.io/sli-vault/assets/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="../../../favicon.png?v=3" />
+    <link
+      rel="alternate"
+      type="application/atom+xml"
+      title="Streak blog"
+      href="../../../blog/feed.xml"
+    />
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var lang = root.dataset.fixed;
+        if (!lang) {
+          try {
+            lang = localStorage.getItem("streak-lang");
+          } catch (e) {}
+          if (!lang) lang = (navigator.language || "").slice(0, 2).toLowerCase();
+        }
+        root.dataset.lang = lang === "es" ? "es" : "en";
+        root.lang = root.dataset.lang;
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../../css/styles.css?v=cbd0c582" />
+  </head>
+  <body class="page-blog">
+    <header class="bar">
+      <div class="bar__in">
+        <a class="brand" href="../../../index.html">
+          <img
+            loading="lazy"
+            decoding="async"
+            src="../../../assets/sli-logo.png"
+            width="24"
+            height="24"
+            alt=""
+          />
+          <span>Streak</span>
+        </a>
+        <nav class="nav">
+          <a href="../../../index.html#download"
+            ><span class="en">Download</span><span class="es">Descargar</span></a
+          >
+          <a href="../../../blog/index.html" aria-current="page">Blog</a>
+          <a href="../../../resources/index.html"
+            ><span class="en">Resources</span><span class="es">Recursos</span></a
+          >
+          <a class="nav__love" href="../../../index.html#support"
+            ><svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 20.3 4.3 12.8a4.6 4.6 0 0 1 6.5-6.5l1.2 1.2 1.2-1.2a4.6 4.6 0 0 1 6.5 6.5Z"
+              ></path></svg
+            ><span class="en">Support</span><span class="es">Apoyar</span></a
+          >
+        </nav>
+        <div class="bar__end">
+          <button class="lang" id="lang" type="button" aria-label="Switch language">
+            <span data-l="en">EN</span><span data-l="es">ES</span>
+          </button>
+          <a
+            class="stars"
+            href="https://github.com/InlitX/streak"
+            target="_blank"
+            rel="noopener"
+            aria-label="Streak on GitHub"
+          >
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
+              <path
+                d="M12 .5C5.73.5.5 5.73.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.2-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.75.81 1.2 1.84 1.2 3.1 0 4.43-2.7 5.4-5.28 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"
+              ></path>
+            </svg>
+            <svg
+              class="stars__star"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 2.4l2.95 5.98 6.6.96-4.78 4.65 1.13 6.57L12 17.46l-5.9 3.1 1.13-6.57L2.45 9.34l6.6-.96L12 2.4Z"
+              ></path>
+            </svg>
+            <span data-count="stars">-</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <article class="post">
+        <header class="post__head">
+          <a class="back" href="../../../blog/index.html">← Blog</a>
+          <h1>Sincroniza el móvil y el PC sin internet</h1>
+          <p class="post__meta">
+            <time datetime="2026-10-09">9 de octubre de 2026</time>
+            · 4 min <span class="en">read</span><span class="es">de lectura</span> ·
+            <a href="../../../blog/sync-without-internet/index.html" data-alt=""
+              ><span class="en">Leer en español</span><span class="es">Read in English</span></a
+            >
+          </p>
+        </header>
+
+        <div class="prose">
+          <p>
+            Streak no tiene cuenta ni permiso de internet. Es a propósito: si la app no puede llegar
+            a la red, tus hábitos no pueden salir de ella. La pega es evidente. ¿Cómo la usas en el
+            móvil y en el ordenador a la vez?
+          </p>
+          <p>
+            La respuesta es una carpeta. Streak puede guardar sus copias en la carpeta que elijas, y
+            la lee cada vez que se abre. Si algo mantiene esa carpeta igual en los dos dispositivos,
+            Streak hace el resto. Ese algo es <a href="https://syncthing.net">Syncthing</a>, una
+            herramienta libre y gratuita que copia ficheros directamente entre tus dispositivos por
+            tu propia red.
+          </p>
+          <p>
+            He probado cada paso con un móvil Android y un PC con Windows. En Linux funciona igual.
+          </p>
+          <h2>Lo que necesitas</h2>
+          <ul>
+            <li>Streak 2.3.0 o más nuevo en el móvil y en el PC.</li>
+            <li>
+              Syncthing en los dos:
+              <ul>
+                <li>
+                  <strong>Android:</strong>
+                  <a href="https://f-droid.org/packages/com.github.catfriend1.syncthingfork/"
+                    >Syncthing-Fork</a
+                  >
+                  desde F-Droid.
+                </li>
+                <li>
+                  <strong>Windows:</strong>
+                  <a href="https://github.com/GermanCoding/SyncTrayzor/releases">SyncTrayzor</a>.
+                  Basta con el zip portable x64: lo descomprimes y lo abres.
+                </li>
+                <li>
+                  <strong>Linux:</strong> el paquete <code>syncthing</code> de tu distribución.
+                </li>
+              </ul>
+            </li>
+            <li>Los dos dispositivos en el mismo Wi-Fi cuando quieras que se pongan al día.</li>
+          </ul>
+          <p>Syncthing sale en inglés en las capturas, así que uso esos nombres.</p>
+          <h2>1. Que Syncthing no salga de tu red</h2>
+          <p>
+            De serie, Syncthing puede usar servidores de internet para encontrar tus dispositivos y
+            pasar datos entre ellos. En casa no te hace falta nada de eso. Apágalo en
+            <strong>los dos</strong> dispositivos:
+          </p>
+          <ul>
+            <li>
+              <strong>PC:</strong> en Syncthing, abre
+              <strong>Actions → Settings → Connections</strong>.
+            </li>
+            <li>
+              <strong>Móvil:</strong> en Syncthing-Fork, abre el menú lateral y luego
+              <strong>Settings → Syncthing Options</strong>.
+            </li>
+          </ul>
+          <p>
+            Apaga <strong>Enable NAT traversal</strong>, <strong>Global Discovery</strong> y
+            <strong>Enable Relaying</strong>. Deja encendido <strong>Local Discovery</strong>: así
+            es como los dos dispositivos se encuentran en tu Wi-Fi.
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/pc-connections.webp"
+              alt="Ajustes de conexión de Syncthing en el PC, solo con Local Discovery marcado"
+            />
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/phone-connections.webp"
+              alt="Syncthing Options en el móvil, solo con Local Discovery encendido"
+            />
+          </p>
+          <h2>2. Empareja los dos dispositivos</h2>
+          <p>
+            En el PC, abre <strong>Actions → Show ID</strong>. Sale un código largo y un código QR.
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/pc-show-id.webp"
+              alt="El ID del PC y su código QR"
+            />
+          </p>
+          <p>
+            En el móvil, ve a la pestaña <strong>Devices</strong> y toca el botón de añadir de
+            arriba. Escanea el QR (o pega el código), ponle al PC un nombre que reconozcas y toca el
+            check.
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/phone-add-device.webp"
+              alt="Añadiendo el PC como dispositivo en el móvil"
+            />
+          </p>
+          <p>
+            Unos segundos después, el PC pregunta si acepta el móvil. Toca
+            <strong>Add Device</strong>, ponle un nombre y <strong>Save</strong>.
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/pc-new-device.webp"
+              alt="El PC preguntando si acepta el dispositivo nuevo"
+            />
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/pc-add-device.webp"
+              alt="Guardando el móvil como dispositivo en el PC"
+            />
+          </p>
+          <h2>3. Comparte una carpeta</h2>
+          <blockquote>
+            <p>
+              <strong>No compartas la carpeta de datos de Streak.</strong> En el PC, Streak guarda
+              ahí su base de datos en uso (la ves en
+              <strong>Ajustes → Datos → Carpeta de datos</strong>; en Windows es
+              <code>Documents\Streak</code>). Copiarla entre dispositivos con Streak abierto puede
+              romperla. Usa una carpeta nueva y vacía con otro nombre, como <code>StreakSync</code>.
+            </p>
+          </blockquote>
+          <p>
+            En el móvil, ve a la pestaña <strong>Folders</strong> y toca el botón de añadir carpeta.
+            Llámala <code>StreakSync</code>, elige (o crea) <code>Documents/StreakSync</code> como
+            directorio, enciende tu PC en <strong>Devices</strong> y toca el check.
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/phone-create-folder.webp"
+              alt="Creando la carpeta StreakSync en el móvil y compartiéndola con el PC"
+            />
+          </p>
+          <p>
+            Ahora el PC pregunta si añade la carpeta. Toca <strong>Add</strong>, pon en
+            <strong>Folder Path</strong> <code>~\Documents\StreakSync</code> (o donde quieras,
+            mientras no sea la carpeta de datos de Streak) y <strong>Save</strong>.
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/pc-new-folder.webp"
+              alt="El PC preguntando si añade la carpeta compartida"
+            />
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/pc-add-folder.webp"
+              alt="Eligiendo dónde va la carpeta en el PC"
+            />
+          </p>
+          <p>
+            Cuando los dos lados dicen <strong>Up to Date</strong>, la carpeta ya está compartida.
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/pc-synced.webp"
+              alt="La carpeta StreakSync al día en el PC"
+            />
+          </p>
+          <h2>4. Dile a Streak que use esa carpeta</h2>
+          <p>
+            En <strong>cada</strong> dispositivo, abre Streak y entra en
+            <strong>Ajustes → Datos → Copia automática</strong>:
+          </p>
+          <ol>
+            <li>Elige <strong>Cada día</strong>.</li>
+            <li>
+              Toca <strong>Carpeta</strong> y elige <code>StreakSync</code>. En Android, Streak pide
+              acceso a tus archivos la primera vez.
+            </li>
+            <li>
+              La <strong>Copia legible</strong> es opcional. Escribe además tus hábitos en ficheros
+              Markdown que puedes abrir con cualquier editor.
+            </li>
+          </ol>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/phone-auto-backup.webp"
+              alt="Copia automática en el móvil, guardando en StreakSync"
+            />
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/pc-auto-backup.webp"
+              alt="Copia automática en el PC, guardando en StreakSync"
+            />
+          </p>
+          <p>
+            A partir de ahí, Streak guarda una copia en esa carpeta al abrirlo (una vez al día, con
+            <strong>Cada día</strong>), y cada vez que arranca lee lo que tu otro dispositivo dejó
+            allí.
+          </p>
+          <h2>5. Úsalo</h2>
+          <p>
+            Pongamos que has marcado unos hábitos en el móvil. Para mandarlos ya, abre
+            <strong>Copia automática</strong> y toca <strong>Hacer copia ahora</strong>. Syncthing
+            pasa la copia nueva al PC en unos segundos.
+          </p>
+          <p>
+            En el PC, abre Streak y tus cambios ya están. Si ya estaba abierto, ve a
+            <strong>Ajustes → Datos → Refrescar</strong>. Trae lo que dejó el móvil y a la vez
+            guarda una copia nueva del PC.
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/pc-refreshed.webp"
+              alt="Refrescar en el PC: tus hábitos están al día"
+            />
+          </p>
+          <p>
+            Al revés funciona igual: <strong>Refrescar</strong> en el móvil trae lo que hiciste en
+            el PC.
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/phone-refresh.webp"
+              alt="Refrescar en el móvil"
+            />
+          </p>
+          <p>
+            En mi prueba creé un hábito en cada dispositivo. Tras un <strong>Refrescar</strong> en
+            cada lado, los dos tenían los dos.
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/pc-after.webp"
+              alt="Los dos hábitos en el PC"
+            />
+          </p>
+          <p>
+            <img
+              loading="lazy"
+              decoding="async"
+              src="../../../blog/img/sync/phone-after.webp"
+              alt="Los dos hábitos en el móvil"
+            />
+          </p>
+          <h2>Conviene saber</h2>
+          <ul>
+            <li>
+              <strong>Un día marcado nunca se pierde.</strong> Streak fusiona, no reemplaza. Un día
+              marcado en cualquiera de los dos se queda marcado. Si los dos tienen el mismo día,
+              gana la cantidad mayor.
+            </li>
+            <li>
+              <strong>Si un cambio no aparece,</strong> toca <strong>Refrescar</strong> en el
+              dispositivo donde lo hiciste y luego en el otro. Streak lee la copia más nueva de la
+              carpeta, así que si los dos guardaron sin leerse antes, puede tardar una vuelta más.
+            </li>
+            <li>
+              <strong>Desmarcar no viaja.</strong> Como al fusionar no se borra nada, un día que
+              desmarcas en un dispositivo sigue marcado en el otro. Desmárcalo también allí.
+            </li>
+            <li>
+              <strong>Los ajustes de un hábito siguen a la copia más nueva.</strong> Si cambias el
+              nombre o la meta en un dispositivo, el otro lo recoge.
+            </li>
+            <li>
+              <strong>La copia legible es solo para leer.</strong> Para restaurar y sincronizar se
+              usan siempre las copias <code>.json</code>.
+            </li>
+          </ul>
+          <p>Y ya está. Dos dispositivos, una carpeta y ni un solo byte enviado a internet.</p>
+          <h2>Lo que vendrá</h2>
+          <p>
+            En una versión futura, Streak guardará y refrescará solo cada pocos minutos, o cada vez
+            que cambies algo, así no tendrás que tocar <strong>Hacer copia ahora</strong> ni
+            <strong>Refrescar</strong>. Seguirá funcionando sin internet.
+          </p>
+          <h2>¿Dudas?</h2>
+          <p>
+            Si tienes alguna duda, una sugerencia o algo no te funciona, déjalo en los comentarios
+            de abajo y te ayudaremos con gusto, yo o alguien de la comunidad. Los comentarios son
+            públicos, así que no compartas nada sensible: ni datos personales, ni IDs de
+            dispositivo, ni rutas con tu nombre.
+          </p>
+        </div>
+
+        <section class="talk" id="comments">
+          <h2><span class="en">Comments</span><span class="es">Comentarios</span></h2>
+          <p class="talk__hint">
+            <span class="en"
+              >Sign in with GitHub to comment or react. Everything is stored as a GitHub
+              discussion.</span
+            ><span class="es"
+              >Entra con GitHub para comentar o reaccionar. Todo se guarda como una discusión de
+              GitHub.</span
+            >
+          </p>
+
+          <meta
+            name="giscus:backlink"
+            content="https://sahaya-savari.github.io/sli-vault/blog/sync-without-internet/"
+          />
+          <script
+            src="https://giscus.app/client.js"
+            data-repo="InlitX/streak"
+            data-repo-id="R_kgDOS0cf4Q"
+            data-category="Blog"
+            data-category-id="DIC_kwDOS0cf4c4DHCef"
+            data-mapping="specific"
+            data-term="sync-without-internet"
+            data-strict="1"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="top"
+            data-theme="transparent_dark"
+            data-lang="es"
+            data-loading="lazy"
+            crossorigin="anonymous"
+            async=""
+          ></script>
+
+          <script>
+            (function () {
+              var meta = document.querySelector("meta[name='description']");
+              var own = meta.content;
+              meta.content =
+                "Streak never touches the network, but your habits can still live on two devices. Here is how to do it over your own Wi-Fi with Syncthing.";
+              document.currentScript.previousElementSibling.addEventListener("load", function () {
+                meta.content = own;
+              });
+            })();
+          </script>
+        </section>
+      </article>
+    </main>
+
+    <footer class="foot">
+      <div class="foot__in">
+        <a class="brand" href="../../../index.html">
+          <img
+            loading="lazy"
+            decoding="async"
+            src="../../../assets/sli-logo.png"
+            width="20"
+            height="20"
+            alt=""
+          />
+          <span>Streak</span>
+        </a>
+        <nav class="foot__nav">
+          <a href="https://github.com/InlitX/streak" target="_blank" rel="noopener">GitHub</a>
+          <a href="../../../blog/index.html">Blog</a>
+          <a href="../../../resources/index.html"
+            ><span class="en">Resources</span><span class="es">Recursos</span></a
+          >
+          <a href="https://hosted.weblate.org/engage/streak/" target="_blank" rel="noopener"
+            ><span class="en">Translate</span><span class="es">Traducir</span></a
+          >
+          <a href="https://github.com/InlitX/streak/issues" target="_blank" rel="noopener"
+            ><span class="en">Report a bug</span><span class="es">Reportar un fallo</span></a
+          >
+          <a href="https://ko-fi.com/inlitx" target="_blank" rel="noopener">Ko-fi</a>
+        </nav>
+        <p class="foot__c">
+          <a
+            href="https://github.com/InlitX/streak/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener"
+            >GPLv3</a
+          >
+          · <span class="en">Made by</span><span class="es">Hecha por</span>
+          <a href="https://github.com/InlitX" target="_blank" rel="noopener">InlitX</a>
+        </p>
+      </div>
+    </footer>
+
+    <dialog class="lb" id="lb" aria-label="Preview">
+      <button class="lb__x" type="button" data-lb="close" aria-label="Close">
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M6 6l12 12M18 6 6 18"></path>
+        </svg>
+      </button>
+      <button class="lb__nav lb__nav--prev" type="button" data-lb="-1" aria-label="Previous">
+        <svg
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m15 5-7 7 7 7"></path>
+        </svg>
+      </button>
+      <div class="lb__stage"></div>
+      <button class="lb__nav lb__nav--next" type="button" data-lb="1" aria-label="Next">
+        <svg
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m9 5 7 7-7 7"></path>
+        </svg>
+      </button>
+      <p class="lb__cap"></p>
+    </dialog>
+
+    <script src="../../../js/site.js?v=110b56b7"></script>
+  </body>
+</html>

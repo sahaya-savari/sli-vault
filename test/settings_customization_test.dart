@@ -325,6 +325,21 @@ void main() {
         await tester.tap(find.byType(BackButton));
         await tester.pumpAndSettle();
         expect(find.text('Minimal'), findsOneWidget);
+
+        // --- Test Help & User Guide Subpage ---
+        await tester.tap(find.text('Help & User Guide'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Help & User Guide'), findsOneWidget);
+        expect(find.text('Getting Started with SLI Vault'), findsOneWidget);
+        expect(
+          find.text('1. What SLI Vault does & Where Data is Stored'),
+          findsOneWidget,
+        );
+
+        await tester.tap(find.byType(BackButton));
+        await tester.pumpAndSettle();
+        expect(find.text('Help & User Guide'), findsOneWidget);
       },
     );
   });

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Page Not Found · SLI Vault</title>
+    <meta name="description" content="The requested page could not be found." />
+    <meta name="theme-color" content="#09090B" />
+    <link rel="icon" type="image/png" href="./favicon.png?v=3" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/styles.css?v=cbd0c582" />
+    <style>
+      .error-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        background: #09090B;
+        color: #F4F4F5;
+        font-family: 'Figtree', sans-serif;
+      }
+      .error-card {
+        max-width: 480px;
+        background: rgba(24, 24, 27, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 1.25rem;
+        padding: 3rem 2rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      }
+      .error-code {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 4rem;
+        font-weight: 800;
+        color: #A1A1AA;
+        margin-bottom: 0.5rem;
+        line-height: 1;
+      }
+      .error-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      .error-desc {
+        color: #A1A1AA;
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 2rem;
+      }
+      .error-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #FAFAFA;
+        color: #09090B;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        text-decoration: none;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+      .error-btn:hover {
+        background: #E4E4E7;
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+  <body class="error-page">
+    <div class="error-card">
+      <a class="brand" href="./index.html" style="display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; text-decoration: none; color: #FFF; font-weight: 700;">
+        <img src="./assets/sli-logo.png" width="28" height="28" alt="SLI Vault Logo" />
+        <span>SLI Vault</span>
+      </a>
+      <div class="error-code">404</div>
+      <h1 class="error-title">Page not found</h1>
+      <p class="error-desc">The link you followed may be broken, or the page may have been moved.</p>
+      <a href="./index.html" class="error-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Back to Vault Home</span>
+      </a>
+    </div>
+  </body>
+</html>

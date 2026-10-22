@@ -1,0 +1,945 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SLI Vault · Your local-first personal library</title>
+    <meta
+      name="description"
+      content="SLI Vault is a local-first personal library for Android. Save links, images and screenshots offline. No accounts, no trackers."
+    />
+    <meta name="theme-color" content="#09090B" />
+    <meta property="og:title" content="SLI Vault" />
+    <meta property="og:description" content="Everything worth keeping, In one local vault." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://sahaya-savari.github.io/sli-vault/assets/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="./../favicon.png?v=3" />
+    <link
+      rel="alternate"
+      type="application/atom+xml"
+      title="Streak blog"
+      href="./blog/feed.xml"
+    />
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var lang = root.dataset.fixed;
+        if (!lang) {
+          try {
+            lang = localStorage.getItem("streak-lang");
+          } catch (e) {}
+          if (!lang) lang = (navigator.language || "").slice(0, 2).toLowerCase();
+        }
+        root.dataset.lang = lang === "ta" ? "ta" : "en";
+        root.lang = root.dataset.lang;
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/styles.css?v=cbd0c582" />
+  </head>
+  <body class="page-home">
+    <header class="bar">
+      <div class="bar__in">
+        <a class="brand" href="./index.html">
+          <img
+            loading="lazy"
+            decoding="async"
+            src="./assets/sli-logo.png"
+            width="24"
+            height="24"
+            alt=""
+          />
+          <span>SLI Vault</span>
+        </a>
+        <nav class="nav">
+          <a href="./index.html#download" data-local=""
+            ><span class="en">Download</span><span class="ta">பதிவிறக்கம்</span></a
+          >
+          <a href="./blog/index.html">Blog</a>
+          <a href="./resources/index.html"
+            ><span class="en">Resources</span><span class="ta">வளங்கள்</span></a
+          >
+          <a class="nav__love" href="./index.html#support"
+            ><svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 20.3 4.3 12.8a4.6 4.6 0 0 1 6.5-6.5l1.2 1.2 1.2-1.2a4.6 4.6 0 0 1 6.5 6.5Z"
+              ></path></svg
+            ><span class="en">Support</span><span class="ta">ஆதரவு</span></a
+          >
+        </nav>
+        <div class="bar__end">
+          <button class="lang" id="lang" type="button" aria-label="Switch language">
+            <span data-l="en">EN</span><span data-l="ta">TA</span>
+          </button>
+          <a
+            class="stars"
+            href="https://github.com/sahaya-savari/sli-vault"
+            target="_blank"
+            rel="noopener"
+            aria-label="SLI Vault on GitHub"
+          >
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
+              <path
+                d="M12 .5C5.73.5.5 5.73.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.2-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.75.81 1.2 1.84 1.2 3.1 0 4.43-2.7 5.4-5.28 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"
+              ></path>
+            </svg>
+            <svg
+              class="stars__star"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 2.4l2.95 5.98 6.6.96-4.78 4.65 1.13 6.57L12 17.46l-5.9 3.1 1.13-6.57L2.45 9.34l6.6-.96L12 2.4Z"
+              ></path>
+            </svg>
+            <span data-count="stars">-</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="glow" aria-hidden="true">
+        <div class="veil"></div>
+        <svg class="spot" viewBox="0 0 3787 2842" fill="none">
+          <g filter="url(#spotblur)">
+            <ellipse
+              cx="1924.71"
+              cy="273.501"
+              rx="1924.71"
+              ry="273.501"
+              transform="matrix(-0.822377 -0.568943 -0.568943 0.822377 3631.88 2291.09)"
+              fill="rgba(214,204,255,.55)"
+              fill-opacity="0.21"
+            ></ellipse>
+          </g>
+          <defs>
+            <filter
+              id="spotblur"
+              x="0.86"
+              y="0.84"
+              width="3785.16"
+              height="2840.26"
+              filterUnits="userSpaceOnUse"
+              color-interpolation-filters="sRGB"
+            >
+              <feFlood flood-opacity="0" result="bg"></feFlood>
+              <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape"></feBlend>
+              <feGaussianBlur stdDeviation="151" result="blur"></feGaussianBlur>
+            </filter>
+          </defs>
+        </svg>
+      </div>
+
+      <section class="hero">
+        <div class="hero__copy">
+          <a
+            class="ver rise"
+            href="https://github.com/sahaya-savari/sli-vault/releases/latest"
+            target="_blank"
+            rel="noopener"
+          >
+            <b>v1.0.1</b>
+            <span>Android · Open Source · Offline</span>
+          </a>
+          <h1 class="rise">
+            <span class="en">Everything worth keeping,</span
+            ><span class="ta">பாதுகாக்க வேண்டிய அனைத்தும்,</span>
+            <em
+              ><span class="en">In one local vault.</span
+              ><span class="ta">உங்கள் தனிப்பட்ட பெட்டகத்தில்.</span></em
+            >
+          </h1>
+          <p class="lede rise">
+            <span class="en"
+              >A serene space for useful links, inspiring images, and the screenshots you return to.
+              Saved together on your device. Found when it matters.</span
+            ><span class="ta"
+              >பயனுள்ள இணைய இணைப்புகள், புகைப்படங்கள் மற்றும் ஸ்கிரீன்ஷாட்களுக்கான தனிப்பட்ட
+              பெட்டகம். அனைத்தும் உங்கள் சாதனத்திலேயே பாதுகாப்பாக.</span
+            >
+          </p>
+          <div class="cta rise">
+            <a class="btn btn--go" href="#download"
+              ><span class="en">Download</span><span class="ta">பதிவிறக்கம்</span></a
+            >
+            <a
+              class="btn"
+              href="https://github.com/sahaya-savari/sli-vault"
+              target="_blank"
+              rel="noopener"
+              ><span class="en">Source code</span><span class="ta">மூலக் குறியீடு</span></a
+            >
+          </div>
+          <div class="stats rise">
+            <a
+              href="https://github.com/sahaya-savari/sli-vault/releases"
+              target="_blank"
+              rel="noopener"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="15"
+                height="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 3v12"></path>
+                <path d="m7 10 5 5 5-5"></path>
+                <path d="M5 21h14"></path>
+              </svg>
+              <b data-count="downloads">-</b> <span class="en">downloads</span
+              ><span class="ta">பதிவிறக்கங்கள்</span>
+            </a>
+            <a href="https://github.com/sahaya-savari/sli-vault" target="_blank" rel="noopener">
+              <svg
+                viewBox="0 0 24 24"
+                width="15"
+                height="15"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 2.4l2.95 5.98 6.6.96-4.78 4.65 1.13 6.57L12 17.46l-5.9 3.1 1.13-6.57L2.45 9.34l6.6-.96L12 2.4Z"
+                ></path>
+              </svg>
+              <b data-count="stars">-</b> <span class="en">stars</span
+              ><span class="ta">நட்சத்திரங்கள்</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero__art rise">
+          <div class="heat" id="heat" aria-hidden="true"></div>
+          <img
+            loading="lazy"
+            decoding="async"
+            class="ph ph--side"
+            src="./assets/phones/hero-left.webp"
+            width="640"
+            height="1346"
+            alt="Statistics with a year of activity"
+          />
+          <img
+            class="ph ph--main"
+            src="./assets/phones/hero-center.webp"
+            width="640"
+            height="1346"
+            fetchpriority="high"
+            alt="The Today screen with habits and streaks"
+          />
+          <img
+            loading="lazy"
+            decoding="async"
+            class="ph ph--side"
+            src="./assets/phones/hero-right.webp"
+            width="640"
+            height="1346"
+            alt="A focus session with a dotted clock"
+          />
+        </div>
+      </section>
+
+      <section class="sec" id="features">
+        <h2 class="h2">
+          <span class="en">Everything you need. Nothing you don’t.</span
+          ><span class="ta">உங்களுக்கு தேவையான அனைத்தும். தேவையற்றது எதுவும் இல்லை.</span>
+        </h2>
+        <ol class="feats">
+          <li>
+            <b
+              ><span class="en">OpenGraph Auto-Fill</span
+              ><span class="ta">தானியங்கி OpenGraph தகவல்</span></b
+            >
+            <p>
+              <span class="en"
+                >Save links with instant OpenGraph title, image, and description auto-fill, plus
+                offline article snapshot extraction.</span
+              ><span class="ta"
+                >இணைப்புகளின் தலைப்பு, படம் மற்றும் விளக்கங்களை உடனடியாக தானாக நிரப்பி, ஆஃப்லைன்
+                வாசிப்பிற்காக பாதுகாக்கிறது.</span
+              >
+            </p>
+          </li>
+          <li>
+            <b
+              ><span class="en">Instant Offline Search</span
+              ><span class="ta">உடனடி ஆஃப்லைன் தேடல்</span></b
+            >
+            <p>
+              <span class="en"
+                >Find any item instantly across titles, web domains, and notes with fast SQLite
+                indexing on your device.</span
+              ><span class="ta"
+                >தலைப்புகள், டொமைன்கள் மற்றும் குறிப்புகளில் உங்கள் சாதனத்தின் வேகமான SQLite
+                அட்டவணையுடன் உடனடியாகத் தேடுங்கள்.</span
+              >
+            </p>
+          </li>
+          <li>
+            <b
+              ><span class="en">Curated Collections</span
+              ><span class="ta">வண்ணத் தொகுப்புகள்</span></b
+            >
+            <p>
+              <span class="en"
+                >Organize items with color-accented collections, maintain a quick favorites
+                shortlist, and tag items.</span
+              ><span class="ta"
+                >வண்ணக் குறிச்சொற்கள் கொண்ட தொகுப்புகளில் ஒழுங்கமைத்து, விருப்பமானவற்றை உடனடியாக
+                அணுகுங்கள்.</span
+              >
+            </p>
+          </li>
+          <li>
+            <b
+              ><span class="en">100% On-Device SQLite</span
+              ><span class="ta">100% சாதன SQLite சேமிப்பகம்</span></b
+            >
+            <p>
+              <span class="en"
+                >Zero cloud accounts, zero telemetry, and zero servers. All data stays strictly
+                inside private app storage.</span
+              ><span class="ta"
+                >மேகக்கணி கணக்குகள் இல்லை, கண்காணிப்பு இல்லை, சேவையகங்கள் இல்லை. உங்கள் தரவு
+                அனைத்தும் உங்கள் சாதனத்திலேயே பாதுகாப்பாக இருக்கும்.</span
+              >
+            </p>
+          </li>
+          <li>
+            <b
+              ><span class="en">Portable Backups</span
+              ><span class="ta">எளிதான காப்புப்பிரதி (Backup)</span></b
+            >
+            <p>
+              <span class="en"
+                >Export portable v3 ZIP backups preserving all original raw images and metadata.
+                Restore anytime.</span
+              ><span class="ta"
+                >அசல் படங்கள் மற்றும் மெட்டாடேட்டாவைப் பாதுகாக்கும் போர்ட்டபிள் ZIP v3
+                காப்புப்பிரதிகளை ஏற்றுமதி செய்யுங்கள். எப்போது வேண்டுமானாலும் மீட்டெடுக்கலாம்.</span
+              >
+            </p>
+          </li>
+          <li>
+            <b
+              ><span class="en">Dark, Light & System</span
+              ><span class="ta">இருண்ட, வெளிச்ச மற்றும் கணினி தீம்கள்</span></b
+            >
+            <p>
+              <span class="en"
+                >Thoughtfully designed with warm OLED dark mode, system theme support, and
+                distraction-free layouts.</span
+              ><span class="ta"
+                >OLED இருண்ட முறை, கணினி தீம் ஆதரவு மற்றும் கவனச்சிதறல் இல்லாத நேர்த்தியான
+                வடிவமைப்புடன் உருவாக்கப்பட்டது.</span
+              >
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="sec sec--wide">
+        <div class="shelf-head">
+          <h2 class="h2">
+            <span class="en">A look inside</span><span class="ta">பயன்பாட்டின் தோற்றம்</span>
+          </h2>
+          <p class="shelf-hint">
+            <span class="en">Scroll sideways, tap to zoom</span
+            ><span class="ta">பக்கவாட்டில் உருட்டவும், பெரிதாக்க தட்டவும்</span>
+          </p>
+        </div>
+        <div class="shelf-wrap">
+          <button class="nudge nudge--prev" type="button" data-shelf="-1" aria-label="Previous">
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m15 5-7 7 7 7"></path>
+            </svg>
+          </button>
+          <div class="shelf" id="shelf" tabindex="0" aria-label="Screens">
+            <figure class="shot">
+              <button
+                class="zoom"
+                type="button"
+                data-group="screens"
+                aria-label="Zoom: Welcome screen"
+              >
+                <img
+                  src="./assets/phones/welcome.webp"
+                  width="640"
+                  height="1346"
+                  alt="Welcome screen"
+                  loading="lazy"
+                />
+              </button>
+              <figcaption>
+                <span class="en">Welcome screen</span><span class="ta">வரவேற்புத் திரை</span>
+              </figcaption>
+            </figure>
+
+            <figure class="shot">
+              <button class="zoom" type="button" data-group="screens" aria-label="Zoom: Vault home">
+                <img
+                  src="./assets/phones/home.webp"
+                  width="640"
+                  height="1346"
+                  alt="Vault home"
+                  loading="lazy"
+                />
+              </button>
+              <figcaption>
+                <span class="en">Vault home</span><span class="ta">முகப்பு பெட்டகம்</span>
+              </figcaption>
+            </figure>
+
+            <figure class="shot">
+              <button
+                class="zoom"
+                type="button"
+                data-group="screens"
+                aria-label="Zoom: Browse gallery"
+              >
+                <img
+                  src="./assets/phones/browse.webp"
+                  width="640"
+                  height="1346"
+                  alt="Browse gallery"
+                  loading="lazy"
+                />
+              </button>
+              <figcaption>
+                <span class="en">Browse gallery</span><span class="ta">தொகுப்புத் தொகுப்பு</span>
+              </figcaption>
+            </figure>
+
+            <figure class="shot">
+              <button class="zoom" type="button" data-group="screens" aria-label="Zoom: Favourites">
+                <img
+                  src="./assets/phones/collections.webp"
+                  width="640"
+                  height="1346"
+                  alt="Favourites"
+                  loading="lazy"
+                />
+              </button>
+              <figcaption>
+                <span class="en">Favourites</span><span class="ta">விருப்பமானவை</span>
+              </figcaption>
+            </figure>
+
+            <figure class="shot">
+              <button
+                class="zoom"
+                type="button"
+                data-group="screens"
+                aria-label="Zoom: Collections"
+              >
+                <img
+                  src="./assets/phones/favourites.webp"
+                  width="640"
+                  height="1346"
+                  alt="Collections"
+                  loading="lazy"
+                />
+              </button>
+              <figcaption>
+                <span class="en">Collections</span><span class="ta">தொகுப்புகள்</span>
+              </figcaption>
+            </figure>
+
+            <figure class="shot">
+              <button
+                class="zoom"
+                type="button"
+                data-group="screens"
+                aria-label="Zoom: Settings and backup"
+              >
+                <img
+                  src="./assets/phones/settings.webp"
+                  width="640"
+                  height="1346"
+                  alt="Settings and backup"
+                  loading="lazy"
+                />
+              </button>
+              <figcaption>
+                <span class="en">Settings and backup</span
+                ><span class="ta">அமைப்புகள் மற்றும் காப்புப்பிரதி</span>
+              </figcaption>
+            </figure>
+          </div>
+          <button class="nudge nudge--next" type="button" data-shelf="1" aria-label="Next">
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m9 5 7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="quiet">
+          <h2 class="h2">
+            <span class="en">No accounts. No trackers. 100% on-device.</span
+            ><span class="ta">கணக்குகள் இல்லை. கண்காணிப்பாளர்கள் இல்லை. 100% சாதனத்திலேயே.</span>
+          </h2>
+          <p>
+            <span class="en"
+              >SLI Vault does not require external accounts or send your bookmarks to remote
+              servers. All your saved links, notes, images and tags stay safely in private SQLite
+              storage on your Android device.</span
+            ><span class="ta"
+              >SLI Vault வெளிப்புறக் கணக்குகளைக் கோருவதில்லை அல்லது உங்கள் புக்மார்க்குகளை தொலை
+              சேவையகங்களுக்கு அனுப்புவதில்லை. நீங்கள் சேமிக்கும் அனைத்து இணைப்புகள், குறிப்புகள்,
+              படங்கள் மற்றும் குறிச்சொற்கள் உங்கள் Android சாதனத்தில் உள்ள தனிப்பட்ட SQLite
+              சேமிப்பகத்தில் மட்டுமே பாதுகாப்பாக இருக்கும்.</span
+            >
+          </p>
+          <div class="quiet__badges">
+            <span class="quiet__badge">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+              <span class="en">Local SQLite</span><span class="ta">சாதன SQLite</span>
+            </span>
+            <span class="quiet__badge">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span class="en">Zero Telemetry</span><span class="ta">கண்காணிப்பு இல்லை</span>
+            </span>
+            <span class="quiet__badge">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <span class="en">No Cloud Account</span><span class="ta">கணக்கு தேவையில்லை</span>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="download">
+        <h2 class="h2"><span class="en">Download</span><span class="ta">பதிவிறக்கம்</span></h2>
+        <div class="dl">
+          <div class="dl__col">
+            <h3>
+              <svg
+                class="brand-ic brand-ic--android"
+                viewBox="0 0 24 24"
+                width="22"
+                height="22"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z"
+                ></path>
+              </svg>
+              Android (v1.0.1)
+            </h3>
+            <a
+              href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-1.0.1-release.apk"
+              ><span class="dl__gh dl__gh--store">
+                <svg
+                  class="brand-ic brand-ic--github"
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                  ></path>
+                </svg> </span
+              >APK <small>Universal (70.8 MB)</small></a
+            >
+            <a
+              href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-1.0.1-arm64-v8a-release.apk"
+              ><span class="dl__gh dl__gh--store">
+                <svg
+                  class="brand-ic brand-ic--github"
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                  ></path>
+                </svg> </span
+              >APK <small>arm64 (29.1 MB)</small></a
+            >
+          </div>
+          <div class="dl__col">
+            <h3>
+              <svg
+                class="brand-ic brand-ic--github"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                ></path>
+              </svg>
+              Source &amp; Release
+            </h3>
+            <a
+              href="https://github.com/sahaya-savari/sli-vault/releases/tag/v1.0.1"
+              target="_blank"
+              rel="noopener"
+              ><span class="dl__gh">
+                <svg
+                  class="brand-ic brand-ic--github"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                  ></path>
+                </svg> </span
+              ><span class="en">Release Assets</span><span class="ta">வெளியீட்டுக் கோப்புகள்</span>
+              <small>v1.0.1</small></a
+            >
+            <a href="https://github.com/sahaya-savari/sli-vault" target="_blank" rel="noopener"
+              ><span class="dl__gh">
+                <svg
+                  class="brand-ic brand-ic--github"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                  ></path>
+                </svg> </span
+              ><span class="en">GitHub Repository</span><span class="ta">GitHub களஞ்சியம்</span>
+              <small>Flutter</small></a
+            >
+          </div>
+        </div>
+        <p class="dl__all">
+          <a
+            href="https://github.com/sahaya-savari/sli-vault/releases/tag/v1.0.1"
+            target="_blank"
+            rel="noopener"
+            ><span class="en">v1.0.1 Release notes and changelog</span
+            ><span class="ta">v1.0.1 வெளியீட்டுக் குறிப்புகள்</span> ↗</a
+          >
+        </p>
+      </section>
+
+      <section class="sec" id="support">
+        <div class="back-it">
+          <div class="back-it__copy">
+            <span class="back-it__tag">
+              <svg
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M12 21.3 3.9 13.4a5 5 0 0 1 7-7.1l1.1 1.1 1.1-1.1a5 5 0 0 1 7 7.1Z"></path>
+              </svg>
+              <span class="en">Support the Project</span
+              ><span class="ta">திட்டத்தை ஆதரியுங்கள்</span>
+            </span>
+            <h2>
+              <span class="en">Crafted with focus.<br />Free and open source.</span
+              ><span class="ta"
+                >முழு கவனத்துடன் உருவாக்கப்பட்டது.<br />இலவசம் மற்றும் திறந்த மூலக் குறியீடு.</span
+              >
+            </h2>
+            <p>
+              <span class="en"
+                >SLI Vault is an independent, local-first personal library project for Android. Zero
+                ads, zero tracking, and zero subscriptions.</span
+              ><span class="ta"
+                >SLI Vault என்பது Android-க்கான ஒரு சுயாதீனமான, உள்ளூர்-முதல் (local-first)
+                தனிப்பட்ட நூலகத் திட்டமாகும். பூஜ்ஜிய விளம்பரங்கள், பூஜ்ஜிய கண்காணிப்பு மற்றும்
+                சந்தாக்கள் இல்லை.</span
+              >
+            </p>
+            <a class="kofi" href="https://ko-fi.com/inlitx" target="_blank" rel="noopener"
+              ><img
+                loading="lazy"
+                decoding="async"
+                src="./assets/kofi.png"
+                width="580"
+                height="146"
+                alt="Buy me a coffee on Ko-fi"
+            /></a>
+            <a
+              class="back-it__sig"
+              href="https://github.com/sahaya-savari"
+              target="_blank"
+              rel="noopener"
+            >
+              <img
+                src="https://github.com/sahaya-savari.png?size=80"
+                width="30"
+                height="30"
+                alt=""
+                loading="lazy"
+              />
+              <span
+                ><b>InlitX</b> · <span class="en">creator of SLI Vault</span
+                ><span class="ta">SLI Vault உருவாக்கியவர்</span></span
+              >
+            </a>
+          </div>
+          <div class="back-it__ways">
+            <a href="https://github.com/sahaya-savari/sli-vault" target="_blank" rel="noopener">
+              <span class="way-ic way-ic--star"
+                ><svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 2.4l2.95 5.98 6.6.96-4.78 4.65 1.13 6.57L12 17.46l-5.9 3.1 1.13-6.57L2.45 9.34l6.6-.96L12 2.4Z"
+                  ></path></svg
+              ></span>
+              <span
+                ><b
+                  ><span class="en">Star on GitHub</span
+                  ><span class="ta">GitHub-இல் நட்சத்திரமிடுங்கள்</span></b
+                ><small
+                  ><span class="en">Help others discover SLI Vault.</span
+                  ><span class="ta">பிறர் SLI Vault-ஐக் கண்டறிய உதவுங்கள்.</span></small
+                ></span
+              >
+              <em data-count="stars">-</em>
+            </a>
+            <a href="https://hosted.weblate.org/engage/streak/" target="_blank" rel="noopener">
+              <span class="way-ic">
+                <svg
+                  class="brand-ic brand-ic--weblate"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M9.662 3.809c-1.875 1.19-2.81 3.515-2.83 5.795-.014 2.628.666 5.258 1.988 7.305.936 1.46 2.238 2.715 3.836 3.412a6.942 6.942 0 005.647-.07c1.997-.927 3.523-2.73 4.463-4.785 1.606-3.518 1.643-7.724.12-11.295-1.146.458-2.166-.271-2.166-.271s.003 1.122-1.083 1.685c1.115 2.612 1.088 5.717-.03 8.263-.538 1.225-1.358 2.365-2.498 3.01-.917.52-2.04.625-3.052.184-1.342-.585-2.293-1.864-2.89-3.254-.466-1.067-.782-2.447-.802-3.878-.037-1.724.728-3.193 1.635-3.218.622-.024 1.427.918 1.598 2.435.158 1.543-.177 3.72-1.174 5.49.677 1.085 1.77 1.98 2.951 1.974 1.386-2.338 1.827-4.911 1.793-6.987-.02-2.28-.955-4.603-2.83-5.795-1.437-.907-3.173-.948-4.676 0zM3.278 3.9s-1.018.73-2.163.27c-1.524 3.573-1.488 7.778.12 11.296.94 2.056 2.465 3.858 4.462 4.785a6.95 6.95 0 005.523.124 9.12 9.12 0 01-1.75-1.455 11.18 11.18 0 01-1.267-1.628c-.768-.08-1.498-.482-2.003-.913-1.447-1.213-2.453-3.478-2.632-5.9-.12-1.635.14-3.354.795-4.894C3.276 5.022 3.278 3.9 3.278 3.9z"
+                  ></path>
+                </svg>
+              </span>
+              <span
+                ><b><span class="en">Translate it</span><span class="ta">மொழிபெயர்க்கவும்</span></b
+                ><small
+                  ><span class="en">Bring SLI Vault to your language.</span
+                  ><span class="ta">SLI Vault-ஐ உங்கள் மொழியில் கொண்டு வாருங்கள்.</span></small
+                ></span
+              >
+            </a>
+            <a
+              href="https://github.com/sahaya-savari/sli-vault/issues"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="way-ic">
+                <svg
+                  class="brand-ic brand-ic--github"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                  ></path>
+                </svg>
+              </span>
+              <span
+                ><b
+                  ><span class="en">Report an issue or suggest a feature</span
+                  ><span class="ta"
+                    >சிக்கலைப் புகாரளிக்கவும் அல்லது புதிய அம்சத்தைப் பரிந்துரைக்கவும்</span
+                  ></b
+                ><small
+                  ><span class="en">Contributions and feedback are always welcome.</span
+                  ><span class="ta"
+                    >பங்களிப்புகளும் கருத்துகளும் எப்போதும் வரவேற்கப்படுகின்றன.</span
+                  ></small
+                ></span
+              >
+            </a>
+            <button type="button" class="way--share" data-share="https://sahaya-savari.github.io/sli-vault/">
+              <span class="way-ic"
+                ><svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg
+              ></span>
+              <span
+                ><b
+                  ><span class="en">Share SLI Vault</span
+                  ><span class="ta">SLI Vault-ஐப் பகிரவும்</span></b
+                ><small class="share-idle"
+                  ><span class="en">Share the link with friends.</span
+                  ><span class="ta">நண்பர்களுடன் இணைப்பைப் பகிருங்கள்.</span></small
+                ><small class="share-done"
+                  ><span class="en">Link copied to clipboard.</span
+                  ><span class="ta">இணைப்பு நகலெடுக்கப்பட்டது.</span></small
+                ></span
+              >
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="foot__in">
+        <a class="brand" href="./index.html">
+          <img
+            loading="lazy"
+            decoding="async"
+            src="./assets/sli-logo.png"
+            width="20"
+            height="20"
+            alt=""
+          />
+          <span>SLI Vault</span>
+        </a>
+        <nav class="foot__nav">
+          <a href="https://github.com/sahaya-savari/sli-vault" target="_blank" rel="noopener"
+            >GitHub</a
+          >
+          <a href="./blog/index.html">Blog</a>
+          <a href="./resources/index.html"
+            ><span class="en">Resources</span><span class="ta">வளங்கள்</span></a
+          >
+          <a href="https://hosted.weblate.org/engage/streak/" target="_blank" rel="noopener"
+            ><span class="en">Translate</span><span class="ta">மொழிபெயர்</span></a
+          >
+          <a href="https://github.com/sahaya-savari/sli-vault/issues" target="_blank" rel="noopener"
+            ><span class="en">Report an issue</span><span class="ta">சிக்கலைப் புகாரளி</span></a
+          >
+          <a href="https://ko-fi.com/inlitx" target="_blank" rel="noopener">Ko-fi</a>
+        </nav>
+        <p class="foot__c">
+          <a
+            href="https://github.com/sahaya-savari/sli-vault/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener"
+            >GPLv3</a
+          >
+          · <span class="en">Created by</span><span class="ta">உருவாக்கியவர்</span>
+          <a href="https://github.com/sahaya-savari" target="_blank" rel="noopener">InlitX</a>
+        </p>
+      </div>
+    </footer>
+
+    <dialog class="lb" id="lb" aria-label="Preview">
+      <button class="lb__x" type="button" data-lb="close" aria-label="Close">
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M6 6l12 12M18 6 6 18"></path>
+        </svg>
+      </button>
+      <button class="lb__nav lb__nav--prev" type="button" data-lb="-1" aria-label="Previous">
+        <svg
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m15 5-7 7 7 7"></path>
+        </svg>
+      </button>
+      <div class="lb__stage"></div>
+      <button class="lb__nav lb__nav--next" type="button" data-lb="1" aria-label="Next">
+        <svg
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m9 5 7 7-7 7"></path>
+        </svg>
+      </button>
+      <p class="lb__cap"></p>
+    </dialog>
+
+    <script src="./js/site.js?v=110b56b7"></script>
+  </body>
+</html>

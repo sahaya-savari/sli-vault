@@ -44,14 +44,14 @@ SLI Vault is a Flutter Android app for saving links and images into **app-privat
 
 The Flutter mobile application resides directly at the **repository root**. The repository is architected as a lightweight monorepo accommodating:
 1. The **Flutter/Dart Android mobile app** at the repository root.
-2. The **companion website** (Eleventy + vanilla CSS & JS) under `website/`.
+2. The **companion website** (Vite + Nitro + TanStack Start) under `website/`.
 
 | Component / Platform | Status |
 |----------------------|--------|
 | Android (Root) | Primary target; signed GitHub Release available (`v1.0.1`) |
 | iOS | Phase 2 - scaffold only, not verified as a shipping target |
 | Web / Desktop | Flutter platform folders only - not the shipping target |
-| Website (`website/`) | Companion website (Eleventy/11ty); see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md) |
+| Website (`website/`) | Companion website (Vite/Nitro); see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md) |
 
 **Download / release status:** a **signed GitHub Release APK** is available under [Releases](https://github.com/sahaya-savari/sli-vault/releases). Application ID `com.sahayasavari.slivault`. There is **no Play Store listing** - sideload / open-source distribution only.
 
@@ -76,9 +76,14 @@ The project-owned code and documentation are licensed under [MIT](LICENSE). Bund
 - Import of the earlier Kotlin vault JSON shape (including Base64 image bytes)
 
 ### Look and feel
+- Three distinct visual styles:
+  - **Classic:** Timeless library experience with balanced 16dp radii, rich dark contrast, and Anthropic Serif typography.
+  - **Minimal:** Crisp 8dp lines, tight padding, and content-first information density.
+  - **Express:** Sculpted 24dp squircle curves, pill badges, and refined micro-motion.
 - Theme: Dark, Light, or System
 - Onboarding with a short welcome clip and still fallbacks
 - Five destinations: Home, Browse, Favorites, Collections, Settings
+- Built-in **Help & User Guide** in Settings for offline tips and gesture walkthroughs
 
 ### Privacy controls
 - Optional lock when backgrounded (device biometric or credential - SQLite is not encrypted)
@@ -158,19 +163,19 @@ Hero and gallery images are **genuine captures from the running Android app** (n
 
 | Screen | Raw Capture | Prepared Web Asset (`website/src/assets/`) | Hero | Gallery |
 |---|---|---|:---:|:---:|
-| Welcome | `docs/screenshots/raw/welcome.png` | `look-inside/welcome.webp` | — | Yes |
+| Welcome | `docs/screenshots/raw/welcome.png` | `look-inside/welcome.webp` | - | Yes |
 | Home | `docs/screenshots/raw/home.png` | `hero-center.webp` & `look-inside/home.webp` | Center | Yes |
 | Browse | `docs/screenshots/raw/browse.png` | `hero-left.webp` & `look-inside/browse.webp` | Left | Yes |
 | Favorites | `docs/screenshots/raw/favorites.png` | `hero-right.webp` & `look-inside/favourites.webp` | Right | Yes |
-| Collections | `docs/screenshots/raw/collections.png` | `look-inside/collections.webp` | — | Yes |
-| Settings | `docs/screenshots/raw/settings.png` | `look-inside/settings.webp` | — | Yes |
+| Collections | `docs/screenshots/raw/collections.png` | `look-inside/collections.webp` | - | Yes |
+| Settings | `docs/screenshots/raw/settings.png` | `look-inside/settings.webp` | - | Yes |
 
 ### Directory structure & refresh workflow
 
-- **Raw:** `docs/screenshots/raw/` and `website/src/assets/screenshots/raw/` — original ADB PNGs (binary-safe `adb pull`; do not use PowerShell `>` redirection).
-- **Optimized:** `website/src/assets/screenshots/current/` — resized PNG/WebP for review.
+- **Raw:** `docs/screenshots/raw/` and `website/src/assets/screenshots/raw/` - original ADB PNGs (binary-safe `adb pull`; do not use PowerShell `>` redirection).
+- **Optimized:** `website/src/assets/screenshots/current/` - resized PNG/WebP for review.
 - **Production imports:** `website/src/assets/look-inside/` + hero `hero-*.webp` used by the TanStack Start site.
-- After replacement: `bun run test` and `bun run build` in `website/`, then check viewports 320–1280px.
+- After replacement: `bun run test` and `bun run build` in `website/`, then check viewports 320-1280px.
 
 ---
 
@@ -340,7 +345,7 @@ Third-party notices that do exist:
 
 **GitHub Release (signed APK, no Play Store):**
 
-- [Latest Releases](https://github.com/sahaya-savari/sli-vault/releases) — install the attached `sli-vault-*-release.apk`
+- [Latest Releases](https://github.com/sahaya-savari/sli-vault/releases) - install the attached `sli-vault-*-release.apk`
 - Application ID: `com.sahayasavari.slivault`
 - Current tree version: `1.0.1` (`versionCode` `2`)
 - Signing: owner release keystore (local `android/key.properties` or GitHub Actions secrets; never in Git)

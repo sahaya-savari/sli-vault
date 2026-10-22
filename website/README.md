@@ -1,70 +1,85 @@
-# SLI Vault web
+# SLI Vault Companion Website
 
-The website for SLI Vault, built with [Eleventy](https://www.11ty.dev).
+Official companion website and showcase for **SLI Vault (v1.0.1)**.
 
-```
-src/
-  index.njk              home page
-  blog/posts/            blog posts in Markdown, one file per language
-  blog/img/              images used by the posts
-  resources/index.njk    the resources page
-  _data/resources.json   what the resources page lists
-  _data/site.json        version, links and the comments settings
-  _includes/             layouts and small macros
-  files/                 the downloadable resources
-  assets/                phones, previews, store icons
-  css/ js/               styles and scripts
-```
+- **Production URL**: `https://sahaya-savari.github.io/sli-vault/`
+- **Deployment Platform**: GitHub Pages (via `.github/workflows/website-pages.yml`)
+- **Framework & Toolchain**: Vite v8, Nitro, TanStack Start, React 19, and Bun
+- **Static Output Target**: `.output/public/`
 
-## Run it locally
-
-```bash
-npm install
-npm run dev
-```
-
-Then open http://localhost:8080/sli-vault/. It reloads on every change.
-
-## Write a post
-
-Create `src/blog/posts/my-post.md`:
-
-```md
----
-title: The title
-description: One line for the list and for search engines.
-date: 2026-10-04
-lang: en
-thread: my-post
-translation: /es/blog/my-post/
 ---
 
-Write in Markdown. Put images in `src/blog/img/` and use them like this:
+## Architecture & Directory Structure
 
-![What the image shows](/blog/img/my-image.webp)
+```text
+website/
+├── public/                 # Static assets, pre-rendered pages, and files copied directly to .output/public/
+│   ├── index.html          # Main landing page & showcase (Hero, Features, Download, Privacy, Support)
+│   ├── 404.html            # Static fallback error page
+│   ├── .nojekyll           # Bypasses GitHub Pages Jekyll processing
+│   ├── robots.txt          # Crawler policies & Sitemap directive
+│   ├── sitemap.xml         # XML sitemap with 15 canonical routes
+│   ├── assets/             # Branding, phone mockups, store badges
+│   ├── css/styles.css      # Core stylesheet (Design tokens, layout, dark theme)
+│   ├── js/site.js          # Lightweight client behavior (theme, language, lightbox)
+│   ├── files/              # Ambient audio soundscapes (MP3/MP4)
+│   ├── blog/               # Pre-rendered blog articles & sync guides
+│   ├── streak/             # Habit tracker & alternate showcase view
+│   └── resources/          # Audio soundscape resources directory
+├── src/                    # TypeScript / TanStack Start source application
+│   ├── routes/             # App routing tree (index.tsx, __root.tsx)
+│   ├── components/ui/      # Reusable Radix UI & design system primitives
+│   ├── server.ts           # Nitro server & SSR error wrappers
+│   └── styles.css          # Tailwind & utility styling
+├── package.json            # Scripts and dependencies
+└── vite.config.ts          # Vite & Nitro static build configuration
 ```
 
-The Spanish version is `my-post.es.md` with `lang: es`, the same `thread` and
-`translation: /blog/my-post/`. Both share one comment thread. A post without a
-translation just leaves `translation` out.
+---
 
-## Comments and likes
+## Two Strictly Protected Elements (DO NOT EDIT)
 
-Posts use [giscus](https://giscus.app): readers sign in with GitHub to comment
-and react, and everything is stored as a discussion in `sahaya-savari/sli-vault`. To
-switch it on:
+Per explicit project directive, the following two visual sections are locked and must **NOT** be visually redesigned, rewritten, moved, or altered:
 
-1. Enable Discussions in the repository settings and add a category named `Blog`
-   (type Announcement, so only giscus creates threads).
-2. Install the giscus app on the repository.
-3. On giscus.app, enter `sahaya-savari/sli-vault`, pick the `Blog` category and copy the
-   `data-category-id` into `giscus.categoryId` in `src/_data/site.json`.
+1. **Hero Section (LOCK A)**:
+   - Location: `website/public/index.html` (lines 152–263) & `website/public/streak/index.html`
+   - Content: *"Everything worth keeping, In one local vault."*, `v1.0.1` badge, `Download` & `Source code` buttons, metadata statistics row, and the 3-phone overlapping layout with `#heat` matrix glow.
+2. **"A look inside" Shelf (LOCK B)**:
+   - Location: `website/public/index.html` (lines 364–518) & `website/public/streak/index.html`
+   - Content: Header *"A look inside"*, hint *"Scroll sideways, tap to zoom"*, circular navigation arrows, modal zoom lightbox, and the 5 phone frames (`welcome.webp`, `home.webp`, `browse.webp`, `collections.webp`, `favourites.webp`, `settings.webp`).
 
-Until then, posts show a short note where the comments go.
+---
 
-## Add a resource
+## Local Development & Testing
 
-Put the file in `src/files/`, a preview in `src/assets/res/` and a line in
-`src/_data/resources.json`. Sizes are read at build time. Add `"author"` to
-credit someone. People send resources through the `Submit a resource` issue
-form in the main repository; check the source and license before adding one.
+### 1. Install Dependencies
+```sh
+bun install
+```
+
+### 2. Start Dev Server
+```sh
+bun run dev
+```
+Available locally at `http://localhost:5173/`.
+
+### 3. Run Quality Checks
+```sh
+bun run lint            # ESLint checks
+bun test                # Unit & routing tests
+bunx prettier --check src  # Code formatting validation
+```
+
+### 4. Build for Production
+```sh
+bun run build
+```
+Output compiles into `.output/public/`. Verify that all links use relative paths (`./` or `../`) so the site functions correctly under the `/sli-vault/` repository subpath.
+
+---
+
+## GitHub Pages Deployment
+
+- Deployments are handled automatically by GitHub Actions when commits are pushed to `main` affecting `website/**`.
+- The workflow `.github/workflows/website-pages.yml` packages `website/.output/public` using `actions/upload-pages-artifact@v3` and publishes directly to GitHub Pages.
+

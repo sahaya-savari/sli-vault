@@ -17,6 +17,7 @@ import '../../data/backup_service.dart';
 import '../../data/vault_controller.dart';
 import '../../domain/vault_item.dart';
 import '../../core/constants/sli_version.dart';
+import 'help_screen.dart';
 import 'legal_screens.dart';
 
 bool _isDark(BuildContext context) =>
@@ -133,6 +134,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           formatBytes: _formatBytes,
                         ),
                       ),
+                    ),
+                    _settingsDivider(context),
+                    _NavRow(
+                      icon: Icons.menu_book_rounded,
+                      title: 'Help & User Guide',
+                      subtitle: 'Beginner tips, features and gestures',
+                      onTap: () => _pushPage(const SliHelpScreen()),
                     ),
                     _settingsDivider(context),
                     _NavRow(
@@ -1465,7 +1473,7 @@ class _DataSubpageState extends State<_DataSubpage> {
                 try {
                   // Pass `bytes` so Android writes via the Storage Access
                   // Framework / document provider. The returned path may be a
-                  // virtual document path (e.g. `/document/1770`) — never treat
+                  // virtual document path (e.g. `/document/1770`) - never treat
                   // that as a dart:io filesystem path.
                   final outputPath = await FilePicker.platform.saveFile(
                     dialogTitle: 'Save SLI Vault Backup',

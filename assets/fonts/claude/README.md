@@ -5,7 +5,7 @@ Source: owner-provided `MB - Claude Font.zip` (Anthropic Serif Display + Text st
 Bundled into SLI Vault for primary UI typography at the project owner's request.
 Keep the Downloads ZIP read-only; edit only copies under this folder.
 
-## License status: UNVERIFIED — redistribution concern
+## License status: UNVERIFIED - redistribution concern
 
 No license file is included in this folder. These OTFs are not covered by the JetBrains Mono SIL OFL notice. Do not describe them as open-source fonts.
 
