@@ -113,3 +113,21 @@ replay_pid*
 
 # Local root QA verification screenshot dumps
 /device_sli_*.png
+
+# Local agent workspace customizations and IDE tooling
+/.agents/
+/skills-lock.json
+/devtools_options.yaml
+mcp-before.*
+
+# Local agent checkpoint, restore notes, and research scratch reports
+/docs/ANTIGRAVITY_RESUME_CHECKPOINT.md
+/docs/RESUME_HERE.md
+/streak-three-styles-report.md
+
+# Local adb device captures, emulator snapshots, and responsive test captures
+/docs/screenshots/device_*.png
+/docs/screenshots/verify-*.png
+/docs/screenshots/emulator_startup.png
+/docs/screenshots/resume_screen.png
+/docs/screenshots/physical_device_clean_2026_10_22/
