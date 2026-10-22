@@ -77,6 +77,37 @@ void main() {
         expect(palette.reduceMotion, isFalse);
       },
     );
+
+    test('distinct font families are wired for Classic, Minimal, and Express', () {
+      final classicTheme = SliTheme.buildTheme(mode: 'dark', visualStyle: SliVisualStyle.classic);
+      final minimalTheme = SliTheme.buildTheme(mode: 'dark', visualStyle: SliVisualStyle.minimal);
+      final expressTheme = SliTheme.buildTheme(mode: 'dark', visualStyle: SliVisualStyle.express);
+
+      // Classic uses Anthropic Serif (Claude / ClaudeDisplay)
+      expect(classicTheme.textTheme.displayLarge?.fontFamily, equals('ClaudeDisplay'));
+      expect(classicTheme.textTheme.bodyLarge?.fontFamily, equals('Claude'));
+
+      // Minimal uses Figtree
+      expect(minimalTheme.textTheme.displayLarge?.fontFamily, equals('Figtree'));
+      expect(minimalTheme.textTheme.bodyLarge?.fontFamily, equals('Figtree'));
+
+      // Express uses Google Sans Flex
+      expect(expressTheme.textTheme.displayLarge?.fontFamily, equals('GoogleSansFlex'));
+      expect(expressTheme.textTheme.bodyLarge?.fontFamily, equals('GoogleSansFlex'));
+    });
+
+    test('OLED Black (amoled) theme properties and high-contrast definitions', () {
+      final amoledTheme = SliTheme.buildTheme(mode: 'amoled', accent: 'orange');
+      expect(amoledTheme.scaffoldBackgroundColor, equals(const Color(0xFF000000)));
+      expect(amoledTheme.brightness, equals(Brightness.dark));
+
+      final palette = amoledTheme.extension<SliPalette>()!;
+      expect(palette.obsidian, equals(const Color(0xFF000000)));
+      expect(palette.charcoal, equals(const Color(0xFF0A0A0C)));
+      expect(palette.border, equals(const Color(0xFF2E323D)));
+      expect(amoledTheme.popupMenuTheme.shape, isNotNull);
+      expect(amoledTheme.bottomSheetTheme.shape, isNotNull);
+    });
   });
 
   group('VaultController Customization & Maintenance Unit Tests', () {
@@ -130,6 +161,14 @@ void main() {
       expect(controller.reduceMotion, isTrue);
       expect(prefs.getBool('sli_vault_reduce_motion_v1'), isTrue);
 
+      await controller.setLockTimeoutSeconds(5);
+      expect(controller.lockTimeoutSeconds, equals(5));
+      expect(prefs.getInt('sli_vault_lock_timeout_v1'), equals(5));
+
+      await controller.setLockTimeoutSeconds(10);
+      expect(controller.lockTimeoutSeconds, equals(10));
+      expect(prefs.getInt('sli_vault_lock_timeout_v1'), equals(10));
+
       await controller.setLockTimeoutSeconds(300);
       expect(controller.lockTimeoutSeconds, equals(300));
       expect(prefs.getInt('sli_vault_lock_timeout_v1'), equals(300));
@@ -152,6 +191,28 @@ void main() {
       await controller.setHapticsEnabled(false);
       expect(controller.hapticsEnabled, isFalse);
       expect(prefs.getBool('sli_vault_haptics_enabled_v1'), isFalse);
+    });
+
+    test('biometric timeout options (0s, 5s, 10s, 30s, 1m, 5m) persist correctly', () async {
+      final prefs = await SharedPreferences.getInstance();
+      for (final timeout in [0, 5, 10, 30, 60, 300]) {
+        await controller.setLockTimeoutSeconds(timeout);
+        expect(controller.lockTimeoutSeconds, equals(timeout));
+        expect(prefs.getInt('sli_vault_lock_timeout_v1'), equals(timeout));
+      }
+    });
+
+    test('screen protection policy defaults to true and persists on change', () async {
+      final prefs = await SharedPreferences.getInstance();
+      expect(controller.screenProtectionEnabled, isTrue);
+
+      await controller.setScreenProtectionEnabled(false);
+      expect(controller.screenProtectionEnabled, isFalse);
+      expect(prefs.getBool('sli_vault_screen_protection_v1'), isFalse);
+
+      await controller.setScreenProtectionEnabled(true);
+      expect(controller.screenProtectionEnabled, isTrue);
+      expect(prefs.getBool('sli_vault_screen_protection_v1'), isTrue);
     });
 
     test('vacuumDatabase executes successfully', () async {
@@ -237,9 +298,9 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Verify Streak-style headers and navigation cards are present
+        // Verify headers and navigation cards are present
         expect(find.text('Settings'), findsOneWidget);
-        expect(find.text('Inlitx'), findsOneWidget);
+        expect(find.text('SLI Vault'), findsAtLeastNWidgets(1));
         expect(find.text('App style'), findsOneWidget);
         expect(find.text('Appearance'), findsOneWidget);
         expect(find.text('Preferences'), findsOneWidget);
@@ -340,7 +401,56 @@ void main() {
         await tester.tap(find.byType(BackButton));
         await tester.pumpAndSettle();
         expect(find.text('Help & User Guide'), findsOneWidget);
+
+        // --- Test Preferences Subpage & Biometric Timeout Dialog ---
+        await tester.tap(find.text('Preferences'));
+        await tester.pumpAndSettle();
+
+        // Drag the Preferences ListView up to reveal Biometric Vault Lock
+        await tester.drag(find.byType(Scrollable).last, const Offset(0, -400));
+        await tester.pumpAndSettle();
+
+        final lockSwitchFinder = find.byKey(const ValueKey('lock-vault-switch'));
+        expect(lockSwitchFinder, findsOneWidget);
+        await tester.tap(lockSwitchFinder);
+        await tester.pumpAndSettle();
+        expect(controller.lockEnabled, isTrue);
+
+        // Drag slightly up to ensure newly revealed Lock Timeout tile is fully in view
+        await tester.drag(find.byType(Scrollable).last, const Offset(0, -150));
+        await tester.pumpAndSettle();
+
+        // Tap Lock Timeout tile to open dialog
+        final timeoutTileFinder = find.text('Lock Timeout');
+        expect(timeoutTileFinder, findsOneWidget);
+        await tester.tap(timeoutTileFinder);
+        await tester.pumpAndSettle();
+
+        // Verify all 6 options are present in dialog
+        expect(find.byKey(const ValueKey('lock-timeout-option-0')), findsOneWidget);
+        expect(find.byKey(const ValueKey('lock-timeout-option-5')), findsOneWidget);
+        expect(find.byKey(const ValueKey('lock-timeout-option-10')), findsOneWidget);
+        expect(find.byKey(const ValueKey('lock-timeout-option-30')), findsOneWidget);
+        expect(find.byKey(const ValueKey('lock-timeout-option-60')), findsOneWidget);
+        expect(find.byKey(const ValueKey('lock-timeout-option-300')), findsOneWidget);
+
+        expect(find.text('5 seconds'), findsOneWidget);
+        expect(find.text('10 seconds'), findsOneWidget);
+        expect(find.text('30 seconds'), findsOneWidget);
+        expect(find.text('1 minute'), findsOneWidget);
+        expect(find.text('5 minutes'), findsOneWidget);
+
+        // Select 30 seconds
+        await tester.tap(find.byKey(const ValueKey('lock-timeout-option-30')));
+        await tester.pumpAndSettle();
+
+        expect(controller.lockTimeoutSeconds, equals(30));
+        expect(find.text('30 seconds'), findsOneWidget);
+
+        await tester.tap(find.byType(BackButton));
+        await tester.pumpAndSettle();
       },
     );
   });
 }
+

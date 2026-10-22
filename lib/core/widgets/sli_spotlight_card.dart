@@ -47,12 +47,14 @@ class _SliSpotlightCardState extends State<SliSpotlightCard> {
           )
         : palette.surfaceFill;
 
+    final isAmoled = palette.obsidian == const Color(0xFF000000);
+
     final borderColor = isDark
         ? (isExpress
-              ? palette.primaryAccent.withValues(alpha: 0.32)
+              ? palette.primaryAccent.withValues(alpha: isAmoled ? 0.40 : 0.32)
               : (isMinimal
-                    ? palette.border.withValues(alpha: 0.45)
-                    : palette.primaryAccent.withValues(alpha: 0.22)))
+                    ? (isAmoled ? palette.border : palette.border.withValues(alpha: 0.45))
+                    : palette.primaryAccent.withValues(alpha: isAmoled ? 0.32 : 0.22)))
         : (isExpress
               ? palette.primaryAccent.withValues(alpha: 0.25)
               : (isMinimal

@@ -23,9 +23,9 @@
         justify-content: center;
         text-align: center;
         padding: 2rem;
-        background: #09090B;
-        color: #F4F4F5;
-        font-family: 'Figtree', sans-serif;
+        background: #09090b;
+        color: #f4f4f5;
+        font-family: "Figtree", sans-serif;
       }
       .error-card {
         max-width: 480px;
@@ -36,10 +36,10 @@
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
       }
       .error-code {
-        font-family: 'JetBrains Mono', monospace;
+        font-family: "JetBrains Mono", monospace;
         font-size: 4rem;
         font-weight: 800;
-        color: #A1A1AA;
+        color: #a1a1aa;
         margin-bottom: 0.5rem;
         line-height: 1;
       }
@@ -49,7 +49,7 @@
         margin-bottom: 1rem;
       }
       .error-desc {
-        color: #A1A1AA;
+        color: #a1a1aa;
         font-size: 1rem;
         line-height: 1.5;
         margin-bottom: 2rem;
@@ -58,32 +58,57 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: #FAFAFA;
-        color: #09090B;
+        background: #fafafa;
+        color: #09090b;
         font-weight: 600;
         font-size: 0.95rem;
         padding: 0.75rem 1.5rem;
         border-radius: 9999px;
         text-decoration: none;
-        transition: transform 0.2s ease, background 0.2s ease;
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease;
       }
       .error-btn:hover {
-        background: #E4E4E7;
+        background: #e4e4e7;
         transform: translateY(-2px);
       }
     </style>
   </head>
   <body class="error-page">
     <div class="error-card">
-      <a class="brand" href="./index.html" style="display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; text-decoration: none; color: #FFF; font-weight: 700;">
+      <a
+        class="brand"
+        href="./"
+        style="
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 2rem;
+          text-decoration: none;
+          color: #fff;
+          font-weight: 700;
+        "
+      >
         <img src="./assets/sli-logo.png" width="28" height="28" alt="SLI Vault Logo" />
         <span>SLI Vault</span>
       </a>
       <div class="error-code">404</div>
       <h1 class="error-title">Page not found</h1>
-      <p class="error-desc">The link you followed may be broken, or the page may have been moved.</p>
-      <a href="./index.html" class="error-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <p class="error-desc">
+        The link you followed may be broken, or the page may have been moved.
+      </p>
+      <a href="./" class="error-btn">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>

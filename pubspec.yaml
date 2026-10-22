@@ -48,7 +48,41 @@ flutter:
     - assets/icons/status/
 
   fonts:
-    # Primary UI - Figtree (SIL Open Font License 1.1)
+    # Classic Style - Anthropic Serif (Claude Text)
+    - family: Claude
+      fonts:
+        - asset: assets/fonts/claude/AnthropicSerif-Text-Regular-Static.otf
+          weight: 400
+        - asset: assets/fonts/claude/AnthropicSerif-Text-RegularItalic-Static.otf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/claude/AnthropicSerif-Text-Medium-Static.otf
+          weight: 500
+        - asset: assets/fonts/claude/AnthropicSerif-Text-MediumItalic-Static.otf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/claude/AnthropicSerif-Text-Semibold-Static.otf
+          weight: 600
+        - asset: assets/fonts/claude/AnthropicSerif-Text-SemiboldItalic-Static.otf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/claude/AnthropicSerif-Text-Bold-Static.otf
+          weight: 700
+        - asset: assets/fonts/claude/AnthropicSerif-Text-BoldItalic-Static.otf
+          weight: 700
+          style: italic
+    # Classic Style - Anthropic Serif (Claude Display optical size)
+    - family: ClaudeDisplay
+      fonts:
+        - asset: assets/fonts/claude/AnthropicSerif-Display-Regular-Static.otf
+          weight: 400
+        - asset: assets/fonts/claude/AnthropicSerif-Display-Medium-Static.otf
+          weight: 500
+        - asset: assets/fonts/claude/AnthropicSerif-Display-Semibold-Static.otf
+          weight: 600
+        - asset: assets/fonts/claude/AnthropicSerif-Display-Bold-Static.otf
+          weight: 700
+    # Minimal Style - Figtree (SIL Open Font License 1.1)
     - family: Figtree
       fonts:
         - asset: assets/fonts/figtree/Figtree-Light.ttf
@@ -65,7 +99,7 @@ flutter:
           weight: 800
         - asset: assets/fonts/figtree/Figtree-Black.ttf
           weight: 900
-    # Expressive Display & Title - Google Sans Flex (SIL Open Font License 1.1)
+    # Express Style - Google Sans Flex (SIL Open Font License 1.1)
     - family: GoogleSansFlex
       fonts:
         - asset: assets/fonts/google_sans_flex/GoogleSansFlex.ttf

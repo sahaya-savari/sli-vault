@@ -9,12 +9,12 @@ SLI Vault is a calm, local-first personal vault for links, screenshots, and visu
 - **Signing Certificate:** `CN=Sahaya Savari F, OU=SLI Vault, O=Sahaya Savari F, C=IN`
 
 ### Key Highlights
-- **Three Streak-Inspired Design Systems:** Full implementation of **Classic** (balanced 16dp radii, clean Figtree typography), **Minimal** (compact 12dp radii, razor-thin borders, JetBrains Mono metadata), and **Express** (sculpted 24dp radii, vibrant gradients, glowing shadows, and tactile squish micro-motion).
-- **Cleared SIL OFL 1.1 Typography:** Replaced unverified proprietary fonts with SIL OFL 1.1 **Figtree** (7 weights) and **Google Sans Flex**, retaining **JetBrains Mono**. Full commercial and redistribution rights cleared.
-- **Screenshot Capture Enabled:** `FLAG_SECURE` removed as the final application-code change in `MainActivity.kt`. Screenshots and screen recordings now capture normally across all screens, with privacy maintained via app-level biometric lock.
-- **Redesigned About Screen:** Style-adaptive hero branding card with dynamic glow, centralized `SliVersion` metadata, developer attribution (`Sahaya Savari`, `@sahaya-savari`), and verified repository and website links.
-- **Punctuation Clean-up:** Normalized em/en dashes across all documentation and user-facing text to standard hyphens.
-- **Quality & Verification:** 116 automated tests passing (100%), 0 `dart analyze` issues, 21 website tests passing.
+- **OLED Black, Dark & Light Appearance Modes:** Centralized `SliPalette` tokens for OLED Black (`amoled`) featuring pure obsidian (`#000000`) background, subtle elevated cards (`#0A0A0E`), and crisp border outlines (`#2E323D` / alpha 0.35). Zero UI elements or text disappear into pure black across Classic, Minimal, and Express design systems.
+- **Biometric Authentication Timeout Choices:** Restored full timeout selection (Immediately, 5s, 10s, 30s, 1 minute, 5 minutes) via Flutter 3.32+ compliant `RadioGroup<int>` under Preferences with persistent storage across app restarts.
+- **Dynamic Screen Protection Policy:** Default-on window protection (`FLAG_SECURE`) preserving privacy and copyright for sensitive bookmarks and collections, with a user-controlled toggle in Settings via `sli_vault/security` MethodChannel for authorized captures.
+- **Companion Website Personalization & React Modernization:** Header cleanup (removed Blog/Resources clutter, removed dynamic star count badge), canonical & OpenGraph metadata correction, full English & Tamil (`EN` | `TA`) language coverage across all sections, and modular reusable React 19 UI components (`SiteHeader`, `MobileNavigation`, `DownloadSection`, `FeatureSection`, `ScreenshotGallery`, `SupportSection`, `SiteFooter`).
+- **Three-Style Design Systems:** Full implementation of **Classic** (balanced 16dp radii, Figtree typography), **Minimal** (compact 12dp radii, razor-thin borders, JetBrains Mono metadata), and **Express** (sculpted 24dp radii, vibrant gradients, glowing shadows, tactile squish micro-motion).
+- **Quality & Verification:** 122 automated Flutter tests passing (100%), 0 `dart analyze` issues, 7 website unit & routing tests passing, 0 ESLint errors.
 
 ### Architecture Download Table
 | Package | Architecture | File Size (Bytes) | Size (MiB) | Recommendation |

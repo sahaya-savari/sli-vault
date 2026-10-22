@@ -81,7 +81,7 @@ class VaultController extends ChangeNotifier {
   bool _autoFetchMetadata = true;
   String _browseDensity = 'comfortable';
   bool _screenProtectionEnabled = true;
-  String _profileName = 'Inlitx';
+  String _profileName = 'SLI Vault';
   String _profilePhotoPath = '';
   final Map<String, (VaultItem item, Uint8List? imageBytes, bool wasPinned)>
   _undoCache = {};
@@ -185,7 +185,10 @@ class VaultController extends ChangeNotifier {
     _autoFetchMetadata = prefs.getBool(_prefAutoFetchMetadata) ?? true;
     _browseDensity = prefs.getString(_prefBrowseDensity) ?? 'comfortable';
     _screenProtectionEnabled = prefs.getBool(_prefScreenProtection) ?? true;
-    _profileName = prefs.getString(_prefProfileName) ?? 'Inlitx';
+    final savedName = prefs.getString(_prefProfileName);
+    _profileName = (savedName == null || savedName == 'Inlitx' || savedName.trim().isEmpty)
+        ? 'SLI Vault'
+        : savedName;
     _profilePhotoPath = prefs.getString(_prefProfilePhoto) ?? '';
     if (Platform.isAndroid) {
       try {
@@ -202,7 +205,7 @@ class VaultController extends ChangeNotifier {
 
   Future<void> setProfileName(String name) async {
     final trimmed = name.trim();
-    _profileName = trimmed.isEmpty ? 'Inlitx' : trimmed;
+    _profileName = trimmed.isEmpty ? 'SLI Vault' : trimmed;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_prefProfileName, _profileName);
     notifyListeners();

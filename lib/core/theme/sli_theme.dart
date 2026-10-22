@@ -3,8 +3,16 @@ import 'package:flutter/material.dart';
 class SliTokens {
   SliTokens._();
 
-  /// Primary UI - Figtree (SIL Open Font License 1.1).
+  /// Default / Minimal UI - Figtree (SIL Open Font License 1.1).
   static const String fontFamily = 'Figtree';
+  static const String fontFamilyMinimal = 'Figtree';
+
+  /// Classic Style - Anthropic Serif (Claude Text & Claude Display).
+  static const String fontFamilyClassic = 'Claude';
+  static const String fontFamilyClassicDisplay = 'ClaudeDisplay';
+
+  /// Express Style - Google Sans Flex (SIL Open Font License 1.1).
+  static const String fontFamilyExpress = 'GoogleSansFlex';
 
   /// Display / headline face - GoogleSansFlex (SIL Open Font License 1.1).
   static const String fontFamilyDisplay = 'GoogleSansFlex';
@@ -249,6 +257,20 @@ class SliPalette extends ThemeExtension<SliPalette> {
     this.motionDuration = const Duration(milliseconds: 250),
     this.motionCurve = Curves.easeInOutCubic,
   });
+
+  /// Distinct display font family for headings based on active visual style.
+  String get displayFontFamily => switch (visualStyle) {
+    SliVisualStyle.classic => SliTokens.fontFamilyClassicDisplay,
+    SliVisualStyle.minimal => SliTokens.fontFamilyMinimal,
+    SliVisualStyle.express => SliTokens.fontFamilyExpress,
+  };
+
+  /// Distinct body font family based on active visual style.
+  String get bodyFontFamily => switch (visualStyle) {
+    SliVisualStyle.classic => SliTokens.fontFamilyClassic,
+    SliVisualStyle.minimal => SliTokens.fontFamilyMinimal,
+    SliVisualStyle.express => SliTokens.fontFamilyExpress,
+  };
 
   @override
   SliPalette copyWith({
@@ -621,8 +643,8 @@ class SliTheme {
         ? SliPalette(
             obsidian: const Color(0xFF000000),
             charcoal: const Color(0xFF0A0A0C),
-            elevated: const Color(0xFF141418),
-            border: const Color(0xFF24262E),
+            elevated: const Color(0xFF14151B),
+            border: const Color(0xFF2E323D),
             textPrimary: SliTokens.textPrimary,
             textSecondary: const Color(0xFFA0A5B0),
             onAccent: SliTokens.onPrimaryGradient,
@@ -632,11 +654,11 @@ class SliTheme {
             successText: SliTokens.success,
             destructive: SliTokens.error,
             onDestructive: const Color(0xFF000000),
-            surfaceFill: const Color(0xEB0A0A0C),
-            surfaceFillDeep: const Color(0xF40A0A0C),
-            surfaceStroke: preset.primary.withValues(alpha: 0.28),
-            plateFill: const Color(0xF20A0A0C),
-            plateStroke: preset.primary.withValues(alpha: 0.35),
+            surfaceFill: const Color(0xFA0A0A0E),
+            surfaceFillDeep: const Color(0xFF0A0A0E),
+            surfaceStroke: preset.primary.withValues(alpha: 0.35),
+            plateFill: const Color(0xF50A0A0E),
+            plateStroke: preset.primary.withValues(alpha: 0.40),
             primaryAccent: preset.primary,
             secondaryAccent: preset.secondary,
             primaryGradient: preset.gradient,
@@ -729,7 +751,9 @@ class SliTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(cardRadius),
           side: BorderSide(
-            color: preset.primary.withValues(alpha: 0.22),
+            color: isAmoled
+                ? preset.primary.withValues(alpha: 0.35)
+                : preset.primary.withValues(alpha: 0.22),
             width: 1,
           ),
         ),
@@ -839,9 +863,22 @@ class SliTheme {
       ),
       popupMenuTheme: PopupMenuThemeData(
         color: palette.elevated,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(cardRadius),
+          side: BorderSide(color: palette.border, width: 1),
+        ),
         textStyle: TextStyle(
           fontFamily: SliTokens.fontFamily,
           color: palette.textPrimary,
+        ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: palette.elevated,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(sheetRadius)),
+          side: BorderSide(color: palette.border, width: 1),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
@@ -923,12 +960,12 @@ class SliTheme {
       checkmarkColor: palette.onAccent,
       side: BorderSide(color: palette.border),
       labelStyle: TextStyle(
-        fontFamily: SliTokens.fontFamily,
+        fontFamily: palette.bodyFontFamily,
         color: palette.textPrimary,
         fontWeight: FontWeight.w600,
       ),
       secondaryLabelStyle: TextStyle(
-        fontFamily: SliTokens.fontFamily,
+        fontFamily: palette.bodyFontFamily,
         color: palette.onAccent,
         fontWeight: FontWeight.w700,
       ),
@@ -940,9 +977,8 @@ class SliTheme {
     final isExpress = style == SliVisualStyle.express;
     final isMinimal = style == SliVisualStyle.minimal;
 
-    final displayFamily = isMinimal
-        ? SliTokens.fontFamily
-        : SliTokens.fontFamilyDisplay;
+    final displayFamily = palette.displayFontFamily;
+    final bodyFamily = palette.bodyFontFamily;
     final displayWeight = isExpress ? FontWeight.w800 : FontWeight.w700;
     final headlineWeight = isExpress ? FontWeight.w800 : FontWeight.w700;
     final titleWeight = isExpress
@@ -976,35 +1012,35 @@ class SliTheme {
         color: palette.textPrimary,
       ),
       titleMedium: TextStyle(
-        fontFamily: SliTokens.fontFamily,
+        fontFamily: bodyFamily,
         fontSize: 15,
         height: 1.35,
         fontWeight: isExpress ? FontWeight.w700 : FontWeight.w600,
         color: palette.textPrimary,
       ),
       bodyLarge: TextStyle(
-        fontFamily: SliTokens.fontFamily,
+        fontFamily: bodyFamily,
         fontSize: 15,
         height: 1.45,
         fontWeight: FontWeight.w400,
         color: palette.textPrimary,
       ),
       bodyMedium: TextStyle(
-        fontFamily: SliTokens.fontFamily,
+        fontFamily: bodyFamily,
         fontSize: 13,
         height: 1.4,
         fontWeight: FontWeight.w400,
         color: palette.textSecondary,
       ),
       labelLarge: TextStyle(
-        fontFamily: SliTokens.fontFamily,
+        fontFamily: bodyFamily,
         fontSize: 14,
         height: 1.3,
         fontWeight: isExpress ? FontWeight.w700 : FontWeight.w600,
         color: palette.textPrimary,
       ),
       labelMedium: TextStyle(
-        fontFamily: SliTokens.fontFamily,
+        fontFamily: bodyFamily,
         fontSize: 12,
         height: 1.3,
         fontWeight: FontWeight.w500,

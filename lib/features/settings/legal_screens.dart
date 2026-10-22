@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/sli_version.dart';
 import '../../core/theme/sli_theme.dart';
@@ -21,18 +20,8 @@ class AboutSliVaultScreen extends StatelessWidget {
           body: 'The app has no account, cloud sync, advertising, or analytics integration. Optional vault locking uses the authentication configured on the device; it does not encrypt the database.',
         ),
         const _DocumentSection(
-          heading: 'Credits & Acknowledgements',
-          body: 'Design inspiration and curated developer resources referenced from InlitX Streak Resources. SLI Vault is an independent project and is not affiliated with or endorsed by InlitX.',
-        ),
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: const Text('InlitX Streak Resources'),
-          subtitle: const Text('https://inlitx.github.io/streak/resources/'),
-          trailing: const Icon(Icons.open_in_new, size: 18),
-          onTap: () async {
-            final uri = Uri.parse('https://inlitx.github.io/streak/resources/');
-            await launchUrl(uri, mode: LaunchMode.externalApplication);
-          },
+          heading: 'Independence & Architecture',
+          body: 'SLI Vault is an independent, local-first application designed for personal knowledge management, bookmarks, and inspiration.',
         ),
         const SizedBox(height: SliTokens.spaceMd),
         ListTile(

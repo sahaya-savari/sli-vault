@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Streak blog</title>
-  <link href="https://inlitx.github.io/streak/blog/feed.xml" rel="self" />
-  <link href="https://inlitx.github.io/streak/blog/" />
-  <id>https://inlitx.github.io/streak/blog/</id>
+  <title>SLI Vault blog</title>
+  <link href="https://sahaya-savari.github.io/sli-vault/blog/feed.xml" rel="self" />
+  <link href="https://sahaya-savari.github.io/sli-vault/blog/" />
+  <id>https://sahaya-savari.github.io/sli-vault/blog/</id>
   <updated>2026-10-09T00:00:00.000Z</updated>
-  <author><name>InlitX</name></author>
+  <author><name>Sahaya Savari</name></author>
   
   <entry>
     <title>Sincroniza el móvil y el PC sin internet</title>
-    <link href="https://inlitx.github.io/streak/es/blog/sync-without-internet/" />
-    <id>https://inlitx.github.io/streak/es/blog/sync-without-internet/</id>
+    <link href="https://sahaya-savari.github.io/sli-vault/es/blog/sync-without-internet/" />
+    <id>https://sahaya-savari.github.io/sli-vault/es/blog/sync-without-internet/</id>
     <updated>2026-10-09T00:00:00.000Z</updated>
-    <summary>Streak nunca toca la red, pero tus hábitos pueden estar en dos dispositivos. Así se hace con Syncthing y tu propio Wi-Fi.</summary>
+    <summary>SLI Vault nunca toca la red, pero tus datos pueden estar en dos dispositivos. Así se hace con Syncthing y tu propio Wi-Fi.</summary>
   </entry>
   
   <entry>
     <title>Sync your phone and PC without the internet</title>
-    <link href="https://inlitx.github.io/streak/blog/sync-without-internet/" />
-    <id>https://inlitx.github.io/streak/blog/sync-without-internet/</id>
+    <link href="https://sahaya-savari.github.io/sli-vault/blog/sync-without-internet/" />
+    <id>https://sahaya-savari.github.io/sli-vault/blog/sync-without-internet/</id>
     <updated>2026-10-09T00:00:00.000Z</updated>
-    <summary>Streak never touches the network, but your habits can still live on two devices. Here is how to do it over your own Wi-Fi with Syncthing.</summary>
+    <summary>SLI Vault never touches the network, but your vault items can still live on two devices. Here is how to do it over your own Wi-Fi with Syncthing.</summary>
   </entry>
   
   <entry>
     <title>Primer post</title>
-    <link href="https://inlitx.github.io/streak/es/blog/first-post/" />
-    <id>https://inlitx.github.io/streak/es/blog/first-post/</id>
+    <link href="https://sahaya-savari.github.io/sli-vault/es/blog/first-post/" />
+    <id>https://sahaya-savari.github.io/sli-vault/es/blog/first-post/</id>
     <updated>2026-10-04T00:00:00.000Z</updated>
     <summary>Para qué es este blog y qué vas a encontrar aquí.</summary>
   </entry>
   
   <entry>
     <title>First post</title>
-    <link href="https://inlitx.github.io/streak/blog/first-post/" />
-    <id>https://inlitx.github.io/streak/blog/first-post/</id>
+    <link href="https://sahaya-savari.github.io/sli-vault/blog/first-post/" />
+    <id>https://sahaya-savari.github.io/sli-vault/blog/first-post/</id>
     <updated>2026-10-04T00:00:00.000Z</updated>
     <summary>What this blog is for, and what you can expect to find here.</summary>
   </entry>

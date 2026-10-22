@@ -85,9 +85,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "SLI Vault - a local-first personal library for links, screenshots and images.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://sahaya-savari.github.io/sli-vault/" },
+      { property: "og:image", content: "https://sahaya-savari.github.io/sli-vault/assets/og.png" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
+      {
+        rel: "canonical",
+        href: "https://sahaya-savari.github.io/sli-vault/",
+      },
       {
         rel: "stylesheet",
         href: appCss,

@@ -80,14 +80,14 @@ The project-owned code and documentation are licensed under [MIT](LICENSE). Bund
   - **Classic:** Timeless library experience with balanced 16dp radii, rich dark contrast, and Anthropic Serif typography.
   - **Minimal:** Crisp 8dp lines, tight padding, and content-first information density.
   - **Express:** Sculpted 24dp squircle curves, pill badges, and refined micro-motion.
-- Theme: Dark, Light, or System
+- Theme: OLED Black (obsidian pure black with defined borders for AMOLED displays), Dark, Light, or System
 - Onboarding with a short welcome clip and still fallbacks
 - Five destinations: Home, Browse, Favorites, Collections, Settings
 - Built-in **Help & User Guide** in Settings for offline tips and gesture walkthroughs
 
 ### Privacy controls
-- Optional lock when backgrounded (device biometric or credential - SQLite is not encrypted)
-- Screenshot capture enabled (`FLAG_SECURE` removed so users can take screenshots normally)
+- Optional lock when backgrounded (device biometric or credential with selectable timeout options: Immediately, 5s, 10s, 30s, 1 minute, 5 minutes; persisted securely)
+- Screen Protection policy: defaults to enabled for privacy and content protection via Android `FLAG_SECURE`, with a user-controlled toggle in Settings via method channel `sli_vault/security` allowing authorized captures without compromising production security defaults.
 
 ---
 

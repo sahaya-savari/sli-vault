@@ -4,31 +4,35 @@
 
 - Version `1.0.1+2010` (`versionCode: 2010`, arm64: `4010`). Application ID remains `com.sahayasavari.slivault`.
 - Monotonically increasing `versionCode: 2010` (arm64 `4010`) guarantees seamless upgrade path on Android devices over previous `4009` and `4008` builds.
+- **OLED Black, Dark & Light Appearance Modes**:
+  - Centralized palette tokens for OLED Black (`amoled`): pure obsidian (`#000000`) background, subtle elevated cards (`#0A0A0E` / `#14151B`), and crisp borders (`#2E323D` / alpha 0.35).
+  - Ensured no cards, text, icons, buttons, menus, or bottom sheets disappear into pure black.
+  - Consistent across Classic, Minimal, and Express design systems.
+- **Biometric Authentication Timeout Choices**:
+  - Restored full timeout selection options: Immediately (0s), 5s, 10s, 30s, 1 minute (60s), 5 minutes (300s).
+  - Implemented with Flutter 3.32+ compliant `RadioGroup<int>` under Preferences with persistent storage across app restarts.
+- **Screen Protection Policy (`FLAG_SECURE`)**:
+  - Implemented dynamic screen protection wired to `sli_vault/security` MethodChannel in `MainActivity.kt`.
+  - Defaults to enabled (`FLAG_SECURE` active) to protect sensitive bookmarks, collections, and screenshots.
+  - Authorized developer/QA toggle allows capture during testing without weakening production defaults.
+- **Companion Website Personalization & React Modernization**:
+  - Header cleanup: removed unnecessary Blog and Resources navigation items; retained Brand, Download (`#download`), Support (`#support`), GitHub link, and language switcher.
+  - Star count badge cleanup: removed dynamic unauthenticated GitHub API star counter that caused stale `0` or broken indicators.
+  - Technical SEO & URL correctness: added canonical `<link rel="canonical" href="https://sahaya-savari.github.io/sli-vault/" />` and OpenGraph metadata; eliminated redundant `index.html` suffixes in all links.
+  - Bilingual coverage: full English (`EN`) and Tamil (`TA`) translations across hero, features, download, privacy, shelf captions, support, and footer.
+  - Reusable modular React 19 UI components in `website/src/components/`: `SiteHeader`, `MobileNavigation`, `DownloadSection`, `FeatureSection`, `ScreenshotGallery` (with accessible zoom lightbox), `SupportSection`, `SiteFooter`.
 - **Three-Style Design System (Classic, Minimal, Express)**:
   - Three genuinely distinct visual identities:
     - **Classic:** Familiar, balanced hierarchy, 16dp rounded cards, standard elevation, Figtree sans-serif.
     - **Minimal:** Compact 12dp cards, hairline outlines, muted monochromatic surfaces, JetBrains Mono metadata.
     - **Express:** 24dp squircle cards, full-pill badges, gradient borders, ambient glow, tactile squish physics on buttons (`SliGradientButton`).
-- **Pin Items Feature**:
-  - Independent Pin state separated from Favorites with amber push-pin badge and distinct AppBar action.
-  - Pinned items stay sorted at the top of the Home and Browse libraries.
-- **Data & Storage Maintenance Hardening**:
-  - Distinct confirmation modals before clearing temporary cache or orphaned images.
-  - Dedicated "Save to Device" and "Share Backup" buttons in export dialog.
-  - High-contrast deletion undo SnackBars with explicit close icons.
-- **Font Licensing Reconciliation**:
-  - Bundled verified SIL Open Font License 1.1 fonts: **Figtree** (7 weights) and **Google Sans Flex**, alongside **JetBrains Mono**.
-- **Screenshot Capture Enabled (`FLAG_SECURE` Removal)**:
-  - Removed window-level screenshot blocking (`FLAG_SECURE`) in `MainActivity.kt`.
-  - Screenshots and screen recordings now capture normally across all tabs and modal sheets.
-  - Device privacy maintained via biometric authentication and app-level idle locking.
-- **Redesigned About Screen**:
-  - Style-adaptive hero branding card with dynamic glow, centralized `SliVersion` metadata, centered responsive developer attribution (`Sahaya Savari`, `@sahaya-savari`), and verified GitHub/Website links.
 - **Automated Verification**:
-  - 117 unit, widget, and contract tests passing (100%).
+  - 122 Flutter unit, widget, and contract tests passing (100%).
   - Clean static analysis (`dart analyze` reports 0 issues).
-  - 21 companion website tests passing.
-  - Physical hardware verification passing on OPPO CPH2569 (Android 15).
+  - 7 companion website component & routing tests passing (100%).
+  - 0 ESLint errors (`bun run lint`).
+  - Production static build verified (`bun run build`).
+  - Physical hardware verification on OPPO CPH2569 (Android 15).
 
 ## 1.0.3 (Historical Local Revision)
 

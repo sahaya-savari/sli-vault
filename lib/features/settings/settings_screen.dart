@@ -23,6 +23,9 @@ import 'legal_screens.dart';
 bool _isDark(BuildContext context) =>
     Theme.of(context).brightness == Brightness.dark;
 
+bool _isAmoled(BuildContext context) =>
+    Theme.of(context).scaffoldBackgroundColor == const Color(0xFF000000);
+
 class SettingsScreen extends StatefulWidget {
   final VaultController controller;
 
@@ -333,13 +336,17 @@ class _ProfileHeader extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  controller.profileName,
-                  style: TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.w800,
-                    color: palette.textPrimary,
-                    letterSpacing: -0.2,
+                Flexible(
+                  child: Text(
+                    controller.profileName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w800,
+                      color: palette.textPrimary,
+                      letterSpacing: -0.2,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 6),
@@ -368,7 +375,19 @@ class _SettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = _isDark(context);
-    final radius = context.sli.cardRadius;
+    final amoled = _isAmoled(context);
+    final palette = context.sli;
+    final radius = palette.cardRadius;
+
+    final cardBg = amoled
+        ? const Color(0xFF0A0A0E)
+        : (dark ? const Color(0xFF161619) : Colors.white);
+
+    final cardBorder = amoled
+        ? palette.border
+        : (dark
+            ? Colors.white.withValues(alpha: 0.08)
+            : Colors.black.withValues(alpha: 0.07));
 
     return Container(
       decoration: BoxDecoration(
@@ -382,13 +401,11 @@ class _SettingsCard extends StatelessWidget {
         ],
       ),
       child: Material(
-        color: dark ? const Color(0xFF161619) : Colors.white,
+        color: cardBg,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radius),
           side: BorderSide(
-            color: dark
-                ? Colors.white.withValues(alpha: 0.08)
-                : Colors.black.withValues(alpha: 0.07),
+            color: cardBorder,
             width: 1,
           ),
         ),
@@ -405,12 +422,16 @@ class _SettingsCard extends StatelessWidget {
 
 Widget _settingsDivider(BuildContext context) {
   final dark = _isDark(context);
+  final amoled = _isAmoled(context);
+  final palette = context.sli;
   return Divider(
     height: 1,
     thickness: 1,
     indent: 62,
     endIndent: 16,
-    color: dark ? const Color(0xFF28282C) : const Color(0xFFE5E5EA),
+    color: amoled
+        ? palette.border
+        : (dark ? const Color(0xFF28282C) : const Color(0xFFE5E5EA)),
   );
 }
 
@@ -423,12 +444,16 @@ class _IconBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.sli;
     final dark = _isDark(context);
+    final amoled = _isAmoled(context);
 
     return Container(
       width: 32,
       height: 32,
       decoration: BoxDecoration(
-        color: dark ? const Color(0xFF242428) : const Color(0xFFEAEAEE),
+        color: amoled
+            ? palette.elevated
+            : (dark ? const Color(0xFF242428) : const Color(0xFFEAEAEE)),
+        border: amoled ? Border.all(color: palette.border, width: 0.8) : null,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Icon(icon, color: palette.textPrimary, size: 17),
@@ -530,7 +555,7 @@ class _NavRow extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// 1. App Style Subpage (Streak Skeleton Cards & Legend)
+// 1. App Style Subpage (Style Skeleton Cards & Legend)
 // ---------------------------------------------------------------------------
 class _AppStyleSubpage extends StatelessWidget {
   final VaultController controller;
@@ -582,11 +607,11 @@ class _AppStyleSubpage extends StatelessWidget {
                 ),
               ),
 
-              // Streak-inspired 3-Style Skeletons
-              _StreakStylePicker(controller: controller, width: width),
+              // Three Distinct Visual Style Skeletons
+              _VisualStylePicker(controller: controller, width: width),
               const SizedBox(height: 32),
 
-              // Streak-inspired App Style Legend
+              // Visual Style Legend
               _AppStyleLegend(controller: controller),
             ],
           );
@@ -596,11 +621,11 @@ class _AppStyleSubpage extends StatelessWidget {
   }
 }
 
-class _StreakStylePicker extends StatelessWidget {
+class _VisualStylePicker extends StatelessWidget {
   final VaultController controller;
   final double width;
 
-  const _StreakStylePicker({required this.controller, required this.width});
+  const _VisualStylePicker({required this.controller, required this.width});
 
   @override
   Widget build(BuildContext context) {
@@ -1152,16 +1177,19 @@ class _PreferencesSubpage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.sli;
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        final palette = context.sli;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Preferences'),
-        leading: const BackButton(),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
-        children: [
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Preferences'),
+            leading: const BackButton(),
+          ),
+          body: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
+            children: [
           // Startup Destination
           _SettingsSectionCard(
             title: 'Default Startup Screen',
@@ -1388,10 +1416,114 @@ class _PreferencesSubpage extends StatelessWidget {
                 value: controller.lockEnabled,
                 onChanged: (val) => controller.setLockEnabled(val),
               ),
+              if (controller.lockEnabled) ...[
+                _settingsDivider(context),
+                _LockTimeoutTile(controller: controller),
+              ],
             ],
           ),
         ],
       ),
+    );
+      },
+    );
+  }
+}
+
+class _LockTimeoutTile extends StatelessWidget {
+  final VaultController controller;
+
+  const _LockTimeoutTile({required this.controller});
+
+  static const List<(int, String)> _timeoutOptions = [
+    (0, 'Immediately'),
+    (5, '5 seconds'),
+    (10, '10 seconds'),
+    (30, '30 seconds'),
+    (60, '1 minute'),
+    (300, '5 minutes'),
+  ];
+
+  static String _labelFor(int seconds) {
+    for (final opt in _timeoutOptions) {
+      if (opt.$1 == seconds) return opt.$2;
+    }
+    return '$seconds seconds';
+  }
+
+  Future<void> _chooseTimeout(BuildContext context) async {
+    final chosen = await showDialog<int>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Lock Timeout'),
+        content: SingleChildScrollView(
+          child: RadioGroup<int>(
+            groupValue: controller.lockTimeoutSeconds,
+            onChanged: (val) => Navigator.of(ctx).pop(val),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: _timeoutOptions
+                  .map(
+                    (opt) => RadioListTile<int>(
+                      key: ValueKey('lock-timeout-option-${opt.$1}'),
+                      title: Text(opt.$2),
+                      value: opt.$1,
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+
+    if (chosen != null && context.mounted) {
+      await controller.setLockTimeoutSeconds(chosen);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.sli;
+
+    return ListTile(
+      key: const ValueKey('lock-timeout-tile'),
+      leading: const Icon(Icons.timer_outlined, size: 22),
+      title: const Text(
+        'Lock Timeout',
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+      ),
+      subtitle: Text(
+        'Require authentication after being in the background.',
+        style: TextStyle(color: palette.textSecondary, fontSize: 13),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            _labelFor(controller.lockTimeoutSeconds),
+            key: const ValueKey('lock-timeout-value-text'),
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: palette.accentText,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Icon(
+            Icons.chevron_right_rounded,
+            size: 20,
+            color: palette.textSecondary.withValues(alpha: 0.7),
+          ),
+        ],
+      ),
+      onTap: () => _chooseTimeout(context),
     );
   }
 }
@@ -2408,15 +2540,23 @@ class _SettingsSectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.sli;
     final dark = _isDark(context);
+    final amoled = _isAmoled(context);
+
+    final cardBg = amoled
+        ? const Color(0xFF0A0A0E)
+        : (dark ? const Color(0xFF161619) : Colors.white);
+    final cardBorder = amoled
+        ? palette.border
+        : (dark
+            ? Colors.white.withValues(alpha: 0.08)
+            : Colors.black.withValues(alpha: 0.07));
 
     return Material(
-      color: dark ? const Color(0xFF161619) : Colors.white,
+      color: cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(context.sli.cardRadius),
         side: BorderSide(
-          color: dark
-              ? Colors.white.withValues(alpha: 0.08)
-              : Colors.black.withValues(alpha: 0.07),
+          color: cardBorder,
           width: 1,
         ),
       ),
@@ -2526,6 +2666,7 @@ class _ThemeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.sli;
     final dark = _isDark(context);
+    final amoled = _isAmoled(context);
     final accent = palette.primaryAccent;
     return Material(
       color: Colors.transparent,
@@ -2538,14 +2679,18 @@ class _ThemeButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: selected
                 ? accent.withValues(alpha: 0.16)
-                : (dark ? const Color(0xFF222226) : const Color(0xFFF0F0F4)),
+                : (amoled
+                    ? palette.elevated
+                    : (dark ? const Color(0xFF222226) : const Color(0xFFF0F0F4))),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: selected
                   ? accent
-                  : (dark
-                        ? Colors.white.withValues(alpha: 0.08)
-                        : Colors.black.withValues(alpha: 0.08)),
+                  : (amoled
+                      ? palette.border
+                      : (dark
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : Colors.black.withValues(alpha: 0.08))),
               width: selected ? 1.8 : 1.0,
             ),
           ),
@@ -2591,6 +2736,7 @@ class _AccentChoiceRow extends StatelessWidget {
     final active = controller.accentPreset;
     final presets = SliAccentPreset.presets;
     final dark = _isDark(context);
+    final amoled = _isAmoled(context);
     final palette = context.sli;
 
     return LayoutBuilder(
@@ -2616,16 +2762,20 @@ class _AccentChoiceRow extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? preset.primary.withValues(alpha: 0.16)
-                          : (dark
-                                ? const Color(0xFF222226)
-                                : const Color(0xFFF0F0F4)),
+                          : (amoled
+                              ? palette.elevated
+                              : (dark
+                                  ? const Color(0xFF222226)
+                                  : const Color(0xFFF0F0F4))),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected
                             ? preset.primary
-                            : (dark
-                                  ? Colors.white.withValues(alpha: 0.08)
-                                  : Colors.black.withValues(alpha: 0.08)),
+                            : (amoled
+                                ? palette.border
+                                : (dark
+                                    ? Colors.white.withValues(alpha: 0.08)
+                                    : Colors.black.withValues(alpha: 0.08))),
                         width: isSelected ? 1.8 : 1.0,
                       ),
                     ),

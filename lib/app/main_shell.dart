@@ -400,7 +400,7 @@ class _BottomNavBar extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: isDark
-              ? SliTokens.charcoal.withValues(alpha: 0.92)
+              ? palette.charcoal.withValues(alpha: 0.92)
               : Colors.white.withValues(alpha: 0.90),
           border: Border(
             top: BorderSide(

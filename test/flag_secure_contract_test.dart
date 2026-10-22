@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-/// Source-level contract: production Android builds must permit screenshots normally.
-/// FLAG_SECURE is explicitly cleared and not added to window flags.
+/// Source-level contract: Android builds provide configurable screen protection
+/// via FLAG_SECURE connected to the sli_vault/security MethodChannel.
 void main() {
-  test('MainActivity removes screenshot-blocking FLAG_SECURE', () {
+  test('MainActivity provides dynamic, user-controlled FLAG_SECURE protection', () {
     final file = File(
       'android/app/src/main/kotlin/com/sahayasavari/slivault/MainActivity.kt',
     );
@@ -18,12 +18,14 @@ void main() {
       ),
       isTrue,
     );
-    // Must NOT add FLAG_SECURE
     expect(
       source.contains(
         'window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)',
       ),
-      isFalse,
+      isTrue,
     );
+    expect(source.contains('sli_vault/security'), isTrue);
+    expect(source.contains('setScreenProtection'), isTrue);
+    expect(source.contains('isScreenProtectionEnabled'), isTrue);
   });
 }
