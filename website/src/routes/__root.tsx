@@ -74,20 +74,46 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "SLI Vault" },
+      { title: "SLI Vault · Your local-first personal library" },
       {
         name: "description",
-        content: "SLI Vault - a local-first personal library for links, screenshots and images.",
+        content:
+          "SLI Vault is a local-first personal library for Android, Windows, and Linux. Save links, images and screenshots offline with instant search. 100% on-device SQLite, zero trackers, no accounts.",
       },
-      { property: "og:title", content: "SLI Vault" },
+      { property: "og:site_name", content: "SLI Vault" },
+      { property: "og:title", content: "SLI Vault · Your local-first personal library" },
       {
         property: "og:description",
-        content: "SLI Vault - a local-first personal library for links, screenshots and images.",
+        content:
+          "Everything worth keeping, in one local vault. Save links, images, and screenshots with 100% on-device SQLite storage. Free and open-source for Android, Windows, and Linux.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://sahaya-savari.github.io/sli-vault/" },
       { property: "og:image", content: "https://sahaya-savari.github.io/sli-vault/assets/og.png" },
+      {
+        property: "og:image:secure_url",
+        content: "https://sahaya-savari.github.io/sli-vault/assets/og.png",
+      },
+      { property: "og:image:type", content: "image/png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content: "SLI Vault - Local-first personal library for Android, Windows, and Linux",
+      },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:url", content: "https://sahaya-savari.github.io/sli-vault/" },
+      { name: "twitter:title", content: "SLI Vault · Your local-first personal library" },
+      {
+        name: "twitter:description",
+        content:
+          "Everything worth keeping, in one local vault. Save links, images, and screenshots with 100% on-device SQLite storage. No accounts, zero tracking.",
+      },
+      {
+        name: "twitter:image",
+        content: "https://sahaya-savari.github.io/sli-vault/assets/og.png",
+      },
+      { name: "twitter:image:alt", content: "SLI Vault - Local-first personal library" },
     ],
     links: [
       {
