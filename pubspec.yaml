@@ -23,7 +23,6 @@ dependencies:
   archive: ^4.0.4
   crypto: ^3.0.7
   local_auth: ^2.3.0
-  video_player: ^2.14.1
   sqflite_common_ffi: ^2.3.5
 
 dev_dependencies:
@@ -41,7 +40,6 @@ flutter:
     - assets/illustrations/loading/
     - assets/illustrations/onboarding/
     - assets/illustrations/plates/
-    - assets/artworks/
     - assets/tokens/
     - assets/icons/navigation/
     - assets/icons/content/

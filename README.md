@@ -237,10 +237,10 @@ Latest Stable: **[v1.0.1](https://github.com/sahaya-savari/sli-vault/releases/ta
 
 | Package | Target Architecture | Direct Download | SHA-256 Checksum |
 | :--- | :--- | :---: | :---: |
-| **`arm64-v8a` (Recommended)** | Most modern Android phones (Android 8.0+) | [Download APK (37.0 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-arm64-v8a.apk) | `9AE4CC2B5BED9D5BD5B289BD2B99C4C09C9B356C4F08167F9FD5EB1CFC6CE1A9` |
-| **Universal** | All Android devices (arm64, arm32, x86) | [Download APK (77.3 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-universal.apk) | `57CB1E9844EAEF721F79E6D5511ED49F82EAE161C5561CFC5380D56BA2EF6A6C` |
-| **`armeabi-v7a`** | Older 32-bit Android phones | [Download APK (34.8 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-armeabi-v7a.apk) | `3D62EA9A74141BB2DEFE8168492B3F2A115DAAA54D5A4607294D6D3CE6940C91` |
-| **`x86_64`** | Emulators and ChromeOS tablets | [Download APK (38.4 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-x86_64.apk) | `07AD5589692332BAD13410EDB172E8873457C280C49A9A776D3720043F1A5B1D` |
+| **`arm64-v8a` (Recommended)** | Most modern Android phones (Android 8.0+) | [Download APK (27.9 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-arm64-v8a.apk) | `5F248A1B94C65B7BE55ACEEA02A902EB56BEDD29487DCF20522DAA6324517489` |
+| **Universal** | All Android devices (arm64, arm32, x86) | [Download APK (67.9 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-universal.apk) | `579F7E9FFC39E7F21116A88FE2FC13F908F0B0861034F9493086685CAD2A96DE` |
+| **`armeabi-v7a`** | Older 32-bit Android phones | [Download APK (25.8 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-armeabi-v7a.apk) | `FB3F870BA957577C359F97443E296BF67ABDF092CCDB112651ECBC565B356369` |
+| **`x86_64`** | Emulators and ChromeOS tablets | [Download APK (29.4 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-x86_64.apk) | `78BB4EB2A0AE0F8CC894D1934151527F7BF72211C4E8C452D4DCF68A342440F4` |
 
 🌐 **Official Companion Website & Web Viewer:** [https://sahaya-savari.github.io/sli-vault/](https://sahaya-savari.github.io/sli-vault/)
 

@@ -107,8 +107,6 @@ class SliAssets {
       'assets/illustrations/plates/plate-settings.webp';
 
   // Welcome / onboarding media
-  static const String welcomeVideo =
-      'assets/illustrations/onboarding/welcome-cabin-rain.mp4';
   static const String welcomeFestival =
       'assets/illustrations/onboarding/welcome-festival.webp';
   static const String welcomeRainPaddies =

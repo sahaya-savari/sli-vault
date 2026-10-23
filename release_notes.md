@@ -22,17 +22,17 @@ SLI Vault is a calm, privacy-first, local-first personal library for links, scre
 ### Architecture Download Table
 | Package | Architecture | Size | Recommendation |
 | :--- | :--- | :---: | :--- |
-| **`sli-vault-v1.0.1-arm64-v8a.apk`** | **ARM64-v8a** | **37.0 MB** | **Recommended for 99% of modern Android phones** |
-| `sli-vault-v1.0.1-universal.apk` | Universal | 77.3 MB | All devices; safe choice if unsure |
-| `sli-vault-v1.0.1-armeabi-v7a.apk` | ARM32 (v7a) | 34.8 MB | Older 32-bit Android devices |
-| `sli-vault-v1.0.1-x86_64.apk` | x86_64 | 38.4 MB | Android emulators & ChromeOS |
-| `sli-vault-v1.0.1.aab` | App Bundle | 77.2 MB | Google Play / bundle installation |
+| **`sli-vault-v1.0.1-arm64-v8a.apk`** | **ARM64-v8a** | **27.9 MB** | **Recommended for 99% of modern Android phones** |
+| `sli-vault-v1.0.1-universal.apk` | Universal | 67.9 MB | All devices; safe choice if unsure |
+| `sli-vault-v1.0.1-armeabi-v7a.apk` | ARM32 (v7a) | 25.8 MB | Older 32-bit Android devices |
+| `sli-vault-v1.0.1-x86_64.apk` | x86_64 | 29.4 MB | Android emulators & ChromeOS |
+| `sli-vault-v1.0.1.aab` | App Bundle | 66.9 MB | Google Play / bundle installation |
 
 ### SHA-256 Checksums
 ```
-9AE4CC2B5BED9D5BD5B289BD2B99C4C09C9B356C4F08167F9FD5EB1CFC6CE1A9  sli-vault-v1.0.1-arm64-v8a.apk
-57CB1E9844EAEF721F79E6D5511ED49F82EAE161C5561CFC5380D56BA2EF6A6C  sli-vault-v1.0.1-universal.apk
-3D62EA9A74141BB2DEFE8168492B3F2A115DAAA54D5A4607294D6D3CE6940C91  sli-vault-v1.0.1-armeabi-v7a.apk
-07AD5589692332BAD13410EDB172E8873457C280C49A9A776D3720043F1A5B1D  sli-vault-v1.0.1-x86_64.apk
-53447EF559EA626C0FB1DE776A9B7BA4C01E625E0777B410ABA59540F2BBDC4F  sli-vault-v1.0.1.aab
+5F248A1B94C65B7BE55ACEEA02A902EB56BEDD29487DCF20522DAA6324517489  sli-vault-v1.0.1-arm64-v8a.apk
+579F7E9FFC39E7F21116A88FE2FC13F908F0B0861034F9493086685CAD2A96DE  sli-vault-v1.0.1-universal.apk
+FB3F870BA957577C359F97443E296BF67ABDF092CCDB112651ECBC565B356369  sli-vault-v1.0.1-armeabi-v7a.apk
+78BB4EB2A0AE0F8CC894D1934151527F7BF72211C4E8C452D4DCF68A342440F4  sli-vault-v1.0.1-x86_64.apk
+D0A4CAA9B8048DC14622FE4309E013C3996E53946795EF6738103324B787579E  sli-vault-v1.0.1.aab
 ```

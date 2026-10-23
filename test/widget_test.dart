@@ -789,10 +789,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    test('welcome stills and short cabin_rain video assets exist on disk', () {
+    test('welcome stills and branding assets exist on disk', () {
       for (final asset in [
         ...SliAssets.welcomeStills,
-        SliAssets.welcomeVideo,
         ...SliLoadingScreen.backgrounds,
         SliAssets.symbol,
       ]) {

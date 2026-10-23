@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../core/assets/sli_assets.dart';
 import '../../core/theme/sli_theme.dart';
@@ -16,81 +13,17 @@ class OnboardingScreen extends StatefulWidget {
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen>
-    with WidgetsBindingObserver {
+class _OnboardingScreenState extends State<OnboardingScreen> {
   late final PageController _pageController;
   int _currentPage = 0;
   DateTime _lastTapTime = DateTime.fromMillisecondsSinceEpoch(0);
-
-  VideoPlayerController? _video;
-  bool _videoReady = false;
-  bool _videoFailed = false;
   int _stillIndex = 0;
-
-  static bool get _isTestBinding => WidgetsBinding.instance.runtimeType
-      .toString()
-      .contains('TestWidgetsFlutterBinding');
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
-    WidgetsBinding.instance.addObserver(this);
     _stillIndex = DateTime.now().day % SliAssets.welcomeStills.length;
-    // Host widget tests have no video plugin surface - stills-only there.
-    if (_isTestBinding) {
-      _videoFailed = true;
-    } else {
-      _initVideo();
-    }
-  }
-
-  Future<void> _initVideo() async {
-    final controller = VideoPlayerController.asset(SliAssets.welcomeVideo);
-    try {
-      await controller.initialize().timeout(const Duration(seconds: 4));
-      await controller.setLooping(true);
-      await controller.setVolume(0);
-      if (!mounted) {
-        await controller.dispose();
-        return;
-      }
-      setState(() {
-        _video = controller;
-        _videoReady = true;
-        _videoFailed = false;
-      });
-      // Play only if user is still on page 0
-      if (_currentPage == 0) {
-        await controller.play();
-      }
-    } catch (_) {
-      await controller.dispose();
-      if (mounted) {
-        setState(() {
-          _video = null;
-          _videoReady = false;
-          _videoFailed = true;
-        });
-      }
-    }
-  }
-
-  Future<void> _pauseVideo() async {
-    final video = _video;
-    if (video != null && video.value.isInitialized && video.value.isPlaying) {
-      await video.pause();
-    }
-  }
-
-  Future<void> _resumeVideo() async {
-    final video = _video;
-    if (video != null &&
-        video.value.isInitialized &&
-        !video.value.isPlaying &&
-        mounted) {
-      await video.play();
-    }
   }
 
   void _onPageChanged(int index) {
@@ -98,12 +31,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     setState(() {
       _currentPage = index;
     });
-    // Video only runs on Page 1 (index 0)
-    if (index == 0) {
-      _resumeVideo();
-    } else {
-      _pauseVideo();
-    }
   }
 
   void _onPrimaryPressed(int totalPages) {
@@ -139,27 +66,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.inactive:
-      case AppLifecycleState.paused:
-      case AppLifecycleState.hidden:
-      case AppLifecycleState.detached:
-        _pauseVideo();
-      case AppLifecycleState.resumed:
-        if (_currentPage == 0) {
-          _resumeVideo();
-        }
-    }
-  }
-
-  @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _pageController.dispose();
-    final video = _video;
-    _video = null;
-    video?.dispose();
     super.dispose();
   }
 
@@ -171,68 +79,79 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     final pages = [
       _OnboardingPageData(
         title: 'Your personal vault for everything worth keeping.',
-        description: 'Save useful links, screenshots, and images in one calm, searchable workspace, without accounts or cloud tracking.',
+        description:
+            'Save useful links, screenshots, and images in one calm, searchable workspace, without accounts or cloud tracking.',
         stillAsset: SliAssets.welcomeStills[_stillIndex],
-        isVideoPage: true,
         featureTiles: const [
           _FeatureTileData(
             iconAsset: SliAssets.contentLink,
             title: 'Links, Notes & Images',
-            subtitle: 'Capture URLs, write offline Markdown notes & snippets, or import images directly into local storage.',
+            subtitle:
+                'Capture URLs, write offline Markdown notes & snippets, or import images directly into local storage.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.utilPrivacy,
             title: 'Local-First & Zero Tracking',
-            subtitle: 'No accounts, no cloud sync, and no analytics SDKs. Your library stays on this device.',
+            subtitle:
+                'No accounts, no cloud sync, and no analytics SDKs. Your library stays on this device.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.utilExport,
             title: 'Honest Storage & Backup',
-            subtitle: 'Local storage is not hardware encryption. Use Export in Settings anytime to back up your items, notes and original images.',
+            subtitle:
+                'Local storage is not hardware encryption. Use Export in Settings anytime to back up your items, notes and original images.',
           ),
         ],
       ),
       const _OnboardingPageData(
         title: 'Links, images, and moments, all in one place.',
-        description: 'Keep useful websites, screenshots, images, and video inspiration organized in your personal library.',
+        description:
+            'Keep useful websites, screenshots, images, and video inspiration organized in your personal library.',
         stillAsset: SliAssets.welcomeFestival,
         featureTiles: [
           _FeatureTileData(
             iconAsset: SliAssets.contentLink,
             title: 'Websites & Moments',
-            subtitle: 'Save article links, research, and favorite web tools with rich domain intelligence.',
+            subtitle:
+                'Save article links, research, and favorite web tools with rich domain intelligence.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.contentImage,
             title: 'Screenshots & Images',
-            subtitle: 'Import photos, design inspiration, and screenshots with native palette extraction.',
+            subtitle:
+                'Import photos, design inspiration, and screenshots with native palette extraction.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.contentLayers,
             title: 'Markdown Notes & Snippets',
-            subtitle: 'Keep code snippets and markdown checklists with JetBrains Mono syntax highlights.',
+            subtitle:
+                'Keep code snippets and markdown checklists with JetBrains Mono syntax highlights.',
           ),
         ],
       ),
       const _OnboardingPageData(
         title: 'Everything saved. Nothing lost in the scroll.',
-        description: 'Search your library, organize collections, and favorite the things you want to revisit.',
+        description:
+            'Search your library, organize collections, and favorite the things you want to revisit.',
         stillAsset: SliAssets.welcomeRainPaddies,
         featureTiles: [
           _FeatureTileData(
             iconAsset: SliAssets.navBrowse,
             title: 'Instant Search',
-            subtitle: 'Narrow your vault by title, domain, URL, or personal notes in milliseconds.',
+            subtitle:
+                'Narrow your vault by title, domain, URL, or personal notes in milliseconds.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.contentCollection,
             title: 'Organized Collections',
-            subtitle: 'Group ideas and related items into custom folders so nothing gets scattered.',
+            subtitle:
+                'Group ideas and related items into custom folders so nothing gets scattered.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.navFavorites,
             title: 'Quick Favorites',
-            subtitle: 'Star your top references for immediate one-tap retrieval anytime.',
+            subtitle:
+                'Star your top references for immediate one-tap retrieval anytime.',
           ),
         ],
       ),
@@ -256,10 +175,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 children: [
                   _WelcomeMedia(
                     stillAsset: page.stillAsset,
-                    video: page.isVideoPage ? _video : null,
-                    videoReady: page.isVideoPage && _videoReady,
-                    videoFailed: page.isVideoPage && _videoFailed,
-                    isVideoPage: page.isVideoPage,
                   ),
                   const _CinematicScrim(),
                   SafeArea(
@@ -495,14 +410,12 @@ class _OnboardingPageData {
   final String title;
   final String description;
   final String stillAsset;
-  final bool isVideoPage;
   final List<_FeatureTileData> featureTiles;
 
   const _OnboardingPageData({
     required this.title,
     required this.description,
     required this.stillAsset,
-    this.isVideoPage = false,
     required this.featureTiles,
   });
 }
@@ -583,81 +496,34 @@ class _WelcomeTopBar extends StatelessWidget {
 }
 
 class _WelcomeMedia extends StatelessWidget {
-  final VideoPlayerController? video;
-  final bool videoReady;
-  final bool videoFailed;
   final String stillAsset;
-  final bool isVideoPage;
 
   const _WelcomeMedia({
     required this.stillAsset,
-    this.video,
-    this.videoReady = false,
-    this.videoFailed = false,
-    this.isVideoPage = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final reduceMotion =
-        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    final useVideo =
-        isVideoPage &&
-        !reduceMotion &&
-        videoReady &&
-        video != null &&
-        !videoFailed;
-
     return Semantics(
       label: 'Welcome artwork for SLI Vault',
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            stillAsset,
-            fit: BoxFit.cover,
-            alignment: Alignment.center,
-            filterQuality: FilterQuality.medium,
-            gaplessPlayback: true,
-            semanticLabel: 'Welcome still for SLI Vault',
-            errorBuilder: (_, _, _) => ColoredBox(
-              color: context.sli.elevated,
-              child: Center(
-                child: SliIllustration(
-                  SliAssets.illOnboarding,
-                  width: 160,
-                  height: 160,
-                  semanticLabel: 'SLI Vault welcome illustration',
-                ),
-              ),
+      child: Image.asset(
+        stillAsset,
+        fit: BoxFit.cover,
+        alignment: Alignment.center,
+        filterQuality: FilterQuality.medium,
+        gaplessPlayback: true,
+        semanticLabel: 'Welcome still for SLI Vault',
+        errorBuilder: (_, _, _) => ColoredBox(
+          color: context.sli.elevated,
+          child: Center(
+            child: SliIllustration(
+              SliAssets.illOnboarding,
+              width: 160,
+              height: 160,
+              semanticLabel: 'SLI Vault welcome illustration',
             ),
           ),
-          if (useVideo)
-            FittedBox(
-              fit: BoxFit.cover,
-              clipBehavior: Clip.hardEdge,
-              child: SizedBox(
-                width: video!.value.size.width,
-                height: video!.value.size.height,
-                child: VideoPlayer(video!),
-              ),
-            ),
-          if (isVideoPage && !videoReady && !videoFailed && !reduceMotion)
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(SliTokens.spaceMd),
-                child: SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: context.sli.primaryAccent,
-                  ),
-                ),
-              ),
-            ),
-        ],
+        ),
       ),
     );
   }
