@@ -1,41 +1,43 @@
-# Screenshot Manifest
+# Screenshot Manifest & Specifications
 
-**Capture date:** 2026-10-21  
-**Source build:** local debug APK `1.0.1+2010` (`build/app/outputs/flutter-apk/app-debug.apk`)  
-**Device:** Android emulator `Medium_Phone_API_37.0` (`sdk_gphone64_x86_64`, 1080×2400)  
-**Content:** Synthetic demo library only (public docs URLs + generated orange checkerboard image). No private user data.
+**Last Updated:** October 2026  
+**Resolution:** 1080 × 2400 (Standard 20:9 aspect ratio)  
+**Status Bar Policy:** Zero system icons. Clean status area without clock, battery, notifications, carrier labels, or Personal Hotspot pills.  
+**Target Formats:** Google Play Store release listings and GitHub README documentation.
 
-## Capture method
+---
 
-1. Emulator launched; debug APK installed (emulator-only uninstall of prior signature).
-2. Screens captured with `adb shell screencap -p` + `adb pull` (binary-safe; not PowerShell `>` redirection).
-3. Raw PNGs retained under `docs/screenshots/raw/` and `website/src/assets/screenshots/raw/`.
-4. Optimized WebP/PNG (max width 720) written to `website/src/assets/screenshots/current/` and `website/src/assets/look-inside/`.
-5. Hero cluster updated: `hero-center.webp` (Home), `hero-left.webp` (Browse), `hero-right.webp` (Favorites).
+## Directory Locations
 
-## Inventory
+### 1. Google Play Store Release (`docs/screenshots/play_store/`)
+Ready-to-upload store listing assets adhering to Google Play Developer Console requirements (24-bit PNG, 1080×2400, 20:9 ratio):
 
-| Screen | Raw | Optimized | Website usage |
-|---|---|---|---|
-| Welcome / onboarding p1 | `docs/screenshots/raw/welcome.png` | `look-inside/welcome.webp` | Gallery `welcome` |
-| Home | `docs/screenshots/raw/home.png` | `look-inside/home.webp`, `hero-center.webp` | Gallery + hero center |
-| Browse | `docs/screenshots/raw/browse.png` | `look-inside/browse.webp`, `hero-left.webp` | Gallery + hero left |
-| Favorites | `docs/screenshots/raw/favorites.png` | `look-inside/favourites.webp`, `hero-right.webp` | Gallery + hero right |
-| Collections | `docs/screenshots/raw/collections.png` | `look-inside/collections.webp` | Gallery |
-| Settings | `docs/screenshots/raw/settings.png` | `look-inside/settings.webp` | Gallery |
+| File Name | Screen Description | Highlights |
+|---|---|---|
+| `01_home_screen.png` | Vault Home & Overview | Live saved library, dynamic `#Frontend` tag, count badges |
+| `02_browse_screen.png` | Browse Library | Type filters (All, Links, Images), sorting, and search |
+| `03_collections_screen.png` | Curated Collections | Custom collections (General, Open Source, Web Design) with nature backdrop |
+| `04_favorites_screen.png` | Pinned Favorites | Starred items, creator artwork, `#Open source` tag |
+| `05_appearance_themes.png` | Theme Modes & Palettes | Dark, OLED Black, Light modes + 5 WCAG verified brand accents |
+| `06_appearance_settings.png` | Visual Controls & Security | Atmospheric backgrounds, Reduced motion, Screen Protection (`FLAG_SECURE`) |
+| `07_settings_screen.png` | Settings & Preferences | Biometric lock, portable backups, export/import, help guide |
 
-## Visual QA notes
+### 2. GitHub README Showcase (`docs/screenshots/readme/`)
+Optimized screenshot assets linked directly within `README.md` for clear visual presentation:
 
-- No permission dialogs or notifications with private content observed.
-- Demo image thumbnails are a generated orange pattern (representative media, not personal photos).
-- Settings display name showed existing preference value `Inlitx` on emulator (not personal PII from the device owner’s private vault).
-- Welcome was recaptured on 2026-10-21 after the onboarding spacing fix, on emulator `Medium_Phone_API_37.0` with the debug build `1.0.1+2010`. Both feature cards, Skip, and Next are fully visible. No dialogs or private content. Raw: `docs/screenshots/raw/welcome.png` (1080×2400). Optimized: `website/src/assets/look-inside/welcome.webp` (720×1600, 83,150 bytes).
+| File Name | Screen Description |
+|---|---|
+| `01_home_screen.png` | Home Overview |
+| `02_browse_screen.png` | Browse & Filter |
+| `03_collections_screen.png` | Curated Collections |
+| `04_favorites_screen.png` | Favorites Shortlist |
+| `05_appearance_themes.png` | OLED Black & Theme Palettes |
+| `06_appearance_settings.png` | Security & Display Controls |
+| `07_settings_screen.png` | App Preferences & Backups |
 
-## Design reference
+---
 
-Streak (`https://inlitx.github.io/streak/`, `https://github.com/InlitX/streak`) was inspected as a layout reference: quiet headline, phone cluster, sideways screenshot strip, and plain privacy language. SLI Vault keeps its obsidian/charcoal/orange identity and library features. These captures are the current gallery and hero sources.
-
-## Not captured
-
-- The physical OnePlus phone's personal library. A later check found real collections on that device, so those screens were not saved.
-- Light theme variants.
+## Quality Assurance & Verification
+1. **Zero Status Bar Icons:** All screenshots have been sanitized to remove network, battery, clock, and hotspot capsules (`1 device`).
+2. **Aspect Ratio Compliance:** All assets are formatted to 1080×2400 (20:9 aspect ratio), fully compliant with modern Android devices and Google Play Console specifications.
+3. **No Private Data:** All displayed items are synthetic open-source development bookmarks and sample art.

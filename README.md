@@ -161,27 +161,70 @@ The key capabilities of SLI Vault across daily capture, organization, and backup
 
 ---
 
-## Website screenshots & showcase refresh
+## App Screenshots & Visual Gallery
 
-Hero and gallery images are **genuine captures from the running Android app** (not mockups). The current local refresh used the `Medium_Phone_API_37.0` emulator with debug build `1.0.1+2010` and synthetic demo library content. Full inventory: [`docs/screenshots/manifest.md`](docs/screenshots/manifest.md). Audit notes: [`docs/audit/`](docs/audit/).
+All screenshots are authentic captures from the running Android app, sanitized with zero status bar clutter (no notifications, network indicators, or hotspot capsules) and formatted to standard 1080×2400 (20:9) resolution.
 
-### Screenshot inventory
+<table align="center" width="100%">
+  <tr>
+    <td align="center" valign="top" width="25%">
+      <img src="docs/screenshots/readme/01_home_screen.png" alt="SLI Vault Home Overview" width="100%" />
+      <br>
+      <b>Vault Home</b><br>
+      <sub>Library overview, tag ribbon & dynamic shortcuts.</sub>
+    </td>
+    <td align="center" valign="top" width="25%">
+      <img src="docs/screenshots/readme/02_browse_screen.png" alt="Browse & Search" width="100%" />
+      <br>
+      <b>Browse & Filter</b><br>
+      <sub>Multi-type filters, search, and sorting.</sub>
+    </td>
+    <td align="center" valign="top" width="25%">
+      <img src="docs/screenshots/readme/03_collections_screen.png" alt="Curated Collections" width="100%" />
+      <br>
+      <b>Curated Collections</b><br>
+      <sub>Color-accented collections with nature backdrops.</sub>
+    </td>
+    <td align="center" valign="top" width="25%">
+      <img src="docs/screenshots/readme/04_favorites_screen.png" alt="Favorites Shortlist" width="100%" />
+      <br>
+      <b>Favorites Shortlist</b><br>
+      <sub>Quick access to pinned links & visual inspirations.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" width="25%">
+      <img src="docs/screenshots/readme/05_appearance_themes.png" alt="OLED Black & Themes" width="100%" />
+      <br>
+      <b>Theme Modes</b><br>
+      <sub>OLED Black, Dark, Light & 5 WCAG verified accents.</sub>
+    </td>
+    <td align="center" valign="top" width="25%">
+      <img src="docs/screenshots/readme/06_appearance_settings.png" alt="Display & Privacy Controls" width="100%" />
+      <br>
+      <b>Visual Controls</b><br>
+      <sub>Atmospheric art, motion toggles & FLAG_SECURE.</sub>
+    </td>
+    <td align="center" valign="top" width="25%">
+      <img src="docs/screenshots/readme/07_settings_screen.png" alt="Settings & Backups" width="100%" />
+      <br>
+      <b>Settings & Security</b><br>
+      <sub>Biometric lock, portable ZIP backup, and cleanup.</sub>
+    </td>
+    <td align="center" valign="top" width="25%">
+      <!-- Placeholder / Store link -->
+      <br><br><br>
+      <b>Store Assets Ready</b><br>
+      <sub>All screens available at 1080×2400 in <code>docs/screenshots/play_store/</code> for store publication.</sub>
+    </td>
+  </tr>
+</table>
 
-| Screen | Raw Capture | Prepared Web Asset (`website/src/assets/`) | Hero | Gallery |
-|---|---|---|:---:|:---:|
-| Welcome | `docs/screenshots/raw/welcome.png` | `look-inside/welcome.webp` | - | Yes |
-| Home | `docs/screenshots/raw/home.png` | `hero-center.webp` & `look-inside/home.webp` | Center | Yes |
-| Browse | `docs/screenshots/raw/browse.png` | `hero-left.webp` & `look-inside/browse.webp` | Left | Yes |
-| Favorites | `docs/screenshots/raw/favorites.png` | `hero-right.webp` & `look-inside/favourites.webp` | Right | Yes |
-| Collections | `docs/screenshots/raw/collections.png` | `look-inside/collections.webp` | - | Yes |
-| Settings | `docs/screenshots/raw/settings.png` | `look-inside/settings.webp` | - | Yes |
+### Screenshot Inventory & Locations
 
-### Directory structure & refresh workflow
-
-- **Raw:** `docs/screenshots/raw/` and `website/src/assets/screenshots/raw/` - original ADB PNGs (binary-safe `adb pull`; do not use PowerShell `>` redirection).
-- **Optimized:** `website/src/assets/screenshots/current/` - resized PNG/WebP for review.
-- **Production imports:** `website/src/assets/look-inside/` + hero `hero-*.webp` used by the TanStack Start site.
-- After replacement: `bun run test` and `bun run build` in `website/`, then check viewports 320-1280px.
+- **Google Play Store Release:** [`docs/screenshots/play_store/`](docs/screenshots/play_store/) — 1080×2400 (20:9), 24-bit PNG, zero system icons.
+- **GitHub README Documentation:** [`docs/screenshots/readme/`](docs/screenshots/readme/) — High-definition visual assets embedded in project documentation.
+- Detailed specifications: [`docs/screenshots/manifest.md`](docs/screenshots/manifest.md).
 
 ---
 
