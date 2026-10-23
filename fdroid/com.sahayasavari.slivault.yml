@@ -1,0 +1,26 @@
+Categories:
+  - Office
+  - Security
+License: MIT
+AuthorName: Sahaya Savari F
+SourceCode: https://github.com/sahaya-savari/sli-vault
+IssueTracker: https://github.com/sahaya-savari/sli-vault/issues
+WebSite: https://sahaya-savari.github.io/sli-vault/
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.1
+CurrentVersionCode: 2010
+
+Builds:
+  - versionName: 1.0.1
+    versionCode: 2010
+    commit: v1.0.1
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.29.0
+    prebuild:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    build:
+      - $$flutter$$/bin/flutter build apk --release
