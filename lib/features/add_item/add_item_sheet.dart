@@ -1165,22 +1165,25 @@ class _AddTypeButton extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: SliTokens.spaceMd,
+                    horizontal: 8,
                     vertical: SliTokens.spaceSm,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SliIcon(iconAsset, size: 18, color: iconColor),
-                      const SizedBox(width: SliTokens.spaceSm),
+                      const SizedBox(width: 6),
                       Flexible(
-                        child: Text(
-                          label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: foreground,
-                            fontWeight: FontWeight.w700,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            label,
+                            maxLines: 1,
+                            style: TextStyle(
+                              color: foreground,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13.5,
+                            ),
                           ),
                         ),
                       ),

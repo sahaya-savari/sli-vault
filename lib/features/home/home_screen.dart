@@ -246,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? 'Your vault is empty'
                               : 'No ${controller.homeFilter.label.toLowerCase()} yet',
                           subtitle: totalCount == 0
-                              ? 'Save your first link or image. Everything stays stored privately on this device.'
+                              ? 'Save links, offline markdown notes, code snippets, or images. Everything stays stored privately on this device.'
                               : 'Tap Add below to capture a new item in this category.',
                           actionLabel: totalCount == 0
                               ? 'Add First Item'

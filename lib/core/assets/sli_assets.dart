@@ -6,6 +6,7 @@ class SliAssets {
   // Branding
   static const String symbol = 'assets/branding/sli_vault_logo_official.png';
   static const String symbolSvg = 'assets/branding/sli-vault-symbol.svg';
+  static const String authorAvatar = 'assets/branding/author_avatar.png';
 
   /// Light plate + dark mark - readable on dark canvases.
   static const String symbolForDark =

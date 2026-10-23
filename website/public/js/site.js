@@ -399,4 +399,3 @@ if (document.readyState === "loading") {
 } else {
   cleanHashSlug();
 }
-

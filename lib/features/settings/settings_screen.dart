@@ -2502,27 +2502,42 @@ class _AboutSubpageState extends State<_AboutSubpage>
                   Row(
                     children: [
                       Container(
-                        width: 48,
-                        height: 48,
+                        width: 52,
+                        height: 52,
                         decoration: BoxDecoration(
-                          gradient: palette.primaryGradient,
                           shape: BoxShape.circle,
+                          border: Border.all(
+                            color: palette.primaryAccent.withValues(alpha: 0.6),
+                            width: 2,
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: palette.primaryAccent.withValues(alpha: 0.3),
-                              blurRadius: 12,
-                              offset: const Offset(0, 3),
+                              color: palette.primaryAccent.withValues(alpha: 0.25),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
                             ),
                           ],
                         ),
-                        child: Center(
-                          child: Text(
-                            'SS',
-                            style: TextStyle(
-                              color: palette.onAccent,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                              fontFamily: SliTokens.fontFamilyMono,
+                        child: ClipOval(
+                          child: Image.asset(
+                            SliAssets.authorAvatar,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              decoration: BoxDecoration(
+                                gradient: palette.primaryGradient,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'SS',
+                                  style: TextStyle(
+                                    color: palette.onAccent,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w800,
+                                    fontFamily: SliTokens.fontFamilyMono,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),

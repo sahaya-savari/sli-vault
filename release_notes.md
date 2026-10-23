@@ -1,6 +1,6 @@
 ## SLI Vault 1.0.1 - Production Android Release
 
-SLI Vault is a calm, local-first personal vault for links, screenshots, and visual inspiration.
+SLI Vault is a calm, privacy-first, local-first personal library for links, screenshots, offline markdown notes, code snippets, and visual inspiration.
 
 ### Application Metadata
 - **Package ID:** `com.sahayasavari.slivault`
@@ -9,25 +9,30 @@ SLI Vault is a calm, local-first personal vault for links, screenshots, and visu
 - **Signing Certificate:** `CN=Sahaya Savari F, OU=SLI Vault, O=Sahaya Savari F, C=IN`
 
 ### Key Highlights
+- **Offline Markdown Notes & Code Snippets:** JetBrains Mono formatting toolbar (bold, italic, code block, headers, bullet list, quote, link), syntax styling, and local SQLite persistence with zero network dependency.
+- **Interactive Tag Ribbon & Explorer:** Dynamic tag counts (`#tag (count)`) with 1-tap filtering across the entire vault.
+- **Creator & Craftsmanship Identity:** Integrated official creator portrait avatar with gold accent border and graceful fallback to the SLI Vault emblem.
+- **Responsive Mode Switcher:** Unclipped, responsive chips for Save Link, Note / Code, and Add Image on all display resolutions and text scaling factors.
 - **OLED Black, Dark & Light Appearance Modes:** Centralized `SliPalette` tokens for OLED Black (`amoled`) featuring pure obsidian (`#000000`) background, subtle elevated cards (`#0A0A0E`), and crisp border outlines (`#2E323D` / alpha 0.35). Zero UI elements or text disappear into pure black across Classic, Minimal, and Express design systems.
 - **Biometric Authentication Timeout Choices:** Restored full timeout selection (Immediately, 5s, 10s, 30s, 1 minute, 5 minutes) via Flutter 3.32+ compliant `RadioGroup<int>` under Preferences with persistent storage across app restarts.
-- **Dynamic Screen Protection Policy:** Default-on window protection (`FLAG_SECURE`) preserving privacy and copyright for sensitive bookmarks and collections, with a user-controlled toggle in Settings via `sli_vault/security` MethodChannel for authorized captures.
-- **Companion Website Personalization & React Modernization:** Header cleanup (removed Blog/Resources clutter, removed dynamic star count badge), canonical & OpenGraph metadata correction, full English & Tamil (`EN` | `TA`) language coverage across all sections, and modular reusable React 19 UI components (`SiteHeader`, `MobileNavigation`, `DownloadSection`, `FeatureSection`, `ScreenshotGallery`, `SupportSection`, `SiteFooter`).
-- **Three-Style Design Systems:** Full implementation of **Classic** (balanced 16dp radii, Figtree typography), **Minimal** (compact 12dp radii, razor-thin borders, JetBrains Mono metadata), and **Express** (sculpted 24dp radii, vibrant gradients, glowing shadows, tactile squish micro-motion).
-- **Quality & Verification:** 122 automated Flutter tests passing (100%), 0 `dart analyze` issues, 7 website unit & routing tests passing, 0 ESLint errors.
+- **Dynamic Screen Protection Policy:** Default-on window protection (`FLAG_SECURE`) preserving privacy for sensitive bookmarks and notes, with a user-controlled toggle in Settings via `sli_vault/security` MethodChannel.
+- **Curated High-Resolution Artwork & Wallpapers:** 9 authentic atmospheric resources with exact pixel dimensions and aspect ratios (including 5:1 Ultrawide and 9:16 mobile portraits).
+- **Quality & Verification:** 100% automated Flutter tests passing (69 unit & widget tests), 0 `flutter analyze` issues, 7 website vitest tests passing, 0 ESLint errors.
 
 ### Architecture Download Table
-| Package | Architecture | File Size (Bytes) | Size (MiB) | Recommendation |
-| :--- | :--- | :---: | :---: | :--- |
-| **`app-arm64-v8a-release.apk`** | **ARM64-v8a** | **29,106,919** | **27.76 MiB** | **Recommended for 99% of Android phones (2016+)** |
-| `app-release.apk` | Universal | 70,896,822 | 67.61 MiB | All devices; safe choice if unsure |
-| `app-armeabi-v7a-release.apk` | ARM32 (v7a) | 26,810,929 | 25.57 MiB | Older 32-bit Android devices |
-| `app-x86_64-release.apk` | x86_64 | 30,624,184 | 29.21 MiB | Android emulators & ChromeOS |
+| Package | Architecture | Size | Recommendation |
+| :--- | :--- | :---: | :--- |
+| **`sli-vault-v1.0.1-arm64-v8a.apk`** | **ARM64-v8a** | **37.0 MB** | **Recommended for 99% of modern Android phones** |
+| `sli-vault-v1.0.1-universal.apk` | Universal | 77.3 MB | All devices; safe choice if unsure |
+| `sli-vault-v1.0.1-armeabi-v7a.apk` | ARM32 (v7a) | 34.8 MB | Older 32-bit Android devices |
+| `sli-vault-v1.0.1-x86_64.apk` | x86_64 | 38.4 MB | Android emulators & ChromeOS |
+| `sli-vault-v1.0.1.aab` | App Bundle | 77.2 MB | Google Play / bundle installation |
 
 ### SHA-256 Checksums
 ```
-A04D92372897556F9479A6F144C8AB70DDB776D9D3A4036370C751BB998A8B20  app-arm64-v8a-release.apk
-FF9480A7F264C491AD398BF8708674DFD4DFFEA061C69B6032922D606238311D  app-release.apk
-42A4C13EE21723DC9619EAE8210867E0D40B932EC0960819DA1FB629DE015863  app-armeabi-v7a-release.apk
-7B7FC355519566E1F480B4DF9F494A4AF29386B08A78106BF5723117E5329F78  app-x86_64-release.apk
+9AE4CC2B5BED9D5BD5B289BD2B99C4C09C9B356C4F08167F9FD5EB1CFC6CE1A9  sli-vault-v1.0.1-arm64-v8a.apk
+57CB1E9844EAEF721F79E6D5511ED49F82EAE161C5561CFC5380D56BA2EF6A6C  sli-vault-v1.0.1-universal.apk
+3D62EA9A74141BB2DEFE8168492B3F2A115DAAA54D5A4607294D6D3CE6940C91  sli-vault-v1.0.1-armeabi-v7a.apk
+07AD5589692332BAD13410EDB172E8873457C280C49A9A776D3720043F1A5B1D  sli-vault-v1.0.1-x86_64.apk
+53447EF559EA626C0FB1DE776A9B7BA4C01E625E0777B410ABA59540F2BBDC4F  sli-vault-v1.0.1.aab
 ```
