@@ -14,6 +14,8 @@ Ready-to-upload store listing assets adhering to Google Play Developer Console r
 
 | File Name | Screen Description | Highlights |
 |---|---|---|
+| `icon_512x512.png` | Google Play Store Hi-Res Icon | 512×512, 32-bit PNG with alpha |
+| `feature_graphic_1024x500.png` | Google Play Store Feature Graphic | 1024×500, 24-bit PNG, zero alpha, app showcase banner |
 | `01_home_screen.png` | Vault Home & Overview | Live saved library, dynamic `#Frontend` tag, count badges |
 | `02_browse_screen.png` | Browse Library | Type filters (All, Links, Images), sorting, and search |
 | `03_collections_screen.png` | Curated Collections | Custom collections (General, Open Source, Web Design) with nature backdrop |
