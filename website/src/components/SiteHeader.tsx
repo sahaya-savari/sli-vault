@@ -17,6 +17,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
 
   const t = {
     features: currentLocale === "ta" ? "சிறப்பம்சங்கள்" : "Features",
+    demo: currentLocale === "ta" ? "நேரலை டெமோ" : "Live Demo",
     download: currentLocale === "ta" ? "பதிவிறக்கம்" : "Download",
     resources: currentLocale === "ta" ? "வளங்கள்" : "Resources",
     faq: currentLocale === "ta" ? "கேள்விகள்" : "FAQ",
@@ -45,10 +46,11 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
 
           {/* Desktop Navigation */}
           <nav className="nav" aria-label="Primary navigation">
-            <a href="#features">{t.features}</a>
-            <a href="#download">{t.download}</a>
+            <a href={`${basePath}#features`}>{t.features}</a>
+            <a href={`${basePath}demo/`}>{t.demo}</a>
+            <a href={`${basePath}#download`}>{t.download}</a>
             <a href={`${basePath}resources/`}>{t.resources}</a>
-            <a href="#faq">{t.faq}</a>
+            <a href={`${basePath}#faq`}>{t.faq}</a>
             <a className="nav__love" href="#support">
               <svg
                 viewBox="0 0 24 24"
@@ -106,7 +108,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
 
             {/* Mobile menu toggle button */}
             <button
-              className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-violet-500"
+              className="mob-toggle md:hidden inline-flex items-center justify-center w-[38px] h-[38px] min-w-[38px] min-h-[38px] rounded-[9px] text-zinc-300 hover:text-white hover:bg-zinc-800 border border-white/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-orange-500"
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-expanded={mobileMenuOpen}

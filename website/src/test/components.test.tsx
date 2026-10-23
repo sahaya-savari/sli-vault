@@ -7,6 +7,7 @@ import {
   ScreenshotGallery,
   SupportSection,
   FaqSection,
+  AndroidDemoPlayer,
   SiteFooter,
 } from "../components";
 
@@ -86,6 +87,19 @@ describe("SLI Vault Website React Components", () => {
     expect(
       screen.getByText("SLI Vault உண்மையில் 100% ஆஃப்லைன் மற்றும் தனிப்பட்டதா?"),
     ).toBeDefined();
+  });
+
+  it("renders AndroidDemoPlayer in standby mode with device silhouette", () => {
+    const { rerender } = render(<AndroidDemoPlayer currentLocale="en" />);
+
+    expect(screen.getByText("SLI Vault 1.0.1")).toBeDefined();
+    expect(screen.getByText("Original Android APK")).toBeDefined();
+    expect(screen.getByText("Standby (3:00 min session)")).toBeDefined();
+
+    // Verify Tamil localization
+    rerender(<AndroidDemoPlayer currentLocale="ta" />);
+    expect(screen.getByText("தயாராக உள்ளது (3:00 நிமிடம்)")).toBeDefined();
+    expect(screen.getByText("தொடுதல் மற்றும் சைகைகள்")).toBeDefined();
   });
 
   it("renders SiteFooter with MIT License and creator credit", () => {

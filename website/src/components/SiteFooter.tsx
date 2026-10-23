@@ -26,9 +26,10 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ currentLocale, basePath 
         </a>
 
         <nav className="foot__nav" aria-label="Footer navigation">
-          <a href="#features">{isTa ? "சிறப்பம்சங்கள்" : "Features"}</a>
-          <a href="#download">{isTa ? "பதிவிறக்கம்" : "Download"}</a>
-          <a href="#faq">{isTa ? "கேள்விகள்" : "FAQ"}</a>
+          <a href={`${basePath}#features`}>{isTa ? "சிறப்பம்சங்கள்" : "Features"}</a>
+          <a href={`${basePath}demo/`}>{isTa ? "நேரலை டெமோ" : "Live Demo"}</a>
+          <a href={`${basePath}#download`}>{isTa ? "பதிவிறக்கம்" : "Download"}</a>
+          <a href={`${basePath}#faq`}>{isTa ? "கேள்விகள்" : "FAQ"}</a>
           <a href="#support">{isTa ? "ஆதரவு" : "Support"}</a>
           <a
             href="https://github.com/sahaya-savari/sli-vault"
@@ -55,9 +56,19 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ currentLocale, basePath 
             MIT License
           </a>
           {" · "}
-          <span>{isTa ? "உருவாக்கியவர் " : "Created by "}</span>
-          <a href="https://github.com/sahaya-savari" target="_blank" rel="noopener noreferrer">
+          <span>Open Source</span>
+          {" · "}
+          <span>{isTa ? "உருவாக்கியவர் " : "Crafted by "}</span>
+          <a href="https://sahayasavari.dev" target="_blank" rel="noopener noreferrer">
             Sahaya Savari
+          </a>
+          {" · "}
+          <a
+            href="https://github.com/sahaya-savari/sli-vault"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            100% Offline &amp; Free Software
           </a>
         </p>
       </div>

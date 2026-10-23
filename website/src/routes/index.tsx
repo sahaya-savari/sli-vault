@@ -9,6 +9,9 @@ import {
   FaqSection,
   SupportSection,
   SiteFooter,
+  LocalEngineSection,
+  ScrollProgress,
+  SmoothCursor,
 } from "../components";
 
 export const Route = createFileRoute("/")({
@@ -88,6 +91,34 @@ function HomePage() {
     }
   }, []);
 
+  // Populate and animate the orange dot background matrix (#heat) behind hero phones
+  useEffect(() => {
+    const heat = document.getElementById("heat");
+    if (!heat || heat.children.length > 0) return;
+
+    const cells: HTMLElement[] = [];
+    for (let i = 0; i < 30 * 22; i += 1) {
+      const cell = document.createElement("i");
+      heat.appendChild(cell);
+      cells.push(cell);
+    }
+    const paint = (cell: HTMLElement) => {
+      const on = Math.random() > 0.42;
+      const level = 0.22 + Math.random() * 0.5;
+      cell.style.background = on ? `rgba(255,87,34,${level.toFixed(2)})` : "rgba(255,255,255,.05)";
+      cell.style.boxShadow = on && level > 0.6 ? "0 0 10px rgba(255,87,34,.45)" : "none";
+    };
+    cells.forEach(paint);
+
+    const interval = setInterval(() => {
+      for (let i = 0; i < 4; i += 1) {
+        paint(cells[Math.floor(Math.random() * cells.length)]);
+      }
+    }, 700);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const toggleLocale = () => {
     const next: Locale = locale === "ta" ? "en" : "ta";
     setLocale(next);
@@ -105,6 +136,12 @@ function HomePage() {
 
   return (
     <div className="page-home min-h-screen bg-[#09090B] text-[#F4F4F5]">
+      {/* Subtle smooth cursor for desktop pointer tracking */}
+      <SmoothCursor />
+
+      {/* Reading scroll progress bar below the navbar */}
+      <ScrollProgress className="top-[60px]" />
+
       {/* Header with clean navigation & language switcher */}
       <SiteHeader currentLocale={locale} onToggleLocale={toggleLocale} />
 
@@ -112,6 +149,34 @@ function HomePage() {
         {/* Glow backdrop decoration */}
         <div className="glow" aria-hidden="true">
           <div className="veil" />
+          <svg className="spot" viewBox="0 0 3787 2842" fill="none">
+            <g filter="url(#spotblur)">
+              <ellipse
+                cx="1924.71"
+                cy="273.501"
+                rx="1924.71"
+                ry="273.501"
+                transform="matrix(-0.822377 -0.568943 -0.568943 0.822377 3631.88 2291.09)"
+                fill="rgba(214,204,255,.55)"
+                fillOpacity="0.21"
+              />
+            </g>
+            <defs>
+              <filter
+                id="spotblur"
+                x="0.86"
+                y="0.84"
+                width="3785.16"
+                height="2840.26"
+                filterUnits="userSpaceOnUse"
+                colorInterpolationFilters="sRGB"
+              >
+                <feFlood floodOpacity="0" result="bg" />
+                <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
+                <feGaussianBlur stdDeviation="151" result="blur" />
+              </filter>
+            </defs>
+          </svg>
         </div>
 
         {/* Hero Section */}
@@ -243,6 +308,9 @@ function HomePage() {
 
         {/* Features Section */}
         <FeatureSection currentLocale={locale} />
+
+        {/* Local Engine & Privacy Verification (Magic UI Components) */}
+        <LocalEngineSection currentLocale={locale} />
 
         {/* "A Look Inside" Screenshot Gallery */}
         <ScreenshotGallery currentLocale={locale} />

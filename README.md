@@ -20,6 +20,7 @@
 <p align="center">
   <a href="#overview">Overview</a> ·
   <a href="#features">Features</a> ·
+  <a href="https://sahaya-savari.github.io/sli-vault/demo/">Live Demo</a> ·
   <a href="#translating-sli-vault">Translations</a> ·
   <a href="#visual-tour--features">Tour</a> ·
   <a href="#privacy">Privacy</a> ·
@@ -42,8 +43,20 @@ SLI Vault is a unified cross-platform Flutter application for saving links, note
 | **Current Version** | `1.0.1` (`versionCode` `2010`, arm64 `4010`) |
 | **Supported Platforms** | Android (8.0+), Windows 10/11 (x64), Linux (Ubuntu, Debian, Fedora, Arch x64) |
 | **Distribution** | Signed APK, Windows ZIP, Linux tarball on [GitHub Releases](https://github.com/sahaya-savari/sli-vault/releases) |
+| **Live Browser Demo** | [https://sahaya-savari.github.io/sli-vault/demo/](https://sahaya-savari.github.io/sli-vault/demo/) |
 | **Data Model** | 100% local-first: SQLite (`sqflite` on Android, `sqflite_common_ffi` on desktop) + private image files |
 | **License** | [MIT](LICENSE) for project-owned code and docs (fonts under SIL OFL 1.1) |
+
+### 🌐 Live Browser Demo (Streaming Android APK)
+
+Experience SLI Vault v1.0.1 directly inside your browser without downloading or installing any APK:
+
+👉 **[Launch Interactive Android Demo](https://sahaya-savari.github.io/sli-vault/demo/)**
+
+- **Authentic Execution:** Runs the original signed release Android APK (`sli-vault-v1.0.1-universal.apk`) inside a remote Android emulator sandbox.
+- **Full Interactivity:** Supports touch taps, swiping gestures, desktop keyboard typing, and fullscreen mode.
+- **Privacy Sandboxing:** Operates in an ephemeral virtual machine with a fresh SQLite database. All test notes and links are automatically wiped upon session timeout.
+- **Zero Local Install:** Works on Windows, macOS, Linux, ChromeOS, and mobile browsers.
 
 The Flutter mobile and desktop application resides directly at the **repository root**. The repository is architected as a lightweight monorepo accommodating:
 1. The **Flutter/Dart cross-platform application** (Android, Windows, Linux) at the repository root.
@@ -54,7 +67,7 @@ The Flutter mobile and desktop application resides directly at the **repository 
 | Android (Root) | Primary mobile target; signed GitHub Release APK & AAB available (`v1.0.1`) |
 | Windows (Desktop) | Production desktop target; 64-bit release binary and ZIP bundle |
 | Linux (Desktop) | Production desktop target; GTK3 release binary and tarball bundle |
-| iOS | Phase 2 - scaffold only |
+| Web Demo (`/demo`) | Browser-based interactive Android APK streaming demo |
 | Website (`website/`) | Companion website (Vite/Nitro); see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md) |
 
 **Download / release status:** a **signed GitHub Release APK** is available under [Releases](https://github.com/sahaya-savari/sli-vault/releases). Application ID `com.sahayasavari.slivault`. There is **no Play Store listing** - sideload / open-source distribution only.

@@ -6,4 +6,7 @@ export * from "./FeatureSection";
 export * from "./ScreenshotGallery";
 export * from "./SupportSection";
 export * from "./FaqSection";
+export * from "./AndroidDemoPlayer";
 export * from "./SiteFooter";
+export * from "./LocalEngineSection";
+export * from "./magicui";

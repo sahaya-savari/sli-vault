@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Live Interactive Demo · SLI Vault</title>
+    <meta
+      name="description"
+      content="Launch and interact with the authentic SLI Vault Android APK directly in your browser. Real-time emulator streaming, 100% on-device SQLite, disposable sandbox with zero installation required."
+    />
+    <meta name="theme-color" content="#09090B" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sahaya-savari.github.io/sli-vault/demo/" />
+    <meta property="og:site_name" content="SLI Vault" />
+    <meta property="og:title" content="Live Interactive Demo · SLI Vault" />
+    <meta
+      property="og:description"
+      content="Launch and interact with the authentic SLI Vault Android APK directly in your browser without downloading."
+    />
+    <meta property="og:image" content="https://sahaya-savari.github.io/sli-vault/assets/og.png" />
+    <meta
+      property="og:image:secure_url"
+      content="https://sahaya-savari.github.io/sli-vault/assets/og.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="SLI Vault - Live Interactive Android Demo" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://sahaya-savari.github.io/sli-vault/demo/" />
+    <meta name="twitter:title" content="Live Interactive Demo · SLI Vault" />
+    <meta
+      name="twitter:description"
+      content="Launch and interact with the authentic SLI Vault Android APK directly in your browser."
+    />
+    <meta name="twitter:image" content="https://sahaya-savari.github.io/sli-vault/assets/og.png" />
+    <meta name="twitter:image:alt" content="SLI Vault - Live Interactive Demo" />
+
+    <link rel="canonical" href="https://sahaya-savari.github.io/sli-vault/demo/" />
+    <link rel="icon" type="image/png" href="../favicon.png?v=3" />
+
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var lang = root.dataset.fixed;
+        if (!lang) {
+          try {
+            lang = localStorage.getItem("sli-vault-lang") || localStorage.getItem("streak-lang");
+          } catch (e) {}
+          if (!lang) lang = (navigator.language || "").slice(0, 2).toLowerCase();
+        }
+        root.dataset.lang = lang === "ta" ? "ta" : "en";
+        root.lang = root.dataset.lang;
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/styles.css?v=cbd0c582" />
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "SLI Vault",
+        "operatingSystem": "Android 7.0+, Windows 10/11 x64, Linux x64",
+        "applicationCategory": "UtilitiesApplication",
+        "softwareVersion": "1.0.1",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "license": "https://github.com/sahaya-savari/sli-vault/blob/main/LICENSE",
+        "url": "https://sahaya-savari.github.io/sli-vault/demo/",
+        "author": {
+          "@type": "Person",
+          "name": "Sahaya Savari"
+        }
+      }
+    </script>
+  </head>
+  <body class="page-demo">
+    <header class="bar" role="banner">
+      <div class="bar__in">
+        <a class="brand" href="../" aria-label="SLI Vault Home">
+          <img
+            loading="lazy"
+            decoding="async"
+            src="../assets/sli-logo.png"
+            width="24"
+            height="24"
+            alt=""
+          />
+          <span>SLI Vault</span>
+        </a>
+        <nav class="nav" aria-label="Primary navigation">
+          <a href="../#features"
+            ><span class="en">Features</span><span class="ta">சிறப்பம்சங்கள்</span></a
+          >
+          <a href="./" class="nav__active"
+            ><span class="en">Live Demo</span><span class="ta">நேரலை டெமோ</span></a
+          >
+          <a href="../#download"
+            ><span class="en">Download</span><span class="ta">பதிவிறக்கம்</span></a
+          >
+          <a href="../resources/"
+            ><span class="en">Resources</span><span class="ta">வளங்கள்</span></a
+          >
+          <a href="../#faq"><span class="en">FAQ</span><span class="ta">கேள்விகள்</span></a>
+          <a class="nav__love" href="../#support">
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 20.3 4.3 12.8a4.6 4.6 0 0 1 6.5-6.5l1.2 1.2 1.2-1.2a4.6 4.6 0 0 1 6.5 6.5Z"
+              />
+            </svg>
+            <span class="en">Support</span><span class="ta">ஆதரவு</span>
+          </a>
+        </nav>
+
+        <div class="bar__end">
+          <button class="lang" id="lang" type="button" aria-label="Switch language">
+            <span class="lang__opt lang__opt--en">EN</span>
+            <span class="lang__sep">/</span>
+            <span class="lang__opt lang__opt--ta">தமிழ்</span>
+          </button>
+          <a
+            class="bar__gh"
+            href="https://github.com/sahaya-savari/sli-vault"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="SLI Vault on GitHub"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+              />
+            </svg>
+          </a>
+          <button
+            class="mob-toggle"
+            id="mob-toggle"
+            type="button"
+            aria-label="Toggle navigation"
+            aria-expanded="false"
+            aria-controls="mob-menu"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div
+      class="mob-menu"
+      id="mob-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Mobile navigation"
+    >
+      <div class="mob-menu__head">
+        <a class="brand" href="../">
+          <img src="../assets/sli-logo.png" width="22" height="22" alt="" />
+          <span>SLI Vault</span>
+        </a>
+        <button class="mob-close" id="mob-close" type="button" aria-label="Close navigation">
+          <svg
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <nav class="mob-nav">
+        <a class="mob-link" href="../#features"
+          ><span class="en">Features</span><span class="ta">சிறப்பம்சங்கள்</span></a
+        >
+        <a class="mob-link mob-link--active" href="./"
+          ><span class="en">Live Demo</span><span class="ta">நேரலை டெமோ</span></a
+        >
+        <a class="mob-link" href="../#download"
+          ><span class="en">Download</span><span class="ta">பதிவிறக்கம்</span></a
+        >
+        <a class="mob-link" href="../resources/"
+          ><span class="en">Resources</span><span class="ta">வளங்கள்</span></a
+        >
+        <a class="mob-link" href="../#faq"
+          ><span class="en">FAQ</span><span class="ta">கேள்விகள்</span></a
+        >
+        <a class="mob-link" href="../#support"
+          ><span class="en">Community & Support</span><span class="ta">ஆதரவு</span></a
+        >
+      </nav>
+    </div>
+    <div class="mob-backdrop" id="mob-backdrop"></div>
+
+    <main id="main" role="main">
+      <section class="sec demo-hero-sec" aria-labelledby="demo-hero-title">
+        <div class="demo-hero-head">
+          <span class="back-it__tag">
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+              <line x1="12" y1="18" x2="12.01" y2="18" />
+            </svg>
+            <span class="en">Live Android Streaming</span>
+            <span class="ta">நேரலை ஆண்ட்ராய்டு ஸ்ட்ரீமிங்</span>
+          </span>
+          <h1 class="h2" id="demo-hero-title">
+            <span class="en">Experience SLI Vault in your browser</span>
+            <span class="ta">SLI Vault நேரலை உலாவி டெமோ</span>
+          </h1>
+          <p class="feats-sub">
+            <span class="en"
+              >Interact with the authentic release Android APK running inside a cloud emulator
+              sandbox. Test offline Markdown notes, tag ribbons, and lightning-fast SQLite search
+              with zero local installation.</span
+            >
+            <span class="ta"
+              >எந்தவொரு பதிவிறக்கமும் இன்றி, அசல் Android APK-ஐ உங்கள் உலாவியில் நேரடியாக இயக்கிப்
+              பாருங்கள். முழுமையான SQLite சேமிப்பகம், JetBrains Mono Markdown குறிப்புகள் மற்றும்
+              தனியுரிமை அம்சங்களை உடனே அனுபவியுங்கள்.</span
+            >
+          </p>
+        </div>
+
+        <!-- Phone Silhouette Container -->
+        <div class="demo-wrap" id="demo-player-container">
+          <div class="demo-toolbar" role="toolbar" aria-label="Demo controls">
+            <div class="demo-toolbar__status">
+              <span class="demo-dot" id="demo-status-dot"></span>
+              <span class="demo-status-text" id="demo-status-text">
+                <span class="en">Standby (3:00 min session)</span>
+                <span class="ta">தயாராக உள்ளது (3:00 நிமிடம்)</span>
+              </span>
+            </div>
+
+            <div class="demo-toolbar__actions">
+              <button
+                type="button"
+                class="demo-btn demo-btn--sm"
+                id="btn-restart"
+                style="display: none"
+                title="Restart session"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19" />
+                </svg>
+                <span class="en">Restart</span>
+                <span class="ta">மீண்டும் தொடங்கு</span>
+              </button>
+
+              <button
+                type="button"
+                class="demo-btn demo-btn--sm"
+                id="btn-fs"
+                style="display: none"
+                title="Toggle Fullscreen"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+                <span class="en">Fullscreen</span>
+                <span class="ta">முழுத்திரை</span>
+              </button>
+
+              <button
+                type="button"
+                class="demo-btn demo-btn--sm demo-btn--danger"
+                id="btn-stop"
+                style="display: none"
+                title="End session"
+              >
+                <span class="en">Stop</span>
+                <span class="ta">முடி</span>
+              </button>
+
+              <button
+                type="button"
+                class="demo-btn demo-btn--sm"
+                id="btn-toggle-key"
+                title="Configure streaming key"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="3" />
+                  <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+                  />
+                </svg>
+                <span class="en">Stream Key</span>
+                <span class="ta">விசை அமைப்புகள்</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Key Drawer -->
+          <div id="key-drawer" class="demo-key-form" style="display: none">
+            <label for="custom-build-key-static" class="demo-key-label">
+              <span class="en">Enter your Appetize Public Key or WebRTC Stream ID:</span>
+              <span class="ta">Appetize App Build Key அல்லது WebRTC Stream Key ஐ உள்ளிடவும்:</span>
+            </label>
+            <div class="demo-key-input-row">
+              <input
+                id="custom-build-key-static"
+                type="text"
+                class="demo-key-input"
+                placeholder="e.g. demo_101_release or appetizePublicKey"
+              />
+              <button type="button" class="demo-btn demo-btn--primary" id="btn-save-key">
+                <span class="en">Save & Stream</span>
+                <span class="ta">சேமி & தொடங்கு</span>
+              </button>
+              <button type="button" class="demo-btn" id="btn-cancel-key">
+                <span class="en">Cancel</span>
+                <span class="ta">ரத்து</span>
+              </button>
+            </div>
+            <p class="demo-key-hint">
+              <span class="en"
+                >Note: Keys are stored only in your local browser sandbox and never transmitted to
+                remote servers.</span
+              >
+              <span class="ta"
+                >குறிப்பு: விசைகள் உங்கள் உலாவியில் மட்டுமே தற்காலிகமாக வைக்கப்படும்.</span
+              >
+            </p>
+          </div>
+
+          <!-- Phone Silhouette -->
+          <div class="phone-chassis" id="phone-chassis">
+            <div class="phone-notch">
+              <span class="phone-speaker" aria-hidden="true"></span>
+              <span class="phone-camera" aria-hidden="true"></span>
+            </div>
+
+            <div
+              class="phone-screen"
+              id="phone-screen"
+              role="region"
+              aria-label="Android Emulator Screen"
+            >
+              <!-- Idle State -->
+              <div class="phone-screen-idle" id="screen-idle">
+                <div class="phone-screen-idle__emblem">
+                  <img
+                    src="../assets/sli-logo.png"
+                    width="56"
+                    height="56"
+                    alt="SLI Vault Logo"
+                    class="phone-emblem-img"
+                  />
+                </div>
+                <h3 class="phone-screen-idle__title">SLI Vault 1.0.1</h3>
+                <span class="phone-screen-idle__badge">Original Android APK</span>
+                <p class="phone-screen-idle__desc">
+                  <span class="en"
+                    >Interact with the authentic Android APK directly in your browser. Complete
+                    SQLite persistence in a disposable sandbox.</span
+                  >
+                  <span class="ta"
+                    >உண்மையான Android APK-ஐ உலாவியில் நேரடியாக இயக்கி சோதிக்கலாம். முழுமையான SQLite
+                    சேமிப்பகத்துடன் கூடிய மாதிரி சூழல்.</span
+                  >
+                </p>
+
+                <button type="button" class="demo-launch-btn" id="btn-launch-demo">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <polygon points="5 3 19 12 5 21 5 3" />
+                  </svg>
+                  <span class="en">Launch Interactive Demo</span>
+                  <span class="ta">டெமோவைத் தொடங்கு</span>
+                </button>
+
+                <div class="phone-screen-idle__specs">
+                  <div class="demo-spec-item">
+                    <span class="demo-spec-label"
+                      ><span class="en">Version</span><span class="ta">பதிப்பு</span></span
+                    >
+                    <span class="demo-spec-val">1.0.1 (Build 2010)</span>
+                  </div>
+                  <div class="demo-spec-item">
+                    <span class="demo-spec-label"
+                      ><span class="en">Platform</span><span class="ta">அமைப்பு</span></span
+                    >
+                    <span class="demo-spec-val">Android 7.0+ (x86_64 / arm64)</span>
+                  </div>
+                  <div class="demo-spec-item">
+                    <span class="demo-spec-label"
+                      ><span class="en">Storage</span><span class="ta">சேமிப்பகம்</span></span
+                    >
+                    <span class="demo-spec-val">Local SQLite (Ephemeral)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stream State Container -->
+              <div class="phone-stream-container" id="stream-container" style="display: none">
+                <div class="phone-stream-loader" id="stream-loader" aria-live="polite">
+                  <div class="demo-spinner" aria-hidden="true"></div>
+                  <p>
+                    <span class="en">Booting Android emulator sandbox...</span
+                    ><span class="ta">Android எமுலேட்டர் தொடங்குகிறது...</span>
+                  </p>
+                  <span
+                    ><span class="en">Launching SLI Vault v1.0.1 APK</span
+                    ><span class="ta">SLI Vault v1.0.1 தொடங்கப்படுகிறது</span></span
+                  >
+                </div>
+                <iframe
+                  id="stream-iframe"
+                  title="SLI Vault Original Android APK Live Stream"
+                  class="phone-iframe"
+                  allow="
+                    autoplay;
+                    fullscreen;
+                    clipboard-read;
+                    clipboard-write;
+                    microphone;
+                    camera;
+                    geolocation;
+                  "
+                  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+                ></iframe>
+              </div>
+
+              <!-- Expired State -->
+              <div class="phone-screen-expired" id="screen-expired" style="display: none">
+                <div class="phone-screen-expired__icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="36"
+                    height="36"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </div>
+                <h3>
+                  <span class="en">Session Expired</span><span class="ta">அமர்வு முடிவடைந்தது</span>
+                </h3>
+                <p>
+                  <span class="en"
+                    >The 3-minute interactive demo duration has ended. The emulator sandbox and
+                    SQLite records have been reset.</span
+                  >
+                  <span class="ta"
+                    >3 நிமிட இலவச அமர்வு நிறைவடைந்தது. உங்கள் தனிப்பட்ட தரவு அனைத்தும் பாதுகாப்பாக
+                    அழிக்கப்பட்டது.</span
+                  >
+                </p>
+                <button type="button" class="demo-launch-btn" id="btn-restart-expired">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19" />
+                  </svg>
+                  <span class="en">Start New Session</span>
+                  <span class="ta">புதிய அமர்வைத் தொடங்கு</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="phone-home-indicator" aria-hidden="true"></div>
+          </div>
+
+          <!-- Feature & Interaction Cards -->
+          <div class="demo-instructions">
+            <div class="demo-guide-card">
+              <span class="demo-guide-card__icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
+                  />
+                </svg>
+              </span>
+              <h4>
+                <span class="en">Touch & Gestures</span
+                ><span class="ta">தொடுதல் மற்றும் சைகைகள்</span>
+              </h4>
+              <p>
+                <span class="en"
+                  >Click or tap to interact. Click and drag to scroll lists, swipe tabs, and
+                  navigate bookmark collections.</span
+                >
+                <span class="ta"
+                  >சுட்டி (mouse) அல்லது தொடுதிரை (touch) மூலம் பயன்பாட்டைத் தட்டவும், உருட்டவும்,
+                  ஸ்வைப் செய்யவும் முடியும்.</span
+                >
+              </p>
+            </div>
+
+            <div class="demo-guide-card">
+              <span class="demo-guide-card__icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <path
+                    d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"
+                  />
+                </svg>
+              </span>
+              <h4>
+                <span class="en">Keyboard Input</span><span class="ta">விசைப்பலகை உள்ளீடு</span>
+              </h4>
+              <p>
+                <span class="en"
+                  >Type directly into search bars or write Markdown notes using your desktop
+                  keyboard in real time.</span
+                >
+                <span class="ta"
+                  >Markdown எடிட்டரில் குறிப்புகள் எழுத மற்றும் தேடலில் உங்கள் டெஸ்க்டாப்
+                  விசைப்பலகையைப் பயன்படுத்தலாம்.</span
+                >
+              </p>
+            </div>
+
+            <div class="demo-guide-card">
+              <span class="demo-guide-card__icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </span>
+              <h4>
+                <span class="en">Disposable Sandbox</span
+                ><span class="ta">முழுமையான தனிமைப்படுத்தல்</span>
+              </h4>
+              <p>
+                <span class="en"
+                  >Every session operates in an ephemeral VM sandbox. Zero personal data is exposed,
+                  and records reset upon exit.</span
+                >
+                <span class="ta"
+                  >டெமோவில் நீங்கள் உருவாக்கும் குறிப்புகள் அல்லது புக்மார்க்குகள் அமர்வு
+                  முடிந்ததும் முழுமையாக அழிக்கப்படும்.</span
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="sec" id="faq" aria-labelledby="faq-title">
+        <div class="faq-head">
+          <span class="back-it__tag">
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <span class="en">Frequently Asked Questions</span>
+            <span class="ta">பொதுவான கேள்விகள்</span>
+          </span>
+          <h2 class="h2" id="faq-title">
+            <span class="en">Clear answers about the demo & vault</span>
+            <span class="ta">டெமோ மற்றும் பெட்டகம் பற்றிய பதில்கள்</span>
+          </h2>
+          <p class="faq-subtitle">
+            <span class="en"
+              >Everything you need to know about SLI Vault's privacy architecture, offline database,
+              and cross-platform capabilities.</span
+            >
+            <span class="ta"
+              >SLI Vault-இன் பாதுகாப்பு, ஆஃப்லைன் செயல்பாடு மற்றும் தனிப்பட்ட தரவு நிர்வாகம் பற்றிய
+              முக்கிய தகவல்கள்.</span
+            >
+          </p>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq-card">
+            <summary class="faq-question">
+              <span class="en">Is this the real Android APK or a web mockup?</span>
+              <span class="ta">இது உண்மையான Android APK-வா அல்லது வலை மாதிரியா?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+            </summary>
+            <div class="faq-answer">
+              <p>
+                <span class="en"
+                  >This is the authentic, signed release SLI Vault Android APK (v1.0.1) executing
+                  inside an isolated cloud Android virtual machine. It runs the exact same Flutter
+                  codebase, SQLite engine, and JetBrains Mono Markdown editor as installed on
+                  physical devices.</span
+                >
+                <span class="ta"
+                  >இது தனிமைப்படுத்தப்பட்ட Android மெய்நிகர் கணினியில் இயங்கும் அதிகாரப்பூர்வ
+                  வெளியீட்டு SLI Vault Android APK (v1.0.1) ஆகும். இயற்பியல் சாதனங்களில்
+                  நிறுவப்படும் அதே குறியீட்டுத் தளம், SQLite மற்றும் Markdown எடிட்டரை இது
+                  பயன்படுத்துகிறது.</span
+                >
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-card">
+            <summary class="faq-question">
+              <span class="en">Is SLI Vault really 100% offline and local?</span>
+              <span class="ta">SLI Vault உண்மையில் 100% ஆஃப்லைன் மற்றும் தனிப்பட்டதா?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+            </summary>
+            <div class="faq-answer">
+              <p>
+                <span class="en"
+                  >Yes. Every link, image, markdown note, tag, and collection is stored directly
+                  inside an on-device SQLite database within your private app sandbox. Zero
+                  telemetry, zero analytics SDKs, and zero cloud accounts required.</span
+                >
+                <span class="ta"
+                  >ஆம். உங்கள் இணைப்புகள், படங்கள், குறிப்புகள் மற்றும் குறிச்சொற்கள் அனைத்தும்
+                  உங்கள் சாதனத்தின் தனிப்பட்ட SQLite தரவுத்தளத்தில் மட்டுமே சேமிக்கப்படுகின்றன.
+                  கண்காணிப்பு SDK-கள் அல்லது மேகக்கணி கணக்குகள் எதுவும் தேவையில்லை.</span
+                >
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-card">
+            <summary class="faq-question">
+              <span class="en">Where can I download the app to install locally?</span>
+              <span class="ta">பயன்பாட்டை எனது சொந்த சாதனத்தில் நிறுவ எங்கு பதிவிறக்கலாம்?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+            </summary>
+            <div class="faq-answer">
+              <p>
+                <span class="en"
+                  >You can download the production APK directly from
+                  <a
+                    href="https://github.com/sahaya-savari/sli-vault/releases/tag/v1.0.1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >GitHub Releases</a
+                  >
+                  or install it via F-Droid. Native desktop binaries for Windows 10/11 x64 and Linux
+                  x64 are also provided.</span
+                >
+                <span class="ta"
+                  ><a
+                    href="https://github.com/sahaya-savari/sli-vault/releases/tag/v1.0.1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >GitHub Releases</a
+                  >
+                  அல்லது F-Droid மூலம் நேரடியாகப் பதிவிறக்கலாம். Windows மற்றும் Linux பதிப்புகளும்
+                  கிடைக்கின்றன.</span
+                >
+              </p>
+            </div>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="foot__in">
+        <div class="foot__top">
+          <div class="foot__brand">
+            <div class="foot__logo">
+              <img src="../assets/sli-logo.png" width="22" height="22" alt="" />
+              <span>SLI Vault</span>
+            </div>
+            <p class="foot__tag">
+              <span class="en">A quiet, local-first personal library. Open source under MIT.</span>
+              <span class="ta">அமைதியான, சாதனத்திலேயே இயங்கும் தனிப்பட்ட நூலகம்.</span>
+            </p>
+          </div>
+          <div class="foot__links">
+            <a href="../#features"
+              ><span class="en">Features</span><span class="ta">சிறப்பம்சங்கள்</span></a
+            >
+            <a href="./"><span class="en">Live Demo</span><span class="ta">நேரலை டெமோ</span></a>
+            <a href="../#download"
+              ><span class="en">Download</span><span class="ta">பதிவிறக்கம்</span></a
+            >
+            <a href="../resources/"
+              ><span class="en">Resources</span><span class="ta">வளங்கள்</span></a
+            >
+            <a href="../#faq"><span class="en">FAQ</span><span class="ta">கேள்விகள்</span></a>
+            <a
+              href="https://github.com/sahaya-savari/sli-vault"
+              target="_blank"
+              rel="noopener noreferrer"
+              >GitHub</a
+            >
+          </div>
+        </div>
+        <div class="foot__bot">
+          <p class="foot__copy">
+            <span class="en"
+              >Crafted with care by Sahaya Savari · Free & Open Source under MIT License.</span
+            >
+            <span class="ta"
+              >சகாய சவரி அவர்களால் வடிவமைக்கப்பட்டது · MIT உரிமத்தின் கீழ் வெளியிடப்பட்டது.</span
+            >
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Interactive Streaming Logic -->
+    <script>
+      (function () {
+        var keyParam =
+          new URLSearchParams(window.location.search).get("buildKey") ||
+          new URLSearchParams(window.location.search).get("key");
+        var activeKey = keyParam || localStorage.getItem("sli-vault-demo-key") || "";
+
+        var btnLaunch = document.getElementById("btn-launch-demo");
+        var btnRestart = document.getElementById("btn-restart");
+        var btnFs = document.getElementById("btn-fs");
+        var btnStop = document.getElementById("btn-stop");
+        var btnToggleKey = document.getElementById("btn-toggle-key");
+        var keyDrawer = document.getElementById("key-drawer");
+        var keyInput = document.getElementById("custom-build-key-static");
+        var btnSaveKey = document.getElementById("btn-save-key");
+        var btnCancelKey = document.getElementById("btn-cancel-key");
+        var btnRestartExpired = document.getElementById("btn-restart-expired");
+
+        var screenIdle = document.getElementById("screen-idle");
+        var streamContainer = document.getElementById("stream-container");
+        var streamLoader = document.getElementById("stream-loader");
+        var streamIframe = document.getElementById("stream-iframe");
+        var screenExpired = document.getElementById("screen-expired");
+        var phoneChassis = document.getElementById("phone-chassis");
+        var statusDot = document.getElementById("demo-status-dot");
+        var statusText = document.getElementById("demo-status-text");
+
+        var timerInterval = null;
+        var timeLeft = 180;
+
+        if (activeKey && keyInput) {
+          keyInput.value = activeKey;
+        }
+
+        function formatTime(sec) {
+          var m = Math.floor(sec / 60);
+          var s = sec % 60;
+          return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+        }
+
+        function updateStatus(state) {
+          if (state === "live") {
+            statusDot.className = "demo-dot demo-dot--live";
+            statusText.textContent = "Active Android Session (" + formatTime(timeLeft) + ")";
+            btnRestart.style.display = "inline-flex";
+            btnFs.style.display = "inline-flex";
+            btnStop.style.display = "inline-flex";
+          } else if (state === "expired") {
+            statusDot.className = "demo-dot demo-dot--expired";
+            statusText.textContent = "Session Expired";
+            btnRestart.style.display = "none";
+            btnFs.style.display = "none";
+            btnStop.style.display = "none";
+          } else {
+            statusDot.className = "demo-dot";
+            statusText.textContent = "Standby (3:00 min session)";
+            btnRestart.style.display = "none";
+            btnFs.style.display = "none";
+            btnStop.style.display = "none";
+          }
+        }
+
+        function launchSession() {
+          if (!activeKey) {
+            keyDrawer.style.display = "block";
+            keyInput.focus();
+            return;
+          }
+          screenIdle.style.display = "none";
+          screenExpired.style.display = "none";
+          streamContainer.style.display = "block";
+          streamLoader.style.display = "flex";
+
+          var embedUrl =
+            "https://appetize.io/embed/" +
+            encodeURIComponent(activeKey) +
+            "?device=pixel7&osVersion=13.0&scale=auto&autoplay=true&appearance=dark&deviceColor=black&centered=both";
+          streamIframe.src = embedUrl;
+          streamIframe.onload = function () {
+            streamLoader.style.display = "none";
+          };
+
+          timeLeft = 180;
+          updateStatus("live");
+          clearInterval(timerInterval);
+          timerInterval = setInterval(function () {
+            timeLeft--;
+            if (timeLeft <= 0) {
+              clearInterval(timerInterval);
+              endSession(true);
+            } else {
+              statusText.textContent = "Active Android Session (" + formatTime(timeLeft) + ")";
+            }
+          }, 1000);
+        }
+
+        function endSession(isExp) {
+          clearInterval(timerInterval);
+          streamIframe.src = "about:blank";
+          streamContainer.style.display = "none";
+          if (isExp) {
+            screenExpired.style.display = "flex";
+            updateStatus("expired");
+          } else {
+            screenIdle.style.display = "flex";
+            updateStatus("idle");
+          }
+        }
+
+        if (btnLaunch) btnLaunch.addEventListener("click", launchSession);
+        if (btnRestart) btnRestart.addEventListener("click", launchSession);
+        if (btnRestartExpired) btnRestartExpired.addEventListener("click", launchSession);
+        if (btnStop)
+          btnStop.addEventListener("click", function () {
+            endSession(false);
+          });
+
+        if (btnFs) {
+          btnFs.addEventListener("click", function () {
+            if (!document.fullscreenElement) {
+              phoneChassis.requestFullscreen().catch(function () {});
+            } else {
+              document.exitFullscreen().catch(function () {});
+            }
+          });
+        }
+
+        if (btnToggleKey) {
+          btnToggleKey.addEventListener("click", function () {
+            keyDrawer.style.display = keyDrawer.style.display === "none" ? "block" : "none";
+          });
+        }
+
+        if (btnSaveKey) {
+          btnSaveKey.addEventListener("click", function () {
+            var val = (keyInput.value || "").trim();
+            if (val) {
+              activeKey = val;
+              try {
+                localStorage.setItem("sli-vault-demo-key", val);
+              } catch (e) {}
+              keyDrawer.style.display = "none";
+              launchSession();
+            }
+          });
+        }
+
+        if (btnCancelKey) {
+          btnCancelKey.addEventListener("click", function () {
+            keyDrawer.style.display = "none";
+          });
+        }
+
+        // Mobile Menu
+        var mobToggle = document.getElementById("mob-toggle");
+        var mobMenu = document.getElementById("mob-menu");
+        var mobBackdrop = document.getElementById("mob-backdrop");
+        var mobClose = document.getElementById("mob-close");
+        function toggleMob(open) {
+          if (mobMenu) mobMenu.classList.toggle("is-open", open);
+          if (mobBackdrop) mobBackdrop.classList.toggle("is-open", open);
+          document.body.classList.toggle("has-mob-menu", open);
+        }
+        if (mobToggle)
+          mobToggle.addEventListener("click", function () {
+            toggleMob(true);
+          });
+        if (mobClose)
+          mobClose.addEventListener("click", function () {
+            toggleMob(false);
+          });
+        if (mobBackdrop)
+          mobBackdrop.addEventListener("click", function () {
+            toggleMob(false);
+          });
+
+        // Language toggle
+        var langBtn = document.getElementById("lang");
+        if (langBtn) {
+          langBtn.addEventListener("click", function () {
+            var cur = document.documentElement.dataset.lang;
+            var next = cur === "ta" ? "en" : "ta";
+            document.documentElement.dataset.lang = next;
+            document.documentElement.lang = next;
+            try {
+              localStorage.setItem("sli-vault-lang", next);
+              localStorage.setItem("streak-lang", next);
+            } catch (e) {}
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
