@@ -212,19 +212,43 @@ All screenshots are authentic captures from the running Android app, sanitized w
       <sub>Biometric lock, portable ZIP backup, and cleanup.</sub>
     </td>
     <td align="center" valign="top" width="25%">
-      <!-- Placeholder / Store link -->
       <br><br><br>
-      <b>Store Assets Ready</b><br>
-      <sub>All screens available at 1080×2400 in <code>docs/screenshots/play_store/</code> for store publication.</sub>
+      <b>Open Source &amp; Free</b><br>
+      <sub>100% private, zero telemetry. Download APKs directly from <a href="https://github.com/sahaya-savari/sli-vault/releases/latest">GitHub Releases</a>.</sub>
     </td>
   </tr>
 </table>
 
 ### Screenshot Inventory & Locations
 
-- **Google Play Store Release:** [`docs/screenshots/play_store/`](docs/screenshots/play_store/) — 1080×2400 (20:9), 24-bit PNG, zero system icons.
-- **GitHub README Documentation:** [`docs/screenshots/readme/`](docs/screenshots/readme/) — High-definition visual assets embedded in project documentation.
+- **High-Resolution Screenshots:** [`docs/screenshots/readme/`](docs/screenshots/readme/) — Clean, full-bleed 1080×2400 mobile interface captures.
+- **Store Graphics & Package Assets:** [`docs/screenshots/play_store/`](docs/screenshots/play_store/) — 512×512 app icon, 1024×500 feature graphic, and clean store screenshots.
 - Detailed specifications: [`docs/screenshots/manifest.md`](docs/screenshots/manifest.md).
+
+---
+
+## Download
+
+SLI Vault is **100% Free and Open-Source Software (FOSS)** distributed directly via GitHub Releases and the official companion website. There are no ads, no trackers, and no Google Play account required to install and use the app.
+
+### Official Releases
+
+Latest Stable: **[v1.0.1](https://github.com/sahaya-savari/sli-vault/releases/tag/v1.0.1)** (`versionCode 2008`)
+
+| Package | Target Architecture | Direct Download | SHA-256 Checksum |
+| :--- | :--- | :---: | :---: |
+| **`arm64-v8a` (Recommended)** | Most modern Android phones (Android 8.0+) | [Download APK (37.0 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-arm64-v8a.apk) | `9AE4CC2B5BED9D5BD5B289BD2B99C4C09C9B356C4F08167F9FD5EB1CFC6CE1A9` |
+| **Universal** | All Android devices (arm64, arm32, x86) | [Download APK (77.3 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-universal.apk) | `57CB1E9844EAEF721F79E6D5511ED49F82EAE161C5561CFC5380D56BA2EF6A6C` |
+| **`armeabi-v7a`** | Older 32-bit Android phones | [Download APK (34.8 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-armeabi-v7a.apk) | `3D62EA9A74141BB2DEFE8168492B3F2A115DAAA54D5A4607294D6D3CE6940C91` |
+| **`x86_64`** | Emulators and ChromeOS tablets | [Download APK (38.4 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-x86_64.apk) | `07AD5589692332BAD13410EDB172E8873457C280C49A9A776D3720043F1A5B1D` |
+
+🌐 **Official Companion Website & Web Viewer:** [https://sahaya-savari.github.io/sli-vault/](https://sahaya-savari.github.io/sli-vault/)
+
+### How to Install (Sideloading)
+1. Download the **`arm64-v8a` APK** directly on your Android phone (or Universal if unsure).
+2. When prompted by your browser or file manager, tap **Settings** and enable **Allow from this source** ("Install unknown apps").
+3. Tap **Install**.
+4. All future updates can be installed directly over existing versions without losing your saved links, notes, or images.
 
 ---
 
