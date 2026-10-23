@@ -42,8 +42,11 @@ class _HomeScreenState extends State<HomeScreen> {
       variant: SliAtmosphereVariant.abstractFlow,
       imageAsset: SliAssets.bgHome,
       child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1360),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(
@@ -256,47 +259,121 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     )
-                  : ListView.separated(
-                      padding: EdgeInsets.fromLTRB(
-                        SliTokens.spaceLg,
-                        SliTokens.spaceSm,
-                        SliTokens.spaceLg,
-                        96,
-                      ),
-                      itemCount: items.length +
-                          ((controller.isBackupReminderDue && !_backupDismissed)
-                              ? 1
-                              : 0),
-                      separatorBuilder: (_, _) =>
-                          SizedBox(height: SliTokens.spaceMd),
-                      itemBuilder: (context, index) {
-                        final showReminder = controller.isBackupReminderDue &&
-                            !_backupDismissed;
-                        if (showReminder && index == 0) {
-                          return _BackupReminderBanner(
-                            controller: controller,
-                            onDismiss: () =>
-                                setState(() => _backupDismissed = true),
+                  : LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth < 600) {
+                          return ListView.separated(
+                            padding: EdgeInsets.fromLTRB(
+                              SliTokens.spaceLg,
+                              SliTokens.spaceSm,
+                              SliTokens.spaceLg,
+                              96,
+                            ),
+                            itemCount: items.length +
+                                ((controller.isBackupReminderDue && !_backupDismissed)
+                                    ? 1
+                                    : 0),
+                            separatorBuilder: (_, _) =>
+                                SizedBox(height: SliTokens.spaceMd),
+                            itemBuilder: (context, index) {
+                              final showReminder = controller.isBackupReminderDue &&
+                                  !_backupDismissed;
+                              if (showReminder && index == 0) {
+                                return _BackupReminderBanner(
+                                  controller: controller,
+                                  onDismiss: () =>
+                                      setState(() => _backupDismissed = true),
+                                );
+                              }
+                              final itemIndex = showReminder ? index - 1 : index;
+                              final item = items[itemIndex];
+                              return VaultItemCard(
+                                item: item,
+                                controller: controller,
+                                isCompact: controller.browseDensity == 'compact',
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => ItemDetailScreen(
+                                        itemId: item.id,
+                                        controller: controller,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                onToggleFavorite: () =>
+                                    controller.toggleFavorite(item.id),
+                              );
+                            },
                           );
                         }
-                        final itemIndex = showReminder ? index - 1 : index;
-                        final item = items[itemIndex];
-                        return VaultItemCard(
-                          item: item,
-                          controller: controller,
-                          isCompact: controller.browseDensity == 'compact',
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => ItemDetailScreen(
-                                  itemId: item.id,
-                                  controller: controller,
+
+                        final int crossAxisCount;
+                        if (constraints.maxWidth < 900) {
+                          crossAxisCount = 3;
+                        } else {
+                          crossAxisCount = (constraints.maxWidth / 260).floor().clamp(4, 6);
+                        }
+
+                        return CustomScrollView(
+                          slivers: [
+                            if (controller.isBackupReminderDue && !_backupDismissed)
+                              SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    SliTokens.spaceLg,
+                                    SliTokens.spaceSm,
+                                    SliTokens.spaceLg,
+                                    SliTokens.spaceMd,
+                                  ),
+                                  child: _BackupReminderBanner(
+                                    controller: controller,
+                                    onDismiss: () =>
+                                        setState(() => _backupDismissed = true),
+                                  ),
                                 ),
                               ),
-                            );
-                          },
-                          onToggleFavorite: () =>
-                              controller.toggleFavorite(item.id),
+                            SliverPadding(
+                              padding: const EdgeInsets.fromLTRB(
+                                SliTokens.spaceLg,
+                                SliTokens.spaceSm,
+                                SliTokens.spaceLg,
+                                96,
+                              ),
+                              sliver: SliverGrid(
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  mainAxisSpacing: SliTokens.spaceMd,
+                                  crossAxisSpacing: SliTokens.spaceMd,
+                                  childAspectRatio: 0.85,
+                                ),
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                    final item = items[index];
+                                    return VaultItemCard(
+                                      item: item,
+                                      controller: controller,
+                                      isGrid: true,
+                                      isCompact: controller.browseDensity == 'compact',
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => ItemDetailScreen(
+                                              itemId: item.id,
+                                              controller: controller,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      onToggleFavorite: () =>
+                                          controller.toggleFavorite(item.id),
+                                    );
+                                  },
+                                  childCount: items.length,
+                                ),
+                              ),
+                            ),
+                          ],
                         );
                       },
                     ),
@@ -304,7 +381,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }
 

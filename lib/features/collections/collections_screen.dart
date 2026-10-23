@@ -162,7 +162,10 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
       variant: SliAtmosphereVariant.abstractFlow,
       imageAsset: SliAssets.bgCollections,
       child: SafeArea(
-        child: ListView(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1000),
+            child: ListView(
           padding: const EdgeInsets.fromLTRB(
             SliTokens.spaceLg,
             SliTokens.spaceMd,
@@ -303,6 +306,8 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }

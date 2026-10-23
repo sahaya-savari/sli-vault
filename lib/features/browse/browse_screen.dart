@@ -493,51 +493,63 @@ class _BrowseScreenState extends State<BrowseScreen> {
                             subtitle: 'Adjust your search query or content type filter to view saved items.',
                           ))
                   : widget.controller.browseGridView
-                  ? GridView.builder(
-                      padding: EdgeInsets.fromLTRB(
-                        SliTokens.spaceLg,
-                        SliTokens.spaceSm,
-                        SliTokens.spaceLg,
-                        96,
-                      ),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: isCompact
-                            ? SliTokens.spaceSm
-                            : SliTokens.spaceMd,
-                        crossAxisSpacing: isCompact
-                            ? SliTokens.spaceSm
-                            : SliTokens.spaceMd,
-                        childAspectRatio: isCompact ? 0.95 : 0.85,
-                      ),
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        final item = items[index];
-                        return VaultItemCard(
-                          item: item,
-                          controller: widget.controller,
-                          isGrid: true,
-                          isCompact: isCompact,
-                          isSelected: _selectedIds.contains(item.id),
-                          isSelectionMode: _isSelectionMode,
-                          onLongPress: () => _toggleSelect(item.id),
-                          onDelete: () => _deleteSingleItem(item),
-                          onTap: () {
-                            if (_isSelectionMode) {
-                              _toggleSelect(item.id);
-                            } else {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => ItemDetailScreen(
-                                    itemId: item.id,
-                                    controller: widget.controller,
-                                  ),
-                                ),
-                              );
-                            }
+                  ? LayoutBuilder(
+                      builder: (context, constraints) {
+                        final int crossAxisCount;
+                        if (constraints.maxWidth < 600) {
+                          crossAxisCount = 2;
+                        } else if (constraints.maxWidth < 900) {
+                          crossAxisCount = 3;
+                        } else {
+                          crossAxisCount = (constraints.maxWidth / 260).floor().clamp(4, 6);
+                        }
+                        return GridView.builder(
+                          padding: EdgeInsets.fromLTRB(
+                            SliTokens.spaceLg,
+                            SliTokens.spaceSm,
+                            SliTokens.spaceLg,
+                            96,
+                          ),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossAxisCount,
+                            mainAxisSpacing: isCompact
+                                ? SliTokens.spaceSm
+                                : SliTokens.spaceMd,
+                            crossAxisSpacing: isCompact
+                                ? SliTokens.spaceSm
+                                : SliTokens.spaceMd,
+                            childAspectRatio: isCompact ? 0.95 : 0.85,
+                          ),
+                          itemCount: items.length,
+                          itemBuilder: (context, index) {
+                            final item = items[index];
+                            return VaultItemCard(
+                              item: item,
+                              controller: widget.controller,
+                              isGrid: true,
+                              isCompact: isCompact,
+                              isSelected: _selectedIds.contains(item.id),
+                              isSelectionMode: _isSelectionMode,
+                              onLongPress: () => _toggleSelect(item.id),
+                              onDelete: () => _deleteSingleItem(item),
+                              onTap: () {
+                                if (_isSelectionMode) {
+                                  _toggleSelect(item.id);
+                                } else {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => ItemDetailScreen(
+                                        itemId: item.id,
+                                        controller: widget.controller,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              onToggleFavorite: () =>
+                                  widget.controller.toggleFavorite(item.id),
+                            );
                           },
-                          onToggleFavorite: () =>
-                              widget.controller.toggleFavorite(item.id),
                         );
                       },
                     )

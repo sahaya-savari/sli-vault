@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../domain/vault_item.dart';
 
@@ -17,9 +17,19 @@ class VaultDatabase {
 
   Future<Database> get database async {
     if (_db != null && _db!.isOpen) return _db!;
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      if (databaseFactory != databaseFactoryFfi) {
+        sqfliteFfiInit();
+        databaseFactory = databaseFactoryFfi;
+      }
+    }
     final dbPath =
         overrideDbPath ??
         p.join((await getApplicationSupportDirectory()).path, 'sli_vault.db');
+    final parentDir = Directory(p.dirname(dbPath));
+    if (!await parentDir.exists()) {
+      await parentDir.create(recursive: true);
+    }
     _db = await openDatabase(
       dbPath,
       version: schemaVersion,

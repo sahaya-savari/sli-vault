@@ -15,6 +15,7 @@ import '../features/collections/collections_screen.dart';
 import '../features/favorites/favorites_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
+import '../features/search/search_screen.dart';
 import '../features/settings/settings_screen.dart';
 
 class MainShell extends StatefulWidget {
@@ -86,18 +87,29 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     if (!widget.controller.isLocked || _isAuthenticating) return;
     setState(() => _isAuthenticating = true);
     try {
-      final supported = await _localAuth.isDeviceSupported();
+      bool supported = false;
+      try {
+        supported = await _localAuth.isDeviceSupported();
+      } catch (_) {
+        supported = false;
+      }
       if (!supported) {
+        if (disableLockAfter) {
+          widget.controller.unlockVault();
+          await widget.controller.setLockEnabled(false);
+          if (mounted) setState(() => _lockMessage = null);
+          return;
+        }
         if (mounted) {
           setState(
-            () => _lockMessage = 'Device authentication is unavailable.',
+            () => _lockMessage = 'Device authentication is unavailable on this device.',
           );
         }
         return;
       }
       final authenticated = await _localAuth.authenticate(
         localizedReason: 'Authenticate to access your private SLI Vault',
-        options: AuthenticationOptions(biometricOnly: false, stickyAuth: true),
+        options: const AuthenticationOptions(biometricOnly: false, stickyAuth: true),
       );
       if (authenticated) {
         widget.controller.unlockVault();
@@ -227,8 +239,20 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
                       onPressed: _isAuthenticating
                           ? null
                           : () => _authenticate(disableLockAfter: true),
-                      child: Text('Authenticate and disable vault lock'),
+                      child: const Text('Authenticate and disable vault lock'),
                     ),
+                    if (_lockMessage != null &&
+                        _lockMessage!.contains('unavailable')) ...[
+                      const SizedBox(height: SliTokens.spaceSm),
+                      TextButton.icon(
+                        icon: const Icon(Icons.lock_open_rounded),
+                        onPressed: () {
+                          widget.controller.unlockVault();
+                          widget.controller.setLockEnabled(false);
+                        },
+                        label: const Text('Unlock and disable lock'),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -242,32 +266,65 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
           );
         }
 
-        return PopScope(
-          canPop: _selectedIndex == 0,
-          onPopInvokedWithResult: (didPop, _) {
-            if (!didPop && _selectedIndex != 0) {
-              setState(() => _selectedIndex = 0);
-            }
+        return CallbackShortcuts(
+          bindings: <ShortcutActivator, VoidCallback>{
+            const SingleActivator(LogicalKeyboardKey.keyF, control: true): () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => SearchScreen(controller: widget.controller),
+                ),
+              );
+            },
+            const SingleActivator(LogicalKeyboardKey.keyF, meta: true): () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => SearchScreen(controller: widget.controller),
+                ),
+              );
+            },
+            const SingleActivator(LogicalKeyboardKey.keyN, control: true): () {
+              _showAddSheet();
+            },
+            const SingleActivator(LogicalKeyboardKey.keyN, meta: true): () {
+              _showAddSheet();
+            },
+            const SingleActivator(LogicalKeyboardKey.escape): () {
+              final nav = Navigator.maybeOf(context);
+              if (nav != null && nav.canPop()) {
+                nav.pop();
+              }
+            },
           },
-          child: Scaffold(
-            backgroundColor: context.sli.obsidian,
-            resizeToAvoidBottomInset: false,
-            body: IndexedStack(
-              sizing: StackFit.expand,
-              index: _selectedIndex,
-              children: _pages,
-            ),
-            floatingActionButton: _selectedIndex == 3
-                ? null
-                : SliShimmerFab(onTap: _showAddSheet),
-            bottomNavigationBar: _BottomNavBar(
-              selectedIndex: _selectedIndex,
-              onSelect: (index) {
-                if (widget.controller.hapticsEnabled) {
-                  HapticFeedback.selectionClick();
+          child: Focus(
+            autofocus: true,
+            child: PopScope(
+              canPop: _selectedIndex == 0,
+              onPopInvokedWithResult: (didPop, _) {
+                if (!didPop && _selectedIndex != 0) {
+                  setState(() => _selectedIndex = 0);
                 }
-                setState(() => _selectedIndex = index);
               },
+              child: Scaffold(
+                backgroundColor: context.sli.obsidian,
+                resizeToAvoidBottomInset: false,
+                body: IndexedStack(
+                  sizing: StackFit.expand,
+                  index: _selectedIndex,
+                  children: _pages,
+                ),
+                floatingActionButton: _selectedIndex == 3
+                    ? null
+                    : SliShimmerFab(onTap: _showAddSheet),
+                bottomNavigationBar: _BottomNavBar(
+                  selectedIndex: _selectedIndex,
+                  onSelect: (index) {
+                    if (widget.controller.hapticsEnabled) {
+                      HapticFeedback.selectionClick();
+                    }
+                    setState(() => _selectedIndex = index);
+                  },
+                ),
+              ),
             ),
           ),
         );
@@ -374,16 +431,21 @@ class _BottomNavBar extends StatelessWidget {
             child: SizedBox(
               key: const ValueKey('sli-bottom-nav'),
               height: 56,
-              child: Row(
-                children: [
-                  for (var i = 0; i < _destinations.length; i++)
-                    _MinimalNavBarItem(
-                      label: _destinations[i].label,
-                      iconAsset: _destinations[i].icon,
-                      selected: selectedIndex == i,
-                      onTap: () => onSelect(i),
-                    ),
-                ],
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 560),
+                  child: Row(
+                    children: [
+                      for (var i = 0; i < _destinations.length; i++)
+                        _MinimalNavBarItem(
+                          label: _destinations[i].label,
+                          iconAsset: _destinations[i].icon,
+                          selected: selectedIndex == i,
+                          onTap: () => onSelect(i),
+                        ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -419,16 +481,21 @@ class _BottomNavBar extends StatelessWidget {
           child: SizedBox(
             key: const ValueKey('sli-bottom-nav'),
             height: 64,
-            child: Row(
-              children: [
-                for (var i = 0; i < _destinations.length; i++)
-                  _NavBarItem(
-                    label: _destinations[i].label,
-                    iconAsset: _destinations[i].icon,
-                    selected: selectedIndex == i,
-                    onTap: () => onSelect(i),
-                  ),
-              ],
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: Row(
+                  children: [
+                    for (var i = 0; i < _destinations.length; i++)
+                      _NavBarItem(
+                        label: _destinations[i].label,
+                        iconAsset: _destinations[i].icon,
+                        selected: selectedIndex == i,
+                        onTap: () => onSelect(i),
+                      ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),

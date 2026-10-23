@@ -58,8 +58,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       variant: SliAtmosphereVariant.abstractFlow,
       imageAsset: SliAssets.bgFavorites,
       child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1360),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SliScreenHeader(
               title: 'Favorites',
@@ -147,6 +150,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }

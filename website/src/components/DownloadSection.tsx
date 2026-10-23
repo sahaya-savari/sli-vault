@@ -79,6 +79,70 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
         <div className="dl__col">
           <h3>
             <svg
+              className="brand-ic"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4h-13.051M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-13.051-1.802" />
+            </svg>
+            <span>{isTa ? "டெஸ்க்டாப் (Windows & Linux)" : "Desktop (Windows & Linux)"}</span>
+          </h3>
+          <a
+            href="https://github.com/sahaya-savari/sli-vault/releases/latest"
+            className="dl__link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="dl__gh dl__gh--store">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4h-13.051M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-13.051-1.802" />
+              </svg>
+            </span>
+            <span>
+              Windows{" "}
+              <small>
+                {isTa ? "Windows 10/11 x64 (.zip)" : "Windows 10/11 x64 (.zip)"}
+              </small>
+            </span>
+          </a>
+          <a
+            href="https://github.com/sahaya-savari/sli-vault/releases/latest"
+            className="dl__link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="dl__gh dl__gh--store">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M12.002 0c-3.13 0-5.698 2.378-5.96 5.438-.03.35-.042.707-.042 1.062v1.5c0 .355.012.712.042 1.062.262 3.06 2.83 5.438 5.96 5.438 3.13 0 5.698-2.378 5.96-5.438.03-.35.042-.707.042-1.062V6.5c0-.355-.012-.712-.042-1.062C17.7 2.378 15.132 0 12.002 0zm-2.062 16.03c-2.35.418-4.27 1.848-5.344 3.844-.45.836-.69 1.777-.72 2.75-.014.453.336.876.812.876h14.628c.477 0 .826-.423.813-.876-.03-.973-.27-1.914-.72-2.75-1.074-1.996-2.994-3.426-5.344-3.844l-.782 1.562a2.006 2.006 0 0 1-1.78.998c-.734 0-1.4-.383-1.78-.998l-.783-1.562z" />
+              </svg>
+            </span>
+            <span>
+              Linux{" "}
+              <small>
+                {isTa ? "Ubuntu / Debian / Arch x64 (.tar.gz)" : "Ubuntu / Debian / Arch x64 (.tar.gz)"}
+              </small>
+            </span>
+          </a>
+        </div>
+
+        <div className="dl__col">
+          <h3>
+            <svg
               className="brand-ic brand-ic--github"
               viewBox="0 0 24 24"
               width="20"

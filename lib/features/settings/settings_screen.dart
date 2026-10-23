@@ -66,8 +66,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           variant: SliAtmosphereVariant.abstractFlow,
           imageAsset: SliAssets.bgSettings,
           child: SafeArea(
-            child: ListView(
-              key: const ValueKey('settings-scroll'),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 860),
+                child: ListView(
+                  key: const ValueKey('settings-scroll'),
               padding: EdgeInsets.fromLTRB(
                 SliTokens.spaceLg,
                 SliTokens.spaceMd,
@@ -172,7 +175,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-        );
+        ),
+      ),
+    );
       },
     );
   }

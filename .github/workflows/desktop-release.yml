@@ -1,0 +1,130 @@
+name: Desktop production release
+
+# Dedicated production build workflow for Windows and Linux desktop releases.
+# Completely decoupled from the Android release pipeline.
+on:
+  workflow_dispatch:
+    inputs:
+      create_github_release:
+        description: "Upload desktop binaries to existing GitHub Release"
+        type: boolean
+        default: false
+      release_tag:
+        description: "Release tag (e.g. v1.0.1). Required when create_github_release is true."
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: desktop-production-release
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: "3.47.7"
+
+jobs:
+  build-windows:
+    name: Build Windows x64 Release (.zip)
+    runs-on: windows-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Enable Windows desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify static analysis
+        run: flutter analyze
+
+      - name: Run unit and widget tests
+        run: flutter test
+
+      - name: Build Windows release binary
+        run: flutter build windows --release
+
+      - name: Package Windows release zip
+        shell: pwsh
+        run: |
+          $releaseDir = "build\windows\x64\runner\Release"
+          $zipPath = "sli-vault-windows-x64.zip"
+          Compress-Archive -Path "$releaseDir\*" -DestinationPath $zipPath -Force
+          Get-Item $zipPath | Select-Object Name, Length
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sli-vault-windows-x64
+          path: sli-vault-windows-x64.zip
+          retention-days: 14
+
+      - name: Upload to GitHub Release
+        if: ${{ inputs.create_github_release && inputs.release_tag != '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          gh release upload ${{ inputs.release_tag }} sli-vault-windows-x64.zip --clobber
+
+  build-linux:
+    name: Build Linux x64 Release (.tar.gz)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Enable Linux desktop
+        run: flutter config --enable-linux-desktop
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Linux release bundle
+        run: flutter build linux --release
+
+      - name: Package Linux release tarball
+        run: |
+          tar -czf sli-vault-linux-x64.tar.gz -C build/linux/x64/release/bundle .
+          ls -lh sli-vault-linux-x64.tar.gz
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sli-vault-linux-x64
+          path: sli-vault-linux-x64.tar.gz
+          retention-days: 14
+
+      - name: Upload to GitHub Release
+        if: ${{ inputs.create_github_release && inputs.release_tag != '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ inputs.release_tag }}" sli-vault-linux-x64.tar.gz --clobber

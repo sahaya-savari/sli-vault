@@ -74,7 +74,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context);
-    final showFeatureCards = media.size.height >= 820;
+    final isWide = media.size.width >= 780;
+    final showFeatureCards = media.size.height >= 680;
+    final contentMaxWidth = isWide ? 960.0 : 560.0;
 
     final pages = [
       _OnboardingPageData(
@@ -178,95 +180,135 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                   const _CinematicScrim(),
                   SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: SliTokens.spaceXl,
-                        vertical: SliTokens.spaceLg,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Reserve space for top bar
-                          const SizedBox(height: 48),
-                          const Spacer(flex: 2),
-                          // Headline + Description
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 420),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  page.title,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium
-                                      ?.copyWith(
-                                        color: SliTokens.textPrimary,
-                                        shadows: const [
-                                          Shadow(
-                                            color: Color(0xCC000000),
-                                            blurRadius: 16,
-                                            offset: Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                ),
-                                const SizedBox(height: SliTokens.spaceMd),
-                                Text(
-                                  page.description,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.bodyLarge
-                                      ?.copyWith(
-                                        color: SliTokens.textPrimary.withValues(
-                                          alpha: 0.92,
-                                        ),
-                                        shadows: const [
-                                          Shadow(
-                                            color: Color(0x99000000),
-                                            blurRadius: 10,
-                                            offset: Offset(0, 1),
-                                          ),
-                                        ],
-                                      ),
-                                ),
-                              ],
-                            ),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: contentMaxWidth),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: SliTokens.spaceXl,
+                            vertical: SliTokens.spaceLg,
                           ),
-                          if (showFeatureCards) ...[
-                            const SizedBox(height: SliTokens.spaceLg),
-                            Flexible(
-                              child: SingleChildScrollView(
-                                physics: const BouncingScrollPhysics(),
-                                child: Column(
-                                  children: [
-                                    for (
-                                      int i = 0;
-                                      i < page.featureTiles.length;
-                                      i++
-                                    ) ...[
-                                      if (i > 0)
-                                        const SizedBox(
-                                          height: SliTokens.spaceSm,
-                                        ),
-                                      _FeatureTile(
-                                        iconAsset:
-                                            page.featureTiles[i].iconAsset,
-                                        title: page.featureTiles[i].title,
-                                        subtitle: page.featureTiles[i].subtitle,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // Reserve space for top bar
+                              const SizedBox(height: 52),
+                              const Spacer(flex: 2),
+                              // Headline + Description
+                              Center(
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: isWide ? 680 : 500,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        page.title,
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium
+                                            ?.copyWith(
+                                              color: SliTokens.textPrimary,
+                                              fontSize: isWide ? 30 : 24,
+                                              fontWeight: FontWeight.w700,
+                                              letterSpacing: -0.5,
+                                              shadows: const [
+                                                Shadow(
+                                                  color: Color(0xCC000000),
+                                                  blurRadius: 16,
+                                                  offset: Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                      ),
+                                      const SizedBox(height: SliTokens.spaceMd),
+                                      Text(
+                                        page.description,
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context).textTheme.bodyLarge
+                                            ?.copyWith(
+                                              color: SliTokens.textPrimary.withValues(
+                                                alpha: 0.92,
+                                              ),
+                                              fontSize: isWide ? 16 : 14,
+                                              height: 1.45,
+                                              shadows: const [
+                                                Shadow(
+                                                  color: Color(0x99000000),
+                                                  blurRadius: 10,
+                                                  offset: Offset(0, 1),
+                                                ),
+                                              ],
+                                            ),
                                       ),
                                     ],
-                                  ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ] else
-                            const Spacer(flex: 3),
-                          // Reserve space for the persistent indicator + CTA.
-                          // Keep this tall enough that feature cards are not
-                          // visually clipped behind the bottom controls.
-                          SizedBox(height: showFeatureCards ? 132 : 100),
-                        ],
+                              if (showFeatureCards) ...[
+                                const SizedBox(height: SliTokens.spaceLg),
+                                if (isWide)
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      for (
+                                        int i = 0;
+                                        i < page.featureTiles.length;
+                                        i++
+                                      ) ...[
+                                        if (i > 0)
+                                          const SizedBox(
+                                            width: SliTokens.spaceMd,
+                                          ),
+                                        Expanded(
+                                          child: _FeatureTile(
+                                            iconAsset:
+                                                page.featureTiles[i].iconAsset,
+                                            title: page.featureTiles[i].title,
+                                            subtitle:
+                                                page.featureTiles[i].subtitle,
+                                            isHorizontalCard: true,
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  )
+                                else
+                                  Flexible(
+                                    child: SingleChildScrollView(
+                                      physics: const BouncingScrollPhysics(),
+                                      child: Column(
+                                        children: [
+                                          for (
+                                            int i = 0;
+                                            i < page.featureTiles.length;
+                                            i++
+                                          ) ...[
+                                            if (i > 0)
+                                              const SizedBox(
+                                                height: SliTokens.spaceSm,
+                                              ),
+                                            _FeatureTile(
+                                              iconAsset:
+                                                  page.featureTiles[i].iconAsset,
+                                              title: page.featureTiles[i].title,
+                                              subtitle:
+                                                  page.featureTiles[i].subtitle,
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                              ] else
+                                const Spacer(flex: 3),
+                              // Reserve space for the persistent indicator + CTA.
+                              SizedBox(height: showFeatureCards ? 132 : 100),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -282,12 +324,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             right: 0,
             child: SafeArea(
               bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: SliTokens.spaceXl,
-                  vertical: SliTokens.spaceLg,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: contentMaxWidth),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: SliTokens.spaceXl,
+                      vertical: SliTokens.spaceLg,
+                    ),
+                    child: _WelcomeTopBar(onSkip: widget.onFinish),
+                  ),
                 ),
-                child: _WelcomeTopBar(onSkip: widget.onFinish),
               ),
             ),
           ),
@@ -304,22 +351,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   horizontal: SliTokens.spaceXl,
                   vertical: SliTokens.spaceLg,
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _PageIndicator(
-                      count: pages.length,
-                      current: _currentPage,
-                      onDotTap: _goToPage,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 280),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _PageIndicator(
+                          count: pages.length,
+                          current: _currentPage,
+                          onDotTap: _goToPage,
+                        ),
+                        const SizedBox(height: SliTokens.spaceMd),
+                        SliGradientButton(
+                          label: _currentPage == pages.length - 1
+                              ? 'Get Started'
+                              : 'Next',
+                          onPressed: () => _onPrimaryPressed(pages.length),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: SliTokens.spaceMd),
-                    SliGradientButton(
-                      label: _currentPage == pages.length - 1
-                          ? 'Get Started'
-                          : 'Next',
-                      onPressed: () => _onPrimaryPressed(pages.length),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -533,15 +585,88 @@ class _FeatureTile extends StatelessWidget {
   final String iconAsset;
   final String title;
   final String subtitle;
+  final bool isHorizontalCard;
 
   const _FeatureTile({
     required this.iconAsset,
     required this.title,
     required this.subtitle,
+    this.isHorizontalCard = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final cardContent = isHorizontalCard
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.35),
+                  borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+                ),
+                alignment: Alignment.center,
+                child: SliIcon(iconAsset, size: 18, color: SliTokens.orange),
+              ),
+              const SizedBox(height: SliTokens.spaceSm),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: SliTokens.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: SliTokens.textPrimary.withValues(alpha: 0.78),
+                      height: 1.35,
+                    ),
+              ),
+            ],
+          )
+        : Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.35),
+                  borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+                ),
+                alignment: Alignment.center,
+                child: SliIcon(iconAsset, size: 18, color: SliTokens.orange),
+              ),
+              const SizedBox(width: SliTokens.spaceMd),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium
+                          ?.copyWith(color: SliTokens.textPrimary),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: SliTokens.textPrimary.withValues(alpha: 0.78),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+
     return Container(
       padding: const EdgeInsets.all(SliTokens.spaceMd),
       decoration: BoxDecoration(
@@ -549,42 +674,7 @@ class _FeatureTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(SliTokens.radiusLg),
         border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.35),
-              borderRadius: BorderRadius.circular(SliTokens.radiusMd),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-            ),
-            alignment: Alignment.center,
-            child: SliIcon(iconAsset, size: 18, color: SliTokens.orange),
-          ),
-          const SizedBox(width: SliTokens.spaceMd),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium
-                      ?.copyWith(color: SliTokens.textPrimary),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: SliTokens.textPrimary.withValues(alpha: 0.78),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      child: cardContent,
     );
   }
 }

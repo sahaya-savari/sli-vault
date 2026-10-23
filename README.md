@@ -1,18 +1,20 @@
 <div align="center">
-  <img src="docs/assets/sli-vault-readme-hero.png" alt="SLI Vault - personal vault for links, screenshots, and images. Android, 100% local-first." width="100%" />
+  <img src="docs/assets/sli-vault-readme-hero.png" alt="SLI Vault - personal vault for links, screenshots, and images. Android, Windows, Linux, 100% local-first." width="100%" />
 </div>
 
 <p align="center">
   <strong>SLI Vault</strong><br>
-  A minimal, private, local-first library for links and images on Android.
+  A minimal, private, local-first library for links, notes, and images on Android, Windows, and Linux.
 </p>
 
 <p align="center">
   <img alt="Flutter" src="https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white">
   <img alt="Dart" src="https://img.shields.io/badge/Dart-3.13-0175C2?logo=dart&logoColor=white">
-  <img alt="Android" src="https://img.shields.io/badge/Android-first-3DDC84?logo=android&logoColor=white">
+  <img alt="Android" src="https://img.shields.io/badge/Android-Supported-3DDC84?logo=android&logoColor=white">
+  <img alt="Windows" src="https://img.shields.io/badge/Windows-10%2F11-0078D6?logo=windows&logoColor=white">
+  <img alt="Linux" src="https://img.shields.io/badge/Linux-x64-FCC624?logo=linux&logoColor=black">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-6f4e37">
-  <img alt="Release" src="https://img.shields.io/badge/GitHub%20Release-signed%20APK-ff6b35">
+  <img alt="Release" src="https://img.shields.io/badge/GitHub%20Release-v1.0.1-ff6b35">
 </p>
 
 <p align="center">
@@ -32,25 +34,27 @@
 
 ## Overview
 
-SLI Vault is a Flutter Android app for saving links and images into **app-private** storage. There is no account, no cloud sync, and no analytics SDK. The production manifest does not request Internet access.
+SLI Vault is a unified cross-platform Flutter application for saving links, notes, and images into **app-private** storage. There is no account, no cloud sync, and no analytics SDK. All data remains 100% local on your device.
 
 | Property | Current Detail |
 |---|---|
 | **Application ID** | `com.sahayasavari.slivault` |
 | **Current Version** | `1.0.1` (`versionCode` `2010`, arm64 `4010`) |
-| **Distribution** | Signed APK and AAB on [GitHub Releases](https://github.com/sahaya-savari/sli-vault/releases) - sideload only, no Play Store listing |
-| **Data Model** | 100% local-first: SQLite + app-private image files |
+| **Supported Platforms** | Android (8.0+), Windows 10/11 (x64), Linux (Ubuntu, Debian, Fedora, Arch x64) |
+| **Distribution** | Signed APK, Windows ZIP, Linux tarball on [GitHub Releases](https://github.com/sahaya-savari/sli-vault/releases) |
+| **Data Model** | 100% local-first: SQLite (`sqflite` on Android, `sqflite_common_ffi` on desktop) + private image files |
 | **License** | [MIT](LICENSE) for project-owned code and docs (fonts under SIL OFL 1.1) |
 
-The Flutter mobile application resides directly at the **repository root**. The repository is architected as a lightweight monorepo accommodating:
-1. The **Flutter/Dart Android mobile app** at the repository root.
+The Flutter mobile and desktop application resides directly at the **repository root**. The repository is architected as a lightweight monorepo accommodating:
+1. The **Flutter/Dart cross-platform application** (Android, Windows, Linux) at the repository root.
 2. The **companion website** (Vite + Nitro + TanStack Start) under `website/`.
 
 | Component / Platform | Status |
 |----------------------|--------|
-| Android (Root) | Primary target; signed GitHub Release available (`v1.0.1`) |
-| iOS | Phase 2 - scaffold only, not verified as a shipping target |
-| Web / Desktop | Flutter platform folders only - not the shipping target |
+| Android (Root) | Primary mobile target; signed GitHub Release APK & AAB available (`v1.0.1`) |
+| Windows (Desktop) | Production desktop target; 64-bit release binary and ZIP bundle |
+| Linux (Desktop) | Production desktop target; GTK3 release binary and tarball bundle |
+| iOS | Phase 2 - scaffold only |
 | Website (`website/`) | Companion website (Vite/Nitro); see [docs/WEBSITE_SETUP.md](docs/WEBSITE_SETUP.md) |
 
 **Download / release status:** a **signed GitHub Release APK** is available under [Releases](https://github.com/sahaya-savari/sli-vault/releases). Application ID `com.sahayasavari.slivault`. There is **no Play Store listing** - sideload / open-source distribution only.
@@ -231,7 +235,7 @@ All screenshots are authentic captures from the running Android app, sanitized w
 
 SLI Vault is **100% Free and Open-Source Software (FOSS)** distributed directly via GitHub Releases and the official companion website. There are no ads, no trackers, and no Google Play account required to install and use the app.
 
-### Official Releases
+### Official Mobile Releases (Android)
 
 Latest Stable: **[v1.0.1](https://github.com/sahaya-savari/sli-vault/releases/tag/v1.0.1)** (`versionCode 2008`)
 
@@ -242,13 +246,32 @@ Latest Stable: **[v1.0.1](https://github.com/sahaya-savari/sli-vault/releases/ta
 | **`armeabi-v7a`** | Older 32-bit Android phones | [Download APK (25.8 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-armeabi-v7a.apk) | `FB3F870BA957577C359F97443E296BF67ABDF092CCDB112651ECBC565B356369` |
 | **`x86_64`** | Emulators and ChromeOS tablets | [Download APK (29.4 MB)](https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-x86_64.apk) | `78BB4EB2A0AE0F8CC894D1934151527F7BF72211C4E8C452D4DCF68A342440F4` |
 
+### Official Desktop Releases (Windows & Linux)
+
+| Platform | Format | Direct Download | Requirements |
+| :--- | :--- | :---: | :--- |
+| **Windows Desktop** | `.zip` Archive (`sli_vault.exe`) | [Download Windows x64](https://github.com/sahaya-savari/sli-vault/releases/latest) | Windows 10 / 11 (64-bit) |
+| **Linux Desktop** | `.tar.gz` Tarball (`sli_vault`) | [Download Linux x64](https://github.com/sahaya-savari/sli-vault/releases/latest) | Ubuntu 20.04+, Debian 11+, Fedora, Arch (GTK3) |
+
 🌐 **Official Companion Website & Web Viewer:** [https://sahaya-savari.github.io/sli-vault/](https://sahaya-savari.github.io/sli-vault/)
 
-### How to Install (Sideloading)
+### How to Install
+
+#### Android (Sideloading)
 1. Download the **`arm64-v8a` APK** directly on your Android phone (or Universal if unsure).
 2. When prompted by your browser or file manager, tap **Settings** and enable **Allow from this source** ("Install unknown apps").
 3. Tap **Install**.
-4. All future updates can be installed directly over existing versions without losing your saved links, notes, or images.
+
+#### Windows Desktop
+1. Download and extract **`sli-vault-windows-x64.zip`**.
+2. Run **`sli_vault.exe`**. No installer or administrative rights required.
+
+#### Linux Desktop
+1. Download and extract **`sli-vault-linux-x64.tar.gz`**:
+   ```bash
+   tar -xzf sli-vault-linux-x64.tar.gz
+   ./sli_vault
+   ```
 
 ---
 
@@ -310,7 +333,7 @@ flutter run
 
 ---
 
-## Build
+### Android Build
 
 Debug APK:
 
@@ -319,7 +342,7 @@ $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
 flutter build apk --debug
 ```
 
-Release-mode APK and App Bundle (**signed** with the owner release keystore):
+Release-mode APK and App Bundle:
 
 ```powershell
 $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
@@ -327,13 +350,35 @@ flutter build apk --release
 flutter build appbundle --release
 ```
 
+### Windows Desktop Build
+
+```powershell
+flutter config --enable-windows-desktop
+flutter build windows --release
+```
+
+Output directory: `build\windows\x64\runner\Release\` (`sli_vault.exe`).
+
+### Linux Desktop Build
+
+```bash
+sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+flutter config --enable-linux-desktop
+flutter build linux --release
+```
+
+Output directory: `build/linux/x64/release/bundle/` (`sli_vault`).
+
+### Artifact Summary
+
 Outputs stay under `build/` and must not be committed. `publish_to` is `none` in `pubspec.yaml`.
 
 | Artifact | Typical local path | Notes |
 |----------|-------------------|--------|
-| Debug APK | `build/app/outputs/flutter-apk/app-debug.apk` | Development |
-| Release APK | `build/app/outputs/flutter-apk/app-release.apk` | 63,521,428 bytes (60.58 MiB), debug-signed |
-| Release AAB | `build/app/outputs/bundle/release/app-release.aab` | 63,540,169 bytes (60.60 MiB), debug-signed |
+| Android APK | `build/app/outputs/flutter-apk/app-release.apk` | Signed release APK |
+| Android AAB | `build/app/outputs/bundle/release/app-release.aab` | Signed Play bundle |
+| Windows Executable | `build/windows/x64/runner/Release/sli_vault.exe` | Standalone x64 desktop binary |
+| Linux Binary | `build/linux/x64/release/bundle/sli_vault` | Standalone GTK3 Linux binary |
 
 ---
 
