@@ -1,0 +1,1 @@
+Calm, private, local-first library for links, notes, and images. Zero tracking.

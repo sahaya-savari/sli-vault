@@ -1,0 +1,13 @@
+SLI Vault is a calm, minimal, local-first personal library for links, screenshots, and capturing offline Markdown notes and code snippets on Android.
+
+There are no accounts, no cloud sync, no advertisements, and no analytics SDKs. All items and images live in app-private device storage. The production Android manifest does not declare or request INTERNET access.
+
+Key Features:
+* 100% Local-First: Backed by durable SQLite storage on your device.
+* Offline Markdown Notes: Format code blocks, checklists, and notes with syntax styling.
+* Interactive Tag Ribbon: Filter and browse your bookmarks by dynamic frequency tags.
+* Native Palette Extraction: Automatically extracts the top 5 dominant hex colors from saved images.
+* Three Distinct Visual Styles: Classic, Minimal, and Express design systems.
+* AMOLED Pure Black: Deep obsidian theme with crisp border contrast tailored for OLED screens.
+* Privacy Controls: Optional app lock via biometric or device credentials with selectable timeouts.
+* Portable Backups: Export and import complete ZIP archives with SHA-256 integrity validation.
