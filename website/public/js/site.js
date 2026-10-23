@@ -348,7 +348,7 @@ document.querySelectorAll("[data-share]").forEach((button) => {
     const url = button.dataset.share;
     if (navigator.share) {
       try {
-        await navigator.share({ title: "Streak", text: document.title, url });
+        await navigator.share({ title: "SLI Vault", text: document.title, url });
         return;
       } catch (error) {
         if (error && error.name === "AbortError") return;
@@ -363,3 +363,40 @@ document.querySelectorAll("[data-share]").forEach((button) => {
     setTimeout(() => button.classList.remove("is-copied"), 2600);
   });
 });
+
+// Clean hash / hashtag url slug (e.g. #support, #download) from address bar
+const cleanHashSlug = () => {
+  if (window.location.hash) {
+    const target = document.querySelector(window.location.hash);
+    if (target) {
+      setTimeout(() => {
+        target.scrollIntoView({ behavior: calm ? "auto" : "smooth" });
+      }, 50);
+    }
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+  }
+};
+
+document.querySelectorAll('a[href^="#"]').forEach((link) => {
+  link.addEventListener("click", (e) => {
+    const hash = link.getAttribute("href");
+    if (!hash || hash === "#") return;
+    const target = document.querySelector(hash);
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: calm ? "auto" : "smooth" });
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    }
+  });
+});
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", cleanHashSlug);
+} else {
+  cleanHashSlug();
+}
+

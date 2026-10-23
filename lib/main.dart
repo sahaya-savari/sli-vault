@@ -35,9 +35,8 @@ class SliVaultApp extends StatefulWidget {
   final VaultController controller;
 
   /// Minimum time the owner loading arts stay on screen after first frame.
-  /// Keep long enough to outlast typical Android splash → Flutter first-frame gap
-  /// so the JPG arts are actually visible (not only the native logo plate).
-  static const Duration loadingHold = Duration(milliseconds: 4200);
+  /// Enough to showcase the artwork while keeping startup responsive.
+  static const Duration loadingHold = Duration(milliseconds: 1600);
 
   const SliVaultApp({super.key, required this.controller});
 

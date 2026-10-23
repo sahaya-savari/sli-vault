@@ -1,7 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -49,10 +49,10 @@ class VaultController extends ChangeNotifier {
   static const String _prefAutoFetchMetadata =
       'sli_vault_auto_fetch_metadata_v1';
   static const String _prefBrowseDensity = 'sli_vault_browse_density_v1';
-  static const String _prefScreenProtection = 'sli_vault_screen_protection_v1';
   static const String _prefProfileName = 'sli_vault_profile_name_v1';
   static const String _prefProfilePhoto = 'sli_vault_profile_photo_v1';
   static const String _prefPinnedItems = 'sli_vault_pinned_items_v1';
+  static const String _prefLastBackupAt = 'sli_vault_last_backup_at_v1';
 
   final VaultDatabase database;
   final LocalImageStorage imageStorage;
@@ -80,9 +80,11 @@ class VaultController extends ChangeNotifier {
   bool _reduceMotion = false;
   bool _autoFetchMetadata = true;
   String _browseDensity = 'comfortable';
-  bool _screenProtectionEnabled = true;
   String _profileName = 'SLI Vault';
   String _profilePhotoPath = '';
+  String? _activeTagFilter;
+  String? _activeDomainFilter;
+  DateTime? _lastBackupAt;
   final Map<String, (VaultItem item, Uint8List? imageBytes, bool wasPinned)>
   _undoCache = {};
   final Map<
@@ -96,6 +98,7 @@ class VaultController extends ChangeNotifier {
   VaultTypeFilter _browseFilter = VaultTypeFilter.all;
   VaultTypeFilter _favoritesFilter = VaultTypeFilter.all;
   VaultSortOption _browseSort = VaultSortOption.newestFirst;
+  VaultSortOption _homeSort = VaultSortOption.newestFirst;
   bool _browseGridView = false;
   String _searchQuery = '';
   int _approxStorageBytes = 0;
@@ -120,6 +123,7 @@ class VaultController extends ChangeNotifier {
   VaultTypeFilter get browseFilter => _browseFilter;
   VaultTypeFilter get favoritesFilter => _favoritesFilter;
   VaultSortOption get browseSort => _browseSort;
+  VaultSortOption get homeSort => _homeSort;
   bool get browseGridView => _browseGridView;
   String get searchQuery => _searchQuery;
   int get approxStorageBytes => _approxStorageBytes;
@@ -137,11 +141,82 @@ class VaultController extends ChangeNotifier {
   bool get reduceMotion => _reduceMotion;
   bool get autoFetchMetadata => _autoFetchMetadata;
   String get browseDensity => _browseDensity;
-  bool get screenProtectionEnabled => _screenProtectionEnabled;
   String get profileName => _profileName;
   String get profilePhotoPath => _profilePhotoPath;
   Set<String> get pinnedItemIds => Set.unmodifiable(_pinnedItemIds);
   bool isItemPinned(String id) => _pinnedItemIds.contains(id);
+
+  String? get activeTagFilter => _activeTagFilter;
+  String? get activeDomainFilter => _activeDomainFilter;
+  DateTime? get lastBackupAt => _lastBackupAt;
+
+  bool get isBackupReminderDue {
+    if (_allItems.isEmpty) return false;
+    if (_lastBackupAt == null) return true;
+    final daysSince = DateTime.now().difference(_lastBackupAt!).inDays;
+    return daysSince >= 14;
+  }
+
+  int get daysSinceLastBackup {
+    if (_lastBackupAt == null) return -1;
+    return DateTime.now().difference(_lastBackupAt!).inDays;
+  }
+
+  void setTagFilter(String? tag) {
+    if (_activeTagFilter == tag) {
+      _activeTagFilter = null;
+    } else {
+      _activeTagFilter = tag;
+    }
+    notifyListeners();
+  }
+
+  void setDomainFilter(String? domain) {
+    if (_activeDomainFilter == domain) {
+      _activeDomainFilter = null;
+    } else {
+      _activeDomainFilter = domain;
+    }
+    notifyListeners();
+  }
+
+  void clearFilters() {
+    _activeTagFilter = null;
+    _activeDomainFilter = null;
+    notifyListeners();
+  }
+
+  Map<String, int> get tagFrequencies {
+    final counts = <String, int>{};
+    for (final item in _allItems) {
+      for (final tag in item.tags) {
+        counts[tag] = (counts[tag] ?? 0) + 1;
+      }
+    }
+    final sorted = counts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    return Map.fromEntries(sorted);
+  }
+
+  Map<String, int> get domainFrequencies {
+    final counts = <String, int>{};
+    for (final item in _allItems) {
+      final domain = item.domainHost;
+      if (domain.isNotEmpty) {
+        counts[domain] = (counts[domain] ?? 0) + 1;
+      }
+    }
+    final sorted = counts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    return Map.fromEntries(sorted);
+  }
+
+  Future<void> recordBackupCompleted() async {
+    _lastBackupAt = DateTime.now();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_prefLastBackupAt, _lastBackupAt!.millisecondsSinceEpoch);
+    notifyListeners();
+  }
 
   List<String> get collections {
     final names = <String>{'General', ..._customCollections};
@@ -155,6 +230,10 @@ class VaultController extends ChangeNotifier {
   /// in `main.dart` so the first painted frame is the rotating owner arts.
   Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
+    final lastBackupMillis = prefs.getInt(_prefLastBackupAt);
+    if (lastBackupMillis != null) {
+      _lastBackupAt = DateTime.fromMillisecondsSinceEpoch(lastBackupMillis);
+    }
     _onboardingCompleted = prefs.getBool(_prefOnboardingDone) ?? false;
     _customCollections = {
       'General',
@@ -179,25 +258,17 @@ class VaultController extends ChangeNotifier {
       orElse: () => VaultSortOption.newestFirst,
     );
     _browseSort = _defaultBrowseSort;
+    _homeSort = _defaultBrowseSort;
     _inAppBrowser = prefs.getBool(_prefInAppBrowser) ?? false;
     _hapticsEnabled = prefs.getBool(_prefHapticsEnabled) ?? true;
     _reduceMotion = prefs.getBool(_prefReduceMotion) ?? false;
     _autoFetchMetadata = prefs.getBool(_prefAutoFetchMetadata) ?? true;
     _browseDensity = prefs.getString(_prefBrowseDensity) ?? 'comfortable';
-    _screenProtectionEnabled = prefs.getBool(_prefScreenProtection) ?? true;
     final savedName = prefs.getString(_prefProfileName);
     _profileName = (savedName == null || savedName == 'Inlitx' || savedName.trim().isEmpty)
         ? 'SLI Vault'
         : savedName;
     _profilePhotoPath = prefs.getString(_prefProfilePhoto) ?? '';
-    if (Platform.isAndroid) {
-      try {
-        const MethodChannel('sli_vault/security').invokeMethod(
-          'setScreenProtection',
-          {'enabled': _screenProtectionEnabled},
-        );
-      } catch (_) {}
-    }
     await reloadLibrary();
     _isInitialized = true;
     notifyListeners();
@@ -240,18 +311,6 @@ class VaultController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setScreenProtectionEnabled(bool enabled) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_prefScreenProtection, enabled);
-    _screenProtectionEnabled = enabled;
-    if (Platform.isAndroid) {
-      try {
-        const MethodChannel('sli_vault/security')
-            .invokeMethod('setScreenProtection', {'enabled': enabled});
-      } catch (_) {}
-    }
-    notifyListeners();
-  }
 
   Future<void> completeOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
@@ -354,6 +413,11 @@ class VaultController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> toggleBrowseDensity() async {
+    final next = _browseDensity == 'compact' ? 'comfortable' : 'compact';
+    await setBrowseDensity(next);
+  }
+
   Future<void> setLockEnabled(bool enabled) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_prefLockEnabled, enabled);
@@ -414,6 +478,21 @@ class VaultController extends ChangeNotifier {
     }
   }
 
+  /// Completely wipes all vault items, stored images, custom collections, and undo caches.
+  Future<void> clearAllData() async {
+    await database.clearAllItems();
+    await imageStorage.clearAllImages();
+    await database.vacuum();
+    _undoCache.clear();
+    _batchUndoCache.clear();
+    _pinnedItemIds.clear();
+    _customCollections = {'General'};
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_prefPinnedItems);
+    await prefs.remove(_prefCollections);
+    await reloadLibrary();
+  }
+
   Future<VaultIntegrityReport> checkIntegrity() async {
     final activeIds = await database.getActiveReferencedImageIds();
     int missing = 0;
@@ -466,6 +545,12 @@ class VaultController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setHomeSort(VaultSortOption sort) {
+    if (_homeSort == sort) return;
+    _homeSort = sort;
+    notifyListeners();
+  }
+
   void setBrowseSort(VaultSortOption sort) {
     if (_browseSort == sort) return;
     _browseSort = sort;
@@ -498,14 +583,31 @@ class VaultController extends ChangeNotifier {
   }
 
   List<VaultItem> get homeFilteredItems {
-    final list = _allItems
-        .where((item) => _homeFilter.matches(item.type))
-        .toList();
+    final list = _allItems.where((item) {
+      if (!_homeFilter.matches(item.type)) return false;
+      if (_activeTagFilter != null && !item.tags.contains(_activeTagFilter)) {
+        return false;
+      }
+      if (_activeDomainFilter != null &&
+          item.domainHost != _activeDomainFilter) {
+        return false;
+      }
+      return true;
+    }).toList();
     list.sort((a, b) {
       final aPin = isItemPinned(a.id);
       final bPin = isItemPinned(b.id);
       if (aPin != bPin) return aPin ? -1 : 1;
-      return b.createdAt.compareTo(a.createdAt);
+      return switch (_homeSort) {
+        VaultSortOption.newestFirst => b.createdAt.compareTo(a.createdAt),
+        VaultSortOption.oldestFirst => a.createdAt.compareTo(b.createdAt),
+        VaultSortOption.titleAZ => a.title.toLowerCase().compareTo(
+          b.title.toLowerCase(),
+        ),
+        VaultSortOption.titleZA => b.title.toLowerCase().compareTo(
+          a.title.toLowerCase(),
+        ),
+      };
     });
     return list;
   }
@@ -623,6 +725,7 @@ class VaultController extends ChangeNotifier {
     required String rawUrl,
     String? customTitle,
     String? description,
+    String? thumbnailUrl,
     List<String> tags = const [],
     String collection = 'General',
   }) async {
@@ -649,6 +752,7 @@ class VaultController extends ChangeNotifier {
         title: effectiveTitle,
         url: validation.normalizedUrl,
         domain: validation.domain,
+        thumbnailId: thumbnailUrl,
         description: description?.trim().isEmpty == true
             ? null
             : description?.trim(),
@@ -733,6 +837,48 @@ class VaultController extends ChangeNotifier {
     }
   }
 
+  /// Saves an offline Markdown note & code snippet item (100% local SQLite storage).
+  Future<VaultItem> addNoteItem({
+    required String title,
+    required String content,
+    String? languageHint,
+    List<String> tags = const [],
+    String collection = 'General',
+  }) async {
+    if (_isBusy) {
+      throw StateError('A save operation is already in progress.');
+    }
+    _isBusy = true;
+    notifyListeners();
+    try {
+      final now = DateTime.now();
+      final effectiveTitle = title.trim().isEmpty
+          ? 'Note ${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}'
+          : title.trim();
+
+      final item = VaultItem(
+        id: _uuid.v4(),
+        type: VaultItemType.note,
+        title: effectiveTitle,
+        url: languageHint?.trim().isEmpty == true ? null : languageHint?.trim(),
+        description: content.trim(),
+        fileSizeBytes: utf8.encode(content).length,
+        tags: VaultValidators.normalizeTags(tags),
+        isFavorite: false,
+        collection: collection.trim().isEmpty ? 'General' : collection.trim(),
+        createdAt: now,
+        updatedAt: now,
+      );
+
+      await database.upsertItem(item);
+      await reloadLibrary();
+      return item;
+    } finally {
+      _isBusy = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> toggleFavorite(String itemId) async {
     final existing = findById(itemId);
     if (existing == null) return;
@@ -775,13 +921,15 @@ class VaultController extends ChangeNotifier {
   }
 
   /// Exports the entire library into a portable ZIP including empty custom collections.
-  Future<Uint8List> createBackupArchiveBytes() {
+  Future<Uint8List> createBackupArchiveBytes() async {
     final customList = _customCollections
         .where((c) => c.trim().isNotEmpty && c.trim() != 'General')
         .toList();
-    return backupService.createBackupArchiveBytes(
+    final bytes = await backupService.createBackupArchiveBytes(
       customCollections: customList,
     );
+    await recordBackupCompleted();
+    return bytes;
   }
 
   /// Commits an import preview safely, restoring items, images, and custom collections.

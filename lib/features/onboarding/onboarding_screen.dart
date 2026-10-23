@@ -177,8 +177,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         featureTiles: const [
           _FeatureTileData(
             iconAsset: SliAssets.contentLink,
-            title: 'Links, Screenshots & Images',
-            subtitle: 'Capture URLs with clean domain fallbacks or import images directly into app-private storage.',
+            title: 'Links, Notes & Images',
+            subtitle: 'Capture URLs, write offline Markdown notes & snippets, or import images directly into local storage.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.utilPrivacy,
@@ -188,36 +188,36 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           _FeatureTileData(
             iconAsset: SliAssets.utilExport,
             title: 'Honest Storage & Backup',
-            subtitle: 'Local storage is not hardware encryption. Use Export in Settings anytime to back up your items and original images.',
+            subtitle: 'Local storage is not hardware encryption. Use Export in Settings anytime to back up your items, notes and original images.',
           ),
         ],
       ),
       const _OnboardingPageData(
         title: 'Links, images, and moments, all in one place.',
         description: 'Keep useful websites, screenshots, images, and video inspiration organized in your personal library.',
-        stillAsset: SliAssets.welcomeLanternTree,
+        stillAsset: SliAssets.welcomeFestival,
         featureTiles: [
           _FeatureTileData(
             iconAsset: SliAssets.contentLink,
             title: 'Websites & Moments',
-            subtitle: 'Save article links, research, and favorite web tools with clean domain icons.',
+            subtitle: 'Save article links, research, and favorite web tools with rich domain intelligence.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.contentImage,
             title: 'Screenshots & Images',
-            subtitle: 'Import photos, design inspiration, and screenshots directly into your private library.',
+            subtitle: 'Import photos, design inspiration, and screenshots with native palette extraction.',
           ),
           _FeatureTileData(
             iconAsset: SliAssets.contentLayers,
-            title: 'Clear Media Badges',
-            subtitle: 'Spot links, images, and visual clips instantly with dedicated type badges.',
+            title: 'Markdown Notes & Snippets',
+            subtitle: 'Keep code snippets and markdown checklists with JetBrains Mono syntax highlights.',
           ),
         ],
       ),
       const _OnboardingPageData(
         title: 'Everything saved. Nothing lost in the scroll.',
         description: 'Search your library, organize collections, and favorite the things you want to revisit.',
-        stillAsset: SliAssets.welcomeValleyRiver,
+        stillAsset: SliAssets.welcomeRainPaddies,
         featureTiles: [
           _FeatureTileData(
             iconAsset: SliAssets.navBrowse,

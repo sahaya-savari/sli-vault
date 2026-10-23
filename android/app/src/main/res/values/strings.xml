@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shortcut_add_link_short">Add Link</string>
+    <string name="shortcut_add_link_long">Save a new link to SLI Vault</string>
+    <string name="shortcut_save_image_short">Save Image</string>
+    <string name="shortcut_save_image_long">Pick and save an image to SLI Vault</string>
+    <string name="shortcut_new_note_short">New Note</string>
+    <string name="shortcut_new_note_long">Write a markdown note or code snippet</string>
+    <string name="shortcut_search_short">Search</string>
+    <string name="shortcut_search_long">Search your local vault</string>
+</resources>

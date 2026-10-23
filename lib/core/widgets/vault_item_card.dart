@@ -109,7 +109,67 @@ class _VaultItemCardState extends State<VaultItemCard> {
           : (context.sli.visualStyle == SliVisualStyle.express ? 16 : 10),
     );
 
-    if (widget.item.type == VaultItemType.link) {
+    if (widget.item.isNote) {
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: context.sli.charcoal,
+          borderRadius: thumbRadius,
+          border: Border.all(color: context.sli.border),
+        ),
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.notes_rounded,
+              size: width * 0.40,
+              color: context.sli.primaryAccent,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              'NOTE',
+              style: TextStyle(
+                fontFamily: SliTokens.fontFamilyMono,
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
+                color: context.sli.primaryAccent,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (widget.item.isLink) {
+      if (widget.item.thumbnailId != null &&
+          widget.item.thumbnailId!.startsWith('http')) {
+        return ClipRRect(
+          borderRadius: thumbRadius,
+          child: Image.network(
+            widget.item.thumbnailId!,
+            width: width,
+            height: height,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => Container(
+              width: width,
+              height: height,
+              decoration: BoxDecoration(
+                color: context.sli.charcoal,
+                borderRadius: thumbRadius,
+                border: Border.all(color: context.sli.border),
+              ),
+              alignment: Alignment.center,
+              child: SliIllustration(
+                SliAssets.illLinkPlaceholder,
+                width: width * 0.72,
+                height: height * 0.72,
+              ),
+            ),
+          ),
+        );
+      }
       return Container(
         width: width,
         height: height,
@@ -391,6 +451,37 @@ class _VaultItemCardState extends State<VaultItemCard> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     _buildTypePill(context),
+                    if (widget.item.isLink)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: context.sli.charcoal,
+                          borderRadius: _badgeRadius(context),
+                          border: Border.all(color: context.sli.border),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.schedule_rounded,
+                              size: 10,
+                              color: context.sli.textSecondary,
+                            ),
+                            const SizedBox(width: 2.5),
+                            Text(
+                              '${widget.item.readingTimeMinutes} min',
+                              style: TextStyle(
+                                color: context.sli.textSecondary,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     if (widget.controller.isItemPinned(widget.item.id))
                       _buildPinBadge(context),
                     if (widget.item.isFavorite) _buildFavoriteBadge(context),
@@ -400,9 +491,9 @@ class _VaultItemCardState extends State<VaultItemCard> {
                     if (widget.item.description != null &&
                         widget.item.description!.isNotEmpty)
                       Tooltip(
-                        message: 'Has note or description',
+                        message: widget.item.isNote ? 'Contains note content' : 'Has note or description',
                         child: Icon(
-                          Icons.description_outlined,
+                          widget.item.isNote ? Icons.notes_rounded : Icons.description_outlined,
                           size: 13,
                           color: context.sli.textSecondary,
                         ),
@@ -440,22 +531,36 @@ class _VaultItemCardState extends State<VaultItemCard> {
                     spacing: 6,
                     runSpacing: 4,
                     children: widget.item.tags.take(3).map((t) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 7,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: context.sli.charcoal,
-                          borderRadius: _tagRadius(context),
-                          border: Border.all(color: context.sli.border),
-                        ),
-                        child: Text(
-                          '#$t',
-                          style: TextStyle(
-                            color: context.sli.amberText,
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w500,
+                      final isActive = widget.controller.activeTagFilter == t;
+                      return InkWell(
+                        onTap: () => widget.controller.setTagFilter(t),
+                        borderRadius: _tagRadius(context),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isActive
+                                ? context.sli.primaryAccent.withValues(alpha: 0.18)
+                                : context.sli.charcoal,
+                            borderRadius: _tagRadius(context),
+                            border: Border.all(
+                              color: isActive
+                                  ? context.sli.primaryAccent
+                                  : context.sli.border,
+                            ),
+                          ),
+                          child: Text(
+                            '#$t',
+                            style: TextStyle(
+                              color: isActive
+                                  ? context.sli.primaryAccent
+                                  : context.sli.amberText,
+                              fontSize: 10.5,
+                              fontWeight:
+                                  isActive ? FontWeight.w700 : FontWeight.w500,
+                            ),
                           ),
                         ),
                       );

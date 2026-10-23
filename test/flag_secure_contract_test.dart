@@ -2,30 +2,36 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-/// Source-level contract: Android builds provide configurable screen protection
-/// via FLAG_SECURE connected to the sli_vault/security MethodChannel.
+/// Source-level contract: FLAG_SECURE is completely removed so users can take
+/// screenshots and screen recordings without restrictions.
 void main() {
-  test('MainActivity provides dynamic, user-controlled FLAG_SECURE protection', () {
+  test('MainActivity permanently clears FLAG_SECURE without dynamic protection toggle', () {
     final file = File(
       'android/app/src/main/kotlin/com/sahayasavari/slivault/MainActivity.kt',
     );
     expect(file.existsSync(), isTrue);
     final source = file.readAsStringSync();
-    expect(source.contains('WindowManager.LayoutParams.FLAG_SECURE'), isTrue);
+
+    // Must explicitly clear FLAG_SECURE
     expect(
       source.contains(
         'window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)',
       ),
       isTrue,
     );
+
+    // Must NEVER add FLAG_SECURE
     expect(
       source.contains(
         'window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)',
       ),
-      isTrue,
+      isFalse,
     );
-    expect(source.contains('sli_vault/security'), isTrue);
-    expect(source.contains('setScreenProtection'), isTrue);
-    expect(source.contains('isScreenProtectionEnabled'), isTrue);
+
+    // MethodChannel and toggles must be completely absent
+    expect(source.contains('sli_vault/security'), isFalse);
+    expect(source.contains('setScreenProtection'), isFalse);
+    expect(source.contains('isScreenProtectionEnabled'), isFalse);
+    expect(source.contains('applyScreenProtection'), isFalse);
   });
 }

@@ -1098,7 +1098,7 @@ class _AppearanceSubpage extends StatelessWidget {
           // Theme Mode Card
           _SettingsSectionCard(
             title: 'Theme Mode',
-            subtitle: 'Choose between standard Dark, deep OLED Black, and clean Light mode.',
+            subtitle: 'Choose between Dark, deep OLED, and Light mode.',
             child: _ThemeChoiceRow(controller: controller),
           ),
           const SizedBox(height: 16),
@@ -1145,20 +1145,6 @@ class _AppearanceSubpage extends StatelessWidget {
                 value: controller.reduceMotion,
                 onChanged: controller.setReduceMotion,
               ),
-              _settingsDivider(context),
-              SwitchListTile(
-                secondary: const Icon(Icons.security_rounded, size: 22),
-                title: const Text(
-                  'Screen Protection (FLAG_SECURE)',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                ),
-                subtitle: Text(
-                  'Prevents screen recording and recents switcher inspection for maximum privacy.',
-                  style: TextStyle(color: palette.textSecondary, fontSize: 13),
-                ),
-                value: controller.screenProtectionEnabled,
-                onChanged: controller.setScreenProtectionEnabled,
-              ),
             ],
           ),
         ],
@@ -1200,9 +1186,8 @@ class _PreferencesSubpage extends StatelessWidget {
                 final itemWidth = (constraints.maxWidth - 10) / 2;
                 final tabs = [
                   (0, 'Home', Icons.home_rounded),
-                  (1, 'Browse', Icons.explore_rounded),
-                  (2, 'Favorites', Icons.favorite_rounded),
-                  (3, 'Collections', Icons.folder_rounded),
+                  (1, 'Favorites', Icons.favorite_rounded),
+                  (2, 'Collections', Icons.folder_rounded),
                 ];
                 return Wrap(
                   spacing: 10,
@@ -1285,9 +1270,9 @@ class _PreferencesSubpage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // Browse Sorting & Density
+          // Library Sorting & Density
           _SettingsSectionCard(
-            title: 'Default Browse Sorting',
+            title: 'Default Library Sorting',
             subtitle: 'Preferred order for library items.',
             child: Row(
               children: [
@@ -1582,60 +1567,77 @@ class _DataSubpageState extends State<_DataSubpage> {
               ),
             ],
           ),
+          actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Close'),
-            ),
-            OutlinedButton.icon(
-              icon: const Icon(Icons.share_outlined, size: 16),
-              label: const Text('Share Backup'),
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                await Share.shareXFiles([
-                  XFile(tempFile.path),
-                ], text: 'SLI Vault Backup Archive');
-              },
-            ),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.save_alt_rounded, size: 16),
-              label: const Text('Save to Device'),
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                try {
-                  // Pass `bytes` so Android writes via the Storage Access
-                  // Framework / document provider. The returned path may be a
-                  // virtual document path (e.g. `/document/1770`) - never treat
-                  // that as a dart:io filesystem path.
-                  final outputPath = await FilePicker.platform.saveFile(
-                    dialogTitle: 'Save SLI Vault Backup',
-                    fileName: fileName,
-                    bytes: zipBytes,
-                    type: FileType.custom,
-                    allowedExtensions: ['zip'],
-                  );
-                  if (outputPath != null && mounted) {
-                    if (isFilesystemPathSafeForDartIo(outputPath)) {
-                      final outputFile = File(outputPath);
-                      if (!await outputFile.exists() ||
-                          await outputFile.length() == 0) {
-                        await outputFile.writeAsBytes(zipBytes, flush: true);
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(44),
+                  ),
+                  icon: const Icon(Icons.save_alt_rounded, size: 18),
+                  label: const Text('Save to Device'),
+                  onPressed: () async {
+                    Navigator.of(dialogContext).pop();
+                    try {
+                      // Pass `bytes` so Android writes via the Storage Access
+                      // Framework / document provider. The returned path may be a
+                      // virtual document path (e.g. `/document/1770`) - never treat
+                      // that as a dart:io filesystem path.
+                      final outputPath = await FilePicker.platform.saveFile(
+                        dialogTitle: 'Save SLI Vault Backup',
+                        fileName: fileName,
+                        bytes: zipBytes,
+                        type: FileType.custom,
+                        allowedExtensions: ['zip'],
+                      );
+                      if (outputPath != null && mounted) {
+                        if (isFilesystemPathSafeForDartIo(outputPath)) {
+                          final outputFile = File(outputPath);
+                          if (!await outputFile.exists() ||
+                              await outputFile.length() == 0) {
+                            await outputFile.writeAsBytes(zipBytes, flush: true);
+                          }
+                        }
+                        messenger.showSnackBar(
+                          const SnackBar(
+                            content: Text('Backup archive saved successfully.'),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        messenger.showSnackBar(
+                          SnackBar(content: Text('Save failed: $e')),
+                        );
                       }
                     }
-                    messenger.showSnackBar(
-                      const SnackBar(
-                        content: Text('Backup archive saved successfully.'),
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  if (mounted) {
-                    messenger.showSnackBar(
-                      SnackBar(content: Text('Save failed: $e')),
-                    );
-                  }
-                }
-              },
+                  },
+                ),
+                const SizedBox(height: 10),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(44),
+                  ),
+                  icon: const Icon(Icons.share_outlined, size: 18),
+                  label: const Text('Share Backup'),
+                  onPressed: () async {
+                    Navigator.of(dialogContext).pop();
+                    await Share.shareXFiles([
+                      XFile(tempFile.path),
+                    ], text: 'SLI Vault Backup Archive');
+                  },
+                ),
+                const SizedBox(height: 6),
+                Center(
+                  child: TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: const Text('Close'),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -1909,6 +1911,75 @@ class _DataSubpageState extends State<_DataSubpage> {
     }
   }
 
+  Future<void> _deleteAllData() async {
+    if (_isWorking) return;
+    final firstConfirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete All Vault Data?'),
+        content: const Text(
+          'This will permanently erase all links, media, tags, and private images stored in this vault.\n\nThis action cannot be undone. Are you sure you want to proceed?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: ctx.sli.destructive,
+              foregroundColor: ctx.sli.onDestructive,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
+    if (firstConfirm != true || !mounted) return;
+
+    final secondConfirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Final Confirmation: Erase Vault?'),
+        content: const Text(
+          'Everything in your vault will be permanently wiped and returned to a clean, empty state.\n\nAre you absolutely certain?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: ctx.sli.destructive,
+              foregroundColor: ctx.sli.onDestructive,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Erase All Data'),
+          ),
+        ],
+      ),
+    );
+    if (secondConfirm != true || !mounted) return;
+
+    setState(() => _isWorking = true);
+    try {
+      await widget.controller.clearAllData();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All vault data has been deleted.')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error wiping vault: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isWorking = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final palette = context.sli;
@@ -2033,6 +2104,47 @@ class _DataSubpageState extends State<_DataSubpage> {
                 onTap: _cleanTempCache,
               ),
             ],
+          ),
+          const SizedBox(height: 16),
+
+          // Danger Zone: Reset / Delete All Data
+          _SettingsSectionCard(
+            title: 'Danger Zone',
+            subtitle: 'Irreversible vault cleanup and reset.',
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: palette.destructive.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.delete_forever_rounded,
+                  color: palette.destructive,
+                  size: 22,
+                ),
+              ),
+              title: Text(
+                'Delete All Vault Data',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  color: palette.destructive,
+                ),
+              ),
+              subtitle: Text(
+                'Permanently erases all saved items, images, and collections.',
+                style: TextStyle(color: palette.textSecondary, fontSize: 13),
+              ),
+              trailing: Icon(
+                Icons.chevron_right_rounded,
+                color: palette.destructive,
+                size: 20,
+              ),
+              onTap: _deleteAllData,
+            ),
           ),
         ],
       ),
@@ -2194,10 +2306,62 @@ class _SupportSubpage extends StatelessWidget {
 // ---------------------------------------------------------------------------
 // 6. About Subpage
 // ---------------------------------------------------------------------------
-class _AboutSubpage extends StatelessWidget {
+class _AboutSubpage extends StatefulWidget {
   final VaultController controller;
 
   const _AboutSubpage({required this.controller});
+
+  @override
+  State<_AboutSubpage> createState() => _AboutSubpageState();
+}
+
+class _AboutSubpageState extends State<_AboutSubpage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animCtrl;
+  late final Animation<double> _scaleAnim;
+  late final Animation<double> _fadeAnim;
+  late final Animation<Offset> _slideAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _animCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    );
+    _scaleAnim = Tween<double>(begin: 0.82, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animCtrl,
+        curve: const Interval(0.0, 0.75, curve: Curves.easeOutBack),
+      ),
+    );
+    _fadeAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animCtrl,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
+    _slideAnim = Tween<Offset>(
+      begin: const Offset(0, 0.12),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animCtrl,
+        curve: const Interval(0.1, 0.9, curve: Curves.easeOutCubic),
+      ),
+    );
+    if (!widget.controller.reduceMotion) {
+      _animCtrl.forward();
+    } else {
+      _animCtrl.value = 1.0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _animCtrl.dispose();
+    super.dispose();
+  }
 
   Future<void> _openExternal(BuildContext context, String url) async {
     final uri = Uri.parse(url);
@@ -2214,7 +2378,7 @@ class _AboutSubpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.sli;
-    final style = controller.visualStyle;
+    final style = widget.controller.visualStyle;
     final isExpress = style == SliVisualStyle.express;
     final isMinimal = style == SliVisualStyle.minimal;
 
@@ -2225,162 +2389,254 @@ class _AboutSubpage extends StatelessWidget {
         title: const Text('About this app'),
         leading: const BackButton(),
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
-        children: [
-          // App Hero Branding Card
-          Center(
-            child: Column(
-              children: [
-                const SizedBox(height: 12),
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(iconRadius),
-                    boxShadow: [
-                      BoxShadow(
-                        color: palette.primaryAccent.withValues(
-                          alpha: isExpress ? 0.32 : 0.18,
+      body: AnimatedBuilder(
+        animation: _animCtrl,
+        builder: (context, child) {
+          return FadeTransition(
+            opacity: _fadeAnim,
+            child: SlideTransition(
+              position: _slideAnim,
+              child: child,
+            ),
+          );
+        },
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
+          children: [
+            // App Hero Branding Card with Android 17 Spring Motion
+            Center(
+              child: Column(
+                children: [
+                  const SizedBox(height: 12),
+                  ScaleTransition(
+                    scale: _scaleAnim,
+                    child: Container(
+                      width: 86,
+                      height: 86,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(iconRadius),
+                        boxShadow: [
+                          BoxShadow(
+                            color: palette.primaryAccent.withValues(
+                              alpha: isExpress ? 0.36 : 0.22,
+                            ),
+                            blurRadius: isExpress ? 32 : 22,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(iconRadius),
+                        child: Image.asset(
+                          SliAssets.symbol,
+                          width: 86,
+                          height: 86,
+                          fit: BoxFit.cover,
                         ),
-                        blurRadius: isExpress ? 28 : 20,
-                        offset: const Offset(0, 8),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'SLI Vault',
+                    style: TextStyle(
+                      fontFamily: isExpress
+                          ? SliTokens.fontFamilyDisplay
+                          : SliTokens.fontFamily,
+                      fontSize: isExpress ? 26 : (isMinimal ? 22 : 24),
+                      fontWeight: isExpress ? FontWeight.w900 : FontWeight.w800,
+                      color: palette.textPrimary,
+                      letterSpacing: -0.4,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: palette.primaryAccent.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(isExpress ? 9999 : 6),
+                      border: Border.all(
+                        color: palette.primaryAccent.withValues(alpha: 0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      SliVersion.buildLabel,
+                      style: TextStyle(
+                        fontFamily: SliTokens.fontFamilyMono,
+                        fontSize: 12,
+                        color: palette.primaryAccent,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(
+                      'A privacy-first, local-first personal vault for links, screenshots, and visual inspiration. Stored securely on-device with zero tracking or telemetry.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: SliTokens.fontFamily,
+                        fontSize: 13.5,
+                        height: 1.45,
+                        color: palette.textSecondary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+
+            // Creator & Craftsmanship Spotlight Card
+            _SettingsSectionCard(
+              title: 'Creator & Craftsmanship',
+              subtitle: 'Designed and built with passion by Sahaya Savari F.',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          gradient: palette.primaryGradient,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: palette.primaryAccent.withValues(alpha: 0.3),
+                              blurRadius: 12,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            'SS',
+                            style: TextStyle(
+                              color: palette.onAccent,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              fontFamily: SliTokens.fontFamilyMono,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              SliVersion.authorName,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: palette.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              SliVersion.authorBio,
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                color: palette.primaryAccent,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(iconRadius),
-                    child: Image.asset(
-                      SliAssets.symbol,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'SLI Vault',
-                  style: TextStyle(
-                    fontFamily: isExpress
-                        ? SliTokens.fontFamilyDisplay
-                        : SliTokens.fontFamily,
-                    fontSize: isExpress ? 26 : (isMinimal ? 22 : 24),
-                    fontWeight: isExpress ? FontWeight.w900 : FontWeight.w800,
-                    color: palette.textPrimary,
-                    letterSpacing: -0.4,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: palette.primaryAccent.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(isExpress ? 9999 : 6),
-                    border: Border.all(
-                      color: palette.primaryAccent.withValues(alpha: 0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Text(
-                    SliVersion.buildLabel,
+                  const SizedBox(height: 12),
+                  Text(
+                    'SLI Vault was created by Sahaya Savari F, an MSc AI student from Madurai, Tamil Nadu. Designed out of a desire for quiet, distraction-free software that respects human dignity. Everything lives 100% offline on this device with zero tracking, zero telemetry, and full open-source privacy.',
                     style: TextStyle(
-                      fontFamily: SliTokens.fontFamilyMono,
-                      fontSize: 12,
-                      color: palette.primaryAccent,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Text(
-                    'A privacy-first, local-first personal vault for links, screenshots, and visual inspiration. Stored securely on-device with zero tracking or telemetry.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: SliTokens.fontFamily,
-                      fontSize: 13.5,
+                      fontSize: 13,
                       height: 1.45,
                       color: palette.textSecondary,
                     ),
                   ),
-                ),
-                const SizedBox(height: 14),
-                // Developer Attribution
-                InkWell(
-                  onTap: () => _openExternal(
-                    context,
-                    'https://github.com/sahaya-savari',
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    child: Text.rich(
-                      TextSpan(
-                        text: 'Created with care by ',
-                        style: TextStyle(
-                          fontFamily: SliTokens.fontFamily,
-                          fontSize: 13,
-                          color: palette.textSecondary,
-                        ),
+                  const SizedBox(height: 16),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final itemWidth = (constraints.maxWidth - 10) / 2;
+                      return Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
                         children: [
-                          TextSpan(
-                            text:
-                                '${SliVersion.authorName} (${SliVersion.authorHandle})',
-                            style: TextStyle(
-                              fontFamily: SliTokens.fontFamily,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: palette.primaryAccent,
-                            ),
+                          _CreatorGridTile(
+                            width: itemWidth,
+                            icon: Icons.language_rounded,
+                            title: 'Portfolio',
+                            subtitle: 'sahayasavari.dev',
+                            onTap: () => _openExternal(context, SliVersion.portfolioUrl),
+                          ),
+                          _CreatorGridTile(
+                            width: itemWidth,
+                            icon: Icons.code_rounded,
+                            title: 'GitHub',
+                            subtitle: '@sahaya-savari',
+                            onTap: () => _openExternal(context, 'https://github.com/sahaya-savari'),
+                          ),
+                          _CreatorGridTile(
+                            width: itemWidth,
+                            icon: Icons.email_outlined,
+                            title: 'Contact Email',
+                            subtitle: 'sahayasavari@gmail.com',
+                            onTap: () => _openExternal(context, 'mailto:${SliVersion.email}'),
+                          ),
+                          _CreatorGridTile(
+                            width: itemWidth,
+                            icon: Icons.policy_rounded,
+                            title: 'Open Source',
+                            subtitle: 'MIT Licensed',
+                            onTap: () => _openExternal(context, SliVersion.licenseUrl),
                           ),
                         ],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Primary Actions (GitHub, Issues, Website)
+            Row(
+              children: [
+                Expanded(
+                  child: _ActionTileButton(
+                    icon: Icons.star_rounded,
+                    label: 'Star GitHub',
+                    onTap: () => _openExternal(context, SliVersion.repositoryUrl),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _ActionTileButton(
+                    icon: Icons.bug_report_rounded,
+                    label: 'Issues',
+                    onTap: () => _openExternal(context, SliVersion.issuesUrl),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _ActionTileButton(
+                    icon: Icons.language_rounded,
+                    label: 'Website',
+                    onTap: () => _openExternal(context, SliVersion.websiteUrl),
+                  ),
+                ),
               ],
             ),
-          ),
-
-          // Primary Actions (GitHub, Issues, Website)
-          Row(
-            children: [
-              Expanded(
-                child: _ActionTileButton(
-                  icon: Icons.star_rounded,
-                  label: 'Star GitHub',
-                  onTap: () => _openExternal(context, SliVersion.repositoryUrl),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _ActionTileButton(
-                  icon: Icons.bug_report_rounded,
-                  label: 'Issues',
-                  onTap: () => _openExternal(context, SliVersion.issuesUrl),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _ActionTileButton(
-                  icon: Icons.language_rounded,
-                  label: 'Website',
-                  onTap: () => _openExternal(context, SliVersion.websiteUrl),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
           // Legal, Privacy & Licenses Section
           _SettingsCard(
@@ -2456,8 +2712,9 @@ class _AboutSubpage extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _ActionTileButton extends StatelessWidget {
@@ -2515,6 +2772,81 @@ class _ActionTileButton extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CreatorGridTile extends StatelessWidget {
+  final double width;
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _CreatorGridTile({
+    required this.width,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.sli;
+    return SizedBox(
+      width: width,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            decoration: BoxDecoration(
+              color: palette.primaryAccent.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: palette.primaryAccent.withValues(alpha: 0.22),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, size: 18, color: palette.primaryAccent),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: palette.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          color: palette.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -2625,7 +2957,7 @@ class _ThemeChoiceRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final modes = [
       ('dark', 'Dark', Icons.dark_mode_outlined),
-      ('amoled', 'OLED Black', Icons.brightness_1_rounded),
+      ('amoled', 'OLED', Icons.brightness_1_rounded),
       ('light', 'Light', Icons.light_mode_outlined),
     ];
 

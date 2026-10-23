@@ -5,7 +5,8 @@ import '../core/assets/sli_assets.dart';
 enum VaultItemType {
   link,
   screenshot,
-  image;
+  image,
+  note;
 
   String get label {
     switch (this) {
@@ -15,6 +16,8 @@ enum VaultItemType {
         return 'Screenshot';
       case VaultItemType.image:
         return 'Image';
+      case VaultItemType.note:
+        return 'Note';
     }
   }
 
@@ -26,11 +29,16 @@ enum VaultItemType {
         return SliAssets.contentScreenshot;
       case VaultItemType.image:
         return SliAssets.contentImage;
+      case VaultItemType.note:
+        return SliAssets.contentLayers;
     }
   }
 
   static VaultItemType fromString(String value) {
     switch (value.toLowerCase().trim()) {
+      case 'note':
+      case 'snippet':
+        return VaultItemType.note;
       case 'screenshot':
         return VaultItemType.screenshot;
       case 'image':
@@ -43,13 +51,12 @@ enum VaultItemType {
 }
 
 /// User-facing grouping. Stored [VaultItemType] strings (`link`, `screenshot`,
-/// `image`) are never rewritten: legacy `screenshot` rows are simply shown
-/// under [images], so filters, counts and Settings copy always agree and the
-/// backup JSON (version 2) is unchanged.
+/// `image`, `note`) are never rewritten.
 enum VaultTypeFilter {
   all('All', SliAssets.contentLayers),
   links('Links', SliAssets.contentLink),
-  images('Images', SliAssets.contentImage);
+  images('Images', SliAssets.contentImage),
+  notes('Notes', SliAssets.contentLayers);
 
   final String label;
   final String iconAsset;
@@ -63,6 +70,8 @@ enum VaultTypeFilter {
         return type == VaultItemType.link;
       case VaultTypeFilter.images:
         return type == VaultItemType.image || type == VaultItemType.screenshot;
+      case VaultTypeFilter.notes:
+        return type == VaultItemType.note;
     }
   }
 }
@@ -255,6 +264,29 @@ class VaultItem {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
+  }
+
+  bool get isNote => type == VaultItemType.note;
+  bool get isLink => type == VaultItemType.link;
+  bool get isImage =>
+      type == VaultItemType.image || type == VaultItemType.screenshot;
+  String? get thumbnailUrl => thumbnailId;
+
+  String get domainHost {
+    if (domain != null && domain!.isNotEmpty) return domain!;
+    if (url != null) {
+      final uri = Uri.tryParse(url!);
+      if (uri != null && uri.host.isNotEmpty) {
+        return uri.host.startsWith('www.') ? uri.host.substring(4) : uri.host;
+      }
+    }
+    return '';
+  }
+
+  int get readingTimeMinutes {
+    final text = '$title ${description ?? ''}';
+    final words = text.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
+    return (words / 180).ceil().clamp(1, 60);
   }
 
   bool matchesSearch(String rawQuery) {

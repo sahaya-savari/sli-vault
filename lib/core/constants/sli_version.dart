@@ -15,8 +15,11 @@ class SliVersion {
   static const String buildLabel = 'Version $versionName (Build $versionCode)';
 
   /// Lead developer and verified repository links.
-  static const String authorName = 'Sahaya Savari';
+  static const String authorName = 'Sahaya Savari F';
   static const String authorHandle = '@sahaya-savari';
+  static const String authorBio = 'MSc AI Student • Madurai, Tamil Nadu';
+  static const String portfolioUrl = 'https://sahayasavari.dev';
+  static const String email = 'sahayasavari@gmail.com';
   static const String repositoryUrl =
       'https://github.com/sahaya-savari/sli-vault';
   static const String issuesUrl =

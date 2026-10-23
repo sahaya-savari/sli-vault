@@ -15,6 +15,7 @@ import 'package:sli_vault/data/vault_controller.dart';
 import 'package:sli_vault/data/vault_database.dart';
 import 'package:sli_vault/domain/vault_item.dart';
 import 'package:sli_vault/features/add_item/add_item_sheet.dart';
+import 'package:sli_vault/features/browse/browse_screen.dart';
 import 'package:sli_vault/main.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -206,6 +207,7 @@ void main() {
         'All',
         'Links',
         'Images',
+        'Notes',
       ]);
       await controller.addLinkItem(rawUrl: 'https://example.com/a');
       await controller.addMediaItem(
@@ -619,8 +621,8 @@ void main() {
   });
 
   for (final theme in ['dark', 'light']) {
-    group('five destinations render without overflow ($theme)', () {
-      testWidgets('home/browse/favourites/collections/settings at 320dp, '
+    group('four destinations render without overflow ($theme)', () {
+      testWidgets('home/favourites/collections/settings at 320dp, '
           'text scale 2.0', (tester) async {
         _setView(tester, width: 320, height: 640, textScale: 2);
         final env = await _boot(tester, theme: theme);
@@ -638,7 +640,6 @@ void main() {
         await tester.pumpAndSettle();
         for (final tab in [
           'Home',
-          'Browse',
           'Favorites',
           'Collections',
           'Settings',
@@ -930,9 +931,10 @@ void main() {
         );
         await env.controller.toggleFavorite(f.id);
       });
-      await tester.pumpWidget(SliVaultApp(controller: env.controller));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Browse').last);
+      await tester.pumpWidget(MaterialApp(
+        theme: SliTheme.darkTheme,
+        home: Scaffold(body: BrowseScreen(controller: env.controller)),
+      ));
       await tester.pumpAndSettle();
       expect(find.text('All (2)'), findsOneWidget);
       await tester.enterText(find.byType(TextField).first, 'flutter');
@@ -941,6 +943,8 @@ void main() {
       expect(find.text('Links (1)'), findsOneWidget);
       expect(find.text('Images (0)'), findsOneWidget);
 
+      await tester.pumpWidget(SliVaultApp(controller: env.controller));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Favorites').last);
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, 'zzz');

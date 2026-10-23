@@ -7,14 +7,15 @@ class SliTokens {
   static const String fontFamily = 'Figtree';
   static const String fontFamilyMinimal = 'Figtree';
 
-  /// Classic Style - Anthropic Serif (Claude Text & Claude Display).
-  static const String fontFamilyClassic = 'Claude';
-  static const String fontFamilyClassicDisplay = 'ClaudeDisplay';
+  /// Classic Style - Google Sans Flex (Clean geometric typography).
+  static const String fontFamilyClassic = 'GoogleSansFlex';
+  static const String fontFamilyClassicDisplay = 'GoogleSansFlex';
 
-  /// Express Style - Google Sans Flex (SIL Open Font License 1.1).
-  static const String fontFamilyExpress = 'GoogleSansFlex';
+  /// Express Style - Claude Serif (Expressive editorial typography).
+  static const String fontFamilyExpress = 'Claude';
+  static const String fontFamilyExpressDisplay = 'ClaudeDisplay';
 
-  /// Display / headline face - GoogleSansFlex (SIL Open Font License 1.1).
+  /// Display / headline face (Google Sans Flex).
   static const String fontFamilyDisplay = 'GoogleSansFlex';
 
   /// Technical / mono UI - JetBrains Mono (SIL Open Font License 1.1).
@@ -174,11 +175,12 @@ enum SliVisualStyle {
   };
 
   String get description => switch (this) {
-    classic => 'Balanced 16dp surfaces, rich contrast, and signature Anthropic Serif typography.',
+    classic =>
+      'Balanced 16dp surfaces, rich contrast, and Google Sans Flex typography.',
     minimal =>
       'Crisp 8dp lines, tight padding, and content-first information density.',
     express =>
-      'Sculpted 24dp squircle curves, pill badges, and refined micro-motion.',
+      'Sculpted 24dp squircle curves, pill badges, and signature Claude editorial serif typography.',
   };
 
   static SliVisualStyle fromKey(String? key) {
@@ -262,7 +264,7 @@ class SliPalette extends ThemeExtension<SliPalette> {
   String get displayFontFamily => switch (visualStyle) {
     SliVisualStyle.classic => SliTokens.fontFamilyClassicDisplay,
     SliVisualStyle.minimal => SliTokens.fontFamilyMinimal,
-    SliVisualStyle.express => SliTokens.fontFamilyExpress,
+    SliVisualStyle.express => SliTokens.fontFamilyExpressDisplay,
   };
 
   /// Distinct body font family based on active visual style.

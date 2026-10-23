@@ -550,23 +550,6 @@ void main() {
       expect(reUndo, 0);
     });
 
-    test('screenProtection preference persists across controller re-initialization', () async {
-      expect(controller.screenProtectionEnabled, isTrue);
-
-      await controller.setScreenProtectionEnabled(false);
-      expect(controller.screenProtectionEnabled, isFalse);
-
-      final controller3 = VaultController(
-        database: controller.database,
-        imageStorage: controller.imageStorage,
-      );
-      await controller3.initialize();
-      expect(controller3.screenProtectionEnabled, isFalse);
-
-      // Re-enable
-      await controller.setScreenProtectionEnabled(true);
-      expect(controller.screenProtectionEnabled, isTrue);
-    });
 
     test('single image deletion caches bytes and undoDelete faithfully restores it to disk', () async {
       final dummyPng = Uint8List.fromList([

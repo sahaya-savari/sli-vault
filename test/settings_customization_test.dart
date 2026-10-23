@@ -83,17 +83,17 @@ void main() {
       final minimalTheme = SliTheme.buildTheme(mode: 'dark', visualStyle: SliVisualStyle.minimal);
       final expressTheme = SliTheme.buildTheme(mode: 'dark', visualStyle: SliVisualStyle.express);
 
-      // Classic uses Anthropic Serif (Claude / ClaudeDisplay)
-      expect(classicTheme.textTheme.displayLarge?.fontFamily, equals('ClaudeDisplay'));
-      expect(classicTheme.textTheme.bodyLarge?.fontFamily, equals('Claude'));
+      // Classic uses Google Sans Flex
+      expect(classicTheme.textTheme.displayLarge?.fontFamily, equals('GoogleSansFlex'));
+      expect(classicTheme.textTheme.bodyLarge?.fontFamily, equals('GoogleSansFlex'));
 
       // Minimal uses Figtree
       expect(minimalTheme.textTheme.displayLarge?.fontFamily, equals('Figtree'));
       expect(minimalTheme.textTheme.bodyLarge?.fontFamily, equals('Figtree'));
 
-      // Express uses Google Sans Flex
-      expect(expressTheme.textTheme.displayLarge?.fontFamily, equals('GoogleSansFlex'));
-      expect(expressTheme.textTheme.bodyLarge?.fontFamily, equals('GoogleSansFlex'));
+      // Express uses Anthropic Serif (Claude / ClaudeDisplay)
+      expect(expressTheme.textTheme.displayLarge?.fontFamily, equals('ClaudeDisplay'));
+      expect(expressTheme.textTheme.bodyLarge?.fontFamily, equals('Claude'));
     });
 
     test('OLED Black (amoled) theme properties and high-contrast definitions', () {
@@ -202,18 +202,6 @@ void main() {
       }
     });
 
-    test('screen protection policy defaults to true and persists on change', () async {
-      final prefs = await SharedPreferences.getInstance();
-      expect(controller.screenProtectionEnabled, isTrue);
-
-      await controller.setScreenProtectionEnabled(false);
-      expect(controller.screenProtectionEnabled, isFalse);
-      expect(prefs.getBool('sli_vault_screen_protection_v1'), isFalse);
-
-      await controller.setScreenProtectionEnabled(true);
-      expect(controller.screenProtectionEnabled, isTrue);
-      expect(prefs.getBool('sli_vault_screen_protection_v1'), isTrue);
-    });
 
     test('vacuumDatabase executes successfully', () async {
       await expectLater(controller.vacuumDatabase(), completes);

@@ -62,32 +62,38 @@ The project-owned code and documentation are licensed under [MIT](LICENSE). Bund
 ## Features
 
 ### Save and organize
-- Save links and import images into durable app-private storage (supports PNG, JPG, WEBP, GIF, BMP, HEIC/HEIF)
+- Save links, import images, and capture **offline Markdown notes & code snippets** into durable app-private storage
+- Markdown notes feature syntax highlighting using the bundled JetBrains Mono font and interactive checklists (`- [ ]` / `- [x]`)
 - Organize into collections on save with inline collection creation in the Add flow
-- Browse, search, filter (All / Links / Images), favorite, tag, and organize into custom collections
-- Reassign collections when editing existing items
-- Android share-in (`ACTION_SEND` / `ACTION_SEND_MULTIPLE` for text and images)
+- Interactive **Tag Ribbon & Tag Cloud** with frequency counts (`#design (12)`) and 1-tap filtering
+- **Domain / Website filters** (`github.com (15)`) to browse bookmarks grouped by source site
+- OpenGraph rich metadata and preview thumbnails for saved links
+- Estimated **reading time badges** (`~3 min read`) and offline reader mode with adjustable font sizes
+- Native **dominant color palette extractor** for saved images (extracts top 5 hex colors with 1-tap clipboard copy)
+- Android **dynamic app shortcuts** on home screen long-press (Quick Add Link, Save Image, New Note, Search Vault)
+- Android share-in (`ACTION_SEND` / `ACTION_SEND_MULTIPLE` for text, links, and images)
 
-### Backup and migration
+### Backup and safety
+- **Scheduled local backup reminders** (in-app indicator when 14+ days have passed since last safety export)
 - Complete portable ZIP backup format v3 (`manifest.json` + `images/<id>` + `links.csv` + `README.txt`) with SHA-256 and byte length per image
 - Standalone CSV export with spreadsheet formula injection protection
 - Empty custom collection retention and restoration
 - Backward compatible: imports legacy v1 and v2 archives safely
-- Import of the earlier Kotlin vault JSON shape (including Base64 image bytes)
+- 100% offline with zero cloud sync, zero telemetry, and zero tracking
 
 ### Look and feel
 - Three distinct visual styles:
   - **Classic:** Timeless library experience with balanced 16dp radii, rich dark contrast, and Anthropic Serif typography.
-  - **Minimal:** Crisp 8dp lines, tight padding, and content-first information density.
-  - **Express:** Sculpted 24dp squircle curves, pill badges, and refined micro-motion.
+  - **Minimal:** Crisp 8dp lines, tight padding, and Figtree content-first typography.
+  - **Express:** Sculpted 24dp squircle curves, Google Sans Flex, pill badges, and refined micro-motion.
 - Theme: OLED Black (obsidian pure black with defined borders for AMOLED displays), Dark, Light, or System
-- Onboarding with a short welcome clip and still fallbacks
-- Five destinations: Home, Browse, Favorites, Collections, Settings
+- Rotating authentic WebP artworks across loading and plates
+- Modernized creator showcase featuring Sahaya Savari F (MSc AI Student, Madurai, Tamil Nadu) in About section
 - Built-in **Help & User Guide** in Settings for offline tips and gesture walkthroughs
 
 ### Privacy controls
 - Optional lock when backgrounded (device biometric or credential with selectable timeout options: Immediately, 5s, 10s, 30s, 1 minute, 5 minutes; persisted securely)
-- Screen Protection policy: defaults to enabled for privacy and content protection via Android `FLAG_SECURE`, with a user-controlled toggle in Settings via method channel `sli_vault/security` allowing authorized captures without compromising production security defaults.
+- Zero telemetry, zero analytics SDKs, and no tracking of any kind.
 
 ---
 
@@ -357,9 +363,19 @@ To reproduce a signed build locally you need `android/key.properties` and the ke
 
 ---
 
+### Author & Craftsmanship
+
+**Sahaya Savari F**
+- **Role:** MSc AI Student • Madurai, Tamil Nadu
+- **Portfolio:** [sahayasavari.dev](https://sahayasavari.dev)
+- **Email:** [sahayasavari@gmail.com](mailto:sahayasavari@gmail.com)
+- **GitHub:** [@sahaya-savari](https://github.com/sahaya-savari)
+
+---
+
 <div align="center">
 
-Built with 🖤
+Built with 🖤 by [Sahaya Savari F](https://sahayasavari.dev)
 
 Thank you for supporting SLI Vault.
 

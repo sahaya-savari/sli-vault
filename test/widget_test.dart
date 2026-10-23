@@ -461,11 +461,9 @@ void main() {
         expect(find.text('Dart Language Tour'), findsOneWidget);
         expect(find.text('1 saved'), findsOneWidget);
 
-        // Navigate to Browse tab
-        await tester.tap(find.text('Browse'));
-        await tester.pumpAndSettle();
-        expect(find.text('Browse Library'), findsOneWidget);
-        expect(find.text('Dart Language Tour'), findsOneWidget);
+        // Verify Home sort and density controls are present on merged Home
+        expect(find.byKey(const Key('home_sort_button')), findsOneWidget);
+        expect(find.byKey(const Key('home_density_toggle')), findsOneWidget);
 
         // Favorite the item and check Favorites tab
         await tester.runAsync(() async {
@@ -493,12 +491,20 @@ void main() {
         await tester.tap(find.text('About this app'));
         await tester.pumpAndSettle();
 
+        await tester.scrollUntilVisible(
+          find.byKey(const ValueKey('Privacy Policy')),
+          100,
+        );
         await tester.tap(find.byKey(const ValueKey('Privacy Policy')));
         await tester.pumpAndSettle();
         expect(find.textContaining('app-private storage'), findsWidgets);
         await tester.pageBack();
         await tester.pumpAndSettle();
 
+        await tester.scrollUntilVisible(
+          find.byKey(const ValueKey('Terms of Use')),
+          100,
+        );
         await tester.tap(find.byKey(const ValueKey('Terms of Use')));
         await tester.pumpAndSettle();
         expect(find.textContaining('hosted storage'), findsOneWidget);
@@ -515,7 +521,7 @@ void main() {
     );
 
     testWidgets(
-      'keeps all five full navigation labels accessible on a narrow display',
+      'keeps all four full navigation labels accessible on a narrow display',
       (WidgetTester tester) async {
         tester.view.devicePixelRatio = 1;
         tester.view.physicalSize = const Size(320, 640);
@@ -547,7 +553,6 @@ void main() {
         await tester.pumpAndSettle();
         for (final label in [
           'Home',
-          'Browse',
           'Favorites',
           'Collections',
           'Settings',
@@ -613,7 +618,6 @@ void main() {
       expect(nav, findsOneWidget);
       for (final label in [
         'Home',
-        'Browse',
         'Favorites',
         'Collections',
         'Settings',

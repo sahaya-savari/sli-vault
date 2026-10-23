@@ -82,35 +82,57 @@ class SliAssets {
   static const String statusError = 'assets/icons/status/error.svg';
   static const String statusLoading = 'assets/icons/status/loading.svg';
 
-  // Loading backgrounds (owner-provided dark vault arts; rotating set)
-  static const String loadingStreetLamp =
-      'assets/illustrations/loading/loading-street-lamp.jpg';
-  static const String loadingNightCity =
-      'assets/illustrations/loading/loading-night-city.jpg';
-  static const String loadingForestCabin =
-      'assets/illustrations/loading/loading-forest-cabin.jpg';
+  // Loading backgrounds (authentic WebP artworks from owner)
+  static const String loadingSnowyDawn =
+      'assets/illustrations/loading/loading-snowy-dawn.webp';
+  static const String loadingStarryTwilight =
+      'assets/illustrations/loading/loading-starry-twilight.webp';
+  static const String loadingMoonlitEarth =
+      'assets/illustrations/loading/loading-moonlit-earth.webp';
 
-  // Welcome / onboarding media (from VALUT STORE ANDROID / IMG FILES)
+  // Backwards-compatible aliases
+  static const String loadingStreetLamp = plateSettings;
+  static const String loadingNightCity = plateHome;
+  static const String loadingForestCabin = plateHome;
+
+  // Authentic plates
+  static const String plateHome =
+      'assets/illustrations/plates/plate-home.webp';
+  static const String plateFavorites =
+      'assets/illustrations/plates/plate-favorites.webp';
+  static const String plateCollections =
+      'assets/illustrations/plates/plate-collections.webp';
+  static const String plateSettings =
+      'assets/illustrations/plates/plate-settings.webp';
+
+  // Welcome / onboarding media
   static const String welcomeVideo =
       'assets/illustrations/onboarding/welcome-cabin-rain.mp4';
-  static const String welcomeLanternTree =
-      'assets/illustrations/onboarding/welcome-lantern-tree.jpg';
-  static const String welcomeFrogPond =
-      'assets/illustrations/onboarding/welcome-frog-pond.jpg';
-  static const String welcomeValleyRiver =
-      'assets/illustrations/onboarding/welcome-valley-river.jpg';
+  static const String welcomeFestival =
+      'assets/illustrations/onboarding/welcome-festival.webp';
+  static const String welcomeRainPaddies =
+      'assets/illustrations/onboarding/welcome-rain-paddies.webp';
+
+  // Backwards-compatible aliases for legacy stills
+  static const String welcomeLanternTree = plateFavorites;
+  static const String welcomeFrogPond = welcomeFestival;
+  static const String welcomeValleyRiver = plateCollections;
+
+  // Stills list (authentic WebP artworks)
   static const List<String> welcomeStills = [
-    welcomeLanternTree,
-    welcomeFrogPond,
-    welcomeValleyRiver,
+    welcomeFestival,
+    welcomeRainPaddies,
+    loadingSnowyDawn,
+    loadingStarryTwilight,
+    loadingMoonlitEarth,
   ];
 
-  /// Library / settings atmosphere plates (same owner IMG FILES set).
-  static const String bgHome = loadingForestCabin;
-  static const String bgBrowse = loadingNightCity;
-  static const String bgFavorites = welcomeLanternTree;
-  static const String bgCollections = welcomeValleyRiver;
-  static const String bgSettings = loadingStreetLamp;
+  /// Library / settings atmosphere plates
+  static const String bgHome = plateHome;
+  static const String bgBrowse = plateHome;
+  static const String bgFavorites = plateFavorites;
+  static const String bgCollections = plateCollections;
+  static const String bgSettings = plateSettings;
 
   // Illustrations
   static const String illOnboarding =

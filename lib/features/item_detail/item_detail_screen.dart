@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -91,117 +92,23 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
         ),
       ),
       builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          minChildSize: 0.5,
-          maxChildSize: 0.95,
-          expand: false,
-          builder: (context, scrollController) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: SliTokens.spaceLg,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      margin: const EdgeInsets.symmetric(
-                        vertical: SliTokens.spaceSm,
-                      ),
-                      decoration: BoxDecoration(
-                        color: context.sli.border,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          snapshot.title,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: 'Delete offline copy',
-                        icon: const Icon(Icons.delete_outline, size: 20),
-                        onPressed: () async {
-                          final messenger = ScaffoldMessenger.of(context);
-                          Navigator.of(context).pop();
-                          await widget.controller.snapshotService
-                              .deleteSnapshot(snapshot.itemId);
-                          if (mounted) {
-                            setState(() {
-                              _hasSnapshot = false;
-                              _cachedSnapshot = null;
-                            });
-                            messenger.showSnackBar(
-                              const SnackBar(
-                                content: Text('Offline snapshot removed.'),
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                      vertical: SliTokens.spaceSm,
-                    ),
-                    padding: const EdgeInsets.all(SliTokens.spaceSm),
-                    decoration: BoxDecoration(
-                      color: context.sli.elevated,
-                      borderRadius: BorderRadius.circular(SliTokens.radiusSm),
-                      border: Border.all(color: context.sli.border),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.offline_pin,
-                          size: 16,
-                          color: context.sli.amberText,
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            'Offline reader copy • ${(snapshot.fileSizeBytes / 1024).toStringAsFixed(1)} KB • Saved ${snapshot.createdAt.toLocal().toString().substring(0, 16)}',
-                            style: TextStyle(
-                              fontSize: 11.5,
-                              color: context.sli.textSecondary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      controller: scrollController,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: SliTokens.spaceSm,
-                      ),
-                      child: SelectableText(
-                        snapshot.readableContent,
-                        style: TextStyle(
-                          color: context.sli.textPrimary,
-                          fontSize: 15,
-                          height: 1.6,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
+        return _ReaderSheetModal(
+          snapshot: snapshot,
+          onDelete: () async {
+            final messenger = ScaffoldMessenger.of(context);
+            Navigator.of(context).pop();
+            await widget.controller.snapshotService.deleteSnapshot(snapshot.itemId);
+            if (mounted) {
+              setState(() {
+                _hasSnapshot = false;
+                _cachedSnapshot = null;
+              });
+              messenger.showSnackBar(
+                const SnackBar(
+                  content: Text('Offline snapshot removed.'),
+                ),
+              );
+            }
           },
         );
       },
@@ -372,102 +279,132 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (item.type != VaultItemType.link)
-                    FutureBuilder<File?>(
-                      future: widget.controller.resolveImageFile(
-                        item.localImageId,
-                      ),
-                      builder: (context, snapshot) {
-                        final file = snapshot.data;
-                        return Container(
-                          constraints: BoxConstraints(
-                            minHeight: 220,
-                            maxHeight: 380,
+                  if (item.type == VaultItemType.note)
+                    _NoteDetailCard(
+                      item: item,
+                      controller: widget.controller,
+                    )
+                  else if (item.type != VaultItemType.link)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        FutureBuilder<File?>(
+                          future: widget.controller.resolveImageFile(
+                            item.localImageId,
                           ),
-                          decoration: BoxDecoration(
-                            color: context.sli.elevated,
-                            borderRadius: BorderRadius.circular(
-                              SliTokens.radiusLg,
-                            ),
-                            border: Border.all(color: context.sli.border),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          child: file != null
-                              ? InteractiveViewer(
-                                  child: Image.file(
-                                    file,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(
-                                            SliTokens.spaceXl,
-                                          ),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              SliIllustration(
-                                                SliAssets.illImagePlaceholder,
-                                                width: 120,
-                                                height: 120,
-                                              ),
-                                              SizedBox(
-                                                height: SliTokens.spaceSm,
-                                              ),
-                                              Text(
-                                                'Preview unavailable for this format (${file.path.split('.').last.toUpperCase()}).\nOriginal file is safely preserved.',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color:
-                                                      context.sli.textSecondary,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                )
-                              : Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(SliTokens.spaceXl),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        SliIllustration(
-                                          SliAssets.illImagePlaceholder,
-                                          width: 120,
-                                          height: 120,
-                                        ),
-                                        SizedBox(height: SliTokens.spaceSm),
-                                        Text(
-                                          'Local image file is unavailable',
-                                          style: TextStyle(
-                                            color: context.sli.textSecondary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                          builder: (context, snapshot) {
+                            final file = snapshot.data;
+                            return Container(
+                              constraints: const BoxConstraints(
+                                minHeight: 220,
+                                maxHeight: 380,
+                              ),
+                              decoration: BoxDecoration(
+                                color: context.sli.elevated,
+                                borderRadius: BorderRadius.circular(
+                                  SliTokens.radiusLg,
                                 ),
-                        );
-                      },
+                                border: Border.all(color: context.sli.border),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: file != null
+                                  ? InteractiveViewer(
+                                      child: Image.file(
+                                        file,
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Center(
+                                            child: Padding(
+                                              padding: EdgeInsets.all(
+                                                SliTokens.spaceXl,
+                                              ),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  SliIllustration(
+                                                    SliAssets.illImagePlaceholder,
+                                                    width: 120,
+                                                    height: 120,
+                                                  ),
+                                                  SizedBox(
+                                                    height: SliTokens.spaceSm,
+                                                  ),
+                                                  Text(
+                                                    'Preview unavailable for this format (${file.path.split('.').last.toUpperCase()}).\nOriginal file is safely preserved.',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      color:
+                                                          context.sli.textSecondary,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  : Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(SliTokens.spaceXl),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            SliIllustration(
+                                              SliAssets.illImagePlaceholder,
+                                              width: 120,
+                                              height: 120,
+                                            ),
+                                            SizedBox(height: SliTokens.spaceSm),
+                                            Text(
+                                              'Local image file is unavailable',
+                                              style: TextStyle(
+                                                color: context.sli.textSecondary,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: SliTokens.spaceSm),
+                        _ImagePaletteSection(
+                          localImageId: item.localImageId,
+                          controller: widget.controller,
+                        ),
+                      ],
                     )
                   else
                     Container(
-                      height: 140,
+                      height: 180,
                       decoration: BoxDecoration(
                         color: context.sli.elevated,
                         borderRadius: BorderRadius.circular(SliTokens.radiusLg),
                         border: Border.all(color: context.sli.border),
                       ),
-                      alignment: Alignment.center,
-                      child: SliIllustration(
-                        SliAssets.illLinkPlaceholder,
-                        width: 110,
-                        height: 110,
-                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: item.thumbnailUrl != null &&
+                              item.thumbnailUrl!.isNotEmpty
+                          ? Image.network(
+                              item.thumbnailUrl!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, _, _) => Center(
+                                child: SliIllustration(
+                                  SliAssets.illLinkPlaceholder,
+                                  width: 110,
+                                  height: 110,
+                                ),
+                              ),
+                            )
+                          : Center(
+                              child: SliIllustration(
+                                SliAssets.illLinkPlaceholder,
+                                width: 110,
+                                height: 110,
+                              ),
+                            ),
                     ),
                   SizedBox(height: SliTokens.spaceLg),
                   Text(
@@ -512,6 +449,61 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           ],
                         ),
                       ),
+                      if (item.isLink)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: context.sli.elevated,
+                            borderRadius: BorderRadius.circular(
+                              SliTokens.radiusSm,
+                            ),
+                            border: Border.all(color: context.sli.border),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.schedule_rounded,
+                                size: 13,
+                                color: context.sli.textSecondary,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '~${item.readingTimeMinutes} min read',
+                                style: TextStyle(
+                                  color: context.sli.textSecondary,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (item.isNote && item.description != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: context.sli.elevated,
+                            borderRadius: BorderRadius.circular(
+                              SliTokens.radiusSm,
+                            ),
+                            border: Border.all(color: context.sli.border),
+                          ),
+                          child: Text(
+                            '${item.description!.trim().split(RegExp(r'\s+')).length} words',
+                            style: TextStyle(
+                              color: context.sli.textSecondary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
                       Text(
                         'Saved ${item.createdAt.toLocal().toString().substring(0, 16)}',
                         style: Theme.of(context).textTheme.bodyMedium,
@@ -643,7 +635,8 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                     ),
                   ],
                   if (item.description != null &&
-                      item.description!.isNotEmpty) ...[
+                      item.description!.isNotEmpty &&
+                      item.type != VaultItemType.note) ...[
                     const SizedBox(height: SliTokens.spaceLg),
                     Text(
                       'Description',
@@ -893,6 +886,623 @@ class _EditItemDialogState extends State<_EditItemDialog> {
           child: const Text('Save Changes'),
         ),
       ],
+    );
+  }
+}
+
+class _ReaderSheetModal extends StatefulWidget {
+  final ArticleSnapshot snapshot;
+  final VoidCallback onDelete;
+
+  const _ReaderSheetModal({
+    required this.snapshot,
+    required this.onDelete,
+  });
+
+  @override
+  State<_ReaderSheetModal> createState() => _ReaderSheetModalState();
+}
+
+class _ReaderSheetModalState extends State<_ReaderSheetModal> {
+  double _fontSize = 15.5;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.sli;
+    return DraggableScrollableSheet(
+      initialChildSize: 0.85,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      expand: false,
+      builder: (context, scrollController) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: SliTokens.spaceLg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.symmetric(vertical: SliTokens.spaceSm),
+                  decoration: BoxDecoration(
+                    color: palette.border,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.snapshot.title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Delete offline copy',
+                    icon: const Icon(Icons.delete_outline, size: 20),
+                    onPressed: widget.onDelete,
+                  ),
+                ],
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: SliTokens.spaceSm),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: palette.elevated,
+                  borderRadius: BorderRadius.circular(SliTokens.radiusSm),
+                  border: Border.all(color: palette.border),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.offline_pin, size: 16, color: palette.amberText),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        'Offline reader • ${(widget.snapshot.fileSizeBytes / 1024).toStringAsFixed(1)} KB',
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: palette.textSecondary,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.format_size_rounded,
+                      size: 14,
+                      color: palette.textSecondary,
+                    ),
+                    SizedBox(
+                      width: 100,
+                      child: Slider(
+                        value: _fontSize,
+                        min: 13,
+                        max: 22,
+                        divisions: 9,
+                        activeColor: palette.primaryAccent,
+                        onChanged: (v) => setState(() => _fontSize = v),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.symmetric(vertical: SliTokens.spaceSm),
+                  child: SelectableText(
+                    widget.snapshot.readableContent,
+                    style: TextStyle(
+                      color: palette.textPrimary,
+                      fontSize: _fontSize,
+                      height: 1.6,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _NoteDetailCard extends StatelessWidget {
+  final VaultItem item;
+  final VaultController controller;
+
+  const _NoteDetailCard({
+    required this.item,
+    required this.controller,
+  });
+
+  void _toggleChecklist(int lineIndex, String currentLine) {
+    final text = item.description ?? '';
+    final lines = text.split('\n');
+    if (lineIndex < 0 || lineIndex >= lines.length) return;
+    if (currentLine.startsWith('- [ ] ')) {
+      lines[lineIndex] = currentLine.replaceFirst('- [ ] ', '- [x] ');
+    } else if (currentLine.startsWith('- [x] ')) {
+      lines[lineIndex] = currentLine.replaceFirst('- [x] ', '- [ ] ');
+    }
+    controller.updateItemDetails(
+      itemId: item.id,
+      newTitle: item.title,
+      newDescription: lines.join('\n'),
+      newTags: item.tags,
+      newCollection: item.collection,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.sli;
+    final text = item.description ?? '';
+    final lines = text.split('\n');
+
+    return Container(
+      padding: const EdgeInsets.all(SliTokens.spaceLg),
+      decoration: BoxDecoration(
+        color: palette.elevated,
+        borderRadius: BorderRadius.circular(SliTokens.radiusLg),
+        border: Border.all(color: palette.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: palette.primaryAccent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Icon(
+                  Icons.article_outlined,
+                  size: 16,
+                  color: palette.primaryAccent,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Offline Markdown Note',
+                style: TextStyle(
+                  color: palette.primaryAccent,
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                'JetBrains Mono syntax',
+                style: TextStyle(
+                  color: palette.textSecondary,
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: SliTokens.spaceMd),
+          const Divider(),
+          const SizedBox(height: SliTokens.spaceSm),
+          ..._buildMarkdownBlocks(context, lines, palette),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildMarkdownBlocks(
+    BuildContext context,
+    List<String> lines,
+    SliPalette palette,
+  ) {
+    final widgets = <Widget>[];
+    bool inCodeBlock = false;
+    final codeBuffer = StringBuffer();
+
+    for (int i = 0; i < lines.length; i++) {
+      final line = lines[i];
+      final trimmed = line.trim();
+
+      if (trimmed.startsWith('```')) {
+        if (inCodeBlock) {
+          final codeContent = codeBuffer.toString().trimRight();
+          widgets.add(_buildCodeBlock(context, codeContent, palette));
+          codeBuffer.clear();
+          inCodeBlock = false;
+        } else {
+          inCodeBlock = true;
+          codeBuffer.clear();
+        }
+        continue;
+      }
+
+      if (inCodeBlock) {
+        codeBuffer.writeln(line);
+        continue;
+      }
+
+      if (trimmed.startsWith('- [ ] ') || trimmed.startsWith('- [x] ')) {
+        final isChecked = trimmed.startsWith('- [x] ');
+        final label = trimmed.substring(6);
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3),
+            child: InkWell(
+              onTap: () => _toggleChecklist(i, trimmed),
+              borderRadius: BorderRadius.circular(6),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    isChecked
+                        ? Icons.check_box_rounded
+                        : Icons.check_box_outline_blank_rounded,
+                    size: 18,
+                    color: isChecked
+                        ? palette.primaryAccent
+                        : palette.textSecondary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        color: isChecked
+                            ? palette.textSecondary
+                            : palette.textPrimary,
+                        decoration: isChecked
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+        continue;
+      }
+
+      if (trimmed.startsWith('# ')) {
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.only(top: 12, bottom: 4),
+            child: Text(
+              trimmed.substring(2),
+              style: TextStyle(
+                color: palette.textPrimary,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        );
+        continue;
+      }
+
+      if (trimmed.startsWith('## ')) {
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.only(top: 10, bottom: 4),
+            child: Text(
+              trimmed.substring(3),
+              style: TextStyle(
+                color: palette.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        );
+        continue;
+      }
+
+      if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '• ',
+                  style: TextStyle(
+                    color: palette.primaryAccent,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    trimmed.substring(2),
+                    style: TextStyle(
+                      color: palette.textPrimary,
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+        continue;
+      }
+
+      if (trimmed.isEmpty) {
+        widgets.add(const SizedBox(height: 8));
+        continue;
+      }
+
+      widgets.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2),
+          child: SelectableText(
+            line,
+            style: TextStyle(
+              color: palette.textPrimary,
+              fontSize: 14,
+              height: 1.5,
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (inCodeBlock && codeBuffer.isNotEmpty) {
+      widgets.add(
+        _buildCodeBlock(context, codeBuffer.toString().trimRight(), palette),
+      );
+    }
+
+    return widgets;
+  }
+
+  Widget _buildCodeBlock(
+    BuildContext context,
+    String code,
+    SliPalette palette,
+  ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: palette.obsidian,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: palette.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'CODE',
+                style: TextStyle(
+                  color: palette.textSecondary,
+                  fontSize: 11,
+                  fontFamily: 'JetBrainsMono',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: code));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Code snippet copied to clipboard!'),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(4),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  child: Row(
+                    children: [
+                      Icon(Icons.copy_rounded, size: 12, color: palette.textSecondary),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Copy',
+                        style: TextStyle(
+                          color: palette.textSecondary,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          SelectableText(
+            code,
+            style: TextStyle(
+              color: palette.accentText,
+              fontFamily: 'JetBrainsMono',
+              fontSize: 13,
+              height: 1.45,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ImagePaletteSection extends StatefulWidget {
+  final String? localImageId;
+  final VaultController controller;
+
+  const _ImagePaletteSection({
+    required this.localImageId,
+    required this.controller,
+  });
+
+  @override
+  State<_ImagePaletteSection> createState() => _ImagePaletteSectionState();
+}
+
+class _ImagePaletteSectionState extends State<_ImagePaletteSection> {
+  List<Color> _palette = [];
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _extractPalette();
+  }
+
+  Future<void> _extractPalette() async {
+    if (widget.localImageId == null) return;
+    setState(() => _loading = true);
+    try {
+      final file = await widget.controller.resolveImageFile(widget.localImageId);
+      if (file == null || !await file.exists()) {
+        if (mounted) setState(() => _loading = false);
+        return;
+      }
+      final bytes = await file.readAsBytes();
+      final codec =
+          await ui.instantiateImageCodec(bytes, targetWidth: 48, targetHeight: 48);
+      final frame = await codec.getNextFrame();
+      final image = frame.image;
+      final byteData =
+          await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+      if (byteData == null) {
+        if (mounted) setState(() => _loading = false);
+        return;
+      }
+      final pixelBytes = byteData.buffer.asUint8List();
+      final counts = <int, int>{};
+      for (int i = 0; i < pixelBytes.length; i += 4) {
+        final r = (pixelBytes[i] ~/ 32) * 32;
+        final g = (pixelBytes[i + 1] ~/ 32) * 32;
+        final b = (pixelBytes[i + 2] ~/ 32) * 32;
+        final a = pixelBytes[i + 3];
+        if (a < 128) continue;
+        final rgb = (0xFF << 24) | (r << 16) | (g << 8) | b;
+        counts[rgb] = (counts[rgb] ?? 0) + 1;
+      }
+      final sorted = counts.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
+      final colors = sorted.take(5).map((e) => Color(e.key)).toList();
+      if (mounted) {
+        setState(() {
+          _palette = colors;
+          _loading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  String _toHex(Color c) {
+    return '#${(c.toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading || _palette.isEmpty) return const SizedBox.shrink();
+    final palette = context.sli;
+
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: palette.elevated,
+        borderRadius: BorderRadius.circular(SliTokens.radiusMd),
+        border: Border.all(color: palette.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.palette_outlined, size: 14, color: palette.textSecondary),
+              const SizedBox(width: 6),
+              Text(
+                'Dominant Palette (Tap hex to copy)',
+                style: TextStyle(
+                  color: palette.textSecondary,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: _palette.map((color) {
+              final hex = _toHex(color);
+              return InkWell(
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: hex));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Copied $hex to clipboard'),
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white24,
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: color.withValues(alpha: 0.35),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        hex,
+                        style: TextStyle(
+                          color: palette.textPrimary,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'JetBrainsMono',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 }

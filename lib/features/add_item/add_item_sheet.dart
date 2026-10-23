@@ -116,6 +116,22 @@ class _AddItemSheetState extends State<AddItemSheet> {
   bool _duplicateConfirmed = false;
 
   bool get _isLinkMode => _selectedType == VaultItemType.link;
+  bool get _isNoteMode => _selectedType == VaultItemType.note;
+
+  void _insertMarkdown(String prefix, String suffix) {
+    final text = _descriptionController.text;
+    final selection = _descriptionController.selection;
+    final start = selection.start.clamp(0, text.length);
+    final end = selection.end.clamp(0, text.length);
+    final selectedText = text.substring(start, end);
+    final newText = text.replaceRange(start, end, '$prefix$selectedText$suffix');
+    _descriptionController.value = TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(
+        offset: start + prefix.length + selectedText.length,
+      ),
+    );
+  }
 
   VaultItem? get _duplicateItem {
     if (!_isLinkMode) return null;
@@ -388,6 +404,13 @@ class _AddItemSheetState extends State<AddItemSheet> {
         }
         _duplicateConfirmed = true;
       }
+    } else if (_isNoteMode) {
+      if (_descriptionController.text.trim().isEmpty) {
+        setState(() {
+          _errorMessage = 'Write some notes or paste a code snippet before saving.';
+        });
+        return;
+      }
     } else if (_selectedImageBytes == null) {
       setState(() {
         _errorMessage = 'Choose an image before saving to your local vault.';
@@ -407,6 +430,14 @@ class _AddItemSheetState extends State<AddItemSheet> {
           rawUrl: _urlController.text,
           customTitle: customTitle,
           description: _descriptionController.text,
+          thumbnailUrl: _fetchedMetadata?.previewImageUrl,
+          tags: tags,
+          collection: _selectedCollection,
+        );
+      } else if (_isNoteMode) {
+        saved = await widget.controller.addNoteItem(
+          title: customTitle,
+          content: _descriptionController.text,
           tags: tags,
           collection: _selectedCollection,
         );
@@ -607,7 +638,53 @@ class _AddItemSheetState extends State<AddItemSheet> {
                             ),
                     ),
                   )
-                else
+                else if (_isNoteMode) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: palette.elevated,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: palette.border),
+                    ),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          tooltip: 'Bold (**bold**)',
+                          icon: const Icon(Icons.format_bold_rounded, size: 20),
+                          onPressed: () => _insertMarkdown('**', '**'),
+                        ),
+                        IconButton(
+                          tooltip: 'Italic (*italic*)',
+                          icon: const Icon(Icons.format_italic_rounded, size: 20),
+                          onPressed: () => _insertMarkdown('*', '*'),
+                        ),
+                        IconButton(
+                          tooltip: 'Heading (###)',
+                          icon: const Icon(Icons.title_rounded, size: 20),
+                          onPressed: () => _insertMarkdown('### ', ''),
+                        ),
+                        IconButton(
+                          tooltip: 'Code Block (```)',
+                          icon: const Icon(Icons.code_rounded, size: 20),
+                          onPressed: () => _insertMarkdown('```\n', '\n```'),
+                        ),
+                        IconButton(
+                          tooltip: 'Task Checkbox (- [ ])',
+                          icon: const Icon(Icons.check_box_outlined, size: 20),
+                          onPressed: () => _insertMarkdown('- [ ] ', ''),
+                        ),
+                        IconButton(
+                          tooltip: 'Bullet List (- )',
+                          icon: const Icon(Icons.format_list_bulleted_rounded, size: 20),
+                          onPressed: () => _insertMarkdown('- ', ''),
+                        ),
+                      ],
+                    ),
+                  ),
+                ] else
                   _ImagePickerTile(
                     bytes: _selectedImageBytes,
                     fileName: _selectedFileName,
@@ -616,6 +693,54 @@ class _AddItemSheetState extends State<AddItemSheet> {
                     onPick: _pickImageFile,
                     onRemove: _removeImage,
                   ),
+                if (_isLinkMode &&
+                    _fetchedMetadata?.previewImageUrl != null &&
+                    _fetchedMetadata!.previewImageUrl!.isNotEmpty) ...[
+                  const SizedBox(height: SliTokens.spaceSm),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      height: 120,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: palette.elevated,
+                        border: Border.all(color: palette.border),
+                      ),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.network(
+                            _fetchedMetadata!.previewImageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                          ),
+                          Positioned(
+                            top: 6,
+                            left: 6,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.7),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                'OpenGraph Preview',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
                 if (_isLinkMode && _duplicateItem != null) ...[
                   const SizedBox(height: 8),
                   Container(
@@ -703,10 +828,10 @@ class _AddItemSheetState extends State<AddItemSheet> {
                   textInputAction: TextInputAction.next,
                   style: TextStyle(color: palette.textPrimary),
                   decoration: InputDecoration(
-                    labelText: 'Title (optional)',
+                    labelText: _isNoteMode ? 'Note Title (optional)' : 'Title (optional)',
                     hintText: _isLinkMode
                         ? 'Defaults to the site domain'
-                        : 'e.g. Trip photo',
+                        : (_isNoteMode ? 'e.g. SQLite Memo, Code Snippet' : 'e.g. Trip photo'),
                   ),
                 ),
                 const SizedBox(height: SliTokens.spaceMd),
@@ -714,11 +839,18 @@ class _AddItemSheetState extends State<AddItemSheet> {
                   key: const Key('add_description_field'),
                   controller: _descriptionController,
                   enabled: !_isSaving,
-                  minLines: 2,
-                  maxLines: 4,
-                  style: TextStyle(color: palette.textPrimary),
-                  decoration: const InputDecoration(
-                    labelText: 'Description (optional)',
+                  minLines: _isNoteMode ? 6 : 2,
+                  maxLines: _isNoteMode ? 10 : 4,
+                  style: TextStyle(
+                    color: palette.textPrimary,
+                    fontFamily: _isNoteMode ? SliTokens.fontFamilyMono : null,
+                    fontSize: _isNoteMode ? 13.5 : 14,
+                  ),
+                  decoration: InputDecoration(
+                    labelText: _isNoteMode ? 'Markdown & Code Content *' : 'Description (optional)',
+                    hintText: _isNoteMode
+                        ? 'Write notes, checklist (- [ ]), or code block (```)...'
+                        : 'Notes or brief summary',
                   ),
                 ),
                 const SizedBox(height: SliTokens.spaceMd),
@@ -729,9 +861,44 @@ class _AddItemSheetState extends State<AddItemSheet> {
                   style: TextStyle(color: palette.textPrimary),
                   decoration: const InputDecoration(
                     labelText: 'Tags (optional)',
-                    hintText: 'Separate with commas: flutter, design',
+                    hintText: 'Separate with commas: flutter, design, notes',
                   ),
                 ),
+                if (widget.controller.tagFrequencies.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: widget.controller.tagFrequencies.keys.take(6).map((tag) {
+                      return InkWell(
+                        onTap: () {
+                          final current = _tagsController.text.trim();
+                          final existing = VaultValidators.parseTagInput(current);
+                          if (!existing.contains(tag)) {
+                            _tagsController.text = current.isEmpty ? tag : '$current, $tag';
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: palette.elevated,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: palette.border),
+                          ),
+                          child: Text(
+                            '#$tag (${widget.controller.tagFrequencies[tag]})',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: palette.primaryAccent,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
                 const SizedBox(height: SliTokens.spaceMd),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -901,11 +1068,20 @@ class _ModeSwitcher extends StatelessWidget {
           enabled: enabled,
           onTap: () => onChanged(VaultItemType.link),
         );
+        final note = _AddTypeButton(
+          key: const Key('add_mode_note'),
+          label: 'Note / Code',
+          iconAsset: SliAssets.contentLayers,
+          selected: selected == VaultItemType.note,
+          enabled: enabled,
+          onTap: () => onChanged(VaultItemType.note),
+        );
         final image = _AddTypeButton(
           key: const Key('add_mode_image'),
           label: 'Add Image',
           iconAsset: SliAssets.contentImage,
-          selected: selected == VaultItemType.image,
+          selected: selected == VaultItemType.image ||
+              selected == VaultItemType.screenshot,
           enabled: enabled,
           onTap: () => onChanged(VaultItemType.image),
         );
@@ -915,13 +1091,17 @@ class _ModeSwitcher extends StatelessWidget {
                 children: [
                   link,
                   const SizedBox(height: SliTokens.spaceSm),
+                  note,
+                  const SizedBox(height: SliTokens.spaceSm),
                   image,
                 ],
               )
             : Row(
                 children: [
                   Expanded(child: link),
-                  const SizedBox(width: SliTokens.spaceSm),
+                  const SizedBox(width: 8),
+                  Expanded(child: note),
+                  const SizedBox(width: 8),
                   Expanded(child: image),
                 ],
               );

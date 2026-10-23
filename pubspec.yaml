@@ -40,6 +40,8 @@ flutter:
     - assets/illustrations/
     - assets/illustrations/loading/
     - assets/illustrations/onboarding/
+    - assets/illustrations/plates/
+    - assets/artworks/
     - assets/tokens/
     - assets/icons/navigation/
     - assets/icons/content/

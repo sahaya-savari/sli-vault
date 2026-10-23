@@ -11,7 +11,6 @@ import '../core/widgets/sli_svg.dart';
 import '../data/vault_controller.dart';
 import '../domain/vault_item.dart';
 import '../features/add_item/add_item_sheet.dart';
-import '../features/browse/browse_screen.dart';
 import '../features/collections/collections_screen.dart';
 import '../features/favorites/favorites_screen.dart';
 import '../features/home/home_screen.dart';
@@ -35,10 +34,17 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
 
   DateTime? _pausedAt;
 
+  late final List<Widget> _pages = [
+    RepaintBoundary(child: HomeScreen(controller: widget.controller)),
+    RepaintBoundary(child: FavoritesScreen(controller: widget.controller)),
+    RepaintBoundary(child: CollectionsScreen(controller: widget.controller)),
+    RepaintBoundary(child: SettingsScreen(controller: widget.controller)),
+  ];
+
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.controller.defaultStartupTab.clamp(0, 4);
+    _selectedIndex = widget.controller.defaultStartupTab.clamp(0, 3);
     WidgetsBinding.instance.addObserver(this);
     PlatformShareService.listen(_presentIncomingShare);
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadInitialShare());
@@ -236,14 +242,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
           );
         }
 
-        final pages = [
-          HomeScreen(controller: widget.controller),
-          BrowseScreen(controller: widget.controller),
-          FavoritesScreen(controller: widget.controller),
-          CollectionsScreen(controller: widget.controller),
-          SettingsScreen(controller: widget.controller),
-        ];
-
         return PopScope(
           canPop: _selectedIndex == 0,
           onPopInvokedWithResult: (didPop, _) {
@@ -252,14 +250,14 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
             }
           },
           child: Scaffold(
-            backgroundColor: Colors.transparent,
+            backgroundColor: context.sli.obsidian,
             resizeToAvoidBottomInset: false,
             body: IndexedStack(
               sizing: StackFit.expand,
               index: _selectedIndex,
-              children: pages,
+              children: _pages,
             ),
-            floatingActionButton: _selectedIndex == 4
+            floatingActionButton: _selectedIndex == 3
                 ? null
                 : SliShimmerFab(onTap: _showAddSheet),
             bottomNavigationBar: _BottomNavBar(
@@ -286,7 +284,6 @@ class _BottomNavBar extends StatelessWidget {
 
   static const _destinations = [
     (label: 'Home', icon: SliAssets.navHome),
-    (label: 'Browse', icon: SliAssets.navBrowse),
     (label: 'Favorites', icon: SliAssets.navFavorites),
     (label: 'Collections', icon: SliAssets.contentCollection),
     (label: 'Settings', icon: SliAssets.navSettings),
