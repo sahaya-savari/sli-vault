@@ -326,12 +326,15 @@ void main() {
         final vacuumBtn = find.byKey(const ValueKey('vacuum-db-button'));
         expect(vacuumBtn, findsOneWidget);
         await tester.tap(vacuumBtn);
-        // Let real sqflite_ffi async work drain
-        for (var i = 0; i < 20; i++) {
+        // Let real sqflite_ffi async work drain (resilient to CI runner latency)
+        for (var i = 0; i < 60; i++) {
           await tester.runAsync(
-            () => Future<void>.delayed(const Duration(milliseconds: 15)),
+            () => Future<void>.delayed(const Duration(milliseconds: 25)),
           );
-          await tester.pump(const Duration(milliseconds: 16));
+          await tester.pump(const Duration(milliseconds: 25));
+          if (find.text('Database defragmented & optimized.').evaluate().isNotEmpty) {
+            break;
+          }
         }
         expect(find.text('Database defragmented & optimized.'), findsOneWidget);
         await tester.pumpAndSettle();
@@ -341,11 +344,14 @@ void main() {
         );
         expect(integrityBtn, findsOneWidget);
         await tester.tap(integrityBtn);
-        for (var i = 0; i < 20; i++) {
+        for (var i = 0; i < 60; i++) {
           await tester.runAsync(
-            () => Future<void>.delayed(const Duration(milliseconds: 15)),
+            () => Future<void>.delayed(const Duration(milliseconds: 25)),
           );
-          await tester.pump(const Duration(milliseconds: 16));
+          await tester.pump(const Duration(milliseconds: 25));
+          if (find.text('Vault Integrity Report').evaluate().isNotEmpty) {
+            break;
+          }
         }
         expect(find.text('Vault Integrity Report'), findsOneWidget);
         expect(find.text('Done'), findsOneWidget);
