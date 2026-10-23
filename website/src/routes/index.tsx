@@ -6,6 +6,7 @@ import {
   FeatureSection,
   ScreenshotGallery,
   DownloadSection,
+  FaqSection,
   SupportSection,
   SiteFooter,
 } from "../components";
@@ -248,6 +249,9 @@ function HomePage() {
 
         {/* Download Section */}
         <DownloadSection currentLocale={locale} />
+
+        {/* Technical FAQ & Privacy Section */}
+        <FaqSection currentLocale={locale} />
 
         {/* Support & Community Section */}
         <SupportSection currentLocale={locale} />

@@ -5,4 +5,5 @@ export * from "./DownloadSection";
 export * from "./FeatureSection";
 export * from "./ScreenshotGallery";
 export * from "./SupportSection";
+export * from "./FaqSection";
 export * from "./SiteFooter";

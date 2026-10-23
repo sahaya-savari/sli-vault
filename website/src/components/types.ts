@@ -10,6 +10,8 @@ export interface NavItem {
 
 export interface FeatureItem {
   id: string;
+  tagEn?: string;
+  tagTa?: string;
   titleEn: string;
   titleTa: string;
   descriptionEn: string;

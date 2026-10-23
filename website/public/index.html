@@ -82,12 +82,16 @@
           <span>SLI Vault</span>
         </a>
         <nav class="nav">
+          <a href="#features"
+            ><span class="en">Features</span><span class="ta">சிறப்பம்சங்கள்</span></a
+          >
           <a href="#download"
             ><span class="en">Download</span><span class="ta">பதிவிறக்கம்</span></a
           >
           <a href="./resources/"
             ><span class="en">Resources</span><span class="ta">வளங்கள்</span></a
           >
+          <a href="#faq"><span class="en">FAQ</span><span class="ta">கேள்விகள்</span></a>
           <a class="nav__love" href="#support"
             ><svg
               viewBox="0 0 24 24"
@@ -197,11 +201,17 @@
             </button>
           </div>
           <nav class="mob-menu__nav">
+            <a class="mob-menu__link" href="#features">
+              <span class="en">Features</span><span class="ta">சிறப்பம்சங்கள்</span>
+            </a>
             <a class="mob-menu__link" href="#download">
               <span class="en">Download</span><span class="ta">பதிவிறக்கம்</span>
             </a>
             <a class="mob-menu__link" href="./resources/">
               <span class="en">Resources</span><span class="ta">வளங்கள்</span>
+            </a>
+            <a class="mob-menu__link" href="#faq">
+              <span class="en">FAQ</span><span class="ta">கேள்விகள்</span>
             </a>
             <a class="mob-menu__link" href="#support">
               <svg
@@ -395,102 +405,356 @@
       </section>
 
       <section class="sec" id="features">
-        <h2 class="h2">
-          <span class="en">Everything you need. Nothing you don’t.</span
-          ><span class="ta">உங்களுக்கு தேவையான அனைத்தும். தேவையற்றது எதுவும் இல்லை.</span>
-        </h2>
-        <ol class="feats">
-          <li>
-            <b
-              ><span class="en">OpenGraph Auto-Fill</span
-              ><span class="ta">தானியங்கி OpenGraph தகவல்</span></b
+        <div class="feats-head">
+          <span class="back-it__tag">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
+              <path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+              />
+            </svg>
+            <span class="en">Core Capabilities</span><span class="ta">முக்கிய சிறப்பம்சங்கள்</span>
+          </span>
+          <h2 class="h2">
+            <span class="en">Everything you need. Nothing you don’t.</span
+            ><span class="ta">உங்களுக்கு தேவையான அனைத்தும். தேவையற்றது எதுவும் இல்லை.</span>
+          </h2>
+          <p class="feats-sub">
+            <span class="en"
+              >Calm, privacy-first craftsmanship designed for speed, complete local persistence, and
+              distraction-free clarity.</span
             >
-            <p>
+            <span class="ta"
+              >ஆஃப்லைன் Markdown, உடனடி SQLite தேடல், டைனமிக் திரை பாதுகாப்பு மற்றும் உண்மையான OLED
+              வடிவமைப்புடன் உங்கள் நூலகம்.</span
+            >
+          </p>
+        </div>
+
+        <div class="feats-grid">
+          <!-- Card 1: Offline Markdown & Code -->
+          <article class="feat-card">
+            <div class="feat-card__top">
+              <span class="feat-card__icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="16 18 22 12 16 6" />
+                  <polyline points="8 6 2 12 8 18" />
+                </svg>
+              </span>
+              <span class="feat-card__tag"
+                ><span class="en">v1.0.1 Notes</span
+                ><span class="ta">v1.0.1 குறிப்புகள்</span></span
+              >
+            </div>
+            <h3 class="feat-card__title">
+              <span class="en">Offline Markdown &amp; Code Snippets</span>
+              <span class="ta">ஆஃப்லைன் Markdown &amp; கோட் குறிப்புகள்</span>
+            </h3>
+            <p class="feat-card__desc">
               <span class="en"
-                >Save links with instant OpenGraph title, image, and description auto-fill, plus
-                offline article snapshot extraction.</span
-              ><span class="ta"
-                >இணைப்புகளின் தலைப்பு, படம் மற்றும் விளக்கங்களை உடனடியாக தானாக நிரப்பி, ஆஃப்லைன்
-                வாசிப்பிற்காக பாதுகாக்கிறது.</span
+                >Integrated JetBrains Mono formatting toolbar (headers, bold, italic, lists, quotes,
+                code blocks) with syntax styling and local SQLite storage.</span
+              >
+              <span class="ta"
+                >JetBrains Mono எழுத்துருவுடன் கூடிய எடிட்டர் (தலைப்புகள், தடிமன், சாய்வு,
+                குறியீட்டுத் தொகுதிகள்) மற்றும் உள்ளூர் SQLite சேமிப்பகம்.</span
               >
             </p>
-          </li>
-          <li>
-            <b
-              ><span class="en">Instant Offline Search</span
-              ><span class="ta">உடனடி ஆஃப்லைன் தேடல்</span></b
-            >
-            <p>
+          </article>
+
+          <!-- Card 2: OpenGraph Auto-Fill -->
+          <article class="feat-card">
+            <div class="feat-card__top">
+              <span class="feat-card__icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                  <path
+                    d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                  />
+                </svg>
+              </span>
+              <span class="feat-card__tag"
+                ><span class="en">Web Snapshots</span><span class="ta">இணைய விவரங்கள்</span></span
+              >
+            </div>
+            <h3 class="feat-card__title">
+              <span class="en">OpenGraph Auto-Fill &amp; Reader</span>
+              <span class="ta">தானியங்கி OpenGraph தகவல்</span>
+            </h3>
+            <p class="feat-card__desc">
               <span class="en"
-                >Find any item instantly across titles, web domains, and notes with fast SQLite
-                indexing on your device.</span
-              ><span class="ta"
-                >தலைப்புகள், டொமைன்கள் மற்றும் குறிப்புகளில் உங்கள் சாதனத்தின் வேகமான SQLite
-                அட்டவணையுடன் உடனடியாகத் தேடுங்கள்.</span
+                >Save links with instant OpenGraph title, preview image, and description auto-fill,
+                plus offline article snapshot extraction.</span
+              >
+              <span class="ta"
+                >இணைப்புகளின் தலைப்பு, முன்னோட்டப் படம் மற்றும் விளக்கங்களை உடனடியாக தானாக நிரப்பி,
+                ஆஃப்லைன் வாசிப்பிற்காக பாதுகாக்கிறது.</span
               >
             </p>
-          </li>
-          <li>
-            <b
-              ><span class="en">Curated Collections</span
-              ><span class="ta">தேர்ந்தெடுக்கப்பட்ட தொகுப்புகள்</span></b
-            >
-            <p>
+          </article>
+
+          <!-- Card 3: Instant Offline Search -->
+          <article class="feat-card">
+            <div class="feat-card__top">
+              <span class="feat-card__icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </span>
+              <span class="feat-card__tag"
+                ><span class="en">Indexed SQLite</span><span class="ta">SQLite அட்டவணை</span></span
+              >
+            </div>
+            <h3 class="feat-card__title">
+              <span class="en">Instant Offline Search</span>
+              <span class="ta">உடனடி ஆஃப்லைன் தேடல்</span>
+            </h3>
+            <p class="feat-card__desc">
               <span class="en"
-                >Organize items with color-accented collections, maintain a quick favorites
-                shortlist, and tag items.</span
-              ><span class="ta"
-                >நிறக்குறியீடு கொண்ட தொகுப்புகளில் ஒழுங்கமைத்து, விருப்பமானவற்றை விரைவாக
-                அணுகுங்கள்.</span
+                >Find any link, note, or code snippet instantly across titles, web domains, and tags
+                with sub-millisecond SQLite indexing on your device.</span
+              >
+              <span class="ta"
+                >தலைப்புகள், டொமைன்கள், குறிப்புகள் மற்றும் குறிச்சொற்களில் உங்கள் சாதனத்தின் அதிவேக
+                SQLite அட்டவணையுடன் உடனடியாகத் தேடுங்கள்.</span
               >
             </p>
-          </li>
-          <li>
-            <b
-              ><span class="en">100% On-Device SQLite</span
-              ><span class="ta">100% சாதன SQLite சேமிப்பகம்</span></b
-            >
-            <p>
+          </article>
+
+          <!-- Card 4: Dynamic Tags -->
+          <article class="feat-card">
+            <div class="feat-card__top">
+              <span class="feat-card__icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"
+                  />
+                  <line x1="7" y1="7" x2="7.01" y2="7" />
+                </svg>
+              </span>
+              <span class="feat-card__tag"
+                ><span class="en">Dynamic Tags</span><span class="ta">குறிச்சொற்கள்</span></span
+              >
+            </div>
+            <h3 class="feat-card__title">
+              <span class="en">Interactive Tag Ribbon &amp; Explorer</span>
+              <span class="ta">ஊடாடும் குறிச்சொல் ரிப்பன்</span>
+            </h3>
+            <p class="feat-card__desc">
               <span class="en"
-                >Zero cloud accounts, zero telemetry, and zero servers. All data stays strictly
-                inside private app storage.</span
-              ><span class="ta"
-                >மேகக்கணி கணக்குகள் இல்லை, கண்காணிப்பு இல்லை, சேவையகங்கள் இல்லை. உங்கள் தரவு
-                அனைத்தும் உங்கள் சாதனத்திலேயே பாதுகாப்பாக இருக்கும்.</span
+                >Dynamic count badges (#tag (count)) with 1-tap filtering across your entire
+                library. Color-coded badges for visual distinction.</span
+              >
+              <span class="ta"
+                >டைனமிக் எண்ணிக்கை (#tag (count)) மற்றும் 1-தட்டல் வடிகட்டுதல் மூலம் உங்கள் அனைத்து
+                புக்மார்க்குகளையும் எளிதாகக் கண்டறியலாம்.</span
               >
             </p>
-          </li>
-          <li>
-            <b
-              ><span class="en">Portable Backups</span
-              ><span class="ta">எளிதான காப்புப்பிரதி (Backup)</span></b
-            >
-            <p>
+          </article>
+
+          <!-- Card 5: Screen Shield & Biometrics -->
+          <article class="feat-card">
+            <div class="feat-card__top">
+              <span class="feat-card__icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </span>
+              <span class="feat-card__tag"
+                ><span class="en">Privacy Shield</span
+                ><span class="ta">பாதுகாப்புக் கேடயம்</span></span
+              >
+            </div>
+            <h3 class="feat-card__title">
+              <span class="en">Dynamic Screen Shield &amp; Biometrics</span>
+              <span class="ta">டைனமிக் திரை பாதுகாப்பு &amp; பயோமெட்ரிக்</span>
+            </h3>
+            <p class="feat-card__desc">
               <span class="en"
-                >Export portable v3 ZIP backups preserving all original raw images and metadata.
-                Restore anytime.</span
-              ><span class="ta"
-                >அசல் படங்கள் மற்றும் மெட்டாடேட்டாவைப் பாதுகாக்கும் போர்ட்டபிள் ZIP v3
-                காப்புப்பிரதிகளை ஏற்றுமதி செய்யுங்கள். எப்போது வேண்டுமானாலும் மீட்டெடுக்கலாம்.</span
+                >Default-on FLAG_SECURE window masking protects against screenshots, recordings, and
+                app-switcher snooping, paired with customizable biometric lock timeouts.</span
+              >
+              <span class="ta"
+                >FLAG_SECURE மூலம் திரைக்காட்சிகள் மற்றும் திரைப்பதிவு தடுக்கப்படுகிறது; சமீபத்திய
+                பயன்பாடுகளின் முன்னோட்டத்திலும் பெட்டகம் மறைக்கப்படுகிறது.</span
               >
             </p>
-          </li>
-          <li>
-            <b
-              ><span class="en">Dark, Light & System</span
-              ><span class="ta">இருண்ட, வெளிச்ச மற்றும் கணினி தீம்கள்</span></b
-            >
-            <p>
+          </article>
+
+          <!-- Card 6: Collections & Wallpapers -->
+          <article class="feat-card">
+            <div class="feat-card__top">
+              <span class="feat-card__icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <polyline points="21 15 16 10 5 21" />
+                </svg>
+              </span>
+              <span class="feat-card__tag"
+                ><span class="en">Visual Library</span
+                ><span class="ta">வண்ணத் தொகுப்புகள்</span></span
+              >
+            </div>
+            <h3 class="feat-card__title">
+              <span class="en">Collections &amp; Curated Artwork</span>
+              <span class="ta">தொகுப்புகள் &amp; அழகியல் வால்பேப்பர்கள்</span>
+            </h3>
+            <p class="feat-card__desc">
               <span class="en"
-                >Thoughtfully designed with warm OLED dark mode, system theme support, and
-                distraction-free layouts.</span
-              ><span class="ta"
-                >OLED இருண்ட முறை, கணினி தீம் ஆதரவு மற்றும் கவனச்சிதறல் இல்லாத நேர்த்தியான
-                வடிவமைப்புடன் உருவாக்கப்பட்டது.</span
+                >Organize with color-accented collections, maintain a quick favorites shortlist, and
+                explore 9 bundled atmospheric high-resolution wallpapers.</span
+              >
+              <span class="ta"
+                >வண்ணத் தொகுப்புகளில் ஒழுங்கமைத்து, விருப்பமானவற்றை விரைவாக அணுகுங்கள்; 9
+                அதிகாரப்பூர்வ உயர்தர வால்பேப்பர்களை அனுபவியுங்கள்.</span
               >
             </p>
-          </li>
-        </ol>
+          </article>
+
+          <!-- Card 7: Lossless Portable Backups -->
+          <article class="feat-card">
+            <div class="feat-card__top">
+              <span class="feat-card__icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              </span>
+              <span class="feat-card__tag"
+                ><span class="en">Data Sovereignty</span><span class="ta">சுயாதீன தரவு</span></span
+              >
+            </div>
+            <h3 class="feat-card__title">
+              <span class="en">Lossless Portable Backups (v3 ZIP)</span>
+              <span class="ta">முழுமையான போர்ட்டபிள் ZIP காப்புப்பிரதி</span>
+            </h3>
+            <p class="feat-card__desc">
+              <span class="en"
+                >Export portable v3 ZIP backups preserving raw images, notes, tags, and SQLite
+                records. Restore anytime on Android, Windows, or Linux.</span
+              >
+              <span class="ta"
+                >அசல் படங்கள், குறிப்புகள் மற்றும் மெட்டாடேட்டாவைப் பாதுகாக்கும் போர்ட்டபிள் ZIP v3
+                காப்புப்பிரதிகளை எப்போது வேண்டுமானாலும் மீட்டெடுக்கலாம்.</span
+              >
+            </p>
+          </article>
+
+          <!-- Card 8: Multi-Platform Native -->
+          <article class="feat-card">
+            <div class="feat-card__top">
+              <span class="feat-card__icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                  <line x1="8" y1="21" x2="16" y2="21" />
+                  <line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+              </span>
+              <span class="feat-card__tag"
+                ><span class="en">Flutter 3.32</span
+                ><span class="ta">மல்டி-பிளாட்ஃபார்ம்</span></span
+              >
+            </div>
+            <h3 class="feat-card__title">
+              <span class="en">Multi-Platform Native Performance</span>
+              <span class="ta">நேட்டிவ் டெஸ்க்டாப் &amp; மொபைல் ஆதரவு</span>
+            </h3>
+            <p class="feat-card__desc">
+              <span class="en"
+                >Engineered on Flutter 3.32 for 64-bit Android, Windows 10/11, and modern Linux.
+                Genuine OLED Obsidian theme with zero text washout.</span
+              >
+              <span class="ta"
+                >Android, 64-பிட் Windows மற்றும் Linux-இல் முழுமையான வேகத்துடன் இயங்கும்; உண்மையான
+                OLED Obsidian கருப்பு தீம் ஆதரவு.</span
+              >
+            </p>
+          </article>
+        </div>
       </section>
 
       <section class="sec sec--wide">
@@ -649,26 +913,10 @@
         </div>
       </section>
 
-      <section class="sec">
+      <section class="sec" aria-labelledby="privacy-title">
         <div class="quiet">
-          <h2 class="h2">
-            <span class="en">No accounts. No trackers. 100% on-device.</span
-            ><span class="ta">கணக்குகள் இல்லை. கண்காணிப்பு இல்லை. 100% சாதனத்திலேயே.</span>
-          </h2>
-          <p>
-            <span class="en"
-              >SLI Vault does not require external accounts or send your bookmarks to remote
-              servers. All your saved links, notes, images and tags stay safely in private SQLite
-              storage on your Android device.</span
-            ><span class="ta"
-              >SLI Vault வெளிப்புறக் கணக்குகளைக் கோருவதில்லை அல்லது உங்கள் புக்மார்க்குகளை தொலை
-              சேவையகங்களுக்கு அனுப்புவதில்லை. நீங்கள் சேமிக்கும் அனைத்து இணைப்புகள், குறிப்புகள்,
-              படங்கள் மற்றும் குறிச்சொற்கள் உங்கள் Android சாதனத்தில் உள்ள தனிப்பட்ட SQLite
-              சேமிப்பகத்தில் மட்டுமே பாதுகாப்பாக இருக்கும்.</span
-            >
-          </p>
-          <div class="quiet__badges">
-            <span class="quiet__badge">
+          <div class="quiet__header">
+            <span class="back-it__tag">
               <svg
                 viewBox="0 0 24 24"
                 width="14"
@@ -680,45 +928,149 @@
                 stroke-linejoin="round"
                 aria-hidden="true"
               >
-                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               </svg>
-              <span class="en">Local SQLite</span><span class="ta">சாதன SQLite</span>
+              <span class="en">Privacy &amp; Architecture</span
+              ><span class="ta">தனியுரிமை உறுதிமொழி</span>
             </span>
-            <span class="quiet__badge">
-              <svg
-                viewBox="0 0 24 24"
-                width="14"
-                height="14"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
+            <h2 class="h2" id="privacy-title">
+              <span class="en">No accounts. No trackers. 100% on-device.</span
+              ><span class="ta">கணக்குகள் இல்லை. கண்காணிப்பு இல்லை. 100% சாதனத்திலேயே.</span>
+            </h2>
+            <p>
+              <span class="en"
+                >SLI Vault does not require external accounts or send your bookmarks to remote
+                servers. All your saved links, notes, images, and tags stay safely in private SQLite
+                storage on your personal device.</span
+              ><span class="ta"
+                >SLI Vault வெளிப்புறக் கணக்குகளைக் கோருவதில்லை அல்லது உங்கள் புக்மார்க்குகளை தொலை
+                சேவையகங்களுக்கு அனுப்புவதில்லை. நீங்கள் சேமிக்கும் அனைத்து இணைப்புகள், குறிப்புகள்,
+                படங்கள் மற்றும் குறிச்சொற்கள் உங்கள் சாதனத்தில் உள்ள தனிப்பட்ட SQLite சேமிப்பகத்தில்
+                மட்டுமே பாதுகாப்பாக இருக்கும்.</span
               >
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
-              <span class="en">Zero Telemetry</span><span class="ta">கண்காணிப்பு இல்லை</span>
-            </span>
-            <span class="quiet__badge">
-              <svg
-                viewBox="0 0 24 24"
-                width="14"
-                height="14"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              </svg>
-              <span class="en">No Cloud Account</span><span class="ta">கணக்கு தேவையில்லை</span>
-            </span>
+            </p>
+          </div>
+
+          <div class="quiet__grid">
+            <div class="quiet__pillar">
+              <span class="quiet__pillar-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <ellipse cx="12" cy="5" rx="9" ry="3" />
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                </svg>
+              </span>
+              <h4>
+                <span class="en">Local SQLite Sandbox</span
+                ><span class="ta">சாதன SQLite தரவுத்தளம்</span>
+              </h4>
+              <p>
+                <span class="en">Direct on-device persistence inside the private OS sandbox.</span
+                ><span class="ta"
+                  >உங்கள் தனிப்பட்ட சேமிப்பகத்தில் மட்டுமே முழுமையான குறியீட்டுடன் அமைகிறது.</span
+                >
+              </p>
+            </div>
+
+            <div class="quiet__pillar">
+              <span class="quiet__pillar-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </span>
+              <h4>
+                <span class="en">FLAG_SECURE Window Shield</span
+                ><span class="ta">டைனமிக் திரை பாதுகாப்பு</span>
+              </h4>
+              <p>
+                <span class="en"
+                  >Prevents unauthorized recordings, screenshots, and switcher peeking.</span
+                ><span class="ta"
+                  >ஸ்கிரீன்ஷாட்கள், திரைப்பதிவு மற்றும் மல்டிடாஸ்கிங் எக்ஸ்போஷரைத் தடுக்கிறது.</span
+                >
+              </p>
+            </div>
+
+            <div class="quiet__pillar">
+              <span class="quiet__pillar-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </span>
+              <h4>
+                <span class="en">Zero Telemetry / Analytics</span
+                ><span class="ta">பூஜ்ஜிய டெலிமெட்ரி &amp; டிராக்கர்கள்</span>
+              </h4>
+              <p>
+                <span class="en"
+                  >No analytics SDKs, no tracking beacons, no third-party network pings.</span
+                ><span class="ta"
+                  >எந்தவொரு மூன்றாம் தரப்பு பகுப்பாய்வு அல்லது கண்காணிப்பு SDK-களும் இல்லை.</span
+                >
+              </p>
+            </div>
+
+            <div class="quiet__pillar">
+              <span class="quiet__pillar-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </span>
+              <h4>
+                <span class="en">Zero Account Required</span
+                ><span class="ta">கணக்கு அல்லது பதிவு தேவையில்லை</span>
+              </h4>
+              <p>
+                <span class="en"
+                  >No email, no login, no subscription. Install and start saving immediately.</span
+                ><span class="ta"
+                  >மின்னஞ்சல், கடவுச்சொல் அல்லது இணைய இணைப்பு எதுவுமின்றி உடனே பயன்பாட்டுக்குத்
+                  தயார்.</span
+                >
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -969,13 +1321,7 @@
               text-decoration: none;
             "
           >
-            <svg
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              fill="currentColor"
-              aria-hidden="true"
-            >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
               <path
                 d="M12.504 0c-.155 0-.311.005-.466.013C8.11.186 5.18 2.71 4.16 6.093c-.085.283-.148.574-.19.87-.088.61-.093 1.247-.009 1.882.12.91.4 1.765.818 2.553l-4.09 11.262c-.108.297-.048.632.156.867.206.234.515.34.81.275l3.636-.853 1.95 3.013c.167.258.45.416.753.416.306 0 .588-.158.755-.416l1.982-3.064 3.637.853c.295.065.604-.04.81-.275.204-.235.264-.57.156-.867l-1.61-4.431c1.57.454 3.243.58 4.942.29 5.065-.864 8.758-5.534 8.24-10.62C25.852 3.327 21.9 0 17.5 0h-4.996z"
               />
@@ -1010,13 +1356,7 @@
               text-decoration: none;
             "
           >
-            <svg
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              fill="currentColor"
-              aria-hidden="true"
-            >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
               <path
                 d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"
               />
@@ -1176,6 +1516,249 @@
             ><span class="ta">v1.0.1 வெளியீட்டுக் குறிப்புகள்</span> ↗</a
           >
         </p>
+      </section>
+
+      <!-- Technical FAQ & Privacy Section -->
+      <section class="sec" id="faq" aria-labelledby="faq-title">
+        <div class="faq-head">
+          <span class="back-it__tag">
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <span class="en">Frequently Asked Questions</span
+            ><span class="ta">பொதுவான கேள்விகள்</span>
+          </span>
+          <h2 class="h2" id="faq-title">
+            <span class="en">Clear answers about your vault</span>
+            <span class="ta">அமைதியான மற்றும் தெளிவான பதில்கள்</span>
+          </h2>
+          <p class="faq-subtitle">
+            <span class="en"
+              >Everything you need to know about SLI Vault's privacy architecture, offline database,
+              and cross-platform capabilities.</span
+            >
+            <span class="ta"
+              >SLI Vault-இன் பாதுகாப்பு, ஆஃப்லைன் செயல்பாடு மற்றும் தனிப்பட்ட தரவு நிர்வாகம் பற்றிய
+              முக்கிய தகவல்கள்.</span
+            >
+          </p>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq-card">
+            <summary class="faq-question">
+              <span
+                ><span class="en">Is SLI Vault really 100% offline and local?</span
+                ><span class="ta"
+                  >SLI Vault உண்மையில் 100% ஆஃப்லைன் மற்றும் தனிப்பட்டதா?</span
+                ></span
+              >
+              <span class="faq-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+            </summary>
+            <div class="faq-answer">
+              <p>
+                <span class="en"
+                  >Yes. Every link, image, markdown note, tag, and collection is stored directly
+                  inside an on-device SQLite database within your private app sandbox. Zero
+                  telemetry, zero analytics SDKs, and zero cloud accounts required. It operates
+                  flawlessly even in airplane mode.</span
+                >
+                <span class="ta"
+                  >ஆம். உங்கள் இணைப்புகள், படங்கள், குறிப்புகள் மற்றும் குறிச்சொற்கள் அனைத்தும்
+                  உங்கள் சாதனத்தின் தனிப்பட்ட SQLite தரவுத்தளத்தில் மட்டுமே சேமிக்கப்படுகின்றன.
+                  கண்காணிப்பு SDK-கள் அல்லது மேகக்கணி கணக்குகள் எதுவும் தேவையில்லை. விமானப்
+                  பயன்முறையிலும் (Airplane mode) தடையின்றி இயங்கும்.</span
+                >
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-card">
+            <summary class="faq-question">
+              <span
+                ><span class="en">How does the Markdown &amp; Code Editor work?</span
+                ><span class="ta"
+                  >Markdown மற்றும் குறிப்புகள் எடிட்டர் எவ்வாறு இயங்குகிறது?</span
+                ></span
+              >
+              <span class="faq-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+            </summary>
+            <div class="faq-answer">
+              <p>
+                <span class="en"
+                  >SLI Vault includes an offline Markdown toolbar styled in JetBrains Mono,
+                  supporting headers, bold/italic, quote blocks, bullet lists, links, and fenced
+                  code blocks with syntax highlighting. You can capture ideas, code snippets, and
+                  study notes instantly.</span
+                >
+                <span class="ta"
+                  >SLI Vault ஆஃப்லைன் Markdown கருவிப்பட்டியைக் கொண்டுள்ளது (JetBrains Mono
+                  எழுத்துருவுடன்). தலைப்புகள், தடிமனான எழுத்துக்கள், குறியீட்டுத் தொகுதிகள் (code
+                  blocks) மற்றும் மேற்கோள்களை ஆஃப்லைனிலேயே எளிதாக எழுதலாம்.</span
+                >
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-card">
+            <summary class="faq-question">
+              <span
+                ><span class="en">Can I transfer my data between Android, Windows, and Linux?</span
+                ><span class="ta"
+                  >Android, Windows மற்றும் Linux இடையே தரவை மாற்ற முடியுமா?</span
+                ></span
+              >
+              <span class="faq-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+            </summary>
+            <div class="faq-answer">
+              <p>
+                <span class="en"
+                  >Absolutely. SLI Vault features a lossless v3 ZIP backup format. Export your vault
+                  from Android and import it seamlessly into Windows or Linux (or vice versa), fully
+                  preserving all raw images, notes, tags, metadata, and collections.</span
+                >
+                <span class="ta"
+                  >நிச்சயமாக. SLI Vault போர்ட்டபிள் v3 ZIP காப்புப்பிரதியை ஆதரிக்கிறது.
+                  Android-லிருந்து ஏற்றுமதி செய்து Windows அல்லது Linux-இல் எந்தத் தரவு இழப்பும்
+                  இன்றி இறக்குமதி செய்யலாம். உங்கள் அனைத்து படங்கள், குறிப்புகள் மற்றும் தொகுப்புகள்
+                  பாதுகாக்கப்படும்.</span
+                >
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-card">
+            <summary class="faq-question">
+              <span
+                ><span class="en"
+                  >How does the Dynamic Screen Protection (FLAG_SECURE) protect privacy?</span
+                ><span class="ta"
+                  >டைனமிக் திரை பாதுகாப்பு (FLAG_SECURE) எவ்வாறு பாதுகாக்கிறது?</span
+                ></span
+              >
+              <span class="faq-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+            </summary>
+            <div class="faq-answer">
+              <p>
+                <span class="en"
+                  >When enabled, the Android window policy prevents unauthorized screen captures,
+                  screen recordings, and masks sensitive bookmark previews from the OS
+                  multitasking/recent apps switcher. Combined with customizable biometric timeouts,
+                  your vault remains private even if someone handles your phone.</span
+                >
+                <span class="ta"
+                  >இயக்கப்பட்டால், Android விண்டோ கொள்கை மூலம் ஸ்கிரீன்ஷாட்கள் மற்றும் ஸ்கிரீன்
+                  ரெக்கார்டிங் தடுக்கப்படுகிறது. சமீபத்திய பயன்பாடுகளின் (recent apps)
+                  முன்னோட்டத்திலும் உங்கள் பெட்டகம் மறைக்கப்பட்டு, பயோமெட்ரிக் பூட்டுடன் முழுமையான
+                  தனியுரிமை வழங்கப்படுகிறது.</span
+                >
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-card">
+            <summary class="faq-question">
+              <span
+                ><span class="en">Is SLI Vault completely free and open source?</span
+                ><span class="ta"
+                  >SLI Vault முற்றிலும் இலவசம் மற்றும் திறந்த மூலக் குறியீடா?</span
+                ></span
+              >
+              <span class="faq-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+            </summary>
+            <div class="faq-answer">
+              <p>
+                <span class="en"
+                  >Yes. SLI Vault is free, open source, and licensed under the permissive MIT
+                  License. There are zero subscriptions, zero ads, and zero paywalls. You are free
+                  to inspect the code, audit the architecture, or build from source on GitHub.</span
+                >
+                <span class="ta"
+                  >ஆம். SLI Vault என்பது MIT உரிமத்தின் கீழ் வெளியிடப்பட்ட ஒரு சுதந்திரமான திறந்த
+                  மூலத் திட்டமாகும். பூஜ்ஜிய விளம்பரங்கள், பூஜ்ஜிய சந்தாக்கள். மூலக் குறியீட்டை
+                  GitHub-இல் பார்வையிடலாம் மற்றும் நீங்களே கட்டமைக்கலாம்.</span
+                >
+              </p>
+            </div>
+          </details>
+        </div>
       </section>
 
       <section class="sec" id="support">

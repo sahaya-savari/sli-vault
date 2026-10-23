@@ -28,8 +28,10 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
   if (!isOpen) return null;
 
   const t = {
+    features: currentLocale === "ta" ? "சிறப்பம்சங்கள்" : "Features",
     download: currentLocale === "ta" ? "பதிவிறக்கம்" : "Download",
     resources: currentLocale === "ta" ? "வளங்கள்" : "Resources",
+    faq: currentLocale === "ta" ? "கேள்விகள்" : "FAQ",
     support: currentLocale === "ta" ? "ஆதரவு" : "Support",
     closeMenu: currentLocale === "ta" ? "மெனுவை மூடு" : "Close menu",
     switchLanguage: currentLocale === "ta" ? "Switch to English" : "தமிழுக்கு மாறவும்",
@@ -77,6 +79,13 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
 
           <nav className="flex flex-col space-y-4" aria-label="Mobile menu links">
             <a
+              href="#features"
+              className="text-base font-medium text-zinc-200 hover:text-white py-2 px-3 rounded-md hover:bg-zinc-800/60 transition-colors"
+              onClick={onClose}
+            >
+              {t.features}
+            </a>
+            <a
               href="#download"
               className="text-base font-medium text-zinc-200 hover:text-white py-2 px-3 rounded-md hover:bg-zinc-800/60 transition-colors"
               onClick={onClose}
@@ -89,6 +98,13 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
               onClick={onClose}
             >
               {t.resources}
+            </a>
+            <a
+              href="#faq"
+              className="text-base font-medium text-zinc-200 hover:text-white py-2 px-3 rounded-md hover:bg-zinc-800/60 transition-colors"
+              onClick={onClose}
+            >
+              {t.faq}
             </a>
             <a
               href="#support"

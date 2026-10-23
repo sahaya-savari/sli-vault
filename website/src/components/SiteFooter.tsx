@@ -26,7 +26,9 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ currentLocale, basePath 
         </a>
 
         <nav className="foot__nav" aria-label="Footer navigation">
+          <a href="#features">{isTa ? "சிறப்பம்சங்கள்" : "Features"}</a>
           <a href="#download">{isTa ? "பதிவிறக்கம்" : "Download"}</a>
+          <a href="#faq">{isTa ? "கேள்விகள்" : "FAQ"}</a>
           <a href="#support">{isTa ? "ஆதரவு" : "Support"}</a>
           <a
             href="https://github.com/sahaya-savari/sli-vault"

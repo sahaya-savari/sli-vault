@@ -6,6 +6,7 @@ import {
   FeatureSection,
   ScreenshotGallery,
   SupportSection,
+  FaqSection,
   SiteFooter,
 } from "../components";
 
@@ -29,20 +30,20 @@ describe("SLI Vault Website React Components", () => {
     expect(screen.getByRole("link", { name: "ஆதரவு" })).toBeDefined();
   });
 
-  it("renders FeatureSection with 6 core features and privacy badges", () => {
+  it("renders FeatureSection with Bento grid features and privacy pillars", () => {
     const { rerender } = render(<FeatureSection currentLocale="en" />);
 
-    expect(screen.getByText("OpenGraph Auto-Fill")).toBeDefined();
+    expect(screen.getByText("OpenGraph Auto-Fill & Reader")).toBeDefined();
     expect(screen.getByText("Instant Offline Search")).toBeDefined();
-    expect(screen.getByText("100% On-Device SQLite")).toBeDefined();
-    expect(screen.getByText("Portable Backups")).toBeDefined();
-    expect(screen.getByText("Zero Telemetry")).toBeDefined();
+    expect(screen.getByText("Local SQLite Sandbox")).toBeDefined();
+    expect(screen.getByText("Lossless Portable Backups (v3 ZIP)")).toBeDefined();
+    expect(screen.getByText("Zero Telemetry / Analytics")).toBeDefined();
 
     // Verify Tamil localization
     rerender(<FeatureSection currentLocale="ta" />);
     expect(screen.getByText("தானியங்கி OpenGraph தகவல்")).toBeDefined();
-    expect(screen.getByText("100% சாதன SQLite சேமிப்பகம்")).toBeDefined();
-    expect(screen.getByText("கண்காணிப்பு இல்லை")).toBeDefined();
+    expect(screen.getByText("சாதன SQLite தரவுத்தளம்")).toBeDefined();
+    expect(screen.getByText("பூஜ்ஜிய டெலிமெட்ரி & டிராக்கர்கள்")).toBeDefined();
   });
 
   it("renders DownloadSection with APK links", () => {
@@ -70,6 +71,21 @@ describe("SLI Vault Website React Components", () => {
     expect(screen.getByText("Welcome screen")).toBeDefined();
     expect(screen.getByText("Vault home")).toBeDefined();
     expect(screen.getByText("Browse gallery")).toBeDefined();
+  });
+
+  it("renders FaqSection with questions and answers", () => {
+    const { rerender } = render(<FaqSection currentLocale="en" />);
+
+    expect(screen.getByText("Frequently Asked Questions")).toBeDefined();
+    expect(screen.getByText("Is SLI Vault really 100% offline and local?")).toBeDefined();
+    expect(screen.getByText("How does the Markdown & Code Editor work?")).toBeDefined();
+
+    // Verify Tamil localization
+    rerender(<FaqSection currentLocale="ta" />);
+    expect(screen.getByText("பொதுவான கேள்விகள்")).toBeDefined();
+    expect(
+      screen.getByText("SLI Vault உண்மையில் 100% ஆஃப்லைன் மற்றும் தனிப்பட்டதா?"),
+    ).toBeDefined();
   });
 
   it("renders SiteFooter with MIT License and creator credit", () => {

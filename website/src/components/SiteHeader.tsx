@@ -16,8 +16,10 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const t = {
+    features: currentLocale === "ta" ? "சிறப்பம்சங்கள்" : "Features",
     download: currentLocale === "ta" ? "பதிவிறக்கம்" : "Download",
     resources: currentLocale === "ta" ? "வளங்கள்" : "Resources",
+    faq: currentLocale === "ta" ? "கேள்விகள்" : "FAQ",
     support: currentLocale === "ta" ? "ஆதரவு" : "Support",
     switchLanguage: currentLocale === "ta" ? "Switch to English" : "தமிழுக்கு மாறவும்",
     githubAria: "SLI Vault on GitHub",
@@ -43,8 +45,10 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
 
           {/* Desktop Navigation */}
           <nav className="nav" aria-label="Primary navigation">
+            <a href="#features">{t.features}</a>
             <a href="#download">{t.download}</a>
             <a href={`${basePath}resources/`}>{t.resources}</a>
+            <a href="#faq">{t.faq}</a>
             <a className="nav__love" href="#support">
               <svg
                 viewBox="0 0 24 24"
