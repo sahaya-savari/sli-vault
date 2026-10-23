@@ -16,19 +16,13 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href="https://sahaya-savari.github.io/sli-vault/" />
     <link rel="icon" type="image/png" href="./favicon.png?v=3" />
-    <link
-      rel="alternate"
-      type="application/atom+xml"
-      title="SLI Vault updates"
-      href="./blog/feed.xml"
-    />
     <script>
       (function () {
         var root = document.documentElement;
         var lang = root.dataset.fixed;
         if (!lang) {
           try {
-            lang = localStorage.getItem("streak-lang");
+            lang = localStorage.getItem("sli-vault-lang") || localStorage.getItem("streak-lang");
           } catch (e) {}
           if (!lang) lang = (navigator.language || "").slice(0, 2).toLowerCase();
         }

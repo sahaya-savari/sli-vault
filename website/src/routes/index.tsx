@@ -99,7 +99,9 @@ function HomePage() {
             >
               <b>v1.0.1</b>
               <span>
-                {isTa ? "Android · Windows · Linux · திறந்த மூல" : "Android · Windows · Linux · Open Source · Offline"}
+                {isTa
+                  ? "Android · Windows · Linux · திறந்த மூல"
+                  : "Android · Windows · Linux · Open Source · Offline"}
               </span>
             </a>
 

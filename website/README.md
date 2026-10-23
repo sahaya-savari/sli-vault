@@ -18,14 +18,12 @@ website/
 │   ├── 404.html            # Static fallback error page
 │   ├── .nojekyll           # Bypasses GitHub Pages Jekyll processing
 │   ├── robots.txt          # Crawler policies & Sitemap directive
-│   ├── sitemap.xml         # XML sitemap with 15 canonical routes
+│   ├── sitemap.xml         # XML sitemap with canonical routes
 │   ├── assets/             # Branding, phone mockups, store badges
 │   ├── css/styles.css      # Core stylesheet (Design tokens, layout, dark theme)
 │   ├── js/site.js          # Lightweight client behavior (theme, language, lightbox)
 │   ├── files/              # Ambient audio soundscapes (MP3/MP4)
-│   ├── blog/               # Pre-rendered blog articles & sync guides
-│   ├── streak/             # Habit tracker & alternate showcase view
-│   └── resources/          # Audio soundscape resources directory
+│   └── resources/          # Wallpapers and audio soundscape showcase
 ├── src/                    # TypeScript / TanStack Start source application
 │   ├── routes/             # App routing tree (index.tsx, __root.tsx)
 │   ├── components/ui/      # Reusable Radix UI & design system primitives

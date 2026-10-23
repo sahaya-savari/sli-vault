@@ -12,7 +12,7 @@ const store = (key, value) => {
 };
 
 {
-  const saved = store("streak-lang");
+  const saved = store("sli-vault-lang") || store("streak-lang");
   if ((saved === "en" || saved === "ta") && !root.dataset.fixed) {
     root.dataset.lang = saved;
     root.lang = saved;
@@ -20,6 +20,7 @@ const store = (key, value) => {
 }
 document.getElementById("lang").addEventListener("click", () => {
   const next = root.dataset.lang === "ta" ? "en" : "ta";
+  store("sli-vault-lang", next);
   store("streak-lang", next);
   const alt = document.querySelector("a[data-alt]");
   if (alt && root.dataset.fixed) {

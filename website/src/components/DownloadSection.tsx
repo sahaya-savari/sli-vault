@@ -109,9 +109,7 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
             </span>
             <span>
               Windows{" "}
-              <small>
-                {isTa ? "Windows 10/11 x64 (.zip)" : "Windows 10/11 x64 (.zip)"}
-              </small>
+              <small>{isTa ? "Windows 10/11 x64 (.zip)" : "Windows 10/11 x64 (.zip)"}</small>
             </span>
           </a>
           <a
@@ -134,7 +132,9 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
             <span>
               Linux{" "}
               <small>
-                {isTa ? "Ubuntu / Debian / Arch x64 (.tar.gz)" : "Ubuntu / Debian / Arch x64 (.tar.gz)"}
+                {isTa
+                  ? "Ubuntu / Debian / Arch x64 (.tar.gz)"
+                  : "Ubuntu / Debian / Arch x64 (.tar.gz)"}
               </small>
             </span>
           </a>
