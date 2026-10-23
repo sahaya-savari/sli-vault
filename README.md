@@ -252,7 +252,7 @@ $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
 flutter build apk --debug
 ```
 
-Release-mode APK and App Bundle (**still debug-signed** until a production keystore exists - do **not** upload these as store artifacts):
+Release-mode APK and App Bundle (**signed** with the owner release keystore):
 
 ```powershell
 $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
@@ -351,9 +351,9 @@ Third-party notices that do exist:
 
 **GitHub Release (signed APK, no Play Store):**
 
-- [Latest Releases](https://github.com/sahaya-savari/sli-vault/releases) - install the attached `sli-vault-*-release.apk`
+- [Latest Releases](https://github.com/sahaya-savari/sli-vault/releases) - install the attached `sli-vault-v1.0.1-*.apk`
 - Application ID: `com.sahayasavari.slivault`
-- Current tree version: `1.0.1` (`versionCode` `2`)
+- Current tree version: `1.0.1` (`versionCode` `2008`)
 - Signing: owner release keystore (local `android/key.properties` or GitHub Actions secrets; never in Git)
 - Production CI: [Android production release](.github/workflows/android-release.yml) (`workflow_dispatch` only)
 - Platforms: Android only for this package; iOS remains Phase 2 - see [docs/IOS_RELEASE.md](docs/IOS_RELEASE.md)
