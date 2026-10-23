@@ -91,7 +91,7 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
             <span>{isTa ? "டெஸ்க்டாப் (Windows & Linux)" : "Desktop (Windows & Linux)"}</span>
           </h3>
           <a
-            href="https://github.com/sahaya-savari/sli-vault/releases/latest"
+            href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-windows-x64.zip"
             className="dl__link"
             target="_blank"
             rel="noopener noreferrer"
@@ -109,11 +109,13 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
             </span>
             <span>
               Windows{" "}
-              <small>{isTa ? "Windows 10/11 x64 (.zip)" : "Windows 10/11 x64 (.zip)"}</small>
+              <small>
+                {isTa ? "Windows 10/11 x64 (.zip · 19.5 MB)" : "Windows 10/11 x64 (.zip · 19.5 MB)"}
+              </small>
             </span>
           </a>
           <a
-            href="https://github.com/sahaya-savari/sli-vault/releases/latest"
+            href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-linux-x64.tar.gz"
             className="dl__link"
             target="_blank"
             rel="noopener noreferrer"
@@ -133,8 +135,8 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
               Linux{" "}
               <small>
                 {isTa
-                  ? "Ubuntu / Debian / Arch x64 (.tar.gz)"
-                  : "Ubuntu / Debian / Arch x64 (.tar.gz)"}
+                  ? "Ubuntu / Debian / Arch x64 (.tar.gz · 18.0 MB)"
+                  : "Ubuntu / Debian / Arch x64 (.tar.gz · 18.0 MB)"}
               </small>
             </span>
           </a>
