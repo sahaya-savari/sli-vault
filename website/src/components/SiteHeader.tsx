@@ -17,6 +17,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
 
   const t = {
     download: currentLocale === "ta" ? "பதிவிறக்கம்" : "Download",
+    resources: currentLocale === "ta" ? "வளங்கள்" : "Resources",
     support: currentLocale === "ta" ? "ஆதரவு" : "Support",
     switchLanguage: currentLocale === "ta" ? "Switch to English" : "தமிழுக்கு மாறவும்",
     githubAria: "SLI Vault on GitHub",
@@ -40,9 +41,10 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
             <span>SLI Vault</span>
           </a>
 
-          {/* Desktop Navigation: clean, focused, no Blog/Resources clutter */}
+          {/* Desktop Navigation */}
           <nav className="nav" aria-label="Primary navigation">
             <a href="#download">{t.download}</a>
+            <a href={`${basePath}resources/`}>{t.resources}</a>
             <a className="nav__love" href="#support">
               <svg
                 viewBox="0 0 24 24"

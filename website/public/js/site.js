@@ -32,9 +32,43 @@ document.getElementById("lang").addEventListener("click", () => {
 });
 
 const bar = document.querySelector(".bar");
-const onScroll = () => bar.classList.toggle("is-down", scrollY > 8);
+const onScroll = () => bar && bar.classList.toggle("is-down", scrollY > 8);
 addEventListener("scroll", onScroll, { passive: true });
 onScroll();
+
+// Mobile navigation drawer controller
+const mobToggle = document.getElementById("mob-toggle");
+const mobMenu = document.getElementById("mob-menu");
+const mobClose = document.getElementById("mob-close");
+const mobBackdrop = document.getElementById("mob-backdrop");
+
+if (mobToggle && mobMenu) {
+  const setMobOpen = (open) => {
+    mobMenu.classList.toggle("is-open", open);
+    mobToggle.classList.toggle("is-active", open);
+    mobToggle.setAttribute("aria-expanded", String(open));
+    mobMenu.setAttribute("aria-hidden", String(!open));
+    document.body.classList.toggle("has-mob-menu", open);
+  };
+
+  mobToggle.addEventListener("click", () => {
+    const isOpen = mobMenu.classList.contains("is-open");
+    setMobOpen(!isOpen);
+  });
+
+  if (mobClose) mobClose.addEventListener("click", () => setMobOpen(false));
+  if (mobBackdrop) mobBackdrop.addEventListener("click", () => setMobOpen(false));
+
+  mobMenu.querySelectorAll(".mob-menu__link").forEach((link) => {
+    link.addEventListener("click", () => setMobOpen(false));
+  });
+
+  addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && mobMenu.classList.contains("is-open")) {
+      setMobOpen(false);
+    }
+  });
+}
 
 function countUp(node, to) {
   if (calm) {

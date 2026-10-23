@@ -29,6 +29,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
 
   const t = {
     download: currentLocale === "ta" ? "பதிவிறக்கம்" : "Download",
+    resources: currentLocale === "ta" ? "வளங்கள்" : "Resources",
     support: currentLocale === "ta" ? "ஆதரவு" : "Support",
     closeMenu: currentLocale === "ta" ? "மெனுவை மூடு" : "Close menu",
     switchLanguage: currentLocale === "ta" ? "Switch to English" : "தமிழுக்கு மாறவும்",
@@ -81,6 +82,13 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
               onClick={onClose}
             >
               {t.download}
+            </a>
+            <a
+              href="./resources/"
+              className="text-base font-medium text-zinc-200 hover:text-white py-2 px-3 rounded-md hover:bg-zinc-800/60 transition-colors"
+              onClick={onClose}
+            >
+              {t.resources}
             </a>
             <a
               href="#support"
