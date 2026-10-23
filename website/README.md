@@ -42,10 +42,10 @@ website/
 Per explicit project directive, the following two visual sections are locked and must **NOT** be visually redesigned, rewritten, moved, or altered:
 
 1. **Hero Section (LOCK A)**:
-   - Location: `website/public/index.html` (lines 152–263) & `website/public/streak/index.html`
+   - Location: `website/public/index.html` (lines 152–263)
    - Content: _"Everything worth keeping, In one local vault."_, `v1.0.1` badge, `Download` & `Source code` buttons, metadata statistics row, and the 3-phone overlapping layout with `#heat` matrix glow.
 2. **"A look inside" Shelf (LOCK B)**:
-   - Location: `website/public/index.html` (lines 364–518) & `website/public/streak/index.html`
+   - Location: `website/public/index.html` (lines 364–518)
    - Content: Header _"A look inside"_, hint _"Scroll sideways, tap to zoom"_, circular navigation arrows, modal zoom lightbox, and the 5 phone frames (`welcome.webp`, `home.webp`, `browse.webp`, `collections.webp`, `favourites.webp`, `settings.webp`).
 
 ---
