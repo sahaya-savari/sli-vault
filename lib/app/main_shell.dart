@@ -478,7 +478,7 @@ class _ExpressNavBarItem extends StatelessWidget {
                 children: [
                   AnimatedContainer(
                     duration: reduceMotion ? Duration.zero : SliMotion.express,
-                    curve: SliMotion.bouncy,
+                    curve: Curves.easeOutCubic,
                     width: 50,
                     height: 28,
                     alignment: Alignment.center,
@@ -486,17 +486,15 @@ class _ExpressNavBarItem extends StatelessWidget {
                       gradient: selected ? palette.primaryGradient : null,
                       color: selected ? null : Colors.transparent,
                       borderRadius: BorderRadius.circular(14),
-                      boxShadow: selected
-                          ? [
-                              BoxShadow(
-                                color: palette.primaryAccent.withValues(
-                                  alpha: 0.35,
-                                ),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
-                              ),
-                            ]
-                          : null,
+                      boxShadow: [
+                        BoxShadow(
+                          color: palette.primaryAccent.withValues(
+                            alpha: selected ? 0.35 : 0.0,
+                          ),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: AnimatedScale(
                       scale: selected ? 1.06 : 1.0,

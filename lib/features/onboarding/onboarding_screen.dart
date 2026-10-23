@@ -450,15 +450,15 @@ class _PageIndicator extends StatelessWidget {
                       )
                     : null,
                 color: isActive ? null : Colors.white.withValues(alpha: 0.32),
-                boxShadow: isActive
-                    ? [
-                        BoxShadow(
-                          color: SliTokens.orange.withValues(alpha: 0.4),
-                          blurRadius: 6,
-                          offset: const Offset(0, 1),
-                        ),
-                      ]
-                    : null,
+                boxShadow: [
+                  BoxShadow(
+                    color: SliTokens.orange.withValues(
+                      alpha: isActive ? 0.4 : 0.0,
+                    ),
+                    blurRadius: 6,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
               ),
             ),
           ),
