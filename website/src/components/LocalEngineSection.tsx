@@ -4,11 +4,9 @@ import {
   Terminal,
   AnimatedSpan,
   TypingAnimation,
-  BorderBeam,
   SparklesText,
   Text3DFlip,
   FlickeringGrid,
-  KineticText,
 } from "./magicui";
 
 interface LocalEngineSectionProps {
@@ -81,80 +79,43 @@ export const LocalEngineSection: React.FC<LocalEngineSectionProps> = ({ currentL
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Terminal Demo: SLI Vault Privacy & SQLite Preflights */}
-        <div className="lg:col-span-7 flex flex-col justify-center">
-          <Terminal title="sli-vault ~ privacy-audit" className="w-full">
-            <TypingAnimation duration={30}>
-              &gt; sli-vault verify --sandbox --network-audit
+      {/* Centered Terminal Privacy Audit */}
+      <div className="max-w-3xl mx-auto w-full">
+        <Terminal title="sli-vault ~ privacy-audit" className="w-full">
+          <TypingAnimation duration={30}>
+            &gt; sli-vault verify --sandbox --network-audit
+          </TypingAnimation>
+
+          <AnimatedSpan className="text-emerald-400 font-medium" delay={800}>
+            <span>✔</span> Preflight checks initialized for platform runtime.
+          </AnimatedSpan>
+
+          <AnimatedSpan className="text-emerald-400 font-medium" delay={1400}>
+            <span>✔</span> SQLite 3.45 database mounted in local private sandbox.
+          </AnimatedSpan>
+
+          <AnimatedSpan className="text-emerald-400 font-medium" delay={2000}>
+            <span>✔</span> FLAG_SECURE window masking active: Screen recordings blocked.
+          </AnimatedSpan>
+
+          <AnimatedSpan className="text-emerald-400 font-medium" delay={2600}>
+            <span>✔</span> Outbound socket inspection: 0 sockets opened, 0 telemetries sent.
+          </AnimatedSpan>
+
+          <AnimatedSpan className="text-emerald-400 font-medium" delay={3200}>
+            <span>✔</span> Full-text FTS5 offline index ready: &lt; 0.8ms query response.
+          </AnimatedSpan>
+
+          <AnimatedSpan className="text-cyan-400" delay={3800}>
+            <span>ℹ</span> Storage status: 100% local persistence on this device.
+          </AnimatedSpan>
+
+          <div className="pt-2">
+            <TypingAnimation delay={4200} className="text-orange-400 font-semibold">
+              Privacy audit passed. Your personal library is completely offline.
             </TypingAnimation>
-
-            <AnimatedSpan className="text-emerald-400 font-medium" delay={800}>
-              <span>✔</span> Preflight checks initialized for platform runtime.
-            </AnimatedSpan>
-
-            <AnimatedSpan className="text-emerald-400 font-medium" delay={1400}>
-              <span>✔</span> SQLite 3.45 database mounted in local private sandbox.
-            </AnimatedSpan>
-
-            <AnimatedSpan className="text-emerald-400 font-medium" delay={2000}>
-              <span>✔</span> FLAG_SECURE window masking active: Screen recordings blocked.
-            </AnimatedSpan>
-
-            <AnimatedSpan className="text-emerald-400 font-medium" delay={2600}>
-              <span>✔</span> Outbound socket inspection: 0 sockets opened, 0 telemetries sent.
-            </AnimatedSpan>
-
-            <AnimatedSpan className="text-emerald-400 font-medium" delay={3200}>
-              <span>✔</span> Full-text FTS5 offline index ready: &lt; 0.8ms query response.
-            </AnimatedSpan>
-
-            <AnimatedSpan className="text-cyan-400" delay={3800}>
-              <span>ℹ</span> Storage status: 100% local persistence on this device.
-            </AnimatedSpan>
-
-            <div className="pt-2">
-              <TypingAnimation delay={4200} className="text-orange-400 font-semibold">
-                Privacy audit passed. Your personal library is completely offline.
-              </TypingAnimation>
-            </div>
-          </Terminal>
-        </div>
-
-        {/* Highlight Card with BorderBeam & Kinetic Text */}
-        <div className="lg:col-span-5 flex">
-          <div className="relative w-full rounded-2xl border border-white/10 bg-[#111114] p-6 flex flex-col justify-between overflow-hidden shadow-xl">
-            <BorderBeam duration={8} size={150} colorFrom="#ff5722" colorTo="#ffb74d" />
-
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-mono font-semibold uppercase tracking-wider text-orange-400">
-                  {isTa ? "கட்டமைப்பு" : "Architecture"}
-                </span>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
-                  Verified Offline
-                </span>
-              </div>
-
-              <h3 className="text-xl font-bold text-white mb-2">
-                <SparklesText sparklesCount={4}>
-                  {isTa ? "தனிப்பட்ட உள்ளூர் சுதந்திரம்" : "Sovereign Personal Space"}
-                </SparklesText>
-              </h3>
-
-              <p className="text-sm text-zinc-300 leading-relaxed mb-6">
-                {isTa
-                  ? "SLI Vault உங்கள் சாதனத்தில் மட்டுமே முழுமையாக இயங்குகிறது. எந்த கணக்குகளும் இல்லை, சந்தாக்களும் இல்லை."
-                  : "SLI Vault executes purely inside your device's private OS boundary. No telemetry SDKs, no tracking pixels, and no cloud dependency."}
-              </p>
-            </div>
-
-            <div className="border-t border-white/10 pt-4 mt-auto">
-              <div className="text-[11px] font-mono text-zinc-400 mb-1">DESIGN PHILOSOPHY</div>
-              <KineticText text="CALM & LOCAL" className="text-2xl text-white tracking-wide" />
-            </div>
           </div>
-        </div>
+        </Terminal>
       </div>
     </section>
   );

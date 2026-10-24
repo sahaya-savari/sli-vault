@@ -34,20 +34,26 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
           >
             <span className="dl__gh dl__gh--store">
               <svg
-                className="brand-ic brand-ic--github"
                 viewBox="0 0 24 24"
-                width="22"
-                height="22"
-                fill="currentColor"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 aria-hidden="true"
+                style={{ color: "#34d399" }}
               >
-                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                <line x1="12" y1="22.08" x2="12" y2="12" />
               </svg>
             </span>
             <span>
               APK{" "}
               <small>
-                {isTa ? "பரிந்துரைக்கப்பட்டது (27.9 MB)" : "Recommended · arm64 (27.9 MB)"}
+                {isTa ? "பரிந்துரைக்கப்பட்டது (27.9 MB)" : "arm64-v8a (27.9 MB · Most Phones)"}
               </small>
             </span>
           </a>
@@ -57,21 +63,80 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
           >
             <span className="dl__gh dl__gh--store">
               <svg
-                className="brand-ic brand-ic--github"
                 viewBox="0 0 24 24"
-                width="22"
-                height="22"
-                fill="currentColor"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 aria-hidden="true"
+                style={{ color: "#60a5fa" }}
               >
-                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                <line x1="12" y1="22.08" x2="12" y2="12" />
               </svg>
             </span>
             <span>
               APK{" "}
               <small>
-                {isTa ? "அனைத்து சாதனங்கள் (67.9 MB)" : "Universal · All Devices (67.9 MB)"}
+                {isTa ? "அனைத்து சாதனங்கள் (67.9 MB)" : "Universal (67.9 MB · All Devices)"}
               </small>
+            </span>
+          </a>
+          <a
+            href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-armeabi-v7a.apk"
+            className="dl__link"
+          >
+            <span className="dl__gh dl__gh--store">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                style={{ color: "#a78bfa" }}
+              >
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                <line x1="12" y1="22.08" x2="12" y2="12" />
+              </svg>
+            </span>
+            <span>
+              APK{" "}
+              <small>{isTa ? "பழைய சாதனங்கள் (25.8 MB)" : "armeabi-v7a (25.8 MB · 32-bit)"}</small>
+            </span>
+          </a>
+          <a
+            href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-x86_64.apk"
+            className="dl__link"
+          >
+            <span className="dl__gh dl__gh--store">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                style={{ color: "#f59e0b" }}
+              >
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                <line x1="12" y1="22.08" x2="12" y2="12" />
+              </svg>
+            </span>
+            <span>
+              APK <small>{isTa ? "எமுலேட்டர் (29.4 MB)" : "x86_64 (29.4 MB · Emulators)"}</small>
             </span>
           </a>
         </div>
@@ -83,10 +148,17 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
               viewBox="0 0 24 24"
               width="20"
               height="20"
-              fill="currentColor"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               aria-hidden="true"
+              style={{ color: "#60a5fa" }}
             >
-              <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4h-13.051M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-13.051-1.802" />
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
             </svg>
             <span>{isTa ? "டெஸ்க்டாப் (Windows & Linux)" : "Desktop (Windows & Linux)"}</span>
           </h3>
@@ -103,15 +175,17 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 height="20"
                 fill="currentColor"
                 aria-hidden="true"
+                style={{ color: "#00a4ef" }}
               >
-                <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4h-13.051M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-13.051-1.802" />
+                <rect x="2" y="2" width="9.2" height="9.2" rx="1.2" />
+                <rect x="12.8" y="2" width="9.2" height="9.2" rx="1.2" />
+                <rect x="2" y="12.8" width="9.2" height="9.2" rx="1.2" />
+                <rect x="12.8" y="12.8" width="9.2" height="9.2" rx="1.2" />
               </svg>
             </span>
             <span>
               Windows{" "}
-              <small>
-                {isTa ? "Windows 10/11 x64 (.zip · 19.5 MB)" : "Windows 10/11 x64 (.zip · 19.5 MB)"}
-              </small>
+              <small>{isTa ? "10/11 x64 (.zip · 19.5 MB)" : "10/11 x64 (.zip · 19.5 MB)"}</small>
             </span>
           </a>
           <a
@@ -127,34 +201,66 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 height="20"
                 fill="currentColor"
                 aria-hidden="true"
+                style={{ color: "#facc15" }}
               >
-                <path d="M12.002 0c-3.13 0-5.698 2.378-5.96 5.438-.03.35-.042.707-.042 1.062v1.5c0 .355.012.712.042 1.062.262 3.06 2.83 5.438 5.96 5.438 3.13 0 5.698-2.378 5.96-5.438.03-.35.042-.707.042-1.062V6.5c0-.355-.012-.712-.042-1.062C17.7 2.378 15.132 0 12.002 0zm-2.062 16.03c-2.35.418-4.27 1.848-5.344 3.844-.45.836-.69 1.777-.72 2.75-.014.453.336.876.812.876h14.628c.477 0 .826-.423.813-.876-.03-.973-.27-1.914-.72-2.75-1.074-1.996-2.994-3.426-5.344-3.844l-.782 1.562a2.006 2.006 0 0 1-1.78.998c-.734 0-1.4-.383-1.78-.998l-.783-1.562z" />
+                <path d="M12 2c-3.13 0-5.7 2.38-5.96 5.44a4.9 4.9 0 0 0 0 2.12c.26 3.06 2.83 5.44 5.96 5.44s5.7-2.38 5.96-5.44a4.9 4.9 0 0 0 0-2.12C17.7 4.38 15.13 2 12 2zm-1.2 5.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5zm2.4 0a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5zm-1.2 2c.83 0 1.5.4 1.5.9s-.67.9-1.5.9-1.5-.4-1.5-.9.67-.9 1.5-.9zm-5.2 6.5c-2.35.42-4.27 1.85-5.34 3.84a5.9 5.9 0 0 0-.72 2.75c0 .5.34.91.81.91h15.5c.48 0 .81-.41.81-.91a5.9 5.9 0 0 0-.72-2.75c-1.07-2-2.99-3.42-5.34-3.84l-.8 1.56c-.38.74-1.15 1.2-1.95 1.2s-1.57-.46-1.95-1.2l-.8-1.56z" />
               </svg>
             </span>
             <span>
               Linux{" "}
               <small>
                 {isTa
-                  ? "Ubuntu / Debian / Arch x64 (.tar.gz · 18.0 MB)"
-                  : "Ubuntu / Debian / Arch x64 (.tar.gz · 18.0 MB)"}
+                  ? "Ubuntu / Debian / Arch (.tar.gz · 18.0 MB)"
+                  : "Ubuntu / Debian / Arch (.tar.gz · 18.0 MB)"}
               </small>
             </span>
+          </a>
+          <a
+            href="https://github.com/sahaya-savari/sli-vault/releases/tag/v1.0.1"
+            className="dl__link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="dl__gh">
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                style={{ color: "#a78bfa" }}
+              >
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                <line x1="7" y1="7" x2="7.01" y2="7" />
+              </svg>
+            </span>
+            <span>{isTa ? "டெஸ்க்டாப் வெளியீடுகள்" : "Desktop Releases"}</span>
+            <small>v1.0.1</small>
           </a>
         </div>
 
         <div className="dl__col">
           <h3>
             <svg
-              className="brand-ic brand-ic--github"
+              className="brand-ic"
               viewBox="0 0 24 24"
               width="20"
               height="20"
-              fill="currentColor"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               aria-hidden="true"
+              style={{ color: "#34d399" }}
             >
-              <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
-            <span>{isTa ? "FOSS வெளியீடுகள்" : "Open Source Distribution"}</span>
+            <span>{isTa ? "FOSS வெளியீடுகள்" : "FOSS Distribution"}</span>
           </h3>
           <a
             href="obtainium://app/https://github.com/sahaya-savari/sli-vault"
@@ -173,6 +279,7 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 aria-hidden="true"
+                style={{ color: "#38bdf8" }}
               >
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="7 10 12 15 17 10" />
@@ -193,10 +300,16 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 viewBox="0 0 24 24"
                 width="18"
                 height="18"
-                fill="currentColor"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 aria-hidden="true"
+                style={{ color: "#60a5fa" }}
               >
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z" />
+                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                <path d="m9 12 2 2 4-4" />
               </svg>
             </span>
             <span>{isTa ? "F-Droid முக்கிய களஞ்சியம்" : "Official F-Droid Store"}</span>
@@ -219,7 +332,7 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
               </svg>
             </span>
-            <span>{isTa ? "அனைத்து வெளியீட்டுக் கோப்புகள்" : "All GitHub Assets"}</span>
+            <span>{isTa ? "அனைத்து வெளியீட்டுக் கோப்புகள்" : "All Release Packages"}</span>
             <small>v1.0.1</small>
           </a>
         </div>

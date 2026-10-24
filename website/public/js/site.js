@@ -451,35 +451,7 @@ if (scrollProgressEl) {
   updateScrollProgress();
 }
 
-// 2. Smooth Cursor Dot for Desktop
-if (window.matchMedia("(pointer: fine)").matches) {
-  const cursorDot = document.getElementById("magic-cursor-dot");
-  if (cursorDot) {
-    let mouseX = -100;
-    let mouseY = -100;
-    let currentX = -100;
-    let currentY = -100;
-
-    window.addEventListener(
-      "mousemove",
-      (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-      },
-      { passive: true },
-    );
-
-    const animateCursor = () => {
-      currentX += (mouseX - currentX) * 0.22;
-      currentY += (mouseY - currentY) * 0.22;
-      cursorDot.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
-      requestAnimationFrame(animateCursor);
-    };
-    requestAnimationFrame(animateCursor);
-  }
-}
-
-// 3. Flickering Grid Background Canvas
+// 2. Flickering Grid Background Canvas
 const flickerCanvas = document.getElementById("magic-flicker-grid");
 if (flickerCanvas && !calm) {
   const ctx = flickerCanvas.getContext("2d");

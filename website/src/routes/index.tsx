@@ -11,7 +11,6 @@ import {
   SiteFooter,
   LocalEngineSection,
   ScrollProgress,
-  SmoothCursor,
 } from "../components";
 
 export const Route = createFileRoute("/")({
@@ -136,9 +135,6 @@ function HomePage() {
 
   return (
     <div className="page-home min-h-screen bg-[#09090B] text-[#F4F4F5]">
-      {/* Subtle smooth cursor for desktop pointer tracking */}
-      <SmoothCursor />
-
       {/* Reading scroll progress bar below the navbar */}
       <ScrollProgress className="top-[60px]" />
 

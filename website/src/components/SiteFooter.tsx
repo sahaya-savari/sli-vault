@@ -48,28 +48,31 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ currentLocale, basePath 
         </nav>
 
         <p className="foot__c">
-          <a
-            href="https://github.com/sahaya-savari/sli-vault/blob/main/LICENSE"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            MIT License
-          </a>
-          {" · "}
-          <span>Open Source</span>
-          {" · "}
-          <span>{isTa ? "உருவாக்கியவர் " : "Crafted by "}</span>
-          <a href="https://sahayasavari.dev" target="_blank" rel="noopener noreferrer">
-            Sahaya Savari
-          </a>
-          {" · "}
-          <a
-            href="https://github.com/sahaya-savari/sli-vault"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            100% Offline &amp; Free Software
-          </a>
+          <span className="foot__copy">
+            <a
+              href="https://github.com/sahaya-savari/sli-vault/blob/main/LICENSE"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              MIT License
+            </a>
+            {" · "}
+            <span>Open Source</span>
+            {" · "}
+            <a
+              href="https://github.com/sahaya-savari/sli-vault"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              100% Offline &amp; Free Software
+            </a>
+          </span>
+          <span className="foot__credit">
+            <span>{isTa ? "உருவாக்கியவர் " : "Crafted by "}</span>
+            <a href="https://sahayasavari.dev" target="_blank" rel="noopener noreferrer">
+              Sahaya Savari F
+            </a>
+          </span>
         </p>
       </div>
     </footer>

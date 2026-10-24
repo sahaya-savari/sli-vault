@@ -52,7 +52,7 @@ describe("SLI Vault Website React Components", () => {
 
     const links = screen.getAllByRole("link");
     const downloadLinks = links.filter((l) => l.getAttribute("href")?.includes(".apk"));
-    expect(downloadLinks.length).toBe(2);
+    expect(downloadLinks.length).toBe(4);
     expect(screen.getByText(/Release notes and changelog/)).toBeDefined();
   });
 
@@ -106,6 +106,6 @@ describe("SLI Vault Website React Components", () => {
     render(<SiteFooter currentLocale="en" />);
 
     expect(screen.getByText("MIT License")).toBeDefined();
-    expect(screen.getByText("Sahaya Savari")).toBeDefined();
+    expect(screen.getByText("Sahaya Savari F")).toBeDefined();
   });
 });
