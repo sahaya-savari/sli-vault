@@ -90,6 +90,8 @@ button {
 
 :root[data-lang="ta"] h1,
 :root[data-lang="ta"] .hero h1,
+:root[lang="ta"] .hero h1,
+.hero__copy.is-tamil h1,
 .ta.h1,
 .hero h1 .ta {
   font-family: "Anek Tamil", sans-serif;
@@ -97,6 +99,38 @@ button {
   font-weight: 600;
   font-style: normal;
   font-variation-settings: "wdth" 125;
+  font-size: clamp(28px, 3.8vw, 50px) !important;
+  line-height: 1.24 !important;
+  letter-spacing: -0.5px !important;
+  word-break: break-word;
+}
+
+@media (min-width: 1024px) {
+  :root[data-lang="ta"] .hero h1,
+  :root[lang="ta"] .hero h1,
+  .hero__copy.is-tamil h1 {
+    font-size: 48px !important;
+    line-height: 1.22 !important;
+    letter-spacing: -0.5px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  :root[data-lang="ta"] .hero h1,
+  :root[lang="ta"] .hero h1,
+  .hero__copy.is-tamil h1 {
+    font-size: 30px !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.3px !important;
+  }
+}
+
+:root[data-lang="ta"] .hero .lede,
+:root[lang="ta"] .hero .lede,
+.hero__copy.is-tamil .lede {
+  font-size: 15.5px !important;
+  line-height: 1.65 !important;
+  max-width: 520px;
 }
 
 :root[data-lang="ta"] h2,

@@ -178,7 +178,7 @@ function HomePage() {
 
         {/* Hero Section */}
         <section className="hero">
-          <div className="hero__copy">
+          <div className={`hero__copy ${isTa ? "is-tamil" : ""}`}>
             <a
               className="ver rise"
               href="#download"
