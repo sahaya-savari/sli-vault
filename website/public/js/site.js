@@ -535,14 +535,14 @@ if (termEl) {
           );
         });
 
-        // After all logs have completed display, hold for 3.5s then loop
+        // After all logs have completed display, hold for 2.6s then smoothly loop
         const totalLogTime = calm ? 80 * logIds.length : 400 + logIds.length * 450;
         setTimeout(() => {
           runTerminalCycle();
-        }, totalLogTime + 3500);
+        }, totalLogTime + 2600);
       }
     };
-    setTimeout(typeChar, 350);
+    setTimeout(typeChar, 300);
   };
 
   whenSeen(termEl, () => {
@@ -550,6 +550,13 @@ if (termEl) {
     isLooping = true;
     runTerminalCycle();
   });
+  // Fallback trigger if element was already scrolled into view
+  setTimeout(() => {
+    if (!isLooping) {
+      isLooping = true;
+      runTerminalCycle();
+    }
+  }, 1200);
 }
 
 // StarBorder Canvas Initializer for static HTML elements

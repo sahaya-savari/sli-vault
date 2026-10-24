@@ -181,16 +181,19 @@ function HomePage() {
           <div className="hero__copy">
             <a
               className="ver rise"
-              href="https://github.com/sahaya-savari/sli-vault/releases/latest"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#download"
+              aria-label="Version 1.0.1 - Jump to downloads"
             >
+              <span className="ver__pulse" aria-hidden="true">
+                <span className="ver__dot" />
+              </span>
               <b>v1.0.1</b>
               <span>
                 {isTa
                   ? "Android · Windows · Linux · திறந்த மூல"
-                  : "Android · Windows · Linux · Open Source · Offline"}
+                  : "Android · Windows · Linux · Open Source"}
               </span>
+              <span className="ver__arrow" aria-hidden="true">↓</span>
             </a>
 
             <h1 className="rise">
@@ -210,7 +213,10 @@ function HomePage() {
                 href="#download"
                 className="btn btn--go"
                 color="#ffffff"
-                trailColor="#ff8a65"
+                trailColor="#ffa726"
+                backgroundColor="#ff5722"
+                textColor="#ffffff"
+                borderColor="rgba(255, 106, 36, 0.6)"
                 duration={3.5}
                 radius={12}
                 thickness={1.5}

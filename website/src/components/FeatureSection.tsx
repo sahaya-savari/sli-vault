@@ -413,7 +413,8 @@ export const FeatureSection: React.FC<FeatureSectionProps> = ({ currentLocale })
           {FEATURES.map((feature) => (
             <FlipCard
               key={feature.id}
-              height={270}
+              width="100%"
+              height={290}
               radius={18}
               background="#111114"
               color="#fafafa"
