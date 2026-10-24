@@ -7,15 +7,15 @@ SourceCode: https://github.com/sahaya-savari/sli-vault
 IssueTracker: https://github.com/sahaya-savari/sli-vault/issues
 WebSite: https://sahaya-savari.github.io/sli-vault/
 
-AutoUpdateMode: Version
-UpdateCheckMode: Tags
-CurrentVersion: 1.0.1
-CurrentVersionCode: 2010
+AutoName: SLI Vault
+
+RepoType: git
+Repo: https://github.com/sahaya-savari/sli-vault.git
 
 Builds:
   - versionName: 1.0.1
     versionCode: 2010
-    commit: v1.0.1
+    commit: 519a8d8969f6831bcaa3f12b0c9d6bf0b4652d37
     output: build/app/outputs/flutter-apk/app-release.apk
     srclibs:
       - flutter@3.29.0
@@ -24,3 +24,8 @@ Builds:
       - $$flutter$$/bin/flutter pub get
     build:
       - $$flutter$$/bin/flutter build apk --release
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.1
+CurrentVersionCode: 2010
