@@ -331,6 +331,65 @@ const FEATURES: ExtendedFeatureItem[] = [
   },
 ];
 
+interface FeatureCardFaceProps {
+  feature: ExtendedFeatureItem;
+  isTamil: boolean;
+}
+
+const FeatureCardFrontFace: React.FC<FeatureCardFaceProps> = ({ feature, isTamil }) => (
+  <div className="feat-card--face">
+    <div>
+      <div className="feat-card__top">
+        <span className="feat-card__icon">{feature.icon}</span>
+        <span className="feat-card__tag">{isTamil ? feature.tagTa : feature.tagEn}</span>
+      </div>
+      <h3 className="feat-card__title">{isTamil ? feature.titleTa : feature.titleEn}</h3>
+      <p className="feat-card__desc">{isTamil ? feature.descriptionTa : feature.descriptionEn}</p>
+    </div>
+    <div className="feat-flip-hint">
+      <span>{isTamil ? "தொழில்நுட்ப விவரம் ↺" : "Click to flip ↺"}</span>
+    </div>
+  </div>
+);
+
+const FeatureCardBackFace: React.FC<FeatureCardFaceProps> = ({ feature, isTamil }) => {
+  const specs = isTamil ? feature.specsTa : feature.specsEn;
+  const title = isTamil ? `${feature.titleTa} விவரங்கள்` : `${feature.titleEn} Specs`;
+
+  return (
+    <div className="feat-card--face feat-card--back">
+      <div>
+        <div className="feat-card__top">
+          <span className="feat-card__icon">{feature.icon}</span>
+          <span
+            className="feat-card__tag"
+            style={{ color: "#ff8a65", borderColor: "rgba(255, 138, 101, 0.3)" }}
+          >
+            {isTamil ? "தொழில்நுட்பம்" : "Specs"}
+          </span>
+        </div>
+        <h3
+          className="feat-card__title"
+          style={{ fontSize: "15px", color: "#ffffff", marginBottom: "8px" }}
+        >
+          {title}
+        </h3>
+        <div className="feat-back__specs">
+          {specs.map((spec, index) => (
+            <div key={index} className="feat-back__item">
+              <span className="feat-back__bullet">✦</span>
+              <span>{spec}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="feat-flip-hint">
+        <span>{isTamil ? "மீண்டும் திருப்பவும் ↺" : "Click to return ↺"}</span>
+      </div>
+    </div>
+  );
+};
+
 export const FeatureSection: React.FC<FeatureSectionProps> = ({ currentLocale }) => {
   const isTa = currentLocale === "ta";
 
@@ -357,9 +416,9 @@ export const FeatureSection: React.FC<FeatureSectionProps> = ({ currentLocale })
         </div>
 
         <div className="feats-grid">
-          {FEATURES.map((feat) => (
+          {FEATURES.map((feature) => (
             <FlipCard
-              key={feat.id}
+              key={feature.id}
               height={270}
               radius={18}
               background="#111114"
@@ -368,55 +427,9 @@ export const FeatureSection: React.FC<FeatureSectionProps> = ({ currentLocale })
               glare
               glareOpacity={0.22}
               hoverScale={1.02}
-              front={
-                <div className="feat-card--face">
-                  <div>
-                    <div className="feat-card__top">
-                      <span className="feat-card__icon">{feat.icon}</span>
-                      <span className="feat-card__tag">{isTa ? feat.tagTa : feat.tagEn}</span>
-                    </div>
-                    <h3 className="feat-card__title">{isTa ? feat.titleTa : feat.titleEn}</h3>
-                    <p className="feat-card__desc">
-                      {isTa ? feat.descriptionTa : feat.descriptionEn}
-                    </p>
-                  </div>
-                  <div className="feat-flip-hint">
-                    <span>{isTa ? "தொழில்நுட்ப விவரம் ↺" : "Click to flip ↺"}</span>
-                  </div>
-                </div>
-              }
-              back={
-                <div className="feat-card--face feat-card--back">
-                  <div>
-                    <div className="feat-card__top">
-                      <span className="feat-card__icon">{feat.icon}</span>
-                      <span
-                        className="feat-card__tag"
-                        style={{ color: "#ff8a65", borderColor: "rgba(255, 138, 101, 0.3)" }}
-                      >
-                        {isTa ? "தொழில்நுட்பம்" : "Specs"}
-                      </span>
-                    </div>
-                    <h3
-                      className="feat-card__title"
-                      style={{ fontSize: "15px", color: "#ffffff", marginBottom: "8px" }}
-                    >
-                      {isTa ? `${feat.titleTa} விவரங்கள்` : `${feat.titleEn} Specs`}
-                    </h3>
-                    <div className="feat-back__specs">
-                      {(isTa ? feat.specsTa : feat.specsEn).map((spec, i) => (
-                        <div key={i} className="feat-back__item">
-                          <span className="feat-back__bullet">✦</span>
-                          <span>{spec}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="feat-flip-hint">
-                    <span>{isTa ? "மீண்டும் திருப்பவும் ↺" : "Click to return ↺"}</span>
-                  </div>
-                </div>
-              }
+              ariaLabel={isTa ? feature.titleTa : feature.titleEn}
+              front={<FeatureCardFrontFace feature={feature} isTamil={isTa} />}
+              back={<FeatureCardBackFace feature={feature} isTamil={isTa} />}
             />
           ))}
         </div>

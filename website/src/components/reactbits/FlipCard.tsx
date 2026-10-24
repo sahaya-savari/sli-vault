@@ -14,56 +14,147 @@ import {
 import "./FlipCard.css";
 
 export interface FlipCardProps {
+  /** Content rendered on the front face of the card */
   front?: React.ReactNode;
+  /** Content rendered on the back face of the card */
   back?: React.ReactNode;
+  /** Controlled flipped state. When provided, component behaves as controlled */
   flipped?: boolean;
+  /** Uncontrolled initial flipped state */
   defaultFlipped?: boolean;
-  onFlipChange?: (flipped: boolean) => void;
+  /** Callback fired whenever the card flips to a different face */
+  onFlipChange?: (isBackFace: boolean) => void;
+  /** Axis of rotation: "y" flips horizontally, "x" flips vertically */
   axis?: "x" | "y";
+  /** Flip card on click or tap */
   flipOnClick?: boolean;
+  /** Enable dragging gestures to rotate the card */
   draggable?: boolean;
+  /** Required drag distance in pixels for a 180deg flip (0 uses card width/height) */
   dragDistance?: number;
+  /** Enable 3D tilt leaning toward cursor */
   tilt?: boolean;
+  /** Maximum tilt angle in degrees */
   tiltMax?: number;
+  /** Enable cursor-following glare sheen */
   glare?: boolean;
+  /** Maximum opacity of the sheen */
   glareOpacity?: number;
+  /** Scale lift factor on hover or press */
   hoverScale?: number;
+  /** 3D CSS perspective in pixels */
   perspective?: number;
+  /** Spring stiffness for flip rotation */
   stiffness?: number;
+  /** Spring damping for flip rotation */
   damping?: number;
+  /** Card width (number in px or CSS string) */
   width?: number | string;
+  /** Card height (number in px or CSS string) */
   height?: number | string;
+  /** Corner border radius in pixels */
   radius?: number;
+  /** Face background color */
   background?: string;
+  /** Face text color */
   color?: string;
+  /** Enable dynamic ground shadow */
   shadow?: boolean;
+  /** Ground shadow color */
   shadowColor?: string;
+  /** Ground shadow opacity */
   shadowOpacity?: number;
+  /** Disables interactions and dims visual style */
   disabled?: boolean;
+  /** Accessible label */
   ariaLabel?: string;
+  /** Additional CSS class name */
   className?: string;
+  /** Inline style overrides */
   style?: React.CSSProperties;
 }
 
-interface GripState {
-  id: number;
-  x: number;
-  y: number;
-  base: number;
-  moved: boolean;
-  slop: number;
-  hist: Array<{ t: number; v: number }>;
+interface DragHistoryPoint {
+  timestamp: number;
+  rotationDegrees: number;
 }
 
-const SLOP = { fine: 4, coarse: 8 };
-const TILT_SPRING = { stiffness: 240, damping: 24, mass: 0.6 };
-const LIFT_SPRING = { stiffness: 320, damping: 26 };
-const FLING = 0.16;
-const HISTORY_MS = 90;
+interface PointerGripSession {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  baseRotationDegrees: number;
+  hasExceededThreshold: boolean;
+  slopThresholdPixels: number;
+  movementHistory: DragHistoryPoint[];
+}
 
-const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
-const snap = (deg: number) => Math.round(deg / 180) * 180;
-const isBack = (deg: number) => Math.abs(Math.round(deg / 180)) % 2 === 1;
+const DRAG_SLOP_PIXELS = {
+  finePointer: 4,
+  touchPointer: 8,
+} as const;
+
+const TILT_SPRING_CONFIG = {
+  stiffness: 240,
+  damping: 24,
+  mass: 0.6,
+} as const;
+
+const LIFT_SPRING_CONFIG = {
+  stiffness: 320,
+  damping: 26,
+} as const;
+
+const FLING_INERTIA_COEFFICIENT = 0.16;
+const VELOCITY_HISTORY_WINDOW_MS = 90;
+
+function clampNumber(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+function snapToNearest180Degrees(degrees: number): number {
+  return Math.round(degrees / 180) * 180;
+}
+
+function isBackFaceShowing(degrees: number): boolean {
+  return Math.abs(Math.round(degrees / 180)) % 2 === 1;
+}
+
+function calculateFlingVelocity(history: DragHistoryPoint[], currentTime: number): number {
+  if (history.length < 2) return 0;
+  const initialPoint = history[0];
+  const latestPoint = history[history.length - 1];
+  const timeDifferenceMs = latestPoint.timestamp - initialPoint.timestamp;
+  const isRecentMovement = currentTime - latestPoint.timestamp < 60;
+
+  if (timeDifferenceMs > 0 && isRecentMovement) {
+    const rotationDelta = latestPoint.rotationDegrees - initialPoint.rotationDegrees;
+    return (rotationDelta / timeDifferenceMs) * 1000;
+  }
+  return 0;
+}
+
+function calculateTargetRotationOnRelease(options: {
+  isCancelled: boolean;
+  baseRotation: number;
+  currentRotation: number;
+  flingVelocity: number;
+}): number {
+  const { isCancelled, baseRotation, currentRotation, flingVelocity } = options;
+
+  if (isCancelled) {
+    return snapToNearest180Degrees(baseRotation);
+  }
+
+  const projectedRotation = currentRotation + flingVelocity * FLING_INERTIA_COEFFICIENT;
+  const nearestSnap = snapToNearest180Degrees(currentRotation);
+
+  return clampNumber(
+    snapToNearest180Degrees(projectedRotation),
+    nearestSnap - 180,
+    nearestSnap + 180,
+  );
+}
 
 export const FlipCard: React.FC<FlipCardProps> = ({
   front = null,
@@ -96,78 +187,110 @@ export const FlipCard: React.FC<FlipCardProps> = ({
   className = "",
   style,
 }) => {
-  const reduce = useReducedMotion();
-  const controlled = flipped !== undefined;
-  const [inner, setInner] = useState(defaultFlipped);
-  const [dragging, setDragging] = useState(false);
-  const shown = controlled ? flipped : inner;
-  const shownRef = useRef(shown);
-  shownRef.current = shown;
-  const rootRef = useRef<HTMLDivElement | null>(null);
-  const grip = useRef<GripState | null>(null);
-  const spin = useRef<{ stop: () => void } | null>(null);
-  const target = useRef(shown ? 180 : 0);
+  const prefersReducedMotion = useReducedMotion();
+  const isControlled = flipped !== undefined;
+  const [internalFlippedState, setInternalFlippedState] = useState(defaultFlipped);
+  const [isDragging, setIsDragging] = useState(false);
 
-  const turn = useMotionValue(shown ? 180 : 0);
-  const tiltX = useSpring(0, TILT_SPRING);
-  const tiltY = useSpring(0, TILT_SPRING);
-  const lift = useSpring(1, LIFT_SPRING);
-  const sheen = useSpring(0, LIFT_SPRING);
-  const gx = useMotionValue(50);
-  const gy = useMotionValue(50);
+  const activeFaceIsBack = isControlled ? flipped : internalFlippedState;
+  const activeFaceRef = useRef(activeFaceIsBack);
+  activeFaceRef.current = activeFaceIsBack;
 
-  const sumX = useTransform([turn, tiltX], ([t, x]) => (Number(t) || 0) + (Number(x) || 0));
-  const sumY = useTransform([turn, tiltY], ([t, y]) => (Number(t) || 0) + (Number(y) || 0));
-  const turnY = useMotionTemplate`perspective(${perspective}px) scale(${lift}) rotateX(${tiltX}deg) rotateY(${sumY}deg)`;
-  const turnX = useMotionTemplate`perspective(${perspective}px) scale(${lift}) rotateY(${tiltY}deg) rotateX(${sumX}deg)`;
-  const facing = useTransform(turn, (t) => Math.abs(Math.cos((Number(t) * Math.PI) / 180)));
-  const spread = useTransform(facing, (f) => 0.08 + 0.92 * f);
-  const shade = useTransform(facing, (f) => 0.1 + 0.9 * f * f);
-  const gxPct = useMotionTemplate`${gx}%`;
-  const gyPct = useMotionTemplate`${gy}%`;
+  const rootElementRef = useRef<HTMLDivElement | null>(null);
+  const activeGripSessionRef = useRef<PointerGripSession | null>(null);
+  const activeSpinAnimationRef = useRef<{ stop: () => void } | null>(null);
+  const targetRotationDegreesRef = useRef(activeFaceIsBack ? 180 : 0);
 
-  const settle = (to: number, velocity: number, instant: boolean) => {
-    spin.current?.stop();
-    target.current = to;
-    if (instant || reduce) {
-      turn.jump(to);
+  // Motion values
+  const rotationDegrees = useMotionValue(activeFaceIsBack ? 180 : 0);
+  const tiltAngleX = useSpring(0, TILT_SPRING_CONFIG);
+  const tiltAngleY = useSpring(0, TILT_SPRING_CONFIG);
+  const liftScale = useSpring(1, LIFT_SPRING_CONFIG);
+  const sheenIntensity = useSpring(0, LIFT_SPRING_CONFIG);
+  const glareCenterX = useMotionValue(50);
+  const glareCenterY = useMotionValue(50);
+
+  // Derived 3D transform calculations
+  const combinedRotationX = useTransform(
+    [rotationDegrees, tiltAngleX],
+    ([rot, tilt]) => (Number(rot) || 0) + (Number(tilt) || 0),
+  );
+  const combinedRotationY = useTransform(
+    [rotationDegrees, tiltAngleY],
+    ([rot, tilt]) => (Number(rot) || 0) + (Number(tilt) || 0),
+  );
+
+  const transformTemplateY = useMotionTemplate`perspective(${perspective}px) scale(${liftScale}) rotateX(${tiltAngleX}deg) rotateY(${combinedRotationY}deg)`;
+  const transformTemplateX = useMotionTemplate`perspective(${perspective}px) scale(${liftScale}) rotateY(${tiltAngleY}deg) rotateX(${combinedRotationX}deg)`;
+
+  const cardFacingRatio = useTransform(rotationDegrees, (deg) =>
+    Math.abs(Math.cos((Number(deg) * Math.PI) / 180)),
+  );
+  const shadowSpreadScale = useTransform(cardFacingRatio, (ratio) => 0.08 + 0.92 * ratio);
+  const shadowOpacityScale = useTransform(cardFacingRatio, (ratio) => 0.1 + 0.9 * ratio * ratio);
+
+  const glareCenterXPct = useMotionTemplate`${glareCenterX}%`;
+  const glareCenterYPct = useMotionTemplate`${glareCenterY}%`;
+
+  const settleRotation = (
+    destinationDegrees: number,
+    initialVelocity: number,
+    instantJump: boolean,
+  ) => {
+    activeSpinAnimationRef.current?.stop();
+    targetRotationDegreesRef.current = destinationDegrees;
+
+    if (instantJump || prefersReducedMotion) {
+      rotationDegrees.jump(destinationDegrees);
     } else {
-      spin.current = animate(turn, to, {
+      activeSpinAnimationRef.current = animate(rotationDegrees, destinationDegrees, {
         type: "spring",
         stiffness,
         damping,
-        velocity,
+        velocity: initialVelocity,
         restDelta: 0.05,
       });
     }
-    const next = isBack(to);
-    if (next === shownRef.current) return;
-    shownRef.current = next;
-    if (!controlled) setInner(next);
-    onFlipChange?.(next);
+
+    const nextIsBack = isBackFaceShowing(destinationDegrees);
+    if (nextIsBack === activeFaceRef.current) return;
+
+    activeFaceRef.current = nextIsBack;
+    if (!isControlled) {
+      setInternalFlippedState(nextIsBack);
+    }
+    onFlipChange?.(nextIsBack);
   };
 
-  const flip = (instant: boolean) => {
-    const base = snap(turn.get());
-    settle(isBack(base) ? base - 180 : base + 180, 0, instant);
+  const executeCardFlip = (instantJump: boolean) => {
+    const currentSnappedBase = snapToNearest180Degrees(rotationDegrees.get());
+    const targetFaceRotation = isBackFaceShowing(currentSnappedBase)
+      ? currentSnappedBase - 180
+      : currentSnappedBase + 180;
+    settleRotation(targetFaceRotation, 0, instantJump);
   };
 
-  const rest = () => {
-    tiltX.set(0);
-    tiltY.set(0);
-    sheen.set(0);
-    lift.set(1);
+  const resetTiltAndSheen = () => {
+    tiltAngleX.set(0);
+    tiltAngleY.set(0);
+    sheenIntensity.set(0);
+    liftScale.set(1);
   };
 
+  // Synchronize controlled flipped prop
   useEffect(() => {
-    if (!controlled || isBack(target.current) === flipped) return;
-    const base = target.current;
-    spin.current?.stop();
-    target.current = isBack(base) ? base - 180 : base + 180;
-    if (reduce) {
-      turn.jump(target.current);
+    if (!isControlled || isBackFaceShowing(targetRotationDegreesRef.current) === flipped) {
+      return;
+    }
+    const currentBase = targetRotationDegreesRef.current;
+    activeSpinAnimationRef.current?.stop();
+    const updatedTarget = isBackFaceShowing(currentBase) ? currentBase - 180 : currentBase + 180;
+    targetRotationDegreesRef.current = updatedTarget;
+
+    if (prefersReducedMotion) {
+      rotationDegrees.jump(updatedTarget);
     } else {
-      spin.current = animate(turn, target.current, {
+      activeSpinAnimationRef.current = animate(rotationDegrees, updatedTarget, {
         type: "spring",
         stiffness,
         damping,
@@ -177,148 +300,215 @@ export const FlipCard: React.FC<FlipCardProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flipped]);
 
-  useEffect(() => () => spin.current?.stop(), []);
+  useEffect(() => () => activeSpinAnimationRef.current?.stop(), []);
 
   useEffect(() => {
-    if (disabled) rest();
+    if (disabled) resetTiltAndSheen();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [disabled]);
 
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (disabled || e.button !== 0 || grip.current) return;
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (disabled || event.button !== 0 || activeGripSessionRef.current) return;
+
     try {
-      e.currentTarget.setPointerCapture(e.pointerId);
+      event.currentTarget.setPointerCapture(event.pointerId);
     } catch {
-      // Ignore if pointer capture fails on unsupported browsers
+      // Ignore if pointer capture is not supported
     }
-    spin.current?.stop();
-    grip.current = {
-      id: e.pointerId,
-      x: e.clientX,
-      y: e.clientY,
-      base: turn.get(),
-      moved: false,
-      slop: e.pointerType === "touch" ? SLOP.coarse : SLOP.fine,
-      hist: [],
+
+    activeSpinAnimationRef.current?.stop();
+    activeGripSessionRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      baseRotationDegrees: rotationDegrees.get(),
+      hasExceededThreshold: false,
+      slopThresholdPixels:
+        event.pointerType === "touch"
+          ? DRAG_SLOP_PIXELS.touchPointer
+          : DRAG_SLOP_PIXELS.finePointer,
+      movementHistory: [],
     };
-    if (!reduce) lift.set(hoverScale);
+
+    if (!prefersReducedMotion) {
+      liftScale.set(hoverScale);
+    }
   };
 
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    const g = grip.current;
-    if (g && g.id === e.pointerId) {
-      const d = axis === "x" ? e.clientY - g.y : e.clientX - g.x;
-      if (!g.moved) {
-        if (Math.abs(d) < g.slop || !draggable || reduce) return;
-        g.moved = true;
-        setDragging(true);
-        tiltX.set(0);
-        tiltY.set(0);
-        sheen.set(0);
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const session = activeGripSessionRef.current;
+
+    // Active drag handling
+    if (session && session.pointerId === event.pointerId) {
+      const deltaDistance =
+        axis === "x" ? event.clientY - session.startY : event.clientX - session.startX;
+
+      if (!session.hasExceededThreshold) {
+        if (
+          Math.abs(deltaDistance) < session.slopThresholdPixels ||
+          !draggable ||
+          prefersReducedMotion
+        ) {
+          return;
+        }
+        session.hasExceededThreshold = true;
+        setIsDragging(true);
+        tiltAngleX.set(0);
+        tiltAngleY.set(0);
+        sheenIntensity.set(0);
       }
-      const rect = e.currentTarget.getBoundingClientRect();
-      const span = dragDistance > 0 ? dragDistance : axis === "x" ? rect.height : rect.width;
-      const deg = g.base + (axis === "x" ? -1 : 1) * (d / Math.max(1, span)) * 180;
-      turn.set(deg);
-      const now = performance.now();
-      g.hist.push({ t: now, v: deg });
-      while (g.hist.length > 2 && now - g.hist[0].t > HISTORY_MS) g.hist.shift();
+
+      const boundingRectangle = event.currentTarget.getBoundingClientRect();
+      const dragSpanPixels =
+        dragDistance > 0
+          ? dragDistance
+          : axis === "x"
+            ? boundingRectangle.height
+            : boundingRectangle.width;
+
+      const deltaNormalized = deltaDistance / Math.max(1, dragSpanPixels);
+      const axisDirection = axis === "x" ? -1 : 1;
+      const calculatedDegrees = session.baseRotationDegrees + axisDirection * deltaNormalized * 180;
+
+      rotationDegrees.set(calculatedDegrees);
+
+      const currentTime = performance.now();
+      session.movementHistory.push({
+        timestamp: currentTime,
+        rotationDegrees: calculatedDegrees,
+      });
+
+      while (
+        session.movementHistory.length > 2 &&
+        currentTime - session.movementHistory[0].timestamp > VELOCITY_HISTORY_WINDOW_MS
+      ) {
+        session.movementHistory.shift();
+      }
       return;
     }
-    if (!tilt || reduce || disabled || e.pointerType === "touch") return;
-    const r = e.currentTarget.getBoundingClientRect();
-    const px = clamp((e.clientX - r.left) / r.width, 0, 1);
-    const py = clamp((e.clientY - r.top) / r.height, 0, 1);
-    tiltX.set((0.5 - py) * 2 * tiltMax);
-    tiltY.set((px - 0.5) * 2 * tiltMax);
-    gx.set(px * 100);
-    gy.set(py * 100);
-    sheen.set(1);
+
+    // Passive hover tilt and glare handling
+    if (!tilt || prefersReducedMotion || disabled || event.pointerType === "touch") {
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const normalizedPointerX = clampNumber((event.clientX - rect.left) / rect.width, 0, 1);
+    const normalizedPointerY = clampNumber((event.clientY - rect.top) / rect.height, 0, 1);
+
+    tiltAngleX.set((0.5 - normalizedPointerY) * 2 * tiltMax);
+    tiltAngleY.set((normalizedPointerX - 0.5) * 2 * tiltMax);
+    glareCenterX.set(normalizedPointerX * 100);
+    glareCenterY.set(normalizedPointerY * 100);
+    sheenIntensity.set(1);
   };
 
-  const release = (e: React.PointerEvent<HTMLDivElement>, cancelled: boolean) => {
-    const g = grip.current;
-    if (!g || g.id !== e.pointerId) return;
-    grip.current = null;
+  const handlePointerRelease = (
+    event: React.PointerEvent<HTMLDivElement>,
+    wasCancelled: boolean,
+  ) => {
+    const session = activeGripSessionRef.current;
+    if (!session || session.pointerId !== event.pointerId) return;
+
+    activeGripSessionRef.current = null;
     try {
-      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-        e.currentTarget.releasePointerCapture(e.pointerId);
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
       }
     } catch {
-      // Ignore if pointer capture already released or invalid
+      // Ignore if pointer capture already released
     }
-    setDragging(false);
-    if (e.pointerType === "touch" || !rootRef.current?.matches(":hover")) rest();
-    if (!g.moved) {
-      if (!cancelled && flipOnClick) flip(false);
-      else settle(target.current, 0, false);
+
+    setIsDragging(false);
+
+    const isHovering = rootElementRef.current?.matches(":hover");
+    if (event.pointerType === "touch" || !isHovering) {
+      resetTiltAndSheen();
+    }
+
+    if (!session.hasExceededThreshold) {
+      if (!wasCancelled && flipOnClick) {
+        executeCardFlip(false);
+      } else {
+        settleRotation(targetRotationDegreesRef.current, 0, false);
+      }
       return;
     }
-    const here = turn.get();
-    let velocity = 0;
-    const a = g.hist[0];
-    const b = g.hist[g.hist.length - 1];
-    if (!cancelled && a && b && b.t > a.t && performance.now() - b.t < 60) {
-      velocity = ((b.v - a.v) / (b.t - a.t)) * 1000;
+
+    const currentDeg = rotationDegrees.get();
+    const flingVelocity = wasCancelled
+      ? 0
+      : calculateFlingVelocity(session.movementHistory, performance.now());
+
+    const destinationDegrees = calculateTargetRotationOnRelease({
+      isCancelled: wasCancelled,
+      baseRotation: session.baseRotationDegrees,
+      currentRotation: currentDeg,
+      flingVelocity,
+    });
+
+    settleRotation(destinationDegrees, flingVelocity, false);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (disabled || (event.key !== "Enter" && event.key !== " ")) return;
+    event.preventDefault();
+    if (!event.repeat) {
+      executeCardFlip(true);
     }
-    const to = cancelled
-      ? snap(g.base)
-      : clamp(snap(here + velocity * FLING), snap(here) - 180, snap(here) + 180);
-    settle(to, velocity, false);
   };
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (disabled || (e.key !== "Enter" && e.key !== " ")) return;
-    e.preventDefault();
-    if (!e.repeat) flip(true);
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    // Keyboard simulated click has detail === 0
+    if (!disabled && event.detail === 0) {
+      executeCardFlip(true);
+    }
   };
 
-  const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!disabled && e.detail === 0) flip(true);
+  const dynamicRotorStyle = {
+    transform: axis === "x" ? transformTemplateX : transformTemplateY,
+    "--fc-gx": glareCenterXPct,
+    "--fc-gy": glareCenterYPct,
+    "--fc-sheen": sheenIntensity,
   };
 
-  const rotorStyle = {
-    transform: axis === "x" ? turnX : turnY,
-    "--fc-gx": gxPct,
-    "--fc-gy": gyPct,
-    "--fc-sheen": sheen,
-  };
-
-  const wStr = typeof width === "number" ? `${width}px` : width;
-  const hStr = typeof height === "number" ? `${height}px` : height;
+  const widthStyleValue = typeof width === "number" ? `${width}px` : width;
+  const heightStyleValue = typeof height === "number" ? `${height}px` : height;
 
   return (
     <div
-      ref={rootRef}
+      ref={rootElementRef}
       role="button"
       tabIndex={disabled ? -1 : 0}
-      aria-pressed={shown}
+      aria-pressed={activeFaceIsBack}
       aria-label={ariaLabel}
       aria-disabled={disabled || undefined}
       className={`flip-card${className ? ` ${className}` : ""}`}
       data-axis={axis}
-      data-draggable={draggable && !disabled && !reduce ? "" : undefined}
-      data-dragging={dragging ? "" : undefined}
+      data-draggable={draggable && !disabled && !prefersReducedMotion ? "" : undefined}
+      data-dragging={isDragging ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
-      data-fade={reduce ? (shown ? "back" : "front") : undefined}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={(e) => release(e, false)}
-      onPointerCancel={(e) => release(e, true)}
-      onLostPointerCapture={(e) => release(e, true)}
-      onPointerEnter={(e) => {
-        if (!reduce && !disabled && e.pointerType !== "touch") lift.set(hoverScale);
+      data-fade={prefersReducedMotion ? (activeFaceIsBack ? "back" : "front") : undefined}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={(event) => handlePointerRelease(event, false)}
+      onPointerCancel={(event) => handlePointerRelease(event, true)}
+      onLostPointerCapture={(event) => handlePointerRelease(event, true)}
+      onPointerEnter={(event) => {
+        if (!prefersReducedMotion && !disabled && event.pointerType !== "touch") {
+          liftScale.set(hoverScale);
+        }
       }}
       onPointerLeave={() => {
-        if (!grip.current) rest();
+        if (!activeGripSessionRef.current) resetTiltAndSheen();
       }}
-      onKeyDown={onKeyDown}
-      onClick={onClick}
-      onDragStart={(e) => e.preventDefault()}
+      onKeyDown={handleKeyDown}
+      onClick={handleClick}
+      onDragStart={(event) => event.preventDefault()}
       style={
         {
-          "--fc-w": wStr,
-          "--fc-h": hStr,
+          "--fc-w": widthStyleValue,
+          "--fc-h": heightStyleValue,
           "--fc-radius": `${radius}px`,
           "--fc-bg": background,
           "--fc-ink": color,
@@ -334,16 +524,29 @@ export const FlipCard: React.FC<FlipCardProps> = ({
           className="flip-card__shadow"
           aria-hidden="true"
           style={
-            axis === "x" ? { scaleY: spread, opacity: shade } : { scaleX: spread, opacity: shade }
+            axis === "x"
+              ? { scaleY: shadowSpreadScale, opacity: shadowOpacityScale }
+              : { scaleX: shadowSpreadScale, opacity: shadowOpacityScale }
           }
         />
       ) : null}
-      <motion.div className="flip-card__rotor" style={reduce ? undefined : rotorStyle}>
-        <div className="flip-card__face flip-card__face--front" aria-hidden={shown} inert={shown}>
+      <motion.div
+        className="flip-card__rotor"
+        style={prefersReducedMotion ? undefined : dynamicRotorStyle}
+      >
+        <div
+          className="flip-card__face flip-card__face--front"
+          aria-hidden={activeFaceIsBack}
+          inert={activeFaceIsBack}
+        >
           {front}
           {glare ? <span className="flip-card__glare" aria-hidden="true" /> : null}
         </div>
-        <div className="flip-card__face flip-card__face--back" aria-hidden={!shown} inert={!shown}>
+        <div
+          className="flip-card__face flip-card__face--back"
+          aria-hidden={!activeFaceIsBack}
+          inert={!activeFaceIsBack}
+        >
           {back}
           {glare ? <span className="flip-card__glare" aria-hidden="true" /> : null}
         </div>
