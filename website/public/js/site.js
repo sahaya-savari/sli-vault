@@ -493,49 +493,63 @@ if (flickerCanvas && !calm) {
   drawGrid();
 }
 
-// 4. Interactive Terminal Typing & Preflight Checks
+// 4. Interactive Terminal Typing & Preflight Checks (Continuous Loop)
 const termEl = document.getElementById("magic-terminal");
 if (termEl) {
   const typedEl = document.getElementById("term-typed");
   const fullCmd = "sli-vault verify --sandbox --network-audit";
-  let hasRun = false;
+  const logIds = [
+    "term-log-1",
+    "term-log-2",
+    "term-log-3",
+    "term-log-4",
+    "term-log-5",
+    "term-log-6",
+    "term-log-7",
+  ];
+  let isLooping = false;
 
-  const runTerminal = () => {
-    if (hasRun || !typedEl) return;
-    hasRun = true;
+  const runTerminalCycle = () => {
+    if (!typedEl) return;
+    typedEl.textContent = "";
+    logIds.forEach((id) => {
+      const row = document.getElementById(id);
+      if (row) row.classList.add("term-hidden");
+    });
+
     let charIdx = 0;
-
     const typeChar = () => {
       if (charIdx < fullCmd.length) {
         typedEl.textContent += fullCmd.charAt(charIdx);
         charIdx++;
-        setTimeout(typeChar, calm ? 5 : 32);
+        setTimeout(typeChar, calm ? 5 : 28);
       } else {
         // Step-by-step logs reveal
-        const logIds = [
-          "term-log-1",
-          "term-log-2",
-          "term-log-3",
-          "term-log-4",
-          "term-log-5",
-          "term-log-6",
-          "term-log-7",
-        ];
         logIds.forEach((id, idx) => {
           setTimeout(
             () => {
               const row = document.getElementById(id);
               if (row) row.classList.remove("term-hidden");
             },
-            calm ? 100 * idx : 500 + idx * 550,
+            calm ? 80 * idx : 400 + idx * 450,
           );
         });
+
+        // After all logs have completed display, hold for 3.5s then loop
+        const totalLogTime = calm ? 80 * logIds.length : 400 + logIds.length * 450;
+        setTimeout(() => {
+          runTerminalCycle();
+        }, totalLogTime + 3500);
       }
     };
-    setTimeout(typeChar, 300);
+    setTimeout(typeChar, 350);
   };
 
-  whenSeen(termEl, runTerminal);
+  whenSeen(termEl, () => {
+    if (isLooping) return;
+    isLooping = true;
+    runTerminalCycle();
+  });
 }
 
 // StarBorder Canvas Initializer for static HTML elements

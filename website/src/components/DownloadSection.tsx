@@ -60,16 +60,25 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 <line x1="12" y1="22.08" x2="12" y2="12" />
               </svg>
             </span>
-            <span>
-              APK{" "}
-              <small>
+            <div className="dl__link-content">
+              <span className="dl__link-title">APK arm64-v8a</span>
+              <small className="dl__link-meta">
                 {isTa ? "பரிந்துரைக்கப்பட்டது (27.9 MB)" : "arm64-v8a (27.9 MB · Most Phones)"}
               </small>
-            </span>
+            </div>
           </StarBorder>
-          <a
+          <StarBorder
+            as="a"
             href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-universal.apk"
             className="dl__link"
+            color="#60a5fa"
+            trailColor="#93c5fd"
+            thickness={1.2}
+            radius={12}
+            duration={4}
+            glow={0.5}
+            clickPulse
+            hover="lap"
           >
             <span className="dl__gh dl__gh--store">
               <svg
@@ -89,16 +98,25 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 <line x1="12" y1="22.08" x2="12" y2="12" />
               </svg>
             </span>
-            <span>
-              APK{" "}
-              <small>
+            <div className="dl__link-content">
+              <span className="dl__link-title">APK Universal</span>
+              <small className="dl__link-meta">
                 {isTa ? "அனைத்து சாதனங்கள் (67.9 MB)" : "Universal (67.9 MB · All Devices)"}
               </small>
-            </span>
-          </a>
-          <a
+            </div>
+          </StarBorder>
+          <StarBorder
+            as="a"
             href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-armeabi-v7a.apk"
             className="dl__link"
+            color="#a78bfa"
+            trailColor="#c4b5fd"
+            thickness={1.2}
+            radius={12}
+            duration={4}
+            glow={0.5}
+            clickPulse
+            hover="lap"
           >
             <span className="dl__gh dl__gh--store">
               <svg
@@ -118,14 +136,25 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 <line x1="12" y1="22.08" x2="12" y2="12" />
               </svg>
             </span>
-            <span>
-              APK{" "}
-              <small>{isTa ? "பழைய சாதனங்கள் (25.8 MB)" : "armeabi-v7a (25.8 MB · 32-bit)"}</small>
-            </span>
-          </a>
-          <a
+            <div className="dl__link-content">
+              <span className="dl__link-title">APK armeabi-v7a</span>
+              <small className="dl__link-meta">
+                {isTa ? "பழைய சாதனங்கள் (25.8 MB)" : "armeabi-v7a (25.8 MB · 32-bit)"}
+              </small>
+            </div>
+          </StarBorder>
+          <StarBorder
+            as="a"
             href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-x86_64.apk"
             className="dl__link"
+            color="#f59e0b"
+            trailColor="#fcd34d"
+            thickness={1.2}
+            radius={12}
+            duration={4}
+            glow={0.5}
+            clickPulse
+            hover="lap"
           >
             <span className="dl__gh dl__gh--store">
               <svg
@@ -145,10 +174,13 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 <line x1="12" y1="22.08" x2="12" y2="12" />
               </svg>
             </span>
-            <span>
-              APK <small>{isTa ? "எமுலேட்டர் (29.4 MB)" : "x86_64 (29.4 MB · Emulators)"}</small>
-            </span>
-          </a>
+            <div className="dl__link-content">
+              <span className="dl__link-title">APK x86_64</span>
+              <small className="dl__link-meta">
+                {isTa ? "எமுலேட்டர் (29.4 MB)" : "x86_64 (29.4 MB · Emulators)"}
+              </small>
+            </div>
+          </StarBorder>
         </div>
 
         <div className="dl__col">
@@ -268,8 +300,12 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 <line x1="7" y1="7" x2="7.01" y2="7" />
               </svg>
             </span>
-            <span>{isTa ? "டெஸ்க்டாப் வெளியீடுகள்" : "Desktop Releases"}</span>
-            <small>v1.0.1</small>
+            <div className="dl__link-content">
+              <span className="dl__link-title">
+                {isTa ? "டெஸ்க்டாப் வெளியீடுகள்" : "Desktop Releases"}
+              </span>
+              <small className="dl__link-meta">v1.0.1 · Direct Assets</small>
+            </div>
           </a>
         </div>
 
@@ -297,6 +333,7 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
             target="_blank"
             rel="noopener noreferrer"
             title="Add to Obtainium for automatic background updates"
+            className="dl__link"
           >
             <span className="dl__gh">
               <svg
@@ -316,14 +353,21 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
             </span>
-            <span>{isTa ? "Obtainium ஆட்டோ-அப்டேட்டர்" : "Obtainium Auto-Updater"}</span>
-            <small>{isTa ? "1-தட்டலில் நேரடி அப்டேட்" : "1-Tap Direct Updates"}</small>
+            <div className="dl__link-content">
+              <span className="dl__link-title">
+                {isTa ? "Obtainium ஆட்டோ-அப்டேட்டர்" : "Obtainium Auto-Updater"}
+              </span>
+              <small className="dl__link-meta">
+                {isTa ? "1-தட்டலில் நேரடி அப்டேட்" : "1-Tap Direct Updates"}
+              </small>
+            </div>
           </a>
           <a
             href="https://gitlab.com/fdroid/fdroiddata/-/merge_requests/53815"
             target="_blank"
             rel="noopener noreferrer"
             title="Track official F-Droid inclusion progress"
+            className="dl__link"
           >
             <span className="dl__gh">
               <svg
@@ -342,13 +386,20 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 <path d="m9 12 2 2 4-4" />
               </svg>
             </span>
-            <span>{isTa ? "F-Droid முக்கிய களஞ்சியம்" : "Official F-Droid Store"}</span>
-            <small>{isTa ? "மதிப்பாய்வில் (!53815)" : "In Review (!53815)"}</small>
+            <div className="dl__link-content">
+              <span className="dl__link-title">
+                {isTa ? "F-Droid முக்கிய களஞ்சியம்" : "Official F-Droid Store"}
+              </span>
+              <small className="dl__link-meta">
+                {isTa ? "மதிப்பாய்வில் (!53815)" : "In Review (!53815)"}
+              </small>
+            </div>
           </a>
           <a
             href="https://github.com/sahaya-savari/sli-vault/releases/tag/v1.0.1"
             target="_blank"
             rel="noopener noreferrer"
+            className="dl__link"
           >
             <span className="dl__gh">
               <svg
@@ -362,8 +413,12 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
               </svg>
             </span>
-            <span>{isTa ? "அனைத்து வெளியீட்டுக் கோப்புகள்" : "All Release Packages"}</span>
-            <small>v1.0.1</small>
+            <div className="dl__link-content">
+              <span className="dl__link-title">
+                {isTa ? "அனைத்து வெளியீட்டுக் கோப்புகள்" : "All Release Packages"}
+              </span>
+              <small className="dl__link-meta">v1.0.1</small>
+            </div>
           </a>
         </div>
       </div>

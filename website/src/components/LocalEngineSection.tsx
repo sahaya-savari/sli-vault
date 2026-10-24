@@ -18,11 +18,11 @@ export const LocalEngineSection: React.FC<LocalEngineSectionProps> = ({ currentL
   const isTa = currentLocale === "ta";
   const [loopCycle, setLoopCycle] = useState(0);
 
-  // Automatically loop the privacy audit sequence every 8.5 seconds
+  // Automatically loop the privacy audit sequence every 9.5 seconds
   React.useEffect(() => {
     const loopTimer = setTimeout(() => {
       setLoopCycle((current) => current + 1);
-    }, 8500);
+    }, 9500);
     return () => clearTimeout(loopTimer);
   }, [loopCycle]);
 
