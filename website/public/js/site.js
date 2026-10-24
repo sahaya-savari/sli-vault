@@ -434,3 +434,128 @@ if (document.readyState === "loading") {
 } else {
   cleanHashSlug();
 }
+
+// ==========================================================================
+// Magic UI Native Interactions (ScrollProgress, SmoothCursor, Terminal, Grid)
+// ==========================================================================
+
+// 1. Reading Scroll Progress Indicator
+const scrollProgressEl = document.getElementById("magic-scroll-progress");
+if (scrollProgressEl) {
+  const updateScrollProgress = () => {
+    const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
+    scrollProgressEl.style.width = Math.min(100, Math.max(0, progress)) + "%";
+  };
+  window.addEventListener("scroll", updateScrollProgress, { passive: true });
+  updateScrollProgress();
+}
+
+// 2. Smooth Cursor Dot for Desktop
+if (window.matchMedia("(pointer: fine)").matches) {
+  const cursorDot = document.getElementById("magic-cursor-dot");
+  if (cursorDot) {
+    let mouseX = -100;
+    let mouseY = -100;
+    let currentX = -100;
+    let currentY = -100;
+
+    window.addEventListener(
+      "mousemove",
+      (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      },
+      { passive: true },
+    );
+
+    const animateCursor = () => {
+      currentX += (mouseX - currentX) * 0.22;
+      currentY += (mouseY - currentY) * 0.22;
+      cursorDot.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
+      requestAnimationFrame(animateCursor);
+    };
+    requestAnimationFrame(animateCursor);
+  }
+}
+
+// 3. Flickering Grid Background Canvas
+const flickerCanvas = document.getElementById("magic-flicker-grid");
+if (flickerCanvas && !calm) {
+  const ctx = flickerCanvas.getContext("2d");
+  let gridAnimId;
+  const squareSize = 4;
+  const gridGap = 8;
+  const squareTotal = squareSize + gridGap;
+
+  const resizeGrid = () => {
+    flickerCanvas.width = flickerCanvas.offsetWidth;
+    flickerCanvas.height = flickerCanvas.offsetHeight;
+  };
+  window.addEventListener("resize", resizeGrid, { passive: true });
+  resizeGrid();
+
+  const drawGrid = () => {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, flickerCanvas.width, flickerCanvas.height);
+    const cols = Math.floor(flickerCanvas.width / squareTotal);
+    const rows = Math.floor(flickerCanvas.height / squareTotal);
+
+    for (let c = 0; c < cols; c++) {
+      for (let r = 0; r < rows; r++) {
+        if (Math.random() < 0.08) {
+          const alpha = 0.05 + Math.random() * 0.35;
+          ctx.fillStyle = `rgba(255, 87, 34, ${alpha.toFixed(2)})`;
+          ctx.fillRect(c * squareTotal, r * squareTotal, squareSize, squareSize);
+        }
+      }
+    }
+    gridAnimId = setTimeout(() => requestAnimationFrame(drawGrid), 180);
+  };
+  drawGrid();
+}
+
+// 4. Interactive Terminal Typing & Preflight Checks
+const termEl = document.getElementById("magic-terminal");
+if (termEl) {
+  const typedEl = document.getElementById("term-typed");
+  const fullCmd = "sli-vault verify --sandbox --network-audit";
+  let hasRun = false;
+
+  const runTerminal = () => {
+    if (hasRun || !typedEl) return;
+    hasRun = true;
+    let charIdx = 0;
+
+    const typeChar = () => {
+      if (charIdx < fullCmd.length) {
+        typedEl.textContent += fullCmd.charAt(charIdx);
+        charIdx++;
+        setTimeout(typeChar, calm ? 5 : 32);
+      } else {
+        // Step-by-step logs reveal
+        const logIds = [
+          "term-log-1",
+          "term-log-2",
+          "term-log-3",
+          "term-log-4",
+          "term-log-5",
+          "term-log-6",
+          "term-log-7",
+        ];
+        logIds.forEach((id, idx) => {
+          setTimeout(
+            () => {
+              const row = document.getElementById(id);
+              if (row) row.classList.remove("term-hidden");
+            },
+            calm ? 100 * idx : 500 + idx * 550,
+          );
+        });
+      }
+    };
+    setTimeout(typeChar, 300);
+  };
+
+  whenSeen(termEl, runTerminal);
+}

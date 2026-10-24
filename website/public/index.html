@@ -68,6 +68,12 @@
     <link rel="stylesheet" href="./css/styles.css?v=cbd0c582" />
   </head>
   <body class="page-home">
+    <!-- Reading scroll progress bar (pinned below navbar) -->
+    <div class="magic-scroll-progress" id="magic-scroll-progress" aria-hidden="true"></div>
+
+    <!-- Smooth Desktop Cursor Follower -->
+    <div class="magic-cursor-dot" id="magic-cursor-dot" aria-hidden="true"></div>
+
     <header class="bar">
       <div class="bar__in">
         <a class="brand" href="./">
@@ -754,6 +760,124 @@
               >
             </p>
           </article>
+        </div>
+      </section>
+
+      <!-- Local Engine & Privacy Verification (Magic UI Showcase) -->
+      <section class="sec magic-engine-sec" aria-labelledby="engine-title">
+        <canvas id="magic-flicker-grid" class="magic-flicker-grid" aria-hidden="true"></canvas>
+
+        <div class="feats-head">
+          <span class="back-it__tag">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <span class="magic-sparkles">
+              <span class="en">Local-First Verification</span>
+              <span class="ta">உள்ளூர் இயங்குதளம்</span>
+            </span>
+          </span>
+
+          <h2 class="h2" id="engine-title">
+            <span class="en">100% On-Device Engine. Zero Network Telemetry.</span>
+            <span class="ta">உள்ளூர் SQLite மற்றும் பூஜ்ஜிய நெட்வொர்க் பாதுகாப்பு</span>
+          </h2>
+
+          <p class="feats-sub">
+            <span class="en">Direct on-device SQLite persistence with verifiable privacy preflights and strict sandbox isolation.</span>
+            <span class="ta">எந்த வெளிப்புற சேவையகமும் இல்லை. உங்கள் கோப்புகள் உங்கள் சாதனத்தின் தனிப்பட்ட SQLite சேமிப்பகத்தில் மட்டுமே இருக்கும்.</span>
+          </p>
+
+          <!-- 3D Flip Badges -->
+          <div class="magic-badges-wrap">
+            <div class="flip-badge" tabindex="0">
+              <span class="flip-badge__inner">
+                <span class="flip-badge__front">Zero External Trackers</span>
+                <span class="flip-badge__back">100% Offline Guaranteed</span>
+              </span>
+            </div>
+            <div class="flip-badge" tabindex="0">
+              <span class="flip-badge__inner">
+                <span class="flip-badge__front">On-Device SQLite Sandbox</span>
+                <span class="flip-badge__back">Direct SQL Querying</span>
+              </span>
+            </div>
+            <div class="flip-badge" tabindex="0">
+              <span class="flip-badge__inner">
+                <span class="flip-badge__front">100% Open Source (MIT)</span>
+                <span class="flip-badge__back">Auditable Codebase</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="magic-engine-grid">
+          <!-- Terminal Demo -->
+          <div class="magic-terminal" id="magic-terminal">
+            <div class="magic-terminal__bar">
+              <div class="magic-terminal__dots">
+                <span class="magic-dot magic-dot--red"></span>
+                <span class="magic-dot magic-dot--yellow"></span>
+                <span class="magic-dot magic-dot--green"></span>
+              </div>
+              <div class="magic-terminal__title">sli-vault ~ privacy-audit</div>
+            </div>
+            <div class="magic-terminal__body">
+              <div class="term-line term-prompt" id="term-prompt">
+                <span class="term-arrow">&gt;</span> <span id="term-typed"></span><span class="term-cursor"></span>
+              </div>
+              <div class="term-log term-hidden" id="term-log-1">
+                <span class="term-check">✔</span> Preflight checks initialized for platform runtime.
+              </div>
+              <div class="term-log term-hidden" id="term-log-2">
+                <span class="term-check">✔</span> SQLite 3.45 database mounted in local private sandbox.
+              </div>
+              <div class="term-log term-hidden" id="term-log-3">
+                <span class="term-check">✔</span> FLAG_SECURE window masking active: Screen recordings blocked.
+              </div>
+              <div class="term-log term-hidden" id="term-log-4">
+                <span class="term-check">✔</span> Outbound socket inspection: 0 sockets opened, 0 telemetries sent.
+              </div>
+              <div class="term-log term-hidden" id="term-log-5">
+                <span class="term-check">✔</span> Full-text FTS5 offline index ready: &lt; 0.8ms query response.
+              </div>
+              <div class="term-log term-info term-hidden" id="term-log-6">
+                <span class="term-info-icon">ℹ</span> Storage status: 100% local persistence on this device.
+              </div>
+              <div class="term-log term-success term-hidden" id="term-log-7">
+                Privacy audit passed. Your personal library is completely offline.
+              </div>
+            </div>
+          </div>
+
+          <!-- Highlight Card with BorderBeam & Kinetic Text -->
+          <div class="magic-border-card">
+            <div class="border-beam-tracer" aria-hidden="true"></div>
+            <div class="magic-border-card__inner">
+              <div class="magic-card-top">
+                <span class="magic-card-tag">
+                  <span class="en">Architecture</span>
+                  <span class="ta">கட்டமைப்பு</span>
+                </span>
+                <span class="magic-card-status">Verified Offline</span>
+              </div>
+
+              <h3 class="magic-card-title magic-sparkles">
+                <span class="en">Sovereign Personal Space</span>
+                <span class="ta">தனிப்பட்ட உள்ளூர் சுதந்திரம்</span>
+              </h3>
+
+              <p class="magic-card-p">
+                <span class="en">SLI Vault executes purely inside your device's private OS boundary. No telemetry SDKs, no tracking pixels, and no cloud dependency.</span>
+                <span class="ta">SLI Vault உங்கள் சாதனத்தில் மட்டுமே முழுமையாக இயங்குகிறது. எந்த கணக்குகளும் இல்லை, சந்தாக்களும் இல்லை.</span>
+              </p>
+
+              <div class="magic-card-foot">
+                <div class="magic-foot-tag">DESIGN PHILOSOPHY</div>
+                <div class="magic-kinetic-text">CALM &amp; LOCAL</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
