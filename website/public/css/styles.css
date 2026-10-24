@@ -12,6 +12,7 @@
   --sans: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --display: "Space Grotesk", "Space Grotesk Fallback", var(--sans);
   --mono: "JetBrains Mono", "JetBrains Mono Fallback", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --tamil: "Anek Tamil", sans-serif;
   --maxw: 1100px;
   --gut: 24px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -66,6 +67,71 @@ button {
 :root[data-lang="ta"] .en,
 :root:not([data-lang="ta"]) .ta {
   display: none;
+}
+
+/* Anek Tamil Font Implementation */
+.anek-tamil {
+  font-family: "Anek Tamil", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 125;
+}
+
+:root[data-lang="ta"],
+:root[data-lang="ta"] body,
+[lang="ta"],
+.ta {
+  font-family: "Anek Tamil", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 125;
+}
+
+:root[data-lang="ta"] h1,
+:root[data-lang="ta"] .hero h1,
+.ta.h1,
+.hero h1 .ta {
+  font-family: "Anek Tamil", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-variation-settings: "wdth" 125;
+}
+
+:root[data-lang="ta"] h2,
+:root[data-lang="ta"] .h2,
+.ta.h2,
+h2 .ta,
+.h2 .ta {
+  font-family: "Anek Tamil", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-variation-settings: "wdth" 125;
+}
+
+:root[data-lang="ta"] h3,
+:root[data-lang="ta"] .h3,
+:root[data-lang="ta"] .feat-card__title,
+.ta.h3,
+h3 .ta {
+  font-family: "Anek Tamil", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-variation-settings: "wdth" 125;
+}
+
+:root[data-lang="ta"] p,
+:root[data-lang="ta"] span:not(.font-mono),
+:root[data-lang="ta"] button,
+:root[data-lang="ta"] a,
+p .ta,
+span.ta {
+  font-family: "Anek Tamil", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 125;
 }
 
 @media (prefers-reduced-motion: reduce) {
