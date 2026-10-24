@@ -1,5 +1,6 @@
 import React from "react";
 import type { Locale, FeatureItem } from "./types";
+import { FlipCard } from "./reactbits";
 
 interface FeatureSectionProps {
   currentLocale: Locale;
@@ -7,6 +8,8 @@ interface FeatureSectionProps {
 
 interface ExtendedFeatureItem extends FeatureItem {
   icon: React.ReactNode;
+  specsEn: string[];
+  specsTa: string[];
 }
 
 const FEATURES: ExtendedFeatureItem[] = [
@@ -20,6 +23,18 @@ const FEATURES: ExtendedFeatureItem[] = [
       "Integrated JetBrains Mono formatting toolbar (headers, bold, italic, lists, quotes, code blocks) with syntax styling and local SQLite storage.",
     descriptionTa:
       "JetBrains Mono எழுத்துருவுடன் கூடிய எடிட்டர் (தலைப்புகள், தடிமன், சாய்வு, குறியீட்டுத் தொகுதிகள்) மற்றும் உள்ளூர் SQLite சேமிப்பகம்.",
+    specsEn: [
+      "SQLite 'notes' table with full local indexing",
+      "JetBrains Mono toolbar: H1-H3, Bold, Code, Lists",
+      "Full Markdown syntax color highlights",
+      "100% on-device, zero cloud parsing latency",
+    ],
+    specsTa: [
+      "SQLite 'notes' உள்ளூர் அட்டவணை சேமிப்பு",
+      "JetBrains Mono எடிட்டர் கருவிப்பட்டை",
+      "முழுமையான Markdown சின்டாக்ஸ் வடிவமைப்பு",
+      "100% சாதனத்திலேயே, இணையம் தேவையில்லை",
+    ],
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -47,6 +62,18 @@ const FEATURES: ExtendedFeatureItem[] = [
       "Save links with instant OpenGraph title, preview image, and description auto-fill, plus offline article snapshot extraction.",
     descriptionTa:
       "இணைப்புகளின் தலைப்பு, முன்னோட்டப் படம் மற்றும் விளக்கங்களை உடனடியாக தானாக நிரப்பி, ஆஃப்லைன் வாசிப்பிற்காக பாதுகாக்கிறது.",
+    specsEn: [
+      "Instant client-side OpenGraph metadata fetch",
+      "Distraction-free offline article reader view",
+      "Automated high-res preview image extraction",
+      "Fallback domain & favicon badge generation",
+    ],
+    specsTa: [
+      "உடனடி OpenGraph மெட்டாடேட்டா பிரித்தெடுத்தல்",
+      "கவனச்சிதறலற்ற ஆஃப்லைன் வாசிப்புப் பார்வை",
+      "தானியங்கி முன்னோட்டப் படம் & ஐகான்",
+      "உள்ளூர் SQLite சேமிப்பு & வாசிப்பு முறை",
+    ],
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -75,6 +102,18 @@ const FEATURES: ExtendedFeatureItem[] = [
       "Find any link, note, or code snippet instantly across titles, web domains, and tags with sub-millisecond SQLite indexing on your device.",
     descriptionTa:
       "தலைப்புகள், டொமைன்கள், குறிப்புகள் மற்றும் குறிச்சொற்களில் உங்கள் சாதனத்தின் அதிவேக SQLite அட்டவணையுடன் உடனடியாகத் தேடுங்கள்.",
+    specsEn: [
+      "Sub-millisecond tokenized SQLite query engine",
+      "Real-time debounced multi-field searching",
+      "Instant matching across titles, tags, and notes",
+      "Zero network latency: 100% Airplane-mode ready",
+    ],
+    specsTa: [
+      "அதிவேக மில்லிசெகண்ட் SQLite தேடல் பொறி",
+      "தலைப்பு, குறிச்சொல், குறிப்புகளில் நிகழ்நேரத் தேடல்",
+      "விசைப்பலகை தட்டலில் உடனடி முடிவுகள்",
+      "ஆஃப்லைனில் முழுமையாக தடையின்றி இயங்கும்",
+    ],
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -102,6 +141,18 @@ const FEATURES: ExtendedFeatureItem[] = [
       "Dynamic count badges (#tag (count)) with 1-tap filtering across your entire library. Color-coded badges for visual distinction.",
     descriptionTa:
       "டைனமிக் எண்ணிக்கை (#tag (count)) மற்றும் 1-தட்டல் வடிகட்டுதல் மூலம் உங்கள் அனைத்து புக்மார்க்குகளையும் எளிதாகக் கண்டறியலாம்.",
+    specsEn: [
+      "Interactive horizontal multi-select tag ribbon",
+      "Automatic dynamic count badges: #tag (count)",
+      "Visual color-coded tags for effortless scanning",
+      "1-tap instant library subset filtering",
+    ],
+    specsTa: [
+      "ஊடாடும் கிடைமட்ட குறிச்சொல் ரிப்பன்",
+      "நிகழ்நேர எண்ணிக்கைக் குறிச்சொற்கள்: #tag (count)",
+      "எளிதான பார்வைக்கு வண்ணக் குறியீட்டு அமைப்பு",
+      "1-தட்டலில் உடனடி நூலக வடிகட்டுதல்",
+    ],
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -129,6 +180,18 @@ const FEATURES: ExtendedFeatureItem[] = [
       "Default-on FLAG_SECURE window masking protects against screenshots, recordings, and app-switcher snooping, paired with customizable biometric lock timeouts.",
     descriptionTa:
       "FLAG_SECURE மூலம் திரைக்காட்சிகள் மற்றும் திரைப்பதிவு தடுக்கப்படுகிறது; சமீபத்திய பயன்பாடுகளின் முன்னோட்டத்திலும் பெட்டகம் மறைக்கப்படுகிறது.",
+    specsEn: [
+      "Native Android FLAG_SECURE window masking",
+      "Blocks screenshots & screen-recording capture",
+      "Obscures app snapshot in task switcher tray",
+      "Biometric fingerprint & face unlock timeout",
+    ],
+    specsTa: [
+      "நேட்டிவ் ஆண்ட்ராய்டு FLAG_SECURE திரை பாதுகாப்பு",
+      "ஸ்கிரீன்ஷாட் மற்றும் திரைப்பதிவு முற்றிலும் தடுப்பு",
+      "சமீபத்திய பயன்பாடுகளின் முன்னோட்டத்தில் மறைப்பு",
+      "பயோமெட்ரிக் கைரேகை & முக அங்கீகாரம்",
+    ],
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -156,6 +219,18 @@ const FEATURES: ExtendedFeatureItem[] = [
       "Organize with color-accented collections, maintain a quick favorites shortlist, and explore 9 bundled atmospheric high-resolution wallpapers.",
     descriptionTa:
       "வண்ணத் தொகுப்புகளில் ஒழுங்கமைத்து, விருப்பமானவற்றை விரைவாக அணுகுங்கள்; 9 அதிகாரப்பூர்வ உயர்தர வால்பேப்பர்களை அனுபவியுங்கள்.",
+    specsEn: [
+      "Color-accented collections with custom themes",
+      "9 bundled atmospheric high-resolution artworks",
+      "Favorites shortlist for instant 1-tap access",
+      "True OLED Obsidian pure-black visual styling",
+    ],
+    specsTa: [
+      "விருப்பமான வண்ணங்களுடன் தனிப்பயன் தொகுப்புகள்",
+      "9 அதிகாரப்பூர்வ உயர் தெளிவுத்திறன் வால்பேப்பர்கள்",
+      "விரைவு அணுகலுக்கான விருப்பமானவை பட்டியல்",
+      "உண்மையான OLED Obsidian கருப்பு அழகியல் வடிவமைப்பு",
+    ],
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -184,6 +259,18 @@ const FEATURES: ExtendedFeatureItem[] = [
       "Export portable v3 ZIP backups preserving raw images, notes, tags, and SQLite records. Restore anytime on Android, Windows, or Linux.",
     descriptionTa:
       "அசல் படங்கள், குறிப்புகள் மற்றும் மெட்டாடேட்டாவைப் பாதுகாக்கும் போர்ட்டபிள் ZIP v3 காப்புப்பிரதிகளை எப்போது வேண்டுமானாலும் மீட்டெடுக்கலாம்.",
+    specsEn: [
+      "Standard v3 ZIP container: 100% vendor open",
+      "Preserves raw full-resolution images and notes",
+      "Bundles raw SQLite database and schema manifest",
+      "Seamless restore across Android, Windows & Linux",
+    ],
+    specsTa: [
+      "நிலையான v3 ZIP வடிவம்: 100% திறந்த மூல அமைப்பு",
+      "அசல் முழுத் தெளிவுப் படங்கள், குறிப்புகள் சேமிப்பு",
+      "முழுமையான SQLite தரவுத்தள கோப்பு காப்புப்பிரதி",
+      "Android, Windows & Linux இடையே உடனடி மீட்பு",
+    ],
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -212,6 +299,18 @@ const FEATURES: ExtendedFeatureItem[] = [
       "Engineered on Flutter 3.32 for 64-bit Android, Windows 10/11, and modern Linux. Genuine OLED Obsidian theme with zero text washout.",
     descriptionTa:
       "Android, 64-பிட் Windows மற்றும் Linux-இல் முழுமையான வேகத்துடன் இயங்கும்; உண்மையான OLED Obsidian கருப்பு தீம் ஆதரவு.",
+    specsEn: [
+      "Flutter 3.32 with next-gen Impeller rendering",
+      "Silky-smooth 60 / 120 FPS high refresh animations",
+      "Zero telemetry SDKs or analytics tracking pings",
+      "Native builds for Android, Windows, and Linux",
+    ],
+    specsTa: [
+      "Flutter 3.32 & அதிவேக Impeller வரைகலை இன்ஜின்",
+      "மென்மையான 60 / 120 FPS உயர் புதுப்பிப்பு வேகம்",
+      "பூஜ்ஜிய டிராக்கர்கள் அல்லது பகுப்பாய்வு கண்காணிப்பு",
+      "Android, Windows & Linux-க்கான நேட்டிவ் கோப்புகள்",
+    ],
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -259,14 +358,66 @@ export const FeatureSection: React.FC<FeatureSectionProps> = ({ currentLocale })
 
         <div className="feats-grid">
           {FEATURES.map((feat) => (
-            <article key={feat.id} className="feat-card">
-              <div className="feat-card__top">
-                <span className="feat-card__icon">{feat.icon}</span>
-                <span className="feat-card__tag">{isTa ? feat.tagTa : feat.tagEn}</span>
-              </div>
-              <h3 className="feat-card__title">{isTa ? feat.titleTa : feat.titleEn}</h3>
-              <p className="feat-card__desc">{isTa ? feat.descriptionTa : feat.descriptionEn}</p>
-            </article>
+            <FlipCard
+              key={feat.id}
+              height={270}
+              radius={18}
+              background="#111114"
+              color="#fafafa"
+              tilt
+              glare
+              glareOpacity={0.22}
+              hoverScale={1.02}
+              front={
+                <div className="feat-card--face">
+                  <div>
+                    <div className="feat-card__top">
+                      <span className="feat-card__icon">{feat.icon}</span>
+                      <span className="feat-card__tag">{isTa ? feat.tagTa : feat.tagEn}</span>
+                    </div>
+                    <h3 className="feat-card__title">{isTa ? feat.titleTa : feat.titleEn}</h3>
+                    <p className="feat-card__desc">
+                      {isTa ? feat.descriptionTa : feat.descriptionEn}
+                    </p>
+                  </div>
+                  <div className="feat-flip-hint">
+                    <span>{isTa ? "தொழில்நுட்ப விவரம் ↺" : "Click to flip ↺"}</span>
+                  </div>
+                </div>
+              }
+              back={
+                <div className="feat-card--face feat-card--back">
+                  <div>
+                    <div className="feat-card__top">
+                      <span className="feat-card__icon">{feat.icon}</span>
+                      <span
+                        className="feat-card__tag"
+                        style={{ color: "#ff8a65", borderColor: "rgba(255, 138, 101, 0.3)" }}
+                      >
+                        {isTa ? "தொழில்நுட்பம்" : "Specs"}
+                      </span>
+                    </div>
+                    <h3
+                      className="feat-card__title"
+                      style={{ fontSize: "15px", color: "#ffffff", marginBottom: "8px" }}
+                    >
+                      {isTa ? `${feat.titleTa} விவரங்கள்` : `${feat.titleEn} Specs`}
+                    </h3>
+                    <div className="feat-back__specs">
+                      {(isTa ? feat.specsTa : feat.specsEn).map((spec, i) => (
+                        <div key={i} className="feat-back__item">
+                          <span className="feat-back__bullet">✦</span>
+                          <span>{spec}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="feat-flip-hint">
+                    <span>{isTa ? "மீண்டும் திருப்பவும் ↺" : "Click to return ↺"}</span>
+                  </div>
+                </div>
+              }
+            />
           ))}
         </div>
       </section>

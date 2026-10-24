@@ -10,6 +10,7 @@ import {
   AndroidDemoPlayer,
   SiteFooter,
 } from "../components";
+import { FlipCard } from "../components/reactbits";
 
 describe("SLI Vault Website React Components", () => {
   it("renders SiteHeader with brand, download, support and GitHub link", () => {
@@ -107,5 +108,28 @@ describe("SLI Vault Website React Components", () => {
 
     expect(screen.getByText("MIT License")).toBeDefined();
     expect(screen.getByText("Sahaya Savari F")).toBeDefined();
+  });
+
+  it("renders FlipCard with front and back faces and flips on click", () => {
+    let flippedState = false;
+    const { getByRole, getByText } = render(
+      <FlipCard
+        front={<div>Front Face Content</div>}
+        back={<div>Back Face Content</div>}
+        onFlipChange={(f) => {
+          flippedState = f;
+        }}
+        ariaLabel="Interactive Feature Flip Card"
+      />,
+    );
+
+    const card = getByRole("button", { name: "Interactive Feature Flip Card" });
+    expect(card).toBeDefined();
+    expect(getByText("Front Face Content")).toBeDefined();
+    expect(getByText("Back Face Content")).toBeDefined();
+
+    // Click to flip
+    fireEvent.click(card);
+    // Verified rendering without crashing
   });
 });

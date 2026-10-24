@@ -606,3 +606,20 @@ document.querySelectorAll(".star-border").forEach((rootEl) => {
   };
   requestAnimationFrame(render);
 });
+
+// Interactive 3D tilt & sheen for feature cards (React Bits dynamic interaction)
+if (!calm && matchMedia("(pointer: fine)").matches) {
+  document.querySelectorAll(".feat-card").forEach((card) => {
+    card.addEventListener("pointermove", (e) => {
+      const r = card.getBoundingClientRect();
+      const px = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+      const py = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+      const tiltX = (0.5 - py) * 14;
+      const tiltY = (px - 0.5) * 14;
+      card.style.transform = `perspective(1000px) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) translateY(-3px)`;
+    });
+    card.addEventListener("pointerleave", () => {
+      card.style.transform = "";
+    });
+  });
+}
