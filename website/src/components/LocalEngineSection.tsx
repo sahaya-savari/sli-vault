@@ -4,6 +4,7 @@ import {
   Terminal,
   AnimatedSpan,
   TypingAnimation,
+  BorderBeam,
   SparklesText,
   Text3DFlip,
   FlickeringGrid,
@@ -79,43 +80,46 @@ export const LocalEngineSection: React.FC<LocalEngineSectionProps> = ({ currentL
         </div>
       </div>
 
-      {/* Centered Terminal Privacy Audit */}
+      {/* Centered Terminal with Sliding Border Beam Animation */}
       <div className="max-w-3xl mx-auto w-full">
-        <Terminal title="sli-vault ~ privacy-audit" className="w-full">
-          <TypingAnimation duration={30}>
-            &gt; sli-vault verify --sandbox --network-audit
-          </TypingAnimation>
-
-          <AnimatedSpan className="text-emerald-400 font-medium" delay={800}>
-            <span>✔</span> Preflight checks initialized for platform runtime.
-          </AnimatedSpan>
-
-          <AnimatedSpan className="text-emerald-400 font-medium" delay={1400}>
-            <span>✔</span> SQLite 3.45 database mounted in local private sandbox.
-          </AnimatedSpan>
-
-          <AnimatedSpan className="text-emerald-400 font-medium" delay={2000}>
-            <span>✔</span> FLAG_SECURE window masking active: Screen recordings blocked.
-          </AnimatedSpan>
-
-          <AnimatedSpan className="text-emerald-400 font-medium" delay={2600}>
-            <span>✔</span> Outbound socket inspection: 0 sockets opened, 0 telemetries sent.
-          </AnimatedSpan>
-
-          <AnimatedSpan className="text-emerald-400 font-medium" delay={3200}>
-            <span>✔</span> Full-text FTS5 offline index ready: &lt; 0.8ms query response.
-          </AnimatedSpan>
-
-          <AnimatedSpan className="text-cyan-400" delay={3800}>
-            <span>ℹ</span> Storage status: 100% local persistence on this device.
-          </AnimatedSpan>
-
-          <div className="pt-2">
-            <TypingAnimation delay={4200} className="text-orange-400 font-semibold">
-              Privacy audit passed. Your personal library is completely offline.
+        <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+          <BorderBeam size={220} duration={8} colorFrom="#ff5722" colorTo="#ffb74d" />
+          <Terminal title="sli-vault ~ privacy-audit" className="w-full border-0">
+            <TypingAnimation duration={30}>
+              &gt; sli-vault verify --sandbox --network-audit
             </TypingAnimation>
-          </div>
-        </Terminal>
+
+            <AnimatedSpan className="text-emerald-400 font-medium" delay={800}>
+              <span>✔</span> Preflight checks initialized for platform runtime.
+            </AnimatedSpan>
+
+            <AnimatedSpan className="text-emerald-400 font-medium" delay={1400}>
+              <span>✔</span> SQLite 3.45 database mounted in local private sandbox.
+            </AnimatedSpan>
+
+            <AnimatedSpan className="text-emerald-400 font-medium" delay={2000}>
+              <span>✔</span> FLAG_SECURE window masking active: Screen recordings blocked.
+            </AnimatedSpan>
+
+            <AnimatedSpan className="text-emerald-400 font-medium" delay={2600}>
+              <span>✔</span> Outbound socket inspection: 0 sockets opened, 0 telemetries sent.
+            </AnimatedSpan>
+
+            <AnimatedSpan className="text-emerald-400 font-medium" delay={3200}>
+              <span>✔</span> Full-text FTS5 offline index ready: &lt; 0.8ms query response.
+            </AnimatedSpan>
+
+            <AnimatedSpan className="text-cyan-400" delay={3800}>
+              <span>ℹ</span> Storage status: 100% local persistence on this device.
+            </AnimatedSpan>
+
+            <div className="pt-2">
+              <TypingAnimation delay={4200} className="text-orange-400 font-semibold">
+                Privacy audit passed. Your personal library is completely offline.
+              </TypingAnimation>
+            </div>
+          </Terminal>
+        </div>
       </div>
     </section>
   );

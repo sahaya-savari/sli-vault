@@ -125,7 +125,11 @@ function counter(name) {
 const setStars = counter("stars");
 fetch("https://api.github.com/repos/sahaya-savari/sli-vault")
   .then((res) => (res.ok ? res.json() : null))
-  .then((repo) => setStars(repo && repo.stargazers_count))
+  .then((repo) => {
+    if (repo && typeof repo.stargazers_count === "number" && repo.stargazers_count > 0) {
+      setStars(repo.stargazers_count);
+    }
+  })
   .catch(() => {});
 
 if (document.querySelector('[data-count="downloads"]')) {
@@ -140,7 +144,9 @@ if (document.querySelector('[data-count="downloads"]')) {
           total += asset.download_count || 0;
         });
       });
-      setDownloads(total);
+      if (total > 0) {
+        setDownloads(total);
+      }
     })
     .catch(() => {});
 }

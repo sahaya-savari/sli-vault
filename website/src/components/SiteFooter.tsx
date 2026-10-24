@@ -69,8 +69,13 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ currentLocale, basePath 
           </span>
           <span className="foot__credit">
             <span>{isTa ? "உருவாக்கியவர் " : "Crafted by "}</span>
-            <a href="https://sahayasavari.dev" target="_blank" rel="noopener noreferrer">
-              Sahaya Savari F
+            <a
+              href="https://sahayasavari.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="whitespace-nowrap font-medium"
+            >
+              Sahaya Savari&nbsp;F
             </a>
           </span>
         </p>
