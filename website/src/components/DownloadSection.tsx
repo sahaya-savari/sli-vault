@@ -202,10 +202,12 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 <rect x="12.8" y="12.8" width="9.2" height="9.2" rx="1.2" />
               </svg>
             </span>
-            <span>
-              Windows{" "}
-              <small>{isTa ? "10/11 x64 (.zip · 19.5 MB)" : "10/11 x64 (.zip · 19.5 MB)"}</small>
-            </span>
+            <div className="dl__link-content">
+              <span className="dl__link-title">Windows</span>
+              <small className="dl__link-meta">
+                {isTa ? "10/11 x64 (.zip · 19.5 MB)" : "10/11 x64 (.zip · 19.5 MB)"}
+              </small>
+            </div>
           </StarBorder>
           <StarBorder
             as="a"
@@ -234,14 +236,14 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 <path d="M12 2c-3.13 0-5.7 2.38-5.96 5.44a4.9 4.9 0 0 0 0 2.12c.26 3.06 2.83 5.44 5.96 5.44s5.7-2.38 5.96-5.44a4.9 4.9 0 0 0 0-2.12C17.7 4.38 15.13 2 12 2zm-1.2 5.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5zm2.4 0a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5zm-1.2 2c.83 0 1.5.4 1.5.9s-.67.9-1.5.9-1.5-.4-1.5-.9.67-.9 1.5-.9zm-5.2 6.5c-2.35.42-4.27 1.85-5.34 3.84a5.9 5.9 0 0 0-.72 2.75c0 .5.34.91.81.91h15.5c.48 0 .81-.41.81-.91a5.9 5.9 0 0 0-.72-2.75c-1.07-2-2.99-3.42-5.34-3.84l-.8 1.56c-.38.74-1.15 1.2-1.95 1.2s-1.57-.46-1.95-1.2l-.8-1.56z" />
               </svg>
             </span>
-            <span>
-              Linux{" "}
-              <small>
+            <div className="dl__link-content">
+              <span className="dl__link-title">Linux</span>
+              <small className="dl__link-meta">
                 {isTa
                   ? "Ubuntu / Debian / Arch (.tar.gz · 18.0 MB)"
                   : "Ubuntu / Debian / Arch (.tar.gz · 18.0 MB)"}
               </small>
-            </span>
+            </div>
           </StarBorder>
           <a
             href="https://github.com/sahaya-savari/sli-vault/releases/tag/v1.0.1"

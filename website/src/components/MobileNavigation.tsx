@@ -6,6 +6,7 @@ interface MobileNavigationProps {
   onClose: () => void;
   currentLocale: Locale;
   onToggleLocale: () => void;
+  basePath?: string;
 }
 
 export const MobileNavigation: React.FC<MobileNavigationProps> = ({
@@ -13,6 +14,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
   onClose,
   currentLocale,
   onToggleLocale,
+  basePath = "./",
 }) => {
   // Close menu on ESC key
   useEffect(() => {
@@ -80,42 +82,42 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
 
           <nav className="flex flex-col space-y-4" aria-label="Mobile menu links">
             <a
-              href="#features"
+              href={`${basePath}#features`}
               className="text-base font-medium text-zinc-200 hover:text-white py-2 px-3 rounded-md hover:bg-zinc-800/60 transition-colors"
               onClick={onClose}
             >
               {t.features}
             </a>
             <a
-              href="./demo/"
+              href={`${basePath}demo/`}
               className="text-base font-medium text-zinc-200 hover:text-white py-2 px-3 rounded-md hover:bg-zinc-800/60 transition-colors"
               onClick={onClose}
             >
               {t.demo}
             </a>
             <a
-              href="#download"
+              href={`${basePath}#download`}
               className="text-base font-medium text-zinc-200 hover:text-white py-2 px-3 rounded-md hover:bg-zinc-800/60 transition-colors"
               onClick={onClose}
             >
               {t.download}
             </a>
             <a
-              href="./resources/"
+              href={`${basePath}resources/`}
               className="text-base font-medium text-zinc-200 hover:text-white py-2 px-3 rounded-md hover:bg-zinc-800/60 transition-colors"
               onClick={onClose}
             >
               {t.resources}
             </a>
             <a
-              href="#faq"
+              href={`${basePath}#faq`}
               className="text-base font-medium text-zinc-200 hover:text-white py-2 px-3 rounded-md hover:bg-zinc-800/60 transition-colors"
               onClick={onClose}
             >
               {t.faq}
             </a>
             <a
-              href="#support"
+              href={`${basePath}#support`}
               className="text-base font-medium text-zinc-200 hover:text-white py-2 px-3 rounded-md hover:bg-zinc-800/60 transition-colors flex items-center gap-2"
               onClick={onClose}
             >

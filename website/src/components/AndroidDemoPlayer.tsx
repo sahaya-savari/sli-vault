@@ -243,6 +243,111 @@ export const AndroidDemoPlayer: React.FC<AndroidDemoPlayerProps> = ({ currentLoc
       {/* Key Input Modal / Drawer */}
       {keyInputVisible && (
         <form onSubmit={handleSaveCustomKey} className="demo-key-form">
+          <div
+            className="demo-key-help"
+            style={{
+              marginBottom: "14px",
+              padding: "12px",
+              background: "rgba(255, 255, 255, 0.03)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              borderRadius: "8px",
+              fontSize: "12px",
+              lineHeight: "1.5",
+            }}
+          >
+            <div
+              style={{
+                fontWeight: "600",
+                color: "#ff6a24",
+                marginBottom: "6px",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+              <span>
+                {isTa ? "ஸ்ட்ரீமிங் விசையை எங்கே பெறுவது?" : "Where to get an Appetize Stream Key?"}
+              </span>
+            </div>
+            <ol
+              style={{
+                paddingLeft: "18px",
+                margin: 0,
+                color: "var(--muted)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "4px",
+              }}
+            >
+              <li>
+                {isTa ? (
+                  <>
+                    <a href="#download" style={{ color: "#ff6a24", textDecoration: "underline" }}>
+                      பதிவிறக்கப் பகுதி
+                    </a>
+                    யிலிருந்து SLI Vault APK-ஐப் பதிவிறக்கவும்.
+                  </>
+                ) : (
+                  <>
+                    Download the SLI Vault APK from the{" "}
+                    <a href="#download" style={{ color: "#ff6a24", textDecoration: "underline" }}>
+                      Download section
+                    </a>
+                    .
+                  </>
+                )}
+              </li>
+              <li>
+                {isTa ? (
+                  <>
+                    <a
+                      href="https://appetize.io/upload"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "#ff6a24", textDecoration: "underline" }}
+                    >
+                      appetize.io/upload
+                    </a>
+                    -ல் APK-ஐப் பதிவேற்றவும் (இலவச அடுக்கு).
+                  </>
+                ) : (
+                  <>
+                    Upload the APK at{" "}
+                    <a
+                      href="https://appetize.io/upload"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "#ff6a24", textDecoration: "underline" }}
+                    >
+                      appetize.io/upload
+                    </a>{" "}
+                    (free tier, instant).
+                  </>
+                )}
+              </li>
+              <li>
+                {isTa
+                  ? "உருவாக்கப்பட்ட Public Key-ஐ நகலெடுத்து கீழே உள்ளிடவும்."
+                  : "Copy your generated Public Key and paste it into the input below."}
+              </li>
+            </ol>
+          </div>
+
           <label htmlFor="custom-build-key" className="demo-key-label">
             {isTa
               ? "Appetize App Build Key அல்லது WebRTC Stream Key ஐ உள்ளிடவும்:"
@@ -266,7 +371,7 @@ export const AndroidDemoPlayer: React.FC<AndroidDemoPlayerProps> = ({ currentLoc
           </div>
           <p className="demo-key-hint">
             {isTa
-              ? "குறிப்பு: நீங்கள் விசை எதுவும் வழங்காவிட்டால், அதிகாரப்பூர்வ வெளியீட்டு தகவல் மற்றும் ஆஃப்லைன் மாதிரி பயன்முறை இயங்கும்."
+              ? "குறிப்பு: விசைகள் உங்கள் உலாவி மணல்தொட்டியில் மட்டுமே சேமிக்கப்படும்; சர்வர்களுக்கு அனுப்பப்படாது."
               : "Note: Keys are stored only in your local browser sandbox and never transmitted to our servers."}
           </p>
         </form>

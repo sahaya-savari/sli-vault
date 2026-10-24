@@ -30,7 +30,7 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ currentLocale, basePath 
           <a href={`${basePath}demo/`}>{isTa ? "நேரலை டெமோ" : "Live Demo"}</a>
           <a href={`${basePath}#download`}>{isTa ? "பதிவிறக்கம்" : "Download"}</a>
           <a href={`${basePath}#faq`}>{isTa ? "கேள்விகள்" : "FAQ"}</a>
-          <a href="#support">{isTa ? "ஆதரவு" : "Support"}</a>
+          <a href={`${basePath}#support`}>{isTa ? "ஆதரவு" : "Support"}</a>
           <a
             href="https://github.com/sahaya-savari/sli-vault"
             target="_blank"

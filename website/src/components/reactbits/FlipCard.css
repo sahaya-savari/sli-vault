@@ -23,7 +23,7 @@
   touch-action: pan-y;
 }
 
-.flip-card[data-axis='x'] {
+.flip-card[data-axis="x"] {
   touch-action: pan-x;
 }
 
@@ -74,7 +74,7 @@
   transform: rotateY(180deg);
 }
 
-.flip-card[data-axis='x'] .flip-card__face--back {
+.flip-card[data-axis="x"] .flip-card__face--back {
   transform: rotateX(180deg);
 }
 
@@ -103,7 +103,7 @@
   transition: opacity 200ms ease;
 }
 
-.flip-card[data-fade='front'] .flip-card__face--front,
-.flip-card[data-fade='back'] .flip-card__face--back {
+.flip-card[data-fade="front"] .flip-card__face--front,
+.flip-card[data-fade="back"] .flip-card__face--back {
   opacity: 1;
 }

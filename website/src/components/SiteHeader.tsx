@@ -51,7 +51,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
             <a href={`${basePath}#download`}>{t.download}</a>
             <a href={`${basePath}resources/`}>{t.resources}</a>
             <a href={`${basePath}#faq`}>{t.faq}</a>
-            <a className="nav__love" href="#support">
+            <a className="nav__love" href={`${basePath}#support`}>
               <svg
                 viewBox="0 0 24 24"
                 width="14"
@@ -141,6 +141,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
         onClose={() => setMobileMenuOpen(false)}
         currentLocale={currentLocale}
         onToggleLocale={onToggleLocale}
+        basePath={basePath}
       />
     </>
   );

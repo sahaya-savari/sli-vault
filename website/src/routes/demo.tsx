@@ -137,7 +137,7 @@ function DemoPage() {
         <FaqSection currentLocale={locale} />
       </main>
 
-      <SiteFooter currentLocale={locale} />
+      <SiteFooter currentLocale={locale} basePath="../" />
     </div>
   );
 }

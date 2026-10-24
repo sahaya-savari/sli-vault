@@ -346,9 +346,6 @@ const FeatureCardFrontFace: React.FC<FeatureCardFaceProps> = ({ feature, isTamil
       <h3 className="feat-card__title">{isTamil ? feature.titleTa : feature.titleEn}</h3>
       <p className="feat-card__desc">{isTamil ? feature.descriptionTa : feature.descriptionEn}</p>
     </div>
-    <div className="feat-flip-hint">
-      <span>{isTamil ? "தொழில்நுட்ப விவரம் ↺" : "Click to flip ↺"}</span>
-    </div>
   </div>
 );
 
@@ -382,9 +379,6 @@ const FeatureCardBackFace: React.FC<FeatureCardFaceProps> = ({ feature, isTamil 
             </div>
           ))}
         </div>
-      </div>
-      <div className="feat-flip-hint">
-        <span>{isTamil ? "மீண்டும் திருப்பவும் ↺" : "Click to return ↺"}</span>
       </div>
     </div>
   );

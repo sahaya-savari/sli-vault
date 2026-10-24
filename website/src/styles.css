@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Anek+Tamil:wdth,wght@125,100..800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Anek+Tamil:wdth,wght@125,100..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -126,4 +126,3 @@
 .animate-border-beam {
   animation: border-beam var(--duration, 8s) linear infinite;
 }
-
