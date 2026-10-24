@@ -1,5 +1,6 @@
 import React from "react";
 import type { Locale } from "./types";
+import { StarBorder } from "./reactbits";
 
 interface DownloadSectionProps {
   currentLocale: Locale;
@@ -28,9 +29,18 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
             </svg>
             <span>Android (v1.0.1)</span>
           </h3>
-          <a
+          <StarBorder
+            as="a"
             href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-arm64-v8a.apk"
             className="dl__link"
+            color="#34d399"
+            trailColor="#6ee7b7"
+            thickness={1.2}
+            radius={12}
+            duration={4}
+            glow={0.5}
+            clickPulse
+            hover="lap"
           >
             <span className="dl__gh dl__gh--store">
               <svg
@@ -56,7 +66,7 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                 {isTa ? "பரிந்துரைக்கப்பட்டது (27.9 MB)" : "arm64-v8a (27.9 MB · Most Phones)"}
               </small>
             </span>
-          </a>
+          </StarBorder>
           <a
             href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-v1.0.1-universal.apk"
             className="dl__link"
@@ -162,11 +172,20 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
             </svg>
             <span>{isTa ? "டெஸ்க்டாப் (Windows & Linux)" : "Desktop (Windows & Linux)"}</span>
           </h3>
-          <a
+          <StarBorder
+            as="a"
             href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-windows-x64.zip"
             className="dl__link"
             target="_blank"
             rel="noopener noreferrer"
+            color="#00a4ef"
+            trailColor="#38bdf8"
+            thickness={1.2}
+            radius={12}
+            duration={4}
+            glow={0.5}
+            clickPulse
+            hover="lap"
           >
             <span className="dl__gh dl__gh--store">
               <svg
@@ -187,12 +206,21 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
               Windows{" "}
               <small>{isTa ? "10/11 x64 (.zip · 19.5 MB)" : "10/11 x64 (.zip · 19.5 MB)"}</small>
             </span>
-          </a>
-          <a
+          </StarBorder>
+          <StarBorder
+            as="a"
             href="https://github.com/sahaya-savari/sli-vault/releases/download/v1.0.1/sli-vault-linux-x64.tar.gz"
             className="dl__link"
             target="_blank"
             rel="noopener noreferrer"
+            color="#facc15"
+            trailColor="#fde047"
+            thickness={1.2}
+            radius={12}
+            duration={4}
+            glow={0.5}
+            clickPulse
+            hover="lap"
           >
             <span className="dl__gh dl__gh--store">
               <svg
@@ -214,7 +242,7 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({ currentLocale 
                   : "Ubuntu / Debian / Arch (.tar.gz · 18.0 MB)"}
               </small>
             </span>
-          </a>
+          </StarBorder>
           <a
             href="https://github.com/sahaya-savari/sli-vault/releases/tag/v1.0.1"
             className="dl__link"

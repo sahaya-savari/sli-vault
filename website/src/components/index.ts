@@ -10,3 +10,4 @@ export * from "./AndroidDemoPlayer";
 export * from "./SiteFooter";
 export * from "./LocalEngineSection";
 export * from "./magicui";
+export * from "./reactbits";

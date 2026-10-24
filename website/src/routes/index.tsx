@@ -11,6 +11,7 @@ import {
   SiteFooter,
   LocalEngineSection,
   ScrollProgress,
+  StarBorder,
 } from "../components";
 
 export const Route = createFileRoute("/")({
@@ -204,9 +205,22 @@ function HomePage() {
             </p>
 
             <div className="cta rise">
-              <a className="btn btn--go" href="#download">
+              <StarBorder
+                as="a"
+                href="#download"
+                className="btn btn--go"
+                color="#ffffff"
+                trailColor="#ff8a65"
+                duration={3.5}
+                radius={12}
+                thickness={1.5}
+                glow={0.7}
+                sparkle
+                clickPulse
+                hover="lap"
+              >
                 <span>{isTa ? "பதிவிறக்கம்" : "Download"}</span>
-              </a>
+              </StarBorder>
               <a
                 className="btn"
                 href="https://github.com/sahaya-savari/sli-vault"

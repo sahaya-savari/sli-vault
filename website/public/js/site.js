@@ -537,3 +537,72 @@ if (termEl) {
 
   whenSeen(termEl, runTerminal);
 }
+
+// StarBorder Canvas Initializer for static HTML elements
+document.querySelectorAll(".star-border").forEach((rootEl) => {
+  let canvas = rootEl.querySelector(".star-border__light");
+  if (!canvas) {
+    canvas = document.createElement("canvas");
+    canvas.className = "star-border__light";
+    canvas.setAttribute("aria-hidden", "true");
+    rootEl.prepend(canvas);
+  }
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const BLEED = 48;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let w = rootEl.offsetWidth;
+  let h = rootEl.offsetHeight;
+
+  const resize = () => {
+    w = rootEl.offsetWidth;
+    h = rootEl.offsetHeight;
+    canvas.width = Math.max(1, Math.round((w + BLEED * 2) * dpr));
+    canvas.height = Math.max(1, Math.round((h + BLEED * 2) * dpr));
+  };
+  resize();
+  window.addEventListener("resize", resize);
+
+  let phase = 0;
+  let last = performance.now();
+
+  const render = (now) => {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    phase = (phase + dt * 0.25) % 1;
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (w < 2 || h < 2) return;
+
+    ctx.setTransform(dpr, 0, 0, dpr, BLEED * dpr, BLEED * dpr);
+    const perimeter = 2 * (w + h);
+    const pos = phase * perimeter;
+    let x = 0;
+    let y = 0;
+    if (pos < w) {
+      x = pos;
+      y = 0;
+    } else if (pos < w + h) {
+      x = w;
+      y = pos - w;
+    } else if (pos < 2 * w + h) {
+      x = w - (pos - (w + h));
+      y = h;
+    } else {
+      x = 0;
+      y = h - (pos - (2 * w + h));
+    }
+
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, 28);
+    grad.addColorStop(0, "rgba(255, 255, 255, 0.95)");
+    grad.addColorStop(0.3, "rgba(255, 138, 101, 0.45)");
+    grad.addColorStop(1, "rgba(255, 138, 101, 0)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(x - 28, y - 28, 56, 56);
+
+    requestAnimationFrame(render);
+  };
+  requestAnimationFrame(render);
+});
